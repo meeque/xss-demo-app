@@ -1,0 +1,1 @@
+foo onload=xss() 

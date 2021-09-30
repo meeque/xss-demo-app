@@ -1,0 +1,8 @@
+Welcome to the XSS demo!
+
+Write your XSS attack payload here!
+Then choose a context in which your payload should be processed!
+
+Some payload processing contexts prevent successful XSS attacks, others allow them. Find out which ones!
+
+If you find an XSS vulnerability, you can execute arbitrary JavaScript. For your convenience, we provide global JavaScript function xss(). Invoke xss() and you will see a corresponding message...

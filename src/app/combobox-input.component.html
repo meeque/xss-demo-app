@@ -1,0 +1,39 @@
+<div class="fd-combobox-input">
+  <div class="fd-popover">
+    <div class="fd-popover__control">
+      <div class="fd-combobox-control" [attr.aria-controls]="'combobox-input-' + componentId" [attr.aria-expanded]="showMenu" aria-haspopup="true">
+        <div class="fd-input-group fd-input-group--after">
+          <input type="text" class="fd-input" [(ngModel)]="query" [placeholder]="placeholder" (focus)="toggleMenu(true)" (input)="toggleMenu(true)">
+          <span class="fd-input-group__addon fd-input-group__addon--after fd-input-group__addon--button">
+            <button (click)="toggleMenu()" class="fd-button--light sap-icon--navigation-down-arrow"></button>
+          </span>
+         </div>
+       </div>
+    </div>
+    <div [id]="'combobox-input-' + componentId" class="fd-popover__body fd-popover__body--no-arrow" [attr.aria-hidden]="!showMenu">
+      <nav class="fd-menu">
+        <ng-template #menuList></ng-template>
+        <div *ngFor="let group of groups" class="fd-menu__group">
+          <h3 class="fd-menu__title">{{ group.name }}</h3>
+          <ng-template #menuList></ng-template>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<ng-template #defaultMenuList let-items="items">
+  <ul class="fd-menu__list">
+    <ng-container *ngFor="let item of items">
+      <ng-template #menuItem></ng-template>
+    </ng-container>
+  </ul>
+</ng-template>
+
+<ng-template #defaultMenuItem let-item="item">
+  <ng-container *ngIf="filter(item)">
+    <li>
+      <a (click)="select(item, $event)" class="fd-menu__item">{{ item.name }}</a>
+    </li>
+  </ng-container>
+</ng-template>

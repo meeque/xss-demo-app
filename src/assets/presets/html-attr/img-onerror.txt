@@ -1,0 +1,1 @@
+"></iframe> <img src="." onerror="xss()">

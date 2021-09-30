@@ -1,0 +1,1 @@
+<div onmouseenter="xss()">Move the cursor over this text to trigger XSS!</div>

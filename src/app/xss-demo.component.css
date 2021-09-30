@@ -1,0 +1,43 @@
+.fd-shell__header h1 {
+  text-align: center;
+  color: white;
+}
+
+article.xss-triggered {
+  background-color: rgb(255, 235, 235) !important;
+}
+
+.input-area textarea.payload {
+  height: 25em;
+}
+
+.output-area .fd-menu__item.filters {
+  cursor: inherit;
+}
+
+.output-area .fd-menu__item.filters button {
+  margin-left: 8px;
+}
+
+.output-area .technology-icon {
+  width: 1.4em;
+  height: 1.4em;
+}
+
+.output-area button .technology-icon {
+  opacity: 0.6;
+}
+
+.output-area button[aria-selected=true] .technology-icon,
+.output-area button:hover .technology-icon {
+  filter: invert(1);
+  opacity: 1;
+}
+
+.output-area a.fd-menu__item .technology-icon {
+  opacity: 0.6;
+}
+
+.output-area a.fd-menu__item:hover .technology-icon {
+  opacity: 0.8;
+}

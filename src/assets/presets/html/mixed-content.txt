@@ -1,0 +1,23 @@
+<h2>HTML Sanitization</h2>
+
+<p>This preset contains <em>mixed <strong>HTML</strong> content</em> and can be used to test different <a target="_blank" href="https://en.wikipedia.org/wiki/HTML_sanitization">HTML sanitization</a> policies.</p>
+
+<p>Some contents are prone to <strong style="color:pink">XSS attacks</strong> and should be blocked by any secure policy:
+<ul>
+<li>Script tags: <script>xss()</script></li>
+<li>IFrames: <iframe src="javascript:javascript:alert('xss')"></iframe></li>
+<li>Image event handlers: <img src="." onerror="xss()"></li>
+<li>Links <a href="javascript:xss()">with JS-URLs</a></li>
+<li>Form fields: <input type="text" val="with event handlers" onfocus="xss()"></li>
+<li><span onmouseenter="xss()">Other elements with event handlers – <em style="color:red">(hover here to test!)</em></span></li>
+<li>SVG event handlers: <svg onload="xss()" width="10" height="10"></svg></li>
+</ul>
+</p>
+
+<p>Some other contents may be questionable for other reasons. It's up to the policy to decide:
+<ul>
+<li>Hyperlinks: <a target="_blank" href="https://en.wikipedia.org/wiki/Phishing">Could be used for phishing</a></li>
+<li>Styles: <em style="font-size:200%;color:green">could</em> <span style="font-size:400%;color:yellow;background-color:blue">be</span> <strong style="font-size:300%;color:pink;text-decoration: underline double red">annoying</strong><span style="font-size:500%;color:brown">!</span>
+<li>Styles could also facilitate click-jacking: <strong>look for the new jester logo!</strong><div style="position:absolute;top:5px;right:10px"><a target="_blank" href="https://www.youtube.com/watch?v=DLzxrzFCyOs"><img width="60px" height="60px" alt="Jester Logo" src="assets/img/team-jester-logo-black.png"></a></div></li>
+</ul>
+</p>

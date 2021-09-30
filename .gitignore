@@ -1,0 +1,22 @@
+# hidden, temp, backup, log files
+.*
+*~
+.tmp
+.bak
+.log
+
+# dependencies
+/node_modules
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+
+# misc
+/connect.lock
+/coverage
+/typings
+
+# System Files
+Thumbs.db

