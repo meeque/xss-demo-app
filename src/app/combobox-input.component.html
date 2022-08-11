@@ -12,6 +12,7 @@
     </div>
     <div [id]="'combobox-input-' + componentId" class="fd-popover__body fd-popover__body--no-arrow" [attr.aria-hidden]="!showMenu">
       <nav class="fd-menu">
+        <!-- XXX should this #menuList ng-template be removed? there is another one further below. might be responsible for UI glitches -->
         <ng-template #menuList></ng-template>
         <div *ngFor="let group of groups" class="fd-menu__group">
           <h3 class="fd-menu__title">{{ group.name }}</h3>
