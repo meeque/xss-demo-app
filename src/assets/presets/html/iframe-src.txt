@@ -1,1 +1,1 @@
-<iframe src="javascript:alert('XSS!')"></iframe>
+<iframe src="javascript:window.parent.xss()"></iframe>
