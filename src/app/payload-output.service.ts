@@ -520,7 +520,7 @@ export class PayloadOutputService {
           id : 'IframeNgTrusted',
           quality : PayloadOutputQuality.Insecure,
           name : 'Trusted ng iframe [src]',
-          title : 'Payload URL Trusted! (Angular iframe [src] and DomSanitizer.bypassSecurityTrustUrl())',
+          title : 'Payload URL Trusted! (Angular iframe [src] and DomSanitizer.bypassSecurityTrustResourceUrl())',
           payloadProcessor: this._processors.ngTrustedResourceUrl,
           templateCode : '<iframe [src]="payload"></iframe>'
         }
