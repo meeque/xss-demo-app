@@ -1,4 +1,5 @@
-FROM nginx:1.21.3-alpine
+### this tag refers to nginx 1.*
+FROM nginx@sha256:56b388b0d79c738f4cf51bbaf184a14fab19337f4819ceb2cae7d94100262de8
 
 ### Copy nginx config ###
 COPY nginx/nginx.conf /etc/nginx/
