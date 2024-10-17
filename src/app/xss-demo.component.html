@@ -39,26 +39,26 @@
                     <combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></combobox-input>
 
                     <ng-template #payloadOutputMenuTechnologyFilters let-item="item" let-comboboxInput>
-                      <li>
-                        <div class="fd-menu__item filters filters-technology">
+                      <li class="fd-list__item">
+                        <div class="fddocs-button-container filters filters-technology">
                           <span class="sap-icon--filter"></span>
                           {{ item.name }}
                           <button
-                              class="fd-button--standard fd-button--compact"
+                              class="fd-button"
                               (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
                               [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
                             <img class="technology-icon" src="assets/img/html-src-logo-black.svg">
                             HTML
                           </button>
                           <button
-                              class="fd-button--standard fd-button--compact"
+                              class="fd-button"
                               (click)="togglePayloadOutputTechnologyFilter('domInjector')"
                               [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')">
                             <img class="technology-icon" src="assets/img/dom-logo-black.svg">
                             DOM
                           </button>
                           <button
-                              class="fd-button--standard fd-button--compact"
+                              class="fd-button"
                               (click)="togglePayloadOutputTechnologyFilter('templateCode')"
                               [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateCode')">
                             <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
@@ -69,26 +69,26 @@
                     </ng-template>
 
                     <ng-template #payloadOutputMenuQualityFilters let-item="item" let-comboboxInput>
-                      <li>
-                        <div class="fd-menu__item filters filters-quality">
+                      <li class="fd-list__item">
+                        <div class="fddocs-button-container filters filters-quality">
                           <span class="sap-icon--filter"></span>
                           {{ item.name }}
                           <button
-                              class="fd-button--standard fd-button--compact"
+                              class="fd-button"
                               (click)="togglePayloadOutputQualityFilter('Recommended')"
                               [attr.aria-selected]="payloadOutputQualityFilters.includes('Recommended')">
                             Recommended
                             <span class="sap-icon--accept"></span>
                           </button>
                           <button
-                              class="fd-button--standard fd-button--compact"
+                              class="fd-button"
                               (click)="togglePayloadOutputQualityFilter('Questionable')"
                               [attr.aria-selected]="payloadOutputQualityFilters.includes('Questionable')">
                             Questionable
                             <span class="sap-icon--question-mark"></span>
                           </button>
                           <button
-                              class="fd-button--standard fd-button--compact"
+                              class="fd-button"
                               (click)="togglePayloadOutputQualityFilter('Insecure')"
                               [attr.aria-selected]="payloadOutputQualityFilters.includes('Insecure')">
                             Insecure
@@ -100,10 +100,10 @@
 
                     <ng-template #payloadOutputMenuItem let-item="item" let-comboboxInput>
                       <ng-container *ngIf="comboboxInput.filter(item)">
-                        <li>
+                        <li class="fd-list__item">
                           <a
                               (click)="comboboxInput.select(item, $event)"
-                              class="fd-menu__item">
+                              class="fd-list__title">
                             <img *ngIf="item.value.htmlSourceProvider" class="technology-icon" src="assets/img/html-src-logo-black.svg">
                             <img *ngIf="item.value.domInjector" class="technology-icon" src="assets/img/dom-logo-black.svg">
                             <img *ngIf="item.value.templateCode" class="technology-icon" src="assets/img/angular-logo-solid-black.svg">

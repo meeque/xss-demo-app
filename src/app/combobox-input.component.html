@@ -14,12 +14,13 @@
 
     <div [id]="'combobox-input-' + componentId" class="fd-popover__body fd-popover__body--no-arrow fd-popover__body--dropdown fd-popover__body--dropdown-fill" [attr.aria-hidden]="!showMenu">
       <div class="fd-popover__wrapper docs-max-height">
-        <!-- XXX should this #menuList ng-template be removed? there is another one further below. might be responsible for UI glitches -->
         <ng-template #menuList></ng-template>
-        <div *ngFor="let group of groups" class="fd-menu__group">
-          <h3 class="fd-menu__title">{{ group.name }}</h3>
+        <ng-container *ngFor="let group of groups">
+          <label class="fd-list__group-header">
+            <span class="fd-list__title">{{ group.name }}</span>
+          </label>
           <ng-template #menuList></ng-template>
-        </div>
+        </ng-container>
       </div>
     </div>
 
