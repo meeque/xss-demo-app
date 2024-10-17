@@ -11,11 +11,11 @@ article.xss-triggered {
   height: 25em;
 }
 
-.output-area .fd-menu__item.filters {
+.output-area .fd-list__item.filters {
   cursor: inherit;
 }
 
-.output-area .fd-menu__item.filters button {
+.output-area .fd-list__item.filters button {
   margin-left: 8px;
 }
 
@@ -34,10 +34,10 @@ article.xss-triggered {
   opacity: 1;
 }
 
-.output-area a.fd-menu__item .technology-icon {
+.output-area a.fd-list__item .technology-icon {
   opacity: 0.6;
 }
 
-.output-area a.fd-menu__item:hover .technology-icon {
+.output-area a.fd-list__item:hover .technology-icon {
   opacity: 0.8;
 }

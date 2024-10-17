@@ -1,30 +1,33 @@
-<div class="fd-combobox-input">
+<div class="fd-form-item">
   <div class="fd-popover">
-    <div class="fd-popover__control">
-      <div class="fd-combobox-control" [attr.aria-controls]="'combobox-input-' + componentId" [attr.aria-expanded]="showMenu" aria-haspopup="true">
-        <div class="fd-input-group fd-input-group--after">
-          <input type="text" class="fd-input" [(ngModel)]="query" [placeholder]="placeholder" (focus)="toggleMenu(true)" (input)="toggleMenu(true)">
-          <span class="fd-input-group__addon fd-input-group__addon--after fd-input-group__addon--button">
-            <button (click)="toggleMenu()" class="fd-button--light sap-icon--navigation-down-arrow"></button>
-          </span>
-         </div>
-       </div>
+
+    <div class="fd-popover__control" [attr.aria-controls]="'combobox-input-' + componentId" [attr.aria-expanded]="showMenu" aria-haspopup="true">
+      <div class="fd-input-group fd-input-group--control">
+        <input type="text" class="fd-input fd-input-group__input" [(ngModel)]="query" [placeholder]="placeholder" (focus)="toggleMenu(true)" (input)="toggleMenu(true)">
+        <span class="fd-input-group__addon fd-input-group__addon--button">
+          <button (click)="toggleMenu()" class="fd-input-group__button fd-button fd-button--transparent">
+            <i class="sap-icon--navigation-down-arrow"></i>
+          </button>
+        </span>
+      </div>
     </div>
-    <div [id]="'combobox-input-' + componentId" class="fd-popover__body fd-popover__body--no-arrow" [attr.aria-hidden]="!showMenu">
-      <nav class="fd-menu">
+
+    <div [id]="'combobox-input-' + componentId" class="fd-popover__body fd-popover__body--no-arrow fd-popover__body--dropdown fd-popover__body--dropdown-fill" [attr.aria-hidden]="!showMenu">
+      <div class="fd-popover__wrapper docs-max-height">
         <!-- XXX should this #menuList ng-template be removed? there is another one further below. might be responsible for UI glitches -->
         <ng-template #menuList></ng-template>
         <div *ngFor="let group of groups" class="fd-menu__group">
           <h3 class="fd-menu__title">{{ group.name }}</h3>
           <ng-template #menuList></ng-template>
         </div>
-      </nav>
+      </div>
     </div>
+
   </div>
 </div>
 
 <ng-template #defaultMenuList let-items="items">
-  <ul class="fd-menu__list">
+  <ul class="fd-list fd-list--dropdown" role="listbox">
     <ng-container *ngFor="let item of items">
       <ng-template #menuItem></ng-template>
     </ng-container>
@@ -33,8 +36,8 @@
 
 <ng-template #defaultMenuItem let-item="item">
   <ng-container *ngIf="filter(item)">
-    <li>
-      <a (click)="select(item, $event)" class="fd-menu__item">{{ item.name }}</a>
+    <li class="fd-list__item" role="option">
+      <a (click)="select(item, $event)" class="fd-list__title">{{ item.name }}</a>
     </li>
   </ng-container>
 </ng-template>
