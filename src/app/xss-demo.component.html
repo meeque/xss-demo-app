@@ -301,12 +301,18 @@
       </main>
     </div>
 
-    <div class="fd-shell__overlay fd-overlay fd-overlay--alert" aria-hidden="false">
-      <div *ngIf="xssTriggered" [id]="'app-component-' + componentId + '-xss-alert'" class="fd-alert fd-alert--error fd-alert--dismissible alert-xss-triggered">
+    <div *ngIf="xssTriggered" [id]="'app-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered" role="note">
+      <p class="fd-message-strip__text">
         <span *ngIf="xssTriggered > 1" class="fd-badge fd-badge--pill">{{ xssTriggered }}</span>
-        <button class="fd-alert__close" (click)="resetXss()" [attr.aria-controls]="'app-component-' + componentId + '-xss-alert'" aria-label="Close"></button>
         XSS has been triggered!
-      </div>
+      </p>
+      <button
+          (click)="resetXss()"
+          [attr.aria-controls]="'app-component-' + componentId + '-xss-alert'"
+          class="fd-button fd-button--transparent is-compact fd-message-strip__close"
+          title="Close">
+        <i class="sap-icon--decline"></i>
+      </button>
     </div>
 
 </div>
