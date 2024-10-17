@@ -43,3 +43,7 @@
 html {
     font-size: 16px;
 }
+
+:root {
+  --fdPanel_Title_Font_Size: 1.0rem;
+}
