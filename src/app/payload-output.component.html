@@ -1,8 +1,8 @@
-<div *ngIf="active" class="fd-panel-grid fd-panel-grid--1col">
+<div *ngIf="active">
 
-  <div class="title fd-panel">
-    <div class="fd-panel__header">
-      <h3 class="fd-panel__title">
+  <div class="title fd-layout-panel">
+    <div class="fd-layout-panel__header">
+      <h3 class="fd-layout-panel__title">
         <img *ngIf="outputDescriptor.htmlSourceProvider" class="technology-icon" src="assets/img/html-src-logo-black.svg">
         <img *ngIf="outputDescriptor.domInjector" class="technology-icon" src="assets/img/dom-logo-black.svg">
         <img *ngIf="outputDescriptor.templateCode" class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
@@ -14,93 +14,93 @@
     </div>
   </div>
 
-  <div *ngIf="outputDescriptor.payloadProcessor" class="payload-processor fd-panel">
-    <div class="fd-panel__header">
-      <div class="fd-panel__expand">
+  <div *ngIf="outputDescriptor.payloadProcessor" class="payload-processor fd-layout-panel">
+    <div class="fd-layout-panel__header">
+      <div class="fd-layout-panel__expand">
         <button
-            class="fd-button fd-button--transparent fd-panel__button" 
+            class="fd-button fd-button--transparent fd-layout-panel__button"
             (click)="showPayloadProcessor = !showPayloadProcessor"
             aria-controls="'paylaod-output-component-' + componentId + '-payload-processor-panel'">
                 <i [ngClass]="showPayloadProcessor ? 'sap-icon--slim-arrow-down' : 'sap-icon--slim-arrow-right'" class=""></i>
         </button>
       </div>
-      <h4 class="fd-panel__title">Payload Processor Function</h4>
+      <h4 class="fd-layout-panel__title">Payload Processor Function</h4>
     </div>
     <div
         role="region"
-        class="fd-panel__body"
+        class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-payload-processor-panel'"
         [attr.aria-hidden]="!showPayloadProcessor"
         [innerText]="outputDescriptor.payloadProcessor">
     </div>
   </div>
 
-  <div *ngIf="outputDescriptor.htmlSourceProvider" class="html-source-provider fd-panel">
-    <div class="fd-panel__header">
-      <div class="fd-panel__expand">
+  <div *ngIf="outputDescriptor.htmlSourceProvider" class="html-source-provider fd-layout-panel">
+    <div class="fd-layout-panel__header">
+      <div class="fd-layout-panel__expand">
         <button
-            class="fd-button fd-button--transparent fd-panel__button" 
+            class="fd-button fd-button--transparent fd-layout-panel__button"
             (click)="showHtmlSourceProvider = !showHtmlSourceProvider"
             aria-controls="'paylaod-output-component-' + componentId + '-payload-processor-panel'">
                 <i [ngClass]="showHtmlSourceProvider ? 'sap-icon--slim-arrow-down' : 'sap-icon--slim-arrow-right'" class=""></i>
         </button>
       </div>
-      <h4 class="fd-panel__title">HTML Source Provider Function</h4>
+      <h4 class="fd-layout-panel__title">HTML Source Provider Function</h4>
     </div>
     <div
         role="region"
-        class="fd-panel__body"
+        class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-html-source-provider-panel'"
         [attr.aria-hidden]="!showHtmlSourceProvider"
         [innerText]="outputDescriptor.htmlSourceProvider">
     </div>
   </div>
 
-  <div *ngIf="outputDescriptor.domInjector" class="dom-injector fd-panel">
-    <div class="fd-panel__header">
-      <div class="fd-panel__expand">
+  <div *ngIf="outputDescriptor.domInjector" class="dom-injector fd-layout-panel">
+    <div class="fd-layout-panel__header">
+      <div class="fd-layout-panel__expand">
         <button
-            class="fd-button fd-button--transparent fd-panel__button" 
+            class="fd-button fd-button--transparent fd-layout-panel__button"
             (click)="showDomInjector = !showDomInjector"
             aria-controls="'paylaod-output-component-' + componentId + '-payload-processor-panel'">
                 <i [ngClass]="showDomInjector ? 'sap-icon--slim-arrow-down' : 'sap-icon--slim-arrow-right'" class=""></i>
         </button>
       </div>
-      <h4 class="fd-panel__title">DOM Injector Function</h4>
+      <h4 class="fd-layout-panel__title">DOM Injector Function</h4>
     </div>
     <div
         role="region"
-        class="fd-panel__body"
+        class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-dom-injector-panel'"
         [attr.aria-hidden]="!showDomInjector"
         [innerText]="outputDescriptor.domInjector">
     </div>
   </div>
 
-  <div *ngIf="outputDescriptor.templateCode" class="template-code fd-panel">
-    <div class="fd-panel__header">
-      <div class="fd-panel__expand">
+  <div *ngIf="outputDescriptor.templateCode" class="template-code fd-layout-panel">
+    <div class="fd-layout-panel__header">
+      <div class="fd-layout-panel__expand">
         <button
-            class="fd-button fd-button--transparent fd-panel__button" 
+            class="fd-button fd-button--transparent fd-layout-panel__button"
             (click)="showTemplateCode = !showTemplateCode"
             aria-controls="'paylaod-output-component-' + componentId + '-payload-processor-panel'">
                 <i [ngClass]="showTemplateCode ? 'sap-icon--slim-arrow-down' : 'sap-icon--slim-arrow-right'" class=""></i>
         </button>
       </div>
-      <h4 class="fd-panel__title">Angular Template Code</h4>
+      <h4 class="fd-layout-panel__title">Angular Template Code</h4>
     </div>
     <div
         role="region"
-        class="fd-panel__body"
+        class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-template-code-panel'"
         [attr.aria-hidden]="!showTemplateCode"
         [innerText]="outputDescriptor.templateCode">
     </div>
   </div>
 
-  <div class="output fd-panel">
-    <div class="fd-panel__header">
-      <h4 class="fd-panel__title">Live HTML Output</h4>
+  <div class="output fd-layout-panel">
+    <div class="fd-layout-panel__header">
+      <h4 class="fd-layout-panel__title">Live HTML Output</h4>
       <div class="fd-toolbar">
         <span class="fd-toolbar__spacer fd-toolbar__spacer--auto"> </span>
         <span *ngIf="!autoUpdate">
@@ -122,26 +122,26 @@
         </label>
       </div>
     </div>
-    <div #output role="region" class="fd-panel__body">
+    <div #output role="region" class="fd-layout-panel__body">
       <ng-content></ng-content>
     </div>
   </div>
 
-  <div class="fd-panel live-code">
-    <div class="fd-panel__header">
-      <div class="fd-panel__expand">
+  <div class="fd-layout-panel live-code">
+    <div class="fd-layout-panel__header">
+      <div class="fd-layout-panel__expand">
         <button
-            class="fd-button fd-button--transparent fd-panel__button" 
+            class="fd-button fd-button--transparent fd-layout-panel__button"
             (click)="showLiveCode = !showLiveCode"
             aria-controls="'paylaod-output-component-' + componentId + '-payload-processor-panel'">
                 <i [ngClass]="showLiveCode ? 'sap-icon--slim-arrow-down' : 'sap-icon--slim-arrow-right'" class=""></i>
         </button>
       </div>
-      <h4 class="fd-panel__title">Live HTML Source Code</h4>
+      <h4 class="fd-layout-panel__title">Live HTML Source Code</h4>
     </div>
     <div
         role="region"
-        class="fd-panel__body"
+        class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-live-code-panel'"
         [attr.aria-hidden]="!showLiveCode"
         [innerText]="liveCode">

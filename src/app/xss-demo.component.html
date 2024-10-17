@@ -24,7 +24,11 @@
 
                     <combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></combobox-input>
 
-                    <textarea name="payload" class="payload" [(ngModel)]="payload" placeholder="Write your attack code here, or select one of the presets above..."></textarea>
+                    <div class="fd-layout-panel">
+                      <div class="fd-layout-panel__body">
+                        <textarea name="payload" class="payload" [(ngModel)]="payload" placeholder="Write your attack code here, or select one of the presets above..."></textarea>
+                      </div>
+                    </div>
 
                   </div>
 

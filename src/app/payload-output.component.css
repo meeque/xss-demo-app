@@ -1,21 +1,21 @@
-.title .fd-panel__header h3 {
+.title .fd-layout-panel__header h3 {
   font-weight: bold;
 }
 
-.title .fd-panel__header .technology-icon {
+.title .fd-layout-panel__header .technology-icon {
   width: 2em;
   height: 2em;
   opacity: 0.8;
 }
 
-.live-code .fd-panel__body,
-.payload-processor .fd-panel__body,
-.dom-injector .fd-panel__body,
-.html-source-provider .fd-panel__body,
-.template-code .fd-panel__body {
+.live-code .fd-layout-panel__body,
+.payload-processor .fd-layout-panel__body,
+.dom-injector .fd-layout-panel__body,
+.html-source-provider .fd-layout-panel__body,
+.template-code .fd-layout-panel__body {
   font-family: monospace;
 }
 
-.fd-panel .fd-panel__body[aria-hidden="true"] {
+.fd-layout-panel .fd-layout-panel__body[aria-hidden="true"] {
   display: none;
 }

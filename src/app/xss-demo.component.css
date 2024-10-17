@@ -8,7 +8,9 @@ article.xss-triggered {
 }
 
 .input-area textarea.payload {
-  height: 25em;
+  height: 30em;
+  width: 100%;
+  resize: vertical;
 }
 
 .output-area .fd-list__item .filters {
