@@ -15,8 +15,15 @@ article.xss-triggered {
   cursor: inherit;
 }
 
+.output-area .fd-list__item .filters span,
+.output-area .fd-list__item .fd-list__title span,
+.output-area .fd-list__item img.technology-icon {
+  vertical-align: middle;
+}
+
 .output-area .fd-list__item .filters button {
   margin-left: 8px;
+  height: 2em;
 }
 
 .output-area .technology-icon {
@@ -24,20 +31,10 @@ article.xss-triggered {
   height: 1.4em;
 }
 
-.output-area button .technology-icon {
-  opacity: 0.6;
-}
-
-.output-area button[aria-selected=true] .technology-icon,
-.output-area button:hover .technology-icon {
+.output-area button[aria-selected=true] .technology-icon {
   filter: invert(1);
-  opacity: 1;
 }
 
-.output-area a.fd-list__item .technology-icon {
-  opacity: 0.6;
-}
-
-.output-area a.fd-list__item:hover .technology-icon {
-  opacity: 0.8;
+.output-area button[aria-selected=true]:hover .technology-icon {
+  filter: unset;
 }
