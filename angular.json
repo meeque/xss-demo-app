@@ -25,8 +25,9 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css",
-              "node_modules/fundamental-styles/dist/fundamental-styles.css"
+              "node_modules/@sap-theming/theming-base-content/content/Base/baseLib/sap_fiori_3/css_variables.css",
+              "node_modules/fundamental-styles/dist/fundamental-styles.css",
+              "src/styles.css"
             ],
             "scripts": [
               "node_modules/dompurify/dist/purify.min.js"
