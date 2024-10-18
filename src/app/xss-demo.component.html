@@ -1,309 +1,302 @@
-<div class="fd-shell fd-shell--fixed fd-shell--fundamentals">
+<article class="fd-dynamic-page">
 
-    <div class="fd-shell__header">
-        <h1>Cross-Site-Scripting (XSS) Demo</h1>
-    </div>
+    <header class="fd-dynamic-page__header">
+      <div class="fd-dynamic-page__title-area">
+        <div class="fd-dynamic-page__main-container">
+          <div class="fd-dynamic-page__title-container">
+            <h1>Cross-Site-Scripting (XSS) Demo</h1>
+          </div>
+        </div>
+      </div>
+    </header>
 
-    <div class="fd-shell__app">
-      <main class="fd-app__main">
+    <main class="fd-dynamic-page__content" [class.xss-triggered]="xssTriggered">
 
-        <article class="fd-page" [class.xss-triggered]="xssTriggered">
+      <div class="fd-container">
 
-          <div class="fd-page__content">
+        <div class="fd-row">
 
-            <!-- Main section with 2 column layout -->
+          <!-- Main section with 2 column layout -->
 
-            <section class="fd-section">
+          <section class="input-area fd-section fd-col--6">
 
-              <div class="fd-container fd-container--fluid">
+            <h2>Payload Input</h2>
 
-                <div class="input-area fd-col fd-col--6">
-                  <h2>Payload Input</h2>
+            <div>
 
-                  <div class="fd-panel-grid fd-panel-grid--1col">
+              <combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></combobox-input>
 
-                    <combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></combobox-input>
-
-                    <div class="fd-layout-panel">
-                      <div class="fd-layout-panel__body">
-                        <textarea name="payload" class="payload" [(ngModel)]="payload" placeholder="Write your attack code here, or select one of the presets above..."></textarea>
-                      </div>
-                    </div>
-
-                  </div>
-
+              <div class="fd-layout-panel fd-margin-top-bottom--sm">
+                <div class="fd-layout-panel__body">
+                  <textarea name="payload" class="payload" [(ngModel)]="payload" placeholder="Write your attack code here, or select one of the presets above..."></textarea>
                 </div>
-
-                <div class="output-area fd-col fd-col--6">
-
-                  <h2>Payload Output</h2>
-
-                  <div class="fd-panel-grid fd-panel-grid--1col">
-
-                    <combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></combobox-input>
-
-                    <ng-template #payloadOutputMenuTechnologyFilters let-item="item" let-comboboxInput>
-                      <li class="fd-list__item">
-                        <div class="fddocs-button-container filters filters-technology">
-                          <span class="sap-icon--filter"></span>
-                          {{ item.name }}
-                          <button
-                              class="fd-button"
-                              (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
-                              [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
-                            <img class="technology-icon" src="assets/img/html-src-logo-black.svg">
-                            HTML
-                          </button>
-                          <button
-                              class="fd-button"
-                              (click)="togglePayloadOutputTechnologyFilter('domInjector')"
-                              [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')">
-                            <img class="technology-icon" src="assets/img/dom-logo-black.svg">
-                            DOM
-                          </button>
-                          <button
-                              class="fd-button"
-                              (click)="togglePayloadOutputTechnologyFilter('templateCode')"
-                              [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateCode')">
-                            <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
-                            Angular
-                          </button>
-                        </div>
-                      </li>
-                    </ng-template>
-
-                    <ng-template #payloadOutputMenuQualityFilters let-item="item" let-comboboxInput>
-                      <li class="fd-list__item">
-                        <div class="fddocs-button-container filters filters-quality">
-                          <span class="sap-icon--filter"></span>
-                          {{ item.name }}
-                          <button
-                              class="fd-button"
-                              (click)="togglePayloadOutputQualityFilter('Recommended')"
-                              [attr.aria-selected]="payloadOutputQualityFilters.includes('Recommended')">
-                            Recommended
-                            <span class="sap-icon--accept"></span>
-                          </button>
-                          <button
-                              class="fd-button"
-                              (click)="togglePayloadOutputQualityFilter('Questionable')"
-                              [attr.aria-selected]="payloadOutputQualityFilters.includes('Questionable')">
-                            Questionable
-                            <span class="sap-icon--question-mark"></span>
-                          </button>
-                          <button
-                              class="fd-button"
-                              (click)="togglePayloadOutputQualityFilter('Insecure')"
-                              [attr.aria-selected]="payloadOutputQualityFilters.includes('Insecure')">
-                            Insecure
-                            <span class="sap-icon--alert"></span>
-                          </button>
-                        </div>
-                      </li>
-                    </ng-template>
-
-                    <ng-template #payloadOutputMenuItem let-item="item" let-comboboxInput>
-                      <ng-container *ngIf="comboboxInput.filter(item)">
-                        <li class="fd-list__item">
-                          <a
-                              (click)="comboboxInput.select(item, $event)"
-                              class="fd-list__title">
-                            <img *ngIf="item.value.htmlSourceProvider" class="technology-icon" src="assets/img/html-src-logo-black.svg">
-                            <img *ngIf="item.value.domInjector" class="technology-icon" src="assets/img/dom-logo-black.svg">
-                            <img *ngIf="item.value.templateCode" class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
-                            {{ item.name }}
-                            <span *ngIf="item.value.quality == 'Recommended'" class="sap-icon--accept"></span>
-                            <span *ngIf="item.value.quality == 'Questionable'" class="sap-icon--question-mark"></span>
-                            <span *ngIf="item.value.quality == 'Insecure'" class="sap-icon--alert"></span>
-                          </a>
-                        </li>
-                      </ng-container>
-                    </ng-template>
-
-                    <div>
-
-                      <!-- All outputs *without* Angular template code -->
-
-                      <ng-container *ngFor="let context of payloadOutputService.descriptors">
-                        <ng-container *ngFor="let output of context.payloadOutputs">
-                          <payload-output
-                              *ngIf="!output.templateCode"
-                              [active]="isActiveOutput(context.id, output.id)"
-                              [outputDescriptor]="output"
-                              [payload]="payload"
-                              (change)="resetXss()">
-                          </payload-output>
-                        </ng-container>
-                      </ng-container>
-
-                      <!-- Outputs with Angular template code: HTML Content -->
-
-                      <payload-output
-                          #output1
-                          [active]="isActiveOutput('HtmlContent', 'NgEncodedTemplate')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent,'NgEncodedTemplate')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        {{ output1.payload }}
-                      </payload-output>
-
-                      <payload-output
-                          #output2
-                          [active]="isActiveOutput('HtmlContent', 'NgEncodedTextContent')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent, 'NgEncodedTextContent')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <div [textContent]="output2.payload"></div>
-                      </payload-output>
-
-                      <payload-output
-                          #output2
-                          [active]="isActiveOutput('HtmlContent', 'NgEncodedInnerText')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent, 'NgEncodedInnerText')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <div [innerText]="output2.payload"></div>
-                      </payload-output>
-
-                      <payload-output
-                          #output4
-                          [active]="isActiveOutput('HtmlContent', 'NgSanitized')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent, 'NgSanitized')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <div [innerHTML]="output4.payload"></div>
-                      </payload-output>
-
-                      <payload-output
-                          #output5
-                          [active]="isActiveOutput('HtmlContent', 'NgTrusted')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent, 'NgTrusted')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <div [innerHTML]="output5.payload"></div>
-                      </payload-output>
-
-                      <!-- Outputs with Angular template code: HTML Attributes -->
-
-                      <payload-output
-                          #output6
-                          [active]="isActiveOutput('HtmlAttribute', 'NgEncodedAttributeValue')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlAttribute, 'NgEncodedAttributeValue')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <p [title]="output6.payload">This paragraph has a title.</p>
-                      </payload-output>
-
-                      <payload-output
-                          #output7
-                          [active]="isActiveOutput('HtmlAttribute', 'NgTrustedAttributeValue')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlAttribute, 'NgTrustedAttributeValue')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <p [title]="output7.payload">This paragraph has a title.</p>
-                      </payload-output>
-
-                      <!-- Outputs with Angular template code: URLs -->
-
-                      <payload-output
-                          #output8
-                          [active]="isActiveOutput('Url', 'LinkNgSanitized')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Url, 'LinkNgSanitized')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <a [href]="output8.payload">Click here to test your payload as a URL!</a>
-                      </payload-output>
-
-                      <payload-output
-                          #output9
-                          [active]="isActiveOutput('Url', 'LinkNgTrusted')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Url, 'LinkNgTrusted')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <a [href]="output9.payload">Click here to test your payload as a URL!</a>
-                      </payload-output>
-
-                      <payload-output
-                          #output10
-                          [active]="isActiveOutput('Url', 'IframeNgSanitized')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Url, 'IframeNgSanitized')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <iframe [src]="output10.payload"></iframe>
-                      </payload-output>
-
-                      <payload-output
-                          #output11
-                          [active]="isActiveOutput('Url', 'IframeNgTrusted')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Url, 'IframeNgTrusted')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <iframe [src]="output11.payload"></iframe>
-                      </payload-output>
-
-                      <!-- Outputs with Angular template code: CSS -->
-
-                      <payload-output
-                          #output12
-                          [active]="isActiveOutput('Css', 'BlockNgSanitized')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'BlockNgSanitized')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <style type="text/css" [innerHTML]="output12.payload"></style>
-                      </payload-output>
-
-                      <payload-output
-                          #output13
-                          [active]="isActiveOutput('Css', 'BlockNgTrusted')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'BlockNgTrusted')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <style type="text/css" [innerHTML]="output13.payload"></style>
-                      </payload-output>
-
-                      <payload-output
-                          #output14
-                          [active]="isActiveOutput('Css', 'AttributeNgSanitized')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'AttributeNgSanitized')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <div [style]="output14.payload">Element with custom style</div>
-                      </payload-output>
-
-                      <payload-output
-                          #output15
-                          [active]="isActiveOutput('Css', 'AttributeNgTrusted')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'AttributeNgTrusted')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <div [style]="output15.payload">Element with custom style</div>
-                      </payload-output>
-
-                      <payload-output
-                          #output16
-                          [active]="isActiveOutput('Css', 'AttributeNgStructured')"
-                          [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'AttributeNgStructured')"
-                          [payload]="payload"
-                          (change)="resetXss()">
-                        <div [ngStyle]="output16.payload">Element with custom style</div>
-                      </payload-output>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
               </div>
 
-            </section>
+            </div>
 
-          </div>
+          </section>
 
-        </article>
+          <section class="output-area fd-section fd-col--6">
 
-      </main>
-    </div>
+            <h2>Payload Output</h2>
+
+            <div>
+
+              <combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></combobox-input>
+
+              <ng-template #payloadOutputMenuTechnologyFilters let-item="item" let-comboboxInput>
+                <li class="fd-list__item">
+                  <div class="fddocs-button-container filters filters-technology">
+                    <span class="sap-icon--filter"></span>
+                    {{ item.name }}
+                    <button
+                        class="fd-button"
+                        (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
+                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
+                      <img class="technology-icon" src="assets/img/html-src-logo-black.svg">
+                      HTML
+                    </button>
+                    <button
+                        class="fd-button"
+                        (click)="togglePayloadOutputTechnologyFilter('domInjector')"
+                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')">
+                      <img class="technology-icon" src="assets/img/dom-logo-black.svg">
+                      DOM
+                    </button>
+                    <button
+                        class="fd-button"
+                        (click)="togglePayloadOutputTechnologyFilter('templateCode')"
+                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateCode')">
+                      <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
+                      Angular
+                    </button>
+                  </div>
+                </li>
+              </ng-template>
+
+              <ng-template #payloadOutputMenuQualityFilters let-item="item" let-comboboxInput>
+                <li class="fd-list__item">
+                  <div class="fddocs-button-container filters filters-quality">
+                    <span class="sap-icon--filter"></span>
+                    {{ item.name }}
+                    <button
+                        class="fd-button"
+                        (click)="togglePayloadOutputQualityFilter('Recommended')"
+                        [attr.aria-selected]="payloadOutputQualityFilters.includes('Recommended')">
+                      Recommended
+                      <span class="sap-icon--accept"></span>
+                    </button>
+                    <button
+                        class="fd-button"
+                        (click)="togglePayloadOutputQualityFilter('Questionable')"
+                        [attr.aria-selected]="payloadOutputQualityFilters.includes('Questionable')">
+                      Questionable
+                      <span class="sap-icon--question-mark"></span>
+                    </button>
+                    <button
+                        class="fd-button"
+                        (click)="togglePayloadOutputQualityFilter('Insecure')"
+                        [attr.aria-selected]="payloadOutputQualityFilters.includes('Insecure')">
+                      Insecure
+                      <span class="sap-icon--alert"></span>
+                    </button>
+                  </div>
+                </li>
+              </ng-template>
+
+              <ng-template #payloadOutputMenuItem let-item="item" let-comboboxInput>
+                <ng-container *ngIf="comboboxInput.filter(item)">
+                  <li class="fd-list__item">
+                    <a
+                        (click)="comboboxInput.select(item, $event)"
+                        class="fd-list__title">
+                      <img *ngIf="item.value.htmlSourceProvider" class="technology-icon" src="assets/img/html-src-logo-black.svg">
+                      <img *ngIf="item.value.domInjector" class="technology-icon" src="assets/img/dom-logo-black.svg">
+                      <img *ngIf="item.value.templateCode" class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
+                      {{ item.name }}
+                      <span *ngIf="item.value.quality == 'Recommended'" class="sap-icon--accept"></span>
+                      <span *ngIf="item.value.quality == 'Questionable'" class="sap-icon--question-mark"></span>
+                      <span *ngIf="item.value.quality == 'Insecure'" class="sap-icon--alert"></span>
+                    </a>
+                  </li>
+                </ng-container>
+              </ng-template>
+
+              <div>
+
+                <!-- All outputs *without* Angular template code -->
+
+                <ng-container *ngFor="let context of payloadOutputService.descriptors">
+                  <ng-container *ngFor="let output of context.payloadOutputs">
+                    <payload-output
+                        *ngIf="!output.templateCode"
+                        [active]="isActiveOutput(context.id, output.id)"
+                        [outputDescriptor]="output"
+                        [payload]="payload"
+                        (change)="resetXss()">
+                    </payload-output>
+                  </ng-container>
+                </ng-container>
+
+                <!-- Outputs with Angular template code: HTML Content -->
+
+                <payload-output
+                    #output1
+                    [active]="isActiveOutput('HtmlContent', 'NgEncodedTemplate')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent,'NgEncodedTemplate')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  {{ output1.payload }}
+                </payload-output>
+
+                <payload-output
+                    #output2
+                    [active]="isActiveOutput('HtmlContent', 'NgEncodedTextContent')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent, 'NgEncodedTextContent')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <div [textContent]="output2.payload"></div>
+                </payload-output>
+
+                <payload-output
+                    #output2
+                    [active]="isActiveOutput('HtmlContent', 'NgEncodedInnerText')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent, 'NgEncodedInnerText')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <div [innerText]="output2.payload"></div>
+                </payload-output>
+
+                <payload-output
+                    #output4
+                    [active]="isActiveOutput('HtmlContent', 'NgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent, 'NgSanitized')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <div [innerHTML]="output4.payload"></div>
+                </payload-output>
+
+               <payload-output
+                    #output5
+                    [active]="isActiveOutput('HtmlContent', 'NgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent, 'NgTrusted')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <div [innerHTML]="output5.payload"></div>
+                </payload-output>
+
+                <!-- Outputs with Angular template code: HTML Attributes -->
+
+                <payload-output
+                    #output6
+                    [active]="isActiveOutput('HtmlAttribute', 'NgEncodedAttributeValue')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlAttribute, 'NgEncodedAttributeValue')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <p [title]="output6.payload">This paragraph has a title.</p>
+                </payload-output>
+
+                <payload-output
+                    #output7
+                    [active]="isActiveOutput('HtmlAttribute', 'NgTrustedAttributeValue')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlAttribute, 'NgTrustedAttributeValue')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <p [title]="output7.payload">This paragraph has a title.</p>
+                </payload-output>
+
+                <!-- Outputs with Angular template code: URLs -->
+
+                <payload-output
+                    #output8
+                    [active]="isActiveOutput('Url', 'LinkNgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Url, 'LinkNgSanitized')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <a [href]="output8.payload">Click here to test your payload as a URL!</a>
+                </payload-output>
+
+                <payload-output
+                    #output9
+                    [active]="isActiveOutput('Url', 'LinkNgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Url, 'LinkNgTrusted')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <a [href]="output9.payload">Click here to test your payload as a URL!</a>
+                </payload-output>
+
+                <payload-output
+                    #output10
+                    [active]="isActiveOutput('Url', 'IframeNgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Url, 'IframeNgSanitized')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <iframe [src]="output10.payload"></iframe>
+                </payload-output>
+
+                <payload-output
+                    #output11
+                    [active]="isActiveOutput('Url', 'IframeNgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Url, 'IframeNgTrusted')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <iframe [src]="output11.payload"></iframe>
+                </payload-output>
+
+                <!-- Outputs with Angular template code: CSS -->
+
+                <payload-output
+                    #output12
+                    [active]="isActiveOutput('Css', 'BlockNgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'BlockNgSanitized')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <style type="text/css" [innerHTML]="output12.payload"></style>
+                </payload-output>
+
+                <payload-output
+                    #output13
+                    [active]="isActiveOutput('Css', 'BlockNgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'BlockNgTrusted')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <style type="text/css" [innerHTML]="output13.payload"></style>
+                </payload-output>
+
+                <payload-output
+                    #output14
+                    [active]="isActiveOutput('Css', 'AttributeNgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'AttributeNgSanitized')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <div [style]="output14.payload">Element with custom style</div>
+                </payload-output>
+
+                <payload-output
+                    #output15
+                    [active]="isActiveOutput('Css', 'AttributeNgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'AttributeNgTrusted')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <div [style]="output15.payload">Element with custom style</div>
+                </payload-output>
+
+                <payload-output
+                    #output16
+                    [active]="isActiveOutput('Css', 'AttributeNgStructured')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'AttributeNgStructured')"
+                    [payload]="payload"
+                    (change)="resetXss()">
+                  <div [ngStyle]="output16.payload">Element with custom style</div>
+                </payload-output>
+
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </main>
 
     <div *ngIf="xssTriggered" [id]="'app-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered" role="note">
       <p class="fd-message-strip__text">
@@ -317,6 +310,7 @@
           title="Close">
         <i class="sap-icon--decline"></i>
       </button>
+
     </div>
 
-</div>
+</article>

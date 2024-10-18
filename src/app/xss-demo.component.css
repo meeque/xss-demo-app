@@ -11,6 +11,7 @@ article.xss-triggered {
   height: 30em;
   width: 100%;
   resize: vertical;
+  border-radius: 0.4rem;
 }
 
 .output-area .fd-list__item .filters {
