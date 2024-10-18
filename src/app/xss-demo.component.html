@@ -48,27 +48,27 @@
                 <li class="fd-list__item">
                   <div class="fddocs-button-container filters filters-technology">
                     <span class="sap-icon--filter"></span>
-                    {{ item.name }}
+                    <span> {{ item.name }} </span>
                     <button
                         class="fd-button"
                         (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
                         [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
                       <img class="technology-icon" src="assets/img/html-src-logo-black.svg">
-                      HTML
+                      <span> HTML </span>
                     </button>
                     <button
                         class="fd-button"
                         (click)="togglePayloadOutputTechnologyFilter('domInjector')"
                         [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')">
                       <img class="technology-icon" src="assets/img/dom-logo-black.svg">
-                      DOM
+                      <span> DOM </span>
                     </button>
                     <button
                         class="fd-button"
                         (click)="togglePayloadOutputTechnologyFilter('templateCode')"
                         [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateCode')">
                       <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
-                      Angular
+                      <span> Angular </span>
                     </button>
                   </div>
                 </li>
@@ -83,21 +83,21 @@
                         class="fd-button"
                         (click)="togglePayloadOutputQualityFilter('Recommended')"
                         [attr.aria-selected]="payloadOutputQualityFilters.includes('Recommended')">
-                      Recommended
+                      <span>Recommended </span>
                       <span class="sap-icon--accept"></span>
                     </button>
                     <button
                         class="fd-button"
                         (click)="togglePayloadOutputQualityFilter('Questionable')"
                         [attr.aria-selected]="payloadOutputQualityFilters.includes('Questionable')">
-                      Questionable
+                      <span> Questionable </span>
                       <span class="sap-icon--question-mark"></span>
                     </button>
                     <button
                         class="fd-button"
                         (click)="togglePayloadOutputQualityFilter('Insecure')"
                         [attr.aria-selected]="payloadOutputQualityFilters.includes('Insecure')">
-                      Insecure
+                      <span> Insecure </span>
                       <span class="sap-icon--alert"></span>
                     </button>
                   </div>
