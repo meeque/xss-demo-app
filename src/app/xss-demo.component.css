@@ -1,18 +1,42 @@
-.fd-shell__header h1 {
-  text-align: center;
+.fd-dynamic-page__header .fd-dynamic-page__main-container {
+  background: var(--sapHighlightColor);
+}
+
+.fd-dynamic-page__header .fd-dynamic-page__title-area:hover {
+  cursor: inherit;
+}
+
+.fd-dynamic-page__header .fd-dynamic-page__title-container {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.fd-dynamic-page__header .fd-dynamic-page__title-container h1 {
+  font-size: 1.5rem;
   color: white;
 }
 
-article.xss-triggered {
-  background-color: rgb(255, 235, 235) !important;
+
+
+
+.fd-dynamic-page__content.xss-triggered {
+  background-color: var(--sapErrorBackground) !important;
 }
 
+
+
 .input-area textarea.payload {
+  box-sizing: border-box;
   height: 30em;
   width: 100%;
+  padding: 0.8em;
   resize: vertical;
+  border-style: solid;
+  border-width: thin;
   border-radius: 0.4rem;
 }
+
+
 
 .output-area .fd-list__item .filters {
   cursor: inherit;

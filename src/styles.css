@@ -40,10 +40,16 @@
     font-style: normal;
 }
 
+:root {
+    --sapGroup_TitleFontSize: 1.0rem;
+}
+
 html {
     font-size: 16px;
 }
 
-:root {
-  --sapGroup_TitleFontSize: 1.0rem;
+body {
+    margin: 0;
+    border: none;
+    padding: 0;
 }
