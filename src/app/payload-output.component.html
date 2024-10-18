@@ -6,7 +6,7 @@
         <img *ngIf="outputDescriptor.htmlSourceProvider" class="technology-icon" src="assets/img/html-src-logo-black.svg">
         <img *ngIf="outputDescriptor.domInjector" class="technology-icon" src="assets/img/dom-logo-black.svg">
         <img *ngIf="outputDescriptor.templateCode" class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
-          {{ outputDescriptor.title }}
+        <span> {{ outputDescriptor.title }} </span>
         <span *ngIf="outputDescriptor.quality == 'Recommended'" class="sap-icon--accept"></span>
         <span *ngIf="outputDescriptor.quality == 'Questionable'" class="sap-icon--question-mark"></span>
         <span *ngIf="outputDescriptor.quality == 'Insecure'" class="sap-icon--alert"></span>

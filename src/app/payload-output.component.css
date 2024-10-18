@@ -1,5 +1,11 @@
-.title .fd-layout-panel__header h3 {
+.fd-layout-panel .fd-layout-panel__header h3,
+.fd-layout-panel .fd-layout-panel__header h4 {
   font-weight: bold;
+}
+
+.fd-layout-panel .fd-layout-panel__header h3 img,
+.fd-layout-panel .fd-layout-panel__header h3 span {
+  vertical-align: middle;
 }
 
 .title .fd-layout-panel__header .technology-icon {
