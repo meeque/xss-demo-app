@@ -101,23 +101,13 @@
   <div class="output fd-layout-panel fd-margin-top-bottom--sm">
     <div class="fd-layout-panel__header">
       <h4 class="fd-layout-panel__title">Live HTML Output</h4>
-      <div class="fd-toolbar">
-        <span class="fd-toolbar__spacer fd-toolbar__spacer--auto"> </span>
+      <div class="fd-layout-panel__actions">
         <span *ngIf="!autoUpdate">
           <a href="#" (click)="update()">Update now</a>
           –
         </span>
-        <label class="fd-switch fd-switch--semantic">
-          <span class="fd-switch__control">
-            <input class="fd-switch__input" type="checkbox" [(ngModel)]="autoUpdate">
-            <div class="fd-switch__slider">
-               <div class="fd-switch__track">
-                  <i role="presentation" class="fd-switch__icon fd-switch__icon--on sap-icon--accept"></i>
-                  <span class="fd-switch__handle" role="presentation"></span>
-                  <i role="presentation" class="fd-switch__icon fd-switch__icon--off sap-icon--decline"></i>
-                </div>
-            </div>
-          </span>
+        <label>
+          <input  type="checkbox" [(ngModel)]="autoUpdate">
           Auto update output
         </label>
       </div>
