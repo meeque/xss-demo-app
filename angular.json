@@ -16,15 +16,18 @@
             "outputPath": "dist/xss-app",
             "index": "src/index.html",
             "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
-              "src/styles.css",
-              "node_modules/fiori-fundamentals/dist/fiori-fundamentals.css"
+              "node_modules/@sap-theming/theming-base-content/content/Base/baseLib/sap_fiori_3/css_variables.css",
+              "node_modules/fundamental-styles/dist/fundamental-styles.css",
+              "src/styles.css"
             ],
             "scripts": [
               "node_modules/dompurify/dist/purify.min.js"
@@ -41,7 +44,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
@@ -78,7 +80,10 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "src/tsconfig.spec.json",
             "karmaConfig": "src/karma.conf.js",
             "styles": [
@@ -106,5 +111,8 @@
       }
     }
   },
-  "defaultProject": "xss-app"
+  "defaultProject": "xss-app",
+  "cli": {
+    "analytics": false
+  }
 }

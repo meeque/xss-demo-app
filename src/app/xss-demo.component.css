@@ -1,22 +1,47 @@
+.fd-shell__header {
+  height: auto;
+}
+
 .fd-shell__header h1 {
   text-align: center;
-  color: white;
+  font-family: var(--sapFontFamily);
+  color: var(--sapHighlightTextColor);
 }
 
-article.xss-triggered {
-  background-color: rgb(255, 235, 235) !important;
+
+
+.fd-dynamic-page__content.xss-triggered {
+  background-color: var(--sapErrorBackground) !important;
 }
+
+
 
 .input-area textarea.payload {
-  height: 25em;
+  box-sizing: border-box;
+  height: 30em;
+  width: 100%;
+  padding: 0.8em;
+  resize: vertical;
+  border-style: solid;
+  border-width: thin;
+  border-radius: 0.4rem;
 }
 
-.output-area .fd-menu__item.filters {
+
+
+.output-area .fd-list__item .filters {
   cursor: inherit;
 }
 
-.output-area .fd-menu__item.filters button {
+.output-area .fd-list__item .filters span,
+.output-area .fd-list__item .fd-list__title span,
+.output-area .fd-list__item img.technology-icon {
+  vertical-align: middle;
+}
+
+.output-area .fd-list__item .filters button {
   margin-left: 8px;
+  height: 2em;
 }
 
 .output-area .technology-icon {
@@ -24,20 +49,45 @@ article.xss-triggered {
   height: 1.4em;
 }
 
-.output-area button .technology-icon {
-  opacity: 0.6;
-}
-
-.output-area button[aria-selected=true] .technology-icon,
-.output-area button:hover .technology-icon {
+.output-area button[aria-selected=true] .technology-icon {
   filter: invert(1);
-  opacity: 1;
 }
 
-.output-area a.fd-menu__item .technology-icon {
-  opacity: 0.6;
+.output-area button[aria-selected=true]:hover .technology-icon {
+  filter: unset;
 }
 
-.output-area a.fd-menu__item:hover .technology-icon {
-  opacity: 0.8;
+
+
+.fd-shell__overlay {
+  display: flex;
+  position: fixed;
+  left: 50%;
+  top: 4rem;
+  transform: translate(-50%,0);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.fd-shell__overlay .fd-message-strip {
+  position: relative;
+  padding: 0.6rem 0.9rem;
+  border-style: solid;
+  border-width: medium;
+  border-radius: 0.3rem;
+  font-family: var(--sapFontFamily);
+  color: var(--fd-color-text-1);
+}
+
+.fd-shell__overlay .fd-message-strip .fd-message-strip__text,
+.fd-shell__overlay .fd-message-strip .fd-button {
+  display: inline;
+  vertical-align: middle;
+  font-weight: bold;
+}
+
+.fd-shell__overlay .fd-message-strip.fd-message-strip--error {
+  background-color: var(--sapErrorBackground);
+  border-color: var(--sapErrorColor);
 }
