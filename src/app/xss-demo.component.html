@@ -300,13 +300,13 @@
   <div class="fd-shell__overlay fd-overlay fd-overlay--alert">
     <div *ngIf="xssTriggered" [id]="'app-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered" role="note">
       <p class="fd-message-strip__text">
-        <span *ngIf="xssTriggered > 1" class="fd-badge fd-badge--pill">{{ xssTriggered }}</span>
-        XSS has been triggered!
+        <span *ngIf="xssTriggered > 1" class="fd-counter">{{ xssTriggered }} </span>
+        <span> XSS has been triggered! </span>
       </p>
       <button
           (click)="resetXss()"
           [attr.aria-controls]="'app-component-' + componentId + '-xss-alert'"
-          class="fd-button fd-button--transparent is-compact fd-message-strip__close"
+          class="fd-button fd-button--transparent"
           title="Close">
         <i class="sap-icon--decline"></i>
       </button>

@@ -56,3 +56,38 @@
 .output-area button[aria-selected=true]:hover .technology-icon {
   filter: unset;
 }
+
+
+
+.fd-shell__overlay {
+  display: flex;
+  position: fixed;
+  left: 50%;
+  top: 4rem;
+  transform: translate(-50%,0);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.fd-shell__overlay .fd-message-strip {
+  position: relative;
+  padding: 0.6rem 0.9rem;
+  border-style: solid;
+  border-width: medium;
+  border-radius: 0.3rem;
+  font-family: var(--sapFontFamily);
+  color: var(--fd-color-text-1);
+}
+
+.fd-shell__overlay .fd-message-strip .fd-message-strip__text,
+.fd-shell__overlay .fd-message-strip .fd-button {
+  display: inline;
+  vertical-align: middle;
+  font-weight: bold;
+}
+
+.fd-shell__overlay .fd-message-strip.fd-message-strip--error {
+  background-color: var(--sapErrorBackground);
+  border-color: var(--sapErrorColor);
+}
