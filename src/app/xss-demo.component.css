@@ -1,21 +1,12 @@
-.fd-dynamic-page__header .fd-dynamic-page__main-container {
-  background: var(--sapHighlightColor);
+.fd-shell__header {
+  height: auto;
 }
 
-.fd-dynamic-page__header .fd-dynamic-page__title-area:hover {
-  cursor: inherit;
+.fd-shell__header h1 {
+  text-align: center;
+  font-family: var(--sapFontFamily);
+  color: var(--sapHighlightTextColor);
 }
-
-.fd-dynamic-page__header .fd-dynamic-page__title-container {
-  margin-right: auto;
-  margin-left: auto;
-}
-
-.fd-dynamic-page__header .fd-dynamic-page__title-container h1 {
-  font-size: 1.5rem;
-  color: white;
-}
-
 
 
 

@@ -1,22 +1,15 @@
-<article class="fd-dynamic-page">
+<div class="fd-shell fd-shell--fixed">
 
-    <header class="fd-dynamic-page__header">
-      <div class="fd-dynamic-page__title-area">
-        <div class="fd-dynamic-page__main-container">
-          <div class="fd-dynamic-page__title-container">
-            <h1>Cross-Site-Scripting (XSS) Demo</h1>
-          </div>
-        </div>
-      </div>
-    </header>
+  <header class="fd-shell__header">
+    <h1>Cross-Site-Scripting (XSS) Demo</h1>
+  </header>
 
+  <article class="fd-shell__app fd-dynamic-page">
     <main class="fd-dynamic-page__content" [class.xss-triggered]="xssTriggered">
-
       <div class="fd-container">
-
         <div class="fd-row">
 
-          <!-- Main section with 2 column layout -->
+
 
           <section class="input-area fd-section fd-col--6">
 
@@ -35,6 +28,8 @@
             </div>
 
           </section>
+
+
 
           <section class="output-area fd-section fd-col--6">
 
@@ -294,10 +289,15 @@
             </div>
           </section>
 
+
+
         </div>
       </div>
     </main>
 
+  </article>
+
+  <div class="fd-shell__overlay fd-overlay fd-overlay--alert">
     <div *ngIf="xssTriggered" [id]="'app-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered" role="note">
       <p class="fd-message-strip__text">
         <span *ngIf="xssTriggered > 1" class="fd-badge fd-badge--pill">{{ xssTriggered }}</span>
@@ -310,7 +310,7 @@
           title="Close">
         <i class="sap-icon--decline"></i>
       </button>
-
     </div>
+  </div>
 
-</article>
+</div>
