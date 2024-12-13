@@ -4,6 +4,7 @@
     <title>XSS Demo: Plain HTML Mock</title>
 </head>
 <body>
+
     <h1>XSS Demo: Plain HTML Mock</h1>
     <p>
         This is a plain HTML page mock.
@@ -13,8 +14,52 @@
     <p>
         However, any other HTML document that is hosted on the same origin (protocol, host, port) can load this page and manipulate its DOM at will.
     </p>
-    <p class="xss-challenge">
-        Try it yourself by replacing this paragraph! For your convenience, you can access it through CSS selector <tt>p.challenge</tt>.
-    </p>
+
+    <div class="xss-challenges">
+
+        <h2>XSS Challenges</h2>
+        <p>
+            Try it yourself with the following challenges...
+        </p>
+
+        <div class="challenge1">
+            <h3>Manipulate the DOM</h3>
+            <p>Try manipulating the contents of the following paragraph:</p>
+            <p class="work-area">
+                For your convenience, this paragraph is accessible through CSS selector <tt>.xss-challenges .challenge1 .work-area</tt>.
+            </p>
+        </div>
+
+        <div class="challenge2">
+            <h3>Exfiltrate Data</h3>
+            <p>Try getting the values from the following form fields:</p>
+            <form action="#" class="work-area">
+                <div>For your convenience, this form is accessible through CSS selector <tt>.xss-challenges .challenge2 .work-area</tt>.</div>
+                <div>
+                    <label>
+                        <p>A text input field:</p>
+                        <input type="text" name="free-text" value="initial text contents">
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <p>A menu:</p>
+                        <select name="menu">
+                            <option selected>First</option>
+                            <option>Second</option>
+                        </select>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        <p>A submit button:</p>
+                        <button type="submit">Submit</button>
+                    </label>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
 </body>
 </html>
