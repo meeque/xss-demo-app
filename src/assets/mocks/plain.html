@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XSS Demo: Plain HTML Mock</title>
+</head>
+<body>
+    <h1>XSS Demo: Plain HTML Mock</h1>
+    <p>
+        This is a plain HTML page mock.
+        This page is statically served and contains no client-side JS code either.
+        Therefore, this page is <strong>not</strong> vulnerable to XSS by itself.
+    </p>
+    <p>
+        However, any other HTML document that is hosted on the same origin (protocol, host, port) can load this page and manipulate its DOM at will.
+    </p>
+    <p class="xss-challenge">
+        Try it yourself by replacing this paragraph! For your convenience, you can access it through CSS selector <tt>p.challenge</tt>.
+    </p>
+</body>
+</html>
