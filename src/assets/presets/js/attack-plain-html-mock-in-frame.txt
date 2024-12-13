@@ -1,0 +1,34 @@
+var workArea = document.createElement('div');
+document.currentScript.insertAdjacentElement('afterend', workArea);
+
+workArea.innerHTML = '\n'
+    + '<iframe class="guest" style="width:100%;height:60em;" src="/assets/mocks/plain.html"></iframe>\n'
+    + '<div class="host-output">\n'
+    + '<div>Text field value: <span class="output1"></span></div>\n'
+    + '<div>Menu selection value: <span class="output2"></span></div>\n'
+    + '</div>\n';
+
+var guestIframe = workArea.querySelector('iframe.guest');
+var hostOutputs = workArea.querySelector('div.host-output');
+
+function linkOutput(source, output) {
+    output.innerText = source.value;
+    source.addEventListener(
+        'change',
+        (event) => { output.innerText = source.value; }
+    );
+}
+
+guestIframe.addEventListener(
+    'load',
+    (event) => {
+        var guestDoc = event.target.contentDocument;
+
+        var paragraph = guestDoc.querySelector('.xss-challenges .challenge1 .work-area');
+        paragraph.innerText = 'p0wn';
+
+        var form = guestDoc.querySelector('.xss-challenges .challenge2 .work-area');
+        linkOutput(form.querySelector('input[type=text]'), hostOutputs.querySelector('.output1'));
+        linkOutput(form.querySelector('select'), hostOutputs.querySelector('.output2'));
+    }
+);

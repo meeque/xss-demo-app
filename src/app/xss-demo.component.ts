@@ -244,6 +244,11 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
           name : 'JS code breaking \'string\'',
           value : 'assets/presets/js/break-single-quotes.txt',
           select : this.selectPreset
+        },
+        {
+          name : 'JS attack on a plain HTML page in an iframe',
+          value : 'assets/presets/js/attack-plain-html-mock-in-frame.txt',
+          select : this.selectPreset
         }
       ]
     }
