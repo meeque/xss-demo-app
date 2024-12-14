@@ -249,6 +249,11 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
           name : 'JS attack on a plain HTML page in an iframe',
           value : 'assets/presets/js/attack-plain-html-mock-in-frame.txt',
           select : this.selectPreset
+        },
+        {
+          name : 'JS attack on a plain HTML page in an new window/tab',
+          value : 'assets/presets/js/attack-plain-html-mock-in-window.txt',
+          select : this.selectPreset
         }
       ]
     }
