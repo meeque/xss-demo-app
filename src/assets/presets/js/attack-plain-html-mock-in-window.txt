@@ -2,32 +2,36 @@ var workArea = document.createElement('div');
 document.currentScript.insertAdjacentElement('afterend', workArea);
 
 workArea.innerHTML = '\n'
+    + '<div class="host-input">\n'
+    + '<div>Send content: <input type="text" name="send-content" value="p0wn" class="input1" ></div>\n'
+    + '</div>\n'
     + '<div class="host-output">\n'
     + '<div>Text field value: <span class="output1"></span></div>\n'
     + '<div>Menu selection value: <span class="output2"></span></div>\n'
     + '</div>\n';
 
 var newWindow = window.open('/assets/mocks/plain.html', '_blank');
+var hostInputs = workArea.querySelector('div.host-input');
 var hostOutputs = workArea.querySelector('div.host-output');
 
-function linkOutput(source, output) {
-    output.innerText = source.value;
-    source.addEventListener(
-        'change',
-        (event) => { output.innerText = source.value; }
+function link(input, output) {
+    output.innerText = input.value;
+    input.addEventListener(
+        'input',
+        (event) => { output.innerText = input.value; }
     );
 }
 
 newWindow.addEventListener(
     'load',
     (event) => {
-        var guestDoc = event.target;
+        var newDoc = event.target;
 
-        var paragraph = guestDoc.querySelector('.xss-challenges .challenge1 .work-area');
-        paragraph.innerText = 'p0wn';
+        var paragraph = newDoc.querySelector('.xss-challenges .challenge1 .work-area');
+        link(hostInputs.querySelector('input[type=text].input1'), paragraph);
 
-        var form = guestDoc.querySelector('.xss-challenges .challenge2 .work-area');
-        linkOutput(form.querySelector('input[type=text]'), hostOutputs.querySelector('.output1'));
-        linkOutput(form.querySelector('select'), hostOutputs.querySelector('.output2'));
+        var form = newDoc.querySelector('.xss-challenges .challenge2 .work-area');
+        link(form.querySelector('input[type=text]'), hostOutputs.querySelector('.output1'));
+        link(form.querySelector('select'), hostOutputs.querySelector('.output2'));
     }
 );
