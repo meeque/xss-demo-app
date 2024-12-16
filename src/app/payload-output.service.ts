@@ -35,14 +35,13 @@ interface HtmlSourceProvider<T> {
 }
 
 
-interface DomInjector<T> {
+interface Injector<T> {
   (element : any, payload : T) : void;
 }
 
+interface DomInjector<T> extends Injector<T> {};
 
-interface JQueryInjector<T> {
-  (element : any, payload : T) : void;
-}
+interface JQueryInjector<T> extends Injector<T> {};
 
 
 export interface PayloadOutputDescriptor<T> {
