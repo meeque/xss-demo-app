@@ -39,6 +39,9 @@ export class PayloadOutputComponent<T> {
   showDomInjector : boolean = true;
 
   @Input()
+  showJQueryInjector : boolean = true;
+
+  @Input()
   showTemplateCode : boolean = true;
 
   @Input()
@@ -68,6 +71,10 @@ export class PayloadOutputComponent<T> {
           else if (this.outputDescriptor.domInjector) {
             outputElement.textContent = '';
             this.outputDescriptor.domInjector(outputElement, this._outputPayload);
+          }
+          else if (this.outputDescriptor.jQueryInjector) {
+            outputElement.textContent = '';
+            this.outputDescriptor.jQueryInjector(outputElement, this._outputPayload);
           }
           this.liveCode = outputElement.innerHTML;
         }
