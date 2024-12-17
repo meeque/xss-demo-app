@@ -230,7 +230,7 @@ export class PayloadOutputService {
     }
   };
 
-  private readonly _jQueryInjectors : { [prop : string] : DomInjector<any> } =
+  private readonly _jQueryInjectors : { [prop : string] : JQueryInjector<any> } =
   {
     text(element, payload) {
       $(element).text(payload);
@@ -250,7 +250,7 @@ export class PayloadOutputService {
     after(element, payload) {
       $(element).after(payload);
     },
-    (element, payload) {
+    before(element, payload) {
       $(element).before(payload);
     },
   };
