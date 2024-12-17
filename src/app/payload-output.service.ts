@@ -235,6 +235,24 @@ export class PayloadOutputService {
     text(element, payload) {
       $(element).text(payload);
     },
+    html(element, payload) {
+      $(element).html(payload);
+    },
+    jQuery(element, payload) {
+      $(payload).replaceAll(element);
+    },
+    append(element, payload) {
+      $(element).append(payload);
+    },
+    prepend(element, payload) {
+      $(element).prepend(payload);
+    },
+    after(element, payload) {
+      $(element).after(payload);
+    },
+    (element, payload) {
+      $(element).before(payload);
+    },
   };
 
   readonly descriptors : ContextDescriptor[] =
@@ -288,6 +306,8 @@ export class PayloadOutputService {
           title : 'Payload as Raw HTML',
           htmlSourceProvider : this._providers.raw
         },
+
+
 
         {
           id : 'DomTextContent',
@@ -357,13 +377,65 @@ export class PayloadOutputService {
           domInjector : this._domInjectors.innerHtmlNoOutput
         },
 
+
+
         {
           id : 'JQueryText',
           quality : PayloadOutputQuality.Recommended,
-          name : 'jQuery.text()',
-          title : 'Payload HTML Encoded (jQuery.text)',
+          name : 'jQuery.text(string)',
+          title : 'Payload as text ($.text())',
           jQueryInjector : this._jQueryInjectors.text
         },
+
+        {
+          id : 'JQueryHtml',
+          quality : PayloadOutputQuality.Insecure,
+          name : 'jQuery.html(string)',
+          title : 'Payload as HTML ($.html())',
+          jQueryInjector : this._jQueryInjectors.html
+        },
+
+        {
+          id : 'JQueryConstructor',
+          quality : PayloadOutputQuality.Insecure,
+          name : 'jQuery(string)',
+          title : 'Payload as HTML, through constructor ($())',
+          jQueryInjector : this._jQueryInjectors.jQuery
+        },
+
+        {
+          id : 'JQueryAppend',
+          quality : PayloadOutputQuality.Insecure,
+          name : 'jQuery.append(string)',
+          title : 'Payload as HTML ($.append())',
+          jQueryInjector : this._jQueryInjectors.append
+        },
+
+        {
+          id : 'JQueryPrepend',
+          quality : PayloadOutputQuality.Insecure,
+          name : 'jQuery.prepend(string)',
+          title : 'Payload as HTML ($.prepend())',
+          jQueryInjector : this._jQueryInjectors.prepend
+        },
+
+        {
+          id : 'JQueryAfter',
+          quality : PayloadOutputQuality.Insecure,
+          name : 'jQuery.after(string)',
+          title : 'Payload as HTML ($.after())',
+          jQueryInjector : this._jQueryInjectors.after
+        },
+
+        {
+          id : 'JQueryBefore',
+          quality : PayloadOutputQuality.Insecure,
+          name : 'jQuery.before(string)',
+          title : 'Payload as HTML ($.before())',
+          jQueryInjector : this._jQueryInjectors.before
+        },
+
+
 
         {
           id : 'NgEncodedTemplate',
