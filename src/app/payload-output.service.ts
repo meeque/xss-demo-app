@@ -241,17 +241,17 @@ export class PayloadOutputService {
     jQuery(element, payload) {
       $(payload).replaceAll(element);
     },
-    append(element, payload) {
-      $(element).append(payload);
-    },
     prepend(element, payload) {
       $(element).prepend(payload);
     },
-    after(element, payload) {
-      $(element).after(payload);
+    append(element, payload) {
+      $(element).append(payload);
     },
     before(element, payload) {
       $(element).before(payload);
+    },
+    after(element, payload) {
+      $(element).after(payload);
     },
   };
 
@@ -404,14 +404,6 @@ export class PayloadOutputService {
         },
 
         {
-          id : 'JQueryAppend',
-          quality : PayloadOutputQuality.Insecure,
-          name : 'jQuery.append(string)',
-          title : 'Payload as HTML ($.append())',
-          jQueryInjector : this._jQueryInjectors.append
-        },
-
-        {
           id : 'JQueryPrepend',
           quality : PayloadOutputQuality.Insecure,
           name : 'jQuery.prepend(string)',
@@ -420,11 +412,11 @@ export class PayloadOutputService {
         },
 
         {
-          id : 'JQueryAfter',
+          id : 'JQueryAppend',
           quality : PayloadOutputQuality.Insecure,
-          name : 'jQuery.after(string)',
-          title : 'Payload as HTML ($.after())',
-          jQueryInjector : this._jQueryInjectors.after
+          name : 'jQuery.append(string)',
+          title : 'Payload as HTML ($.append())',
+          jQueryInjector : this._jQueryInjectors.append
         },
 
         {
@@ -433,6 +425,14 @@ export class PayloadOutputService {
           name : 'jQuery.before(string)',
           title : 'Payload as HTML ($.before())',
           jQueryInjector : this._jQueryInjectors.before
+        },
+
+        {
+          id : 'JQueryAfter',
+          quality : PayloadOutputQuality.Insecure,
+          name : 'jQuery.after(string)',
+          title : 'Payload as HTML ($.after())',
+          jQueryInjector : this._jQueryInjectors.after
         },
 
 
