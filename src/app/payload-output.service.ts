@@ -238,7 +238,7 @@ export class PayloadOutputService {
     html(element, payload) {
       $(element).html(payload);
     },
-    jQuery(element, payload) {
+    jQueryConstructor(element, payload) {
       $(payload).appendTo(element);
     },
     prepend(element, payload) {
@@ -269,6 +269,11 @@ export class PayloadOutputService {
       $('<p>').text('This is a static paragraph. Wrapping around all its parent\'s contents...')
         .appendTo(element)
         .wrap(payload);
+    },
+    replaceWith(element, payload) {
+      $('<p>').text('This is a static paragraph. Replacing it...')
+        .appendTo(element)
+        .replaceWith(payload);
     },
   };
 
@@ -417,14 +422,14 @@ export class PayloadOutputService {
           quality : PayloadOutputQuality.Insecure,
           name : 'jQuery(string)',
           title : 'Payload as HTML, through constructor ($())',
-          jQueryInjector : this._jQueryInjectors.jQuery
+          jQueryInjector : this._jQueryInjectors.jQueryConstructor
         },
 
         {
           id : 'JQueryPrepend',
           quality : PayloadOutputQuality.Insecure,
           name : 'jQuery.prepend(string)',
-          title : 'Payload as HTML ($.prepend())',
+          title : 'Payload prepended as HTML ($.prepend())',
           jQueryInjector : this._jQueryInjectors.prepend
         },
 
@@ -432,7 +437,7 @@ export class PayloadOutputService {
           id : 'JQueryAppend',
           quality : PayloadOutputQuality.Insecure,
           name : 'jQuery.append(string)',
-          title : 'Payload as HTML ($.append())',
+          title : 'Payload appended as HTML ($.append())',
           jQueryInjector : this._jQueryInjectors.append
         },
 
@@ -440,7 +445,7 @@ export class PayloadOutputService {
           id : 'JQueryBefore',
           quality : PayloadOutputQuality.Insecure,
           name : 'jQuery.before(string)',
-          title : 'Payload as HTML ($.before())',
+          title : 'Payload as HTML before ($.before())',
           jQueryInjector : this._jQueryInjectors.before
         },
 
@@ -448,7 +453,7 @@ export class PayloadOutputService {
           id : 'JQueryAfter',
           quality : PayloadOutputQuality.Insecure,
           name : 'jQuery.after(string)',
-          title : 'Payload as HTML ($.after())',
+          title : 'Payload as HTML after ($.after())',
           jQueryInjector : this._jQueryInjectors.after
         },
 
@@ -456,7 +461,7 @@ export class PayloadOutputService {
           id : 'JQueryWrapInner',
           quality : PayloadOutputQuality.Insecure,
           name : 'jQuery.wrapInner(string)',
-          title : 'Payload as HTML ($.wrapInner())',
+          title : 'Payload as inner HTML wrap ($.wrapInner())',
           jQueryInjector : this._jQueryInjectors.wrapInner
         },
 
@@ -464,8 +469,16 @@ export class PayloadOutputService {
           id : 'JQueryWrap',
           quality : PayloadOutputQuality.Insecure,
           name : 'jQuery.wrap(string)',
-          title : 'Payload as HTML ($.wrap())',
+          title : 'Payload as HTML wrap ($.wrap())',
           jQueryInjector : this._jQueryInjectors.wrap
+        },
+
+        {
+          id : 'JQueryReplaceWith',
+          quality : PayloadOutputQuality.Insecure,
+          name : 'jQuery.replaceWith(string)',
+          title : 'Payload as HTML replacement ($.replaceWith())',
+          jQueryInjector : this._jQueryInjectors.replaceWith
         },
 
 
