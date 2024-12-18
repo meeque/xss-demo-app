@@ -242,16 +242,24 @@ export class PayloadOutputService {
       $(payload).replaceAll(element);
     },
     prepend(element, payload) {
-      $(element).prepend(payload);
+      $(element)
+        .html($('<p>').text('This is a static paragraph. Prepending to its parent element...'))
+        .prepend(payload);
     },
     append(element, payload) {
-      $(element).append(payload);
+      $(element)
+        .html($('<p>').text('This is a static paragraph. Appending to its parent element...'))
+        .append(payload);
     },
     before(element, payload) {
-      $(element).before(payload);
+      $('<p>').text('This is a static paragraph. Inserting before it...')
+        .prependTo(element)
+        .before(payload);
     },
     after(element, payload) {
-      $(element).after(payload);
+      $('<p>').text('This is a static paragraph. Inserting after it...')
+        .prependTo(element)
+        .after(payload);
     },
   };
 
