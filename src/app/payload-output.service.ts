@@ -239,7 +239,7 @@ export class PayloadOutputService {
       $(element).html(payload);
     },
     jQuery(element, payload) {
-      $(payload).replaceAll(element);
+      $(payload).appendTo(element);
     },
     prepend(element, payload) {
       $(element)
@@ -258,8 +258,17 @@ export class PayloadOutputService {
     },
     after(element, payload) {
       $('<p>').text('This is a static paragraph. Inserting after it...')
-        .prependTo(element)
+        .appendTo(element)
         .after(payload);
+    },
+    wrapInner(element, payload) {
+      $(element)
+        .html($('<p>').text('This is a static paragraph. Wrapping around its contents...').wrapInner(payload));
+    },
+    wrap(element, payload) {
+      $('<p>').text('This is a static paragraph. Wrapping around all its parent\'s contents...')
+        .appendTo(element)
+        .wrap(payload);
     },
   };
 
@@ -441,6 +450,22 @@ export class PayloadOutputService {
           name : 'jQuery.after(string)',
           title : 'Payload as HTML ($.after())',
           jQueryInjector : this._jQueryInjectors.after
+        },
+
+        {
+          id : 'JQueryWrapInner',
+          quality : PayloadOutputQuality.Insecure,
+          name : 'jQuery.wrapInner(string)',
+          title : 'Payload as HTML ($.wrapInner())',
+          jQueryInjector : this._jQueryInjectors.wrapInner
+        },
+
+        {
+          id : 'JQueryWrap',
+          quality : PayloadOutputQuality.Insecure,
+          name : 'jQuery.wrap(string)',
+          title : 'Payload as HTML ($.wrap())',
+          jQueryInjector : this._jQueryInjectors.wrap
         },
 
 
