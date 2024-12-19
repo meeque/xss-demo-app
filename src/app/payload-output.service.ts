@@ -84,6 +84,10 @@ export class PayloadOutputService {
       return this.sanitizer.bypassSecurityTrustStyle(payload);
     },
 
+    domTextNode : (payload) => {
+      return document.createTextNode(payload);
+    },
+
     htmlEncoding(payload) {
       return payload
           .replace(/&/g, '&amp;')
@@ -407,6 +411,24 @@ export class PayloadOutputService {
           name : 'jQuery.text(string)',
           title : 'Payload as text ($.text())',
           jQueryInjector : this._jQueryInjectors.text
+        },
+
+        {
+          id : 'JQueryHtmlTextNode',
+          quality : PayloadOutputQuality.Questionable,
+          name : 'jQuery.html(Text)',
+          title : 'Payload as HTML Text node ($.html())',
+          payloadProcessor: this._processors.domTextNode,
+          jQueryInjector : this._jQueryInjectors.html
+        },
+
+        {
+          id : 'JQueryConstructorTextNode',
+          quality : PayloadOutputQuality.Questionable,
+          name : 'jQuery(Text)',
+          title : 'Payload as HTML Text node, through constructor ($())',
+          payloadProcessor: this._processors.domTextNode,
+          jQueryInjector : this._jQueryInjectors.jQueryConstructor
         },
 
         {
