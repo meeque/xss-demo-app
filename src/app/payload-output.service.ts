@@ -414,6 +414,24 @@ export class PayloadOutputService {
         },
 
         {
+          id : 'JQueryHtmlEncoded',
+          quality : PayloadOutputQuality.Questionable,
+          name : 'jQuery.html(encodedString)',
+          title : 'Payload as manually encoded HTML ($.html())',
+          payloadProcessor: this._processors.htmlEncoding,
+          jQueryInjector : this._jQueryInjectors.html
+        },
+
+        {
+          id : 'JQueryConstructorEncoded',
+          quality : PayloadOutputQuality.Questionable,
+          name : 'jQuery(encodedString)',
+          title : 'Payload as manually encoded HTML, through constructor ($())',
+          payloadProcessor: this._processors.htmlEncoding,
+          jQueryInjector : this._jQueryInjectors.jQueryConstructor
+        },
+
+        {
           id : 'JQueryHtmlTextNode',
           quality : PayloadOutputQuality.Questionable,
           name : 'jQuery.html(Text)',
