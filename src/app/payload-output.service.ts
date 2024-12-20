@@ -414,6 +414,33 @@ export class PayloadOutputService {
         },
 
         {
+          id : 'JQueryHtmlSanitized',
+          quality : PayloadOutputQuality.Recommended,
+          name : 'jQuery.html(DOMPurify default)',
+          title : 'Payload as sanitized HTML (DOMPurify default policy & $.html())',
+          payloadProcessor : this._processors.htmlSanitizingDomPurify,
+          jQueryInjector : this._jQueryInjectors.html
+        },
+
+        {
+          id : 'JQueryHtmlSanitizedMinimalInline',
+          quality : PayloadOutputQuality.Recommended,
+          name : 'jQuery.html(DOMPurify minimal inline)',
+          title : 'Payload as sanitized HTML (DOMPurify minimal policy for inline markup & $.html())',
+          payloadProcessor : this._processors.htmlSanitizingDomPurifyMinimalInline,
+          jQueryInjector : this._jQueryInjectors.html
+        },
+
+        {
+          id : 'JQueryHtmlSanitizedInlineBlockLinks',
+          quality : PayloadOutputQuality.Recommended,
+          name : 'jQuery.html(DOMPurify some inline, block, links)',
+          title : 'Payload as sanitized HTML (DOMPurify policy for some inline, block, and link markup & $.html())',
+          payloadProcessor : this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
+          jQueryInjector : this._jQueryInjectors.html
+        },
+
+        {
           id : 'JQueryHtmlEncoded',
           quality : PayloadOutputQuality.Questionable,
           name : 'jQuery.html(encodedString)',
