@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XSS Demo: Browser Storage Mock</title>
+    <script src="storage.js"></script>
+</head>
+<body>
+
+    <h1>XSS Demo: Browser Storage Mock</h1>
+    <p>
+        This is a simple HTML document that displays the contents of <code>localStorage</code> and <code>sessionStorage</code>.
+    </p>
+
+    <div class="localStorage">
+        <h2>Local Storage</h2>
+    </div>
+
+    <div class="sessionStorage">
+        <h2>Session Storage</h2>
+    </div>
+
+    <template id="storageView">
+        <table class="storageView">
+            <tr>
+                <th>Index</th>
+                <th>Key</th>
+                <th>Item</th>
+            </tr>
+        </table>
+    </template>
+
+    <template id="storageViewEntry">
+        <tr>
+            <td class="index"></td>
+            <td class="key"></td>
+            <td class="item"></td>
+        </tr>
+    </template>
+
+</body>
+</html>
