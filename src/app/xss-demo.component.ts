@@ -251,13 +251,18 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
           select : this.selectPreset
         },
         {
-          name : 'JS attack on a plain HTML page in an new window/tab',
-          value : 'assets/presets/js/attack-plain-html-mock-in-window.txt',
+          name : 'JS attack on a plain HTML page in a new top-level browsing context',
+          value : 'assets/presets/js/attack-plain-html-mock-in-tlbc.txt',
           select : this.selectPreset
         },
         {
           name : 'JS attack on browser storage with an iframe',
           value : 'assets/presets/js/attack-storage-in-frame.txt',
+          select : this.selectPreset
+        },
+        {
+          name : 'JS attack on browser storage with a new top-level browsing context',
+          value : 'assets/presets/js/attack-storage-in-tlbc.txt',
           select : this.selectPreset
         },
       ]
