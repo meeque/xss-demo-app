@@ -6,6 +6,11 @@ document.addEventListener(
 
         function storageViewController(containerElement, storage) {
 
+            if (storage.length == 0) {
+                containerElement.insertAdjacentText('beforeend', 'No items in this storage.');
+                return;
+            }
+
             const storageView = storageViewTemplate.cloneNode(true).querySelector('table');
 
             for (let i = 0; i < storage.length; i++) {
