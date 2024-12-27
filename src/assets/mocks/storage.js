@@ -48,6 +48,8 @@ document.addEventListener(
             $container.insertAdjacentElement('beforeend', $tableStorage);
 
             function newEntryController() {
+                disableButtons();
+
                 const $rowNewEntry = $$storageNewEntry.cloneNode(true).querySelector('tr');
                 const $inputKey = $rowNewEntry.querySelector('.key input');
                 const $inputValue = $rowNewEntry.querySelector('.item input');
@@ -107,6 +109,8 @@ document.addEventListener(
                 $rowActions.insertAdjacentElement('beforebegin', $rowEntryDisplay);
 
                 function editController() {
+                    disableButtons();
+
                     const $rowEntryEdit = $$storageEntryEdit.cloneNode(true).querySelector('tr');
                     const $cellIndex = $rowEntryEdit.querySelector('.index');
                     const $cellKey = $rowEntryEdit.querySelector('.key');
@@ -136,6 +140,12 @@ document.addEventListener(
 
                     $rowEntryDisplay.insertAdjacentElement('afterend', $rowEntryEdit);
                     $remove($rowEntryDisplay);
+                }
+            }
+
+            function disableButtons() {
+                for ($button of $tableStorage.querySelectorAll('button')) {
+                    $button.disabled = true;
                 }
             }
         }
