@@ -6,22 +6,11 @@ document.addEventListener(
         const $$storageEntryDisplay = document.getElementById('storageEntryDisplay').content;
         const $$storageEntryEdit = document.getElementById('storageEntryEdit').content;
 
-        initStorageViews();
-
-        window.addEventListener(
-            'storage',
-            (event) => {
-                initStorageViews();
-            }
-        );
-
-        function initStorageViews() {
-            for (const localStorageViewContainer of document.querySelectorAll('.localStorage')) {
-                storageController(localStorageViewContainer, window.localStorage);
-            }
-            for (const sessionStorageViewContainer of document.querySelectorAll('.sessionStorage')) {
-                storageController(sessionStorageViewContainer, window.sessionStorage);
-            }
+        for (const localStorageViewContainer of document.querySelectorAll('.localStorage')) {
+            storageController(localStorageViewContainer, window.localStorage);
+        }
+        for (const sessionStorageViewContainer of document.querySelectorAll('.sessionStorage')) {
+            storageController(sessionStorageViewContainer, window.sessionStorage);
         }
 
         function storageController($container, storage) {
@@ -44,6 +33,15 @@ document.addEventListener(
                 'click',
                 () => {
                     newEntryController();
+                }
+            );
+
+            window.addEventListener(
+                'storage',
+                (event) => {
+                    if (event.storageArea === storage) {
+                        storageController($container, storage);
+                    }
                 }
             );
 
