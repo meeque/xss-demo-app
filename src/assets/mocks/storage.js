@@ -1,127 +1,10 @@
 document.addEventListener(
     'DOMContentLoaded',
     () => {
-        const storageViewTemplate = document.getElementById('storageView').content;
-        const storageViewEntryTemplate = document.getElementById('storageViewEntry').content;
-        const storageViewEntryEditTemplate = document.getElementById('storageViewEntryEdit').content;
-        const storageViewEntryNewTemplate = document.getElementById('storageViewEntryNew').content;
-
-        function remove(node) {
-            if (node && node.parentNode) {
-                node.parentNode.removeChild(node);
-            }
-        }
-
-        function storageViewEntryController(containerElement, storage, index) {
-            const key = storage.key(index)
-            const item = storage.getItem(key);
-
-            const storageViewEntry = storageViewEntryTemplate.cloneNode(true).querySelector('tr');
-            storageViewEntry.querySelector('.index').textContent = index;
-            storageViewEntry.querySelector('.key').textContent = key;
-            storageViewEntry.querySelector('.item').textContent = item;
-
-            storageViewEntry.querySelector('.actions button[name=edit]').addEventListener(
-                'click',
-                (event) => {
-                    storageViewEntryEditController(storageViewEntry, storage, index);
-                }
-            );
-
-            storageViewEntry.querySelector('.actions button[name=delete]').addEventListener(
-                'click',
-                () => {
-                    storage.removeItem(key);
-                    initStorageViews();
-                }
-            );
-
-            containerElement.querySelector('tr.actions').insertAdjacentElement('beforebegin', storageViewEntry);
-        }
-
-        function storageViewEntryEditController(storageViewEntryElement, storage, index) {
-            const key = storage.key(index)
-            const item = storage.getItem(key);
-
-            const storageViewEntryEdit = storageViewEntryEditTemplate.cloneNode(true).querySelector('tr');
-            storageViewEntryEdit.querySelector('.index').textContent = index;
-            storageViewEntryEdit.querySelector('.key').textContent = key;
-            storageViewEntryEdit.querySelector('.item input').value = item;
-
-            storageViewEntryEdit.querySelector('.actions button[name=save]').addEventListener(
-                'click',
-                () => {
-                    storage.setItem(key, storageViewEntryEdit.querySelector('.item input').value);
-                    initStorageViews();
-                }
-            );
-
-            storageViewEntryEdit.querySelector('.actions button[name=cancel]').addEventListener(
-                'click',
-                () => {
-                    initStorageViews();
-                }
-            );
-
-            storageViewEntryElement.insertAdjacentElement('afterend', storageViewEntryEdit);
-            remove(storageViewEntryElement);
-        }
-
-        function storageViewEntryNewController(containerElement, storage) {
-            const storageViewEntryNew = storageViewEntryNewTemplate.cloneNode(true).querySelector('tr');
-
-            storageViewEntryNew.querySelector('.actions button[name=save]').addEventListener(
-                'click',
-                () => {
-                    storage.setItem(storageViewEntryNew.querySelector('.key input').value, storageViewEntryNew.querySelector('.item input').value);
-                    initStorageViews();
-                }
-            );
-
-            storageViewEntryNew.querySelector('.actions button[name=cancel]').addEventListener(
-                'click',
-                () => {
-                    initStorageViews();
-                }
-            );
-
-            containerElement.querySelector('tr.actions').insertAdjacentElement('beforebegin', storageViewEntryNew);
-        }
-
-        function storageViewController(containerElement, storage) {
-
-            remove(containerElement.querySelector('div.storageView'));
-
-            const storageView = storageViewTemplate.cloneNode(true).querySelector('div.storageView');
-            const storageViewTable = storageView.querySelector('table');
-            const storageViewMessageEmpty = storageView.querySelector('tr.messageEmpty');
-            const storageViewButtonNew = storageView.querySelector('tr.actions button[name=new]');
-
-            if (storage.length != 0) {
-                remove(storageViewMessageEmpty);
-                for (let i = 0; i < storage.length; i++) {
-                    storageViewEntryController(storageViewTable, storage, i);
-                }
-            }
-
-            storageViewButtonNew.addEventListener(
-                'click',
-                () => {
-                    storageViewEntryNewController(storageViewTable, storage);
-                }
-            );
-
-            containerElement.insertAdjacentElement('beforeend', storageView);
-        }
-
-        function initStorageViews() {
-            for (const localStorageViewContainer of document.querySelectorAll('.localStorage')) {
-                storageViewController(localStorageViewContainer, window.localStorage);
-            }
-            for (const sessionStorageViewContainer of document.querySelectorAll('.sessionStorage')) {
-                storageViewController(sessionStorageViewContainer, window.sessionStorage);
-            }
-        }
+        const $$storage = document.getElementById('storage').content;
+        const $$storageNewEntry = document.getElementById('storageNewEntry').content;
+        const $$storageEntryDisplay = document.getElementById('storageEntryDisplay').content;
+        const $$storageEntryEdit = document.getElementById('storageEntryEdit').content;
 
         initStorageViews();
 
@@ -131,5 +14,138 @@ document.addEventListener(
                 initStorageViews();
             }
         );
+
+        function initStorageViews() {
+            for (const localStorageViewContainer of document.querySelectorAll('.localStorage')) {
+                storageController(localStorageViewContainer, window.localStorage);
+            }
+            for (const sessionStorageViewContainer of document.querySelectorAll('.sessionStorage')) {
+                storageController(sessionStorageViewContainer, window.sessionStorage);
+            }
+        }
+
+        function storageController($container, storage) {
+
+            $remove($container.querySelector('table.storage'));
+
+            const $tableStorage = $$storage.cloneNode(true).querySelector('table.storage');
+            const $rowMessageEmpty = $tableStorage.querySelector('tr.messageEmpty');
+            const $rowActions = $tableStorage.querySelector('tr.actions');
+            const $buttonNew = $rowActions.querySelector('button[name=new]');
+
+            if (storage.length != 0) {
+                $remove($rowMessageEmpty);
+                for (let i = 0; i < storage.length; i++) {
+                    entryController(i);
+                }
+            }
+
+            $buttonNew.addEventListener(
+                'click',
+                () => {
+                    newEntryController();
+                }
+            );
+
+            $container.insertAdjacentElement('beforeend', $tableStorage);
+
+            function newEntryController() {
+                const $rowNewEntry = $$storageNewEntry.cloneNode(true).querySelector('tr');
+                const $inputKey = $rowNewEntry.querySelector('.key input');
+                const $inputValue = $rowNewEntry.querySelector('.item input');
+                const $cellActions = $rowNewEntry.querySelector('.actions')
+                const $buttonSave = $cellActions.querySelector('button[name=save]');
+                const $buttonCancel = $cellActions.querySelector('button[name=cancel]');
+
+                $buttonSave.addEventListener(
+                    'click',
+                    () => {
+                        storage.setItem($inputKey.value, $inputValue.value);
+                        storageController($container, storage);
+                    }
+                );
+
+                $buttonCancel.addEventListener(
+                    'click',
+                    () => {
+                        storageController($container, storage);
+                    }
+                );
+
+                $rowActions.insertAdjacentElement('beforebegin', $rowNewEntry);
+            }
+
+            function entryController(index) {
+                const key = storage.key(index)
+                const item = storage.getItem(key);
+
+                const $rowEntryDisplay = $$storageEntryDisplay.cloneNode(true).querySelector('tr');
+                const $cellIndex = $rowEntryDisplay.querySelector('.index');
+                const $cellKey = $rowEntryDisplay.querySelector('.key');
+                const $cellItem = $rowEntryDisplay.querySelector('.item');
+                const $cellActions = $rowEntryDisplay.querySelector('.actions');
+                const $buttonEdit = $cellActions.querySelector('button[name=edit]');
+                const $buttonDelete = $cellActions.querySelector('button[name=delete]');
+
+                $cellIndex.textContent = index;
+                $cellKey.textContent = key;
+                $cellItem.textContent = item;
+
+                $buttonEdit.addEventListener(
+                    'click',
+                    (event) => {
+                        editController($rowEntryDisplay, index);
+                    }
+                );
+
+                $buttonDelete.addEventListener(
+                    'click',
+                    () => {
+                        storage.removeItem(key);
+                        storageController($container, storage);
+                    }
+                );
+
+                $rowActions.insertAdjacentElement('beforebegin', $rowEntryDisplay);
+
+                function editController() {
+                    const $rowEntryEdit = $$storageEntryEdit.cloneNode(true).querySelector('tr');
+                    const $cellIndex = $rowEntryEdit.querySelector('.index');
+                    const $cellKey = $rowEntryEdit.querySelector('.key');
+                    const $inputItem = $rowEntryEdit.querySelector('.item input');
+                    const $cellActions = $rowEntryEdit.querySelector('.actions');
+                    const $buttonSave = $cellActions.querySelector('button[name=save]');
+                    const $buttonCancel = $cellActions.querySelector('button[name=cancel]');
+
+                    $cellIndex.textContent = index;
+                    $cellKey.textContent = key;
+                    $inputItem.value = item;
+
+                    $buttonSave.addEventListener(
+                        'click',
+                        () => {
+                            storage.setItem(key, $inputItem.value);
+                            storageController($container, storage);
+                        }
+                    );
+
+                    $buttonCancel.addEventListener(
+                        'click',
+                        () => {
+                            storageController($container, storage);
+                        }
+                    );
+
+                    $rowEntryDisplay.insertAdjacentElement('afterend', $rowEntryEdit);
+                    $remove($rowEntryDisplay);
+                }
+            }
+        }
+
+        function $remove(node) {
+            if (node && node.parentNode) {
+                node.parentNode.removeChild(node);
+            }
+        }
     }
 );

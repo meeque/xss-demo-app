@@ -19,27 +19,41 @@
         <h2>Session Storage</h2>
     </div>
 
-    <template id="storageView">
-        <div class="storageView">
-            <table>
-                <tr class="head">
-                    <th>Index</th>
-                    <th>Key</th>
-                    <th>Item</th>
-                    <th></th>
-                </tr>
-                <tr class="messageEmpty">
-                    <td colspan="4">No items in this storage.</td>
-                </tr>
-                <tr class="actions">
-                    <td colspan="3"></td>
-                    <td><button type="button" name="new">Add New Item...</button></td>
-                </tr>
-            </table>
-        </div>
+    <template id="storage">
+        <table class="storage">
+            <tr class="head">
+                <th>Index</th>
+                <th>Key</th>
+                <th>Item</th>
+                <th></th>
+            </tr>
+            <tr class="messageEmpty">
+                <td colspan="4">No items in this storage.</td>
+            </tr>
+            <tr class="actions">
+                <td colspan="3"></td>
+                <td><button type="button" name="new">Add New Item...</button></td>
+            </tr>
+        </table>
     </template>
 
-    <template id="storageViewEntry">
+    <template id="storageNewEntry">
+        <tr>
+            <td></td>
+            <td class="key">
+                <input type="text">
+            </td>
+            <td class="item">
+                <input type="text">
+            </td>
+            <td class="actions">
+                <button type="button" name="save">Save</button>
+                <button type="button" name="cancel">Cancel</button>
+            </td>
+        </tr>
+    </template>
+
+    <template id="storageEntryDisplay">
         <tr>
             <td class="index"></td>
             <td class="key"></td>
@@ -51,26 +65,10 @@
         </tr>
     </template>
 
-    <template id="storageViewEntryEdit">
+    <template id="storageEntryEdit">
         <tr>
             <td class="index"></td>
             <td class="key"></td>
-            <td class="item">
-                <input type="text">
-            </td>
-            <td class="actions">
-                <button type="button" name="save">Save</button>
-                <button type="button" name="cancel">Cancel</button>
-            </td>
-        </tr>
-    </template>
-
-    <template id="storageViewEntryNew">
-        <tr>
-            <td></td>
-            <td class="key">
-                <input type="text">
-            </td>
             <td class="item">
                 <input type="text">
             </td>
