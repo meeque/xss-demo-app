@@ -94,7 +94,7 @@ document.addEventListener(
                 $buttonEdit.addEventListener(
                     'click',
                     (event) => {
-                        editController($rowEntryDisplay, index);
+                        editController();
                     }
                 );
 
