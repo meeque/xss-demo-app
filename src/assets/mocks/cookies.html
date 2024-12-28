@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XSS Demo: Browser Storage Mock</title>
+    <script src="/scripts.js"></script>
+    <script src="cookies.js"></script>
+</head>
+<body>
+
+    <h1>XSS Demo: Cookies Mock</h1>
+    <p>
+        This is a simple HTML document that displays the contents of browser cookies.
+    </p>
+    <p>
+        For technical reasons, this client-side mock can only work with cookies that are not <code>HTTPOnly</code>.
+    </p>
+
+    <div class="cookies">
+        <h2>Cookies</h2>
+    </div>
+
+    <template id="cookies">
+        <table class="cookies">
+            <tr class="head">
+                <th>Domain</th>
+                <th>Path</th>
+                <th>Name</th>
+                <th>Value</th>
+                <th>Flags</th>
+                <th>Actions</th>
+            </tr>
+            <tr class="messageEmpty">
+                <td colspan="6">No non-<code>HTTPOnly</code> cookies set for this domain.</td>
+            </tr>
+            <tr class="actions">
+                <td colspan="5"></td>
+                <td><button type="button" name="new">Create New Cookie...</button></td>
+            </tr>
+        </table>
+    </template>
+
+    <template id="cookiesNew">
+        <tr>
+            <td class="domain">
+                <input type="text">
+            </td>
+            <td class="path">
+                <input type="text">
+            </td>
+            <td class="name">
+                <input type="text">
+            </td>
+            <td class="value">
+                <input type="text">
+            </td>
+            <td class="flags">
+                <input type="checkbox">
+                <input type="checkbox">
+                <input type="checkbox">
+            </td>
+            <td class="actions">
+                <button type="button" name="save">Save</button>
+                <button type="button" name="cancel">Cancel</button>
+            </td>
+        </tr>
+    </template>
+
+    <template id="cookieDisplay">
+        <tr>
+            <td class="domain"></td>
+            <td class="path"></td>
+            <td class="name"></td>
+            <td class="value"></td>
+            <td class="flags"></td>
+            <td class="actions">
+                <button type="button" name="edit">Edit</button>
+                <button type="button" name="delete">Delete</button>
+            </td>
+        </tr>
+    </template>
+
+    <template id="cookieEdit">
+        <tr>
+            <td class="domain"></td>
+            <td class="path"></td>
+            <td class="name"></td>
+            <td class="value">
+                <input type="text">
+            </td>
+            <td class="flags">
+                <input type="checkbox">
+                <input type="checkbox">
+                <input type="checkbox">
+            </td>
+            <td class="actions">
+                <button type="button" name="save">Save</button>
+                <button type="button" name="cancel">Cancel</button>
+            </td>
+        </tr>
+    </template>
+
+</body>
+</html>

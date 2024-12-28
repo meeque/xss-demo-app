@@ -31,7 +31,8 @@
             ],
             "scripts": [
               "node_modules/dompurify/dist/purify.min.js",
-              "node_modules/jquery/dist/jquery.slim.min.js"
+              "node_modules/jquery/dist/jquery.slim.min.js",
+              "node_modules/cookie-store/index.js"
             ]
           },
           "configurations": {
