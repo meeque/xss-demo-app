@@ -1,5 +1,5 @@
 ### this tag refers to nginx 1.*
-FROM nginx@sha256:28402db69fec7c17e179ea87882667f1e054391138f77ffaf0c3eb388efc3ffb
+FROM nginx@sha256:42e917aaa1b5bb40dd0f6f7f4f857490ac7747d7ef73b391c774a41a8b994f15
 
 ### Copy nginx config ###
 COPY nginx/nginx.conf /etc/nginx/
