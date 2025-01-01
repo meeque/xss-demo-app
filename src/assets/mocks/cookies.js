@@ -51,7 +51,12 @@ document.addEventListener(
                 $buttonSave.addEventListener(
                     'click',
                     async () => {
-                        await window.cookieStore.set($inputName.value, $inputValue.value);
+                        await setCookie({
+                            domain: $inputDomain.value,
+                            path: $inputPath.value,
+                            name: $inputName.value,
+                            value: $inputValue.value,
+                        });
                         cookiesController($container);
                     }
                 );
@@ -119,7 +124,12 @@ document.addEventListener(
                     $buttonSave.addEventListener(
                         'click',
                         async () => {
-                            await window.cookieStore.set(cookie.name, $inputValue.value);
+                            await setCookie({
+                                domain: $cellDomain.textContent,
+                                path: $cellPath.textContent,
+                                name: $cellName.textContent,
+                                value: $inputValue.value,
+                            });
                             cookiesController($container);
                         }
                     );
@@ -141,6 +151,29 @@ document.addEventListener(
                     $button.disabled = true;
                 }
             }
+        }
+
+        async function setCookie(options) {
+            if (hasNativeCookieStore()) {
+                return await window.cookieStore.set({
+                    domain: options.domain || null,
+                    path: options.path || null,
+                    name: options.name || '',
+                    value: options.value || '',
+                });
+            } else {
+                // the polyfill only supports name/value pairs, now options objects
+                return await window.cookieStore.set(
+                    options.name || '',
+                    options.value || '',
+                );
+            }
+
+        }
+
+        function hasNativeCookieStore() {
+            // prototype of the polyfill would be [object Object] instead
+            return Object.getPrototypeOf(window.cookieStore) === '[object CookieStore]'
         }
 
         function $remove(node) {
