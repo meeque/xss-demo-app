@@ -4,7 +4,7 @@ document.addEventListener(
         const $$cookies = document.getElementById('cookies').content;
         const $$cookiesNew = document.getElementById('cookiesNew').content;
         const $$cookieDisplay = document.getElementById('cookieDisplay').content;
-        const $$cookiesEdit = document.getElementById('cookieEdit').content;
+        const $$cookieEdit = document.getElementById('cookieEdit').content;
 
         for (const $cookiesContainer of document.querySelectorAll('.cookies')) {
             cookiesController($cookiesContainer);
@@ -23,7 +23,7 @@ document.addEventListener(
             if (window.cookies.length != 0) {
                 $remove($rowMessageEmpty);
                 for (const cookie of cookies) {
-                    entryController(cookie);
+                    cookieDisplayController(cookie);
                 }
             }
 
@@ -44,6 +44,9 @@ document.addEventListener(
                 const $inputPath = $rowCookiesNew.querySelector('.path input');
                 const $inputName = $rowCookiesNew.querySelector('.name input');
                 const $inputValue = $rowCookiesNew.querySelector('.value input');
+                const $checkboxSecure = $rowCookiesNew.querySelector('.secure input');
+                const $selectSameSite = $rowCookiesNew.querySelector('.sameSite select');
+                const $inputExpires = $rowCookiesNew.querySelector('.expires input');
                 const $cellActions = $rowCookiesNew.querySelector('.actions')
                 const $buttonSave = $cellActions.querySelector('button[name=save]');
                 const $buttonCancel = $cellActions.querySelector('button[name=cancel]');
@@ -56,6 +59,9 @@ document.addEventListener(
                             path: $inputPath.value,
                             name: $inputName.value,
                             value: $inputValue.value,
+                            secure: $checkboxSecure.value,
+                            sameSite: $selectSameSite.value,
+                            expires: $inputExpires.value,
                         });
                         cookiesController($container);
                     }
@@ -71,14 +77,17 @@ document.addEventListener(
                 $rowActions.insertAdjacentElement('beforebegin', $rowCookiesNew);
             }
 
-            function entryController(cookie) {
+            function cookieDisplayController(cookie) {
 
-                const $rowEntryDisplay = $$cookieDisplay.cloneNode(true).querySelector('tr');
-                const $cellDomain = $rowEntryDisplay.querySelector('.domain');
-                const $cellPath = $rowEntryDisplay.querySelector('.path');
-                const $cellName = $rowEntryDisplay.querySelector('.name');
-                const $cellValue = $rowEntryDisplay.querySelector('.value');
-                const $cellActions = $rowEntryDisplay.querySelector('.actions');
+                const $rowCookieDisplay = $$cookieDisplay.cloneNode(true).querySelector('tr');
+                const $cellDomain = $rowCookieDisplay.querySelector('.domain');
+                const $cellPath = $rowCookieDisplay.querySelector('.path');
+                const $cellName = $rowCookieDisplay.querySelector('.name');
+                const $cellValue = $rowCookieDisplay.querySelector('.value');
+                const $cellSecure = $rowCookieDisplay.querySelector('.secure');
+                const $cellSameSite = $rowCookieDisplay.querySelector('.sameSite');
+                const $cellExpires = $rowCookieDisplay.querySelector('.expires');
+                const $cellActions = $rowCookieDisplay.querySelector('.actions');
                 const $buttonEdit = $cellActions.querySelector('button[name=edit]');
                 const $buttonDelete = $cellActions.querySelector('button[name=delete]');
 
@@ -86,32 +95,38 @@ document.addEventListener(
                 $cellPath.textContent = cookie.path;
                 $cellName.textContent = cookie.name;
                 $cellValue.textContent = cookie.value;
+                $cellSecure.textContent = displayOptionalBoolean(cookie.secure);
+                $cellSameSite.textContent = cookie.sameSite;
+                $cellExpires.textContent = cookie.expires;
 
                 $buttonEdit.addEventListener(
                     'click',
                     (event) => {
-                        editController($rowEntryDisplay, cookie);
+                        cookieEditController($rowCookieDisplay, cookie);
                     }
                 );
 
                 $buttonDelete.addEventListener(
                     'click',
                     async () => {
-                        await window.cookieStore.delete(cookie.name);
+                        await deleteCookie(cookie);
                         cookiesController($container);
                     }
                 );
 
-                $rowActions.insertAdjacentElement('beforebegin', $rowEntryDisplay);
+                $rowActions.insertAdjacentElement('beforebegin', $rowCookieDisplay);
 
-                function editController() {
+                function cookieEditController() {
                     disableButtons();
 
-                    const $rowEntryEdit = $$cookiesEdit.cloneNode(true).querySelector('tr');
+                    const $rowEntryEdit = $$cookieEdit.cloneNode(true).querySelector('tr');
                     const $cellDomain = $rowEntryEdit.querySelector('.domain');
                     const $cellPath = $rowEntryEdit.querySelector('.path');
                     const $cellName = $rowEntryEdit.querySelector('.name');
                     const $inputValue = $rowEntryEdit.querySelector('.value input');
+                    const $checkboxSecure = $rowEntryEdit.querySelector('.secure input');
+                    const $selectSameSite = $rowEntryEdit.querySelector('.sameSite select');
+                    const $inputExpires = $rowEntryEdit.querySelector('.expires input');
                     const $cellActions = $rowEntryEdit.querySelector('.actions');
                     const $buttonSave = $cellActions.querySelector('button[name=save]');
                     const $buttonCancel = $cellActions.querySelector('button[name=cancel]');
@@ -120,6 +135,9 @@ document.addEventListener(
                     $cellPath.textContent = cookie.path;
                     $cellName.textContent = cookie.name;
                     $inputValue.value = cookie.value;
+                    $checkboxSecure.value = cookie.secure;
+                    $selectSameSite.value = cookie.sameSite;
+                    $inputExpires.value = cookie.expires;
 
                     $buttonSave.addEventListener(
                         'click',
@@ -129,6 +147,9 @@ document.addEventListener(
                                 path: $cellPath.textContent,
                                 name: $cellName.textContent,
                                 value: $inputValue.value,
+                                secure: $checkboxSecure.value,
+                                sameSite: $selectSameSite.value,
+                                expires: $inputExpires.value,
                             });
                             cookiesController($container);
                         }
@@ -141,8 +162,8 @@ document.addEventListener(
                         }
                     );
 
-                    $rowEntryDisplay.insertAdjacentElement('afterend', $rowEntryEdit);
-                    $remove($rowEntryDisplay);
+                    $rowCookieDisplay.insertAdjacentElement('afterend', $rowEntryEdit);
+                    $remove($rowCookieDisplay);
                 }
             }
 
@@ -157,23 +178,42 @@ document.addEventListener(
             if (hasNativeCookieStore()) {
                 return await window.cookieStore.set({
                     domain: options.domain || null,
-                    path: options.path || null,
+                    path: options.path || '/',
                     name: options.name || '',
                     value: options.value || '',
+                    secure: options.secure || null,
+                    sameSite: options.sameSite || null,
+                    expires: options.expires || null,
                 });
             } else {
-                // the polyfill only supports name/value pairs, now options objects
+                // the polyfill only supports name/value pairs, no options objects
                 return await window.cookieStore.set(
                     options.name || '',
                     options.value || '',
                 );
             }
+        }
 
+        async function deleteCookie(options) {
+            if (hasNativeCookieStore()) {
+                return await window.cookieStore.delete({
+                    domain: options.domain || null,
+                    path: options.path || '/',
+                    name: options.name || '',
+                });
+            } else {
+                // the polyfill only supports cookie name, no options objects
+                return await window.cookieStore.delete(options.name || '');
+            }
         }
 
         function hasNativeCookieStore() {
             // prototype of the polyfill would be [object Object] instead
-            return Object.getPrototypeOf(window.cookieStore) === '[object CookieStore]'
+            return Object.getPrototypeOf(window.cookieStore) == '[object CookieStore]';
+        }
+
+        function displayOptionalBoolean(value) {
+            return (value === true) ? '✔' : (value === false) ? '⤫' : '';
         }
 
         function $remove(node) {

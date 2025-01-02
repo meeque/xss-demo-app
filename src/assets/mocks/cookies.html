@@ -26,14 +26,17 @@
                 <th>Path</th>
                 <th>Name</th>
                 <th>Value</th>
-                <th>Flags</th>
+                <th>Secure</th>
+                <th>HttpOnly</th>
+                <th>SameSite</th>
+                <th>Expires</th>
                 <th>Actions</th>
             </tr>
             <tr class="messageEmpty">
                 <td colspan="6">No non-<code>HTTPOnly</code> cookies set for this domain.</td>
             </tr>
             <tr class="actions">
-                <td colspan="5"></td>
+                <td colspan="8"></td>
                 <td><button type="button" name="new">Create New Cookie...</button></td>
             </tr>
         </table>
@@ -53,10 +56,21 @@
             <td class="value">
                 <input type="text">
             </td>
-            <td class="flags">
+            <td class="secure">
                 <input type="checkbox">
-                <input type="checkbox">
-                <input type="checkbox">
+            </td>
+            <td class="httpOnly">
+                <input type="checkbox" disabled>
+            </td>
+            <td class="sameSite">
+                <select>
+                    <option value="strict">strict</option>
+                    <option value="lax">lax</option>
+                    <option value="none">none</option>
+                </select>
+            </td>
+            <td class="expires">
+                <input type="text">
             </td>
             <td class="actions">
                 <button type="button" name="save">Save</button>
@@ -71,7 +85,10 @@
             <td class="path"></td>
             <td class="name"></td>
             <td class="value"></td>
-            <td class="flags"></td>
+            <td class="secure"></td>
+            <td class="httpOnly">⤫</td>
+            <td class="sameSite"></td>
+            <td class="expires"></td>
             <td class="actions">
                 <button type="button" name="edit">Edit</button>
                 <button type="button" name="delete">Delete</button>
@@ -87,10 +104,21 @@
             <td class="value">
                 <input type="text">
             </td>
-            <td class="flags">
+            <td class="secure">
                 <input type="checkbox">
-                <input type="checkbox">
-                <input type="checkbox">
+            </td>
+            <td class="httpOnly">
+                <input type="checkbox" disabled>
+            </td>
+            <td class="sameSite">
+                <select>
+                    <option value="strict">strict</option>
+                    <option value="lax">lax</option>
+                    <option value="none">none</option>
+                </select>
+            </td>
+            <td class="expires">
+                <input type="text">
             </td>
             <td class="actions">
                 <button type="button" name="save">Save</button>
