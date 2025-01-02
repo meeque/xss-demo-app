@@ -97,7 +97,13 @@ document.addEventListener(
                 $cellValue.textContent = cookie.value;
                 $cellSecure.textContent = displayOptionalBoolean(cookie.secure);
                 $cellSameSite.textContent = cookie.sameSite;
-                $cellExpires.textContent = cookie.expires;
+                if (cookie.expires) {
+                    $cellExpires.textContent = cookie.expires;
+                    $cellExpires.setAttribute('title', new Date(cookie.expires).toISOString());
+                } else {
+                    $cellExpires.textContent = 'session';
+                    $cellExpires.setAttribute('title', 'This is a session cookie, which does not have a predetermined expiry date.');
+                }
 
                 $buttonEdit.addEventListener(
                     'click',
@@ -183,7 +189,7 @@ document.addEventListener(
                     value: options.value || '',
                     secure: options.secure || null,
                     sameSite: options.sameSite || null,
-                    expires: options.expires || null,
+                    expires: parseDate(options.expires),
                 });
             } else {
                 // the polyfill only supports name/value pairs, no options objects
@@ -210,6 +216,27 @@ document.addEventListener(
         function hasNativeCookieStore() {
             // prototype of the polyfill would be [object Object] instead
             return Object.getPrototypeOf(window.cookieStore) == '[object CookieStore]';
+        }
+
+        function parseDate(date) {
+            const tenYearsInMillis = 10 * 365 * 24 * 60 * 60 * 1000;
+            if (typeof date == 'number') {
+                if (date > tenYearsInMillis) {
+                    return date;
+                }
+                return Date.now() + date;
+            }
+            if (typeof date == 'string') {
+                const numericDate = Number.parseInt(date);
+                if (!Number.isNaN(numericDate)) {
+                    return parseDate(numericDate);
+                }
+                const parsedDate = Date.parse(date);
+                if (!Number.isNaN(parsedDate)) {
+                    return parsedDate;
+                }
+            }
+            return null;
         }
 
         function displayOptionalBoolean(value) {
