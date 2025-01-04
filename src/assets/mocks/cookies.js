@@ -44,7 +44,6 @@ document.addEventListener(
                 const $inputPath = $rowCookiesNew.querySelector('.path input');
                 const $inputName = $rowCookiesNew.querySelector('.name input');
                 const $inputValue = $rowCookiesNew.querySelector('.value input');
-                const $checkboxSecure = $rowCookiesNew.querySelector('.secure input');
                 const $selectSameSite = $rowCookiesNew.querySelector('.sameSite select');
                 const $inputExpires = $rowCookiesNew.querySelector('.expires input');
                 const $cellActions = $rowCookiesNew.querySelector('.actions')
@@ -59,7 +58,6 @@ document.addEventListener(
                             path: $inputPath.value,
                             name: $inputName.value,
                             value: $inputValue.value,
-                            secure: $checkboxSecure.value,
                             sameSite: $selectSameSite.value,
                             expires: $inputExpires.value,
                         });
@@ -141,7 +139,7 @@ document.addEventListener(
                     $cellPath.textContent = cookie.path;
                     $cellName.textContent = cookie.name;
                     $inputValue.value = cookie.value;
-                    $checkboxSecure.value = cookie.secure;
+                    $checkboxSecure.checked = !!cookie.secure;
                     $selectSameSite.value = cookie.sameSite;
                     $inputExpires.value = cookie.expires;
 
@@ -153,7 +151,6 @@ document.addEventListener(
                                 path: $cellPath.textContent,
                                 name: $cellName.textContent,
                                 value: $inputValue.value,
-                                secure: $checkboxSecure.value,
                                 sameSite: $selectSameSite.value,
                                 expires: $inputExpires.value,
                             });
@@ -187,7 +184,6 @@ document.addEventListener(
                     path: options.path || '/',
                     name: options.name || '',
                     value: options.value || '',
-                    secure: options.secure || null,
                     sameSite: options.sameSite || null,
                     expires: parseDate(options.expires),
                 });
