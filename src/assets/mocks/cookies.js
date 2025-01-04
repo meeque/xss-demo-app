@@ -6,6 +6,14 @@ document.addEventListener(
         const $$cookieDisplay = document.getElementById('cookieDisplay').content;
         const $$cookieEdit = document.getElementById('cookieEdit').content;
 
+        const $dataListCookieDomains = document.getElementById('cookieDomains');
+
+        for (const domain of suggestCookieDomains()) {
+            const $domainOption = document.createElement('option');
+            $domainOption.value = domain;
+            $dataListCookieDomains.insertAdjacentElement('beforeend', $domainOption);
+        }
+
         var messageError = null;
 
         for (const $cookiesContainer of document.querySelectorAll('.cookies')) {
@@ -252,6 +260,16 @@ document.addEventListener(
         function hasNativeCookieStore() {
             // prototype of the polyfill would be [object Object] instead
             return Object.getPrototypeOf(window.cookieStore) == '[object CookieStore]';
+        }
+
+        function suggestCookieDomains() {
+            const domains = [];
+            const currentDomainLabels = location.hostname.split('.').filter((label) => label !== '');
+            for (i = 0; i < currentDomainLabels.length; i++)
+            {
+                domains.push(currentDomainLabels.slice(i, currentDomainLabels.length).join('.'));
+            }
+            return domains;
         }
 
         function parseDate(date) {
