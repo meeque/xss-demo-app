@@ -49,6 +49,10 @@ document.addEventListener(
                 }
             );
 
+            if (hasNativeCookieStore()) {
+                cookieStore.onchange = () => cookiesController($container);
+            }
+
             $container.insertAdjacentElement('beforeend', $tableCookies);
 
             function cookiesNewController() {
@@ -76,7 +80,11 @@ document.addEventListener(
                             sameSite: $selectSameSite.value,
                             expires: $inputExpires.value,
                         });
-                        cookiesController($container);
+
+                        // the polyfill does not support CookieStore change events, so refresh controller manually
+                        if (!hasNativeCookieStore()) {
+                            cookiesController($container);
+                        }
                     }
                 );
 
@@ -130,7 +138,11 @@ document.addEventListener(
                     'click',
                     async () => {
                         await deleteCookie(cookie);
-                        cookiesController($container);
+
+                        // the polyfill does not support CookieStore change events, so refresh controller manually
+                        if (!hasNativeCookieStore()) {
+                            cookiesController($container);
+                        }
                     }
                 );
 
@@ -170,7 +182,11 @@ document.addEventListener(
                                 sameSite: $selectSameSite.value,
                                 expires: $inputExpires.value,
                             });
-                            cookiesController($container);
+
+                            // the polyfill does not support CookieStore change events, so refresh controller manually
+                            if (!hasNativeCookieStore()) {
+                                cookiesController($container);
+                            }
                         }
                     );
 
@@ -196,7 +212,7 @@ document.addEventListener(
         async function setCookie(options) {
             try {
                 if (hasNativeCookieStore()) {
-                    return await window.cookieStore.set({
+                    await window.cookieStore.set({
                         domain: options.domain || null,
                         path: options.path || '/',
                         name: options.name || '',
@@ -206,7 +222,7 @@ document.addEventListener(
                     });
                 } else {
                     // the polyfill only supports name/value pairs, no options objects
-                    return await window.cookieStore.set(
+                    await window.cookieStore.set(
                         options.name || '',
                         options.value || '',
                     );
@@ -219,14 +235,14 @@ document.addEventListener(
         async function deleteCookie(options) {
             try {
                 if (hasNativeCookieStore()) {
-                    return await window.cookieStore.delete({
+                    await window.cookieStore.delete({
                         domain: options.domain || null,
                         path: options.path || '/',
                         name: options.name || '',
                     });
                 } else {
                     // the polyfill only supports cookie name, no options objects
-                    return await window.cookieStore.delete(options.name || '');
+                    await window.cookieStore.delete(options.name || '');
                 }
             } catch (error) {
                 messageError = error.toString();
