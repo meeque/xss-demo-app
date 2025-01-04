@@ -294,7 +294,7 @@ document.addEventListener(
         }
 
         function displayOptionalBoolean(value) {
-            return (value === true) ? '✔' : (value === false) ? '⤫' : '';
+            return (value === true) ? '✔' : (value === false) ? '✗' : '-';
         }
 
         function $remove(node) {
