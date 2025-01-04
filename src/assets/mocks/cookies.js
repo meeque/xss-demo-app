@@ -223,13 +223,13 @@ document.addEventListener(
                 return Date.now() + date;
             }
             if (typeof date == 'string') {
-                const numericDate = Number.parseInt(date);
-                if (!Number.isNaN(numericDate)) {
-                    return parseDate(numericDate);
-                }
                 const parsedDate = Date.parse(date);
                 if (!Number.isNaN(parsedDate)) {
                     return parsedDate;
+                }
+                const numericDate = Number.parseInt(date);
+                if (!Number.isNaN(numericDate)) {
+                    return parseDate(numericDate);
                 }
             }
             return null;
