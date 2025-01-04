@@ -31,6 +31,11 @@ document.addEventListener(
 
             const cookies = await window.cookieStore.getAll();
             if (window.cookies.length != 0) {
+
+                cookies.sort( (c1, c2) => c1.name == c2.name ? 0 : (c1.name < c2.name ? -1 : 1 ) );
+                cookies.sort( (c1, c2) => c1.path == c2.path ? 0 : (c1.path < c2.path ? -1 : 1 ) );
+                cookies.sort( (c1, c2) => c1.domain == c2.domain ? 0 : (c1.domain < c2.domain ? -1 : 1 ) );
+
                 $remove($rowMessageEmpty);
                 for (const cookie of cookies) {
                     cookieDisplayController(cookie);
