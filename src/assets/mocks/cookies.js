@@ -6,6 +6,8 @@ document.addEventListener(
         const $$cookieDisplay = document.getElementById('cookieDisplay').content;
         const $$cookieEdit = document.getElementById('cookieEdit').content;
 
+        var messageError = null;
+
         for (const $cookiesContainer of document.querySelectorAll('.cookies')) {
             cookiesController($cookiesContainer);
         }
@@ -17,7 +19,15 @@ document.addEventListener(
             const $tableCookies = $$cookies.cloneNode(true).querySelector('table.cookies');
             const $rowMessageEmpty = $tableCookies.querySelector('tr.messageEmpty');
             const $rowActions = $tableCookies.querySelector('tr.actions');
+            const $cellMessageError = $rowActions.querySelector('td.messageError');
             const $buttonNew = $rowActions.querySelector('button[name=new]');
+
+            if (messageError === null) {
+                $cellMessageError.textContent = '';
+            } else {
+                $cellMessageError.textContent = messageError;
+                messageError = null;
+            }
 
             const cookies = await window.cookieStore.getAll();
             if (window.cookies.length != 0) {
@@ -95,6 +105,7 @@ document.addEventListener(
                 $cellValue.textContent = cookie.value;
                 $cellSecure.textContent = displayOptionalBoolean(cookie.secure);
                 $cellSameSite.textContent = cookie.sameSite;
+
                 if (cookie.expires) {
                     $cellExpires.textContent = cookie.expires;
                     $cellExpires.setAttribute('title', new Date(cookie.expires).toISOString());
@@ -178,34 +189,42 @@ document.addEventListener(
         }
 
         async function setCookie(options) {
-            if (hasNativeCookieStore()) {
-                return await window.cookieStore.set({
-                    domain: options.domain || null,
-                    path: options.path || '/',
-                    name: options.name || '',
-                    value: options.value || '',
-                    sameSite: options.sameSite || null,
-                    expires: parseDate(options.expires),
-                });
-            } else {
-                // the polyfill only supports name/value pairs, no options objects
-                return await window.cookieStore.set(
-                    options.name || '',
-                    options.value || '',
-                );
+            try {
+                if (hasNativeCookieStore()) {
+                    return await window.cookieStore.set({
+                        domain: options.domain || null,
+                        path: options.path || '/',
+                        name: options.name || '',
+                        value: options.value || '',
+                        sameSite: options.sameSite || null,
+                        expires: parseDate(options.expires),
+                    });
+                } else {
+                    // the polyfill only supports name/value pairs, no options objects
+                    return await window.cookieStore.set(
+                        options.name || '',
+                        options.value || '',
+                    );
+                }
+            } catch(error) {
+                messageError = error.toString();
             }
         }
 
         async function deleteCookie(options) {
-            if (hasNativeCookieStore()) {
-                return await window.cookieStore.delete({
-                    domain: options.domain || null,
-                    path: options.path || '/',
-                    name: options.name || '',
-                });
-            } else {
-                // the polyfill only supports cookie name, no options objects
-                return await window.cookieStore.delete(options.name || '');
+            try {
+                if (hasNativeCookieStore()) {
+                    return await window.cookieStore.delete({
+                        domain: options.domain || null,
+                        path: options.path || '/',
+                        name: options.name || '',
+                    });
+                } else {
+                    // the polyfill only supports cookie name, no options objects
+                    return await window.cookieStore.delete(options.name || '');
+                }
+            } catch (error) {
+                messageError = error.toString();
             }
         }
 
