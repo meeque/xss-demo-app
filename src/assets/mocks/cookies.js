@@ -90,7 +90,8 @@ document.addEventListener(
                         });
 
                         // the polyfill does not support CookieStore change events, so refresh controller manually
-                        if (!hasNativeCookieStore()) {
+                        // also refresh manually after errors
+                        if (messageError !== null || !hasNativeCookieStore()) {
                             cookiesController($container);
                         }
                     }
@@ -148,7 +149,8 @@ document.addEventListener(
                         await deleteCookie(cookie);
 
                         // the polyfill does not support CookieStore change events, so refresh controller manually
-                        if (!hasNativeCookieStore()) {
+                        // also refresh manually after errors
+                        if (messageError !== null || !hasNativeCookieStore()) {
                             cookiesController($container);
                         }
                     }
@@ -192,7 +194,8 @@ document.addEventListener(
                             });
 
                             // the polyfill does not support CookieStore change events, so refresh controller manually
-                            if (!hasNativeCookieStore()) {
+                            // also refresh manually after errors
+                            if (messageError !== null || !hasNativeCookieStore()) {
                                 cookiesController($container);
                             }
                         }
