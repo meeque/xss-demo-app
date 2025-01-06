@@ -1,0 +1,73 @@
+var workArea = document.createElement('div');
+document.currentScript.insertAdjacentElement('afterend', workArea);
+
+workArea.innerHTML = '\n'
+    + '<form class="cookie-form">\n'
+    + '<div>Domain: <input type="text" name="domain"></div>\n'
+    + '<div>Path: <input type="text" name="path"></div>\n'
+    + '<div>Name: <input type="text" name="name"></div>\n'
+    + '<div>Value: <input type="text" name="value"></div>\n'
+    + '<div>Secure: <input type="checkbox" name="secure"></div>\n'
+    + '<div>Samesite: <select name="samesite"><option>strict</option><option>lax</option><option>none</option></select></div>\n'
+    + '<div>Max-Age: <input type="text" name="max-age"></div>\n'
+    + '<div><button type="button" name="get">Get</button><button type="button" name="set">Set</button><button type="button" name="del">Delete</button></div>\n'
+    + '</form>\n';
+
+var newWindow = window.open('/assets/mocks/cookies.html', '_blank');
+
+var cookieForm = workArea.querySelector('form.cookie-form');
+var fieldDomain = cookieForm.querySelector('input[name=domain]');
+var fieldPath = cookieForm.querySelector('input[name=path]');
+var fieldName = cookieForm.querySelector('input[name=name]');
+var fieldValue = cookieForm.querySelector('input[name=value]');
+var fieldSecure = cookieForm.querySelector('input[name=secure]');
+var fieldSamesite = cookieForm.querySelector('select[name=samesite]');
+var fieldMaxAge = cookieForm.querySelector('input[name=max-age]');
+var buttonGet = cookieForm.querySelector('button[name=get]');
+var buttonSet = cookieForm.querySelector('button[name=set]');
+var buttonDel = cookieForm.querySelector('button[name=del]');
+
+buttonGet.addEventListener(
+    'click',
+    (event) => {
+        fieldValue.value = getCookieValue(fieldName.value);
+    }
+);
+
+buttonSet.addEventListener(
+    'click',
+    (event) => {
+        setCookie(fieldDomain.value, fieldPath.value, fieldName.value, fieldValue.value, fieldSecure.checked, fieldSamesite.value, fieldMaxAge.value);
+    }
+);
+
+buttonDel.addEventListener(
+    'click',
+    (event) => {
+        setCookie(fieldDomain.value, fieldPath.value, fieldName.value, '', false, '', 0);
+    }
+);
+
+function getCookieValue(name) {
+    for (const currentCookieString of document.cookie.split('; ')) {
+        const currentSparatorIndex = currentCookieString.indexOf('=');
+        if (currentSparatorIndex >= 0) {
+            const currentCookieName = currentCookieString.substring(0, currentSparatorIndex);
+            if (currentCookieName == name) {
+                return currentCookieString.substring(currentSparatorIndex + 1);
+            }
+        }
+
+    }
+    return null;
+}
+
+function setCookie(domain, path, name, value, secure, samesite, maxAge) {
+    document.cookie =
+        name + '=' + value + ';' +
+        (domain != '' ? 'domain=' + domain + ';' : '') +
+        (path != '' ? 'path=' + path + ';' : '') +
+        (secure ? 'secure;' : '') +
+        (samesite != '' ? 'samesite=' + samesite + ';' : '') +
+        (maxAge !== '' ? 'max-age=' + maxAge + ';' : '');
+}

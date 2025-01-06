@@ -265,6 +265,16 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
           value : 'assets/presets/js/attack-storage-in-tlbc.txt',
           select : this.selectPreset
         },
+        {
+          name : 'JS attack on cookies with an iframe',
+          value : 'assets/presets/js/attack-cookies-in-frame.txt',
+          select : this.selectPreset
+        },
+        {
+          name : 'JS attack on cookies with a new top-level browsing context',
+          value : 'assets/presets/js/attack-cookies-in-tlbc.txt',
+          select : this.selectPreset
+        },
       ]
     }
   ];
