@@ -37,42 +37,20 @@
         </table>
     </template>
 
-    <template id="storageNewEntry">
+    <template id="storageEntry">
         <tr>
-            <td></td>
+            <td class="index">
+                <input type="text" disabled>
+            </td>
             <td class="key">
-                <input type="text">
+                <input type="text" disabled>
             </td>
             <td class="item">
-                <input type="text">
+                <input type="text" disabled>
             </td>
-            <td class="actions">
-                <button type="button" name="save">Save</button>
-                <button type="button" name="cancel">Cancel</button>
-            </td>
-        </tr>
-    </template>
-
-    <template id="storageEntryDisplay">
-        <tr>
-            <td class="index"></td>
-            <td class="key"></td>
-            <td class="item"></td>
             <td class="actions">
                 <button type="button" name="edit">Edit</button>
                 <button type="button" name="delete">Delete</button>
-            </td>
-        </tr>
-    </template>
-
-    <template id="storageEntryEdit">
-        <tr>
-            <td class="index"></td>
-            <td class="key"></td>
-            <td class="item">
-                <input type="text">
-            </td>
-            <td class="actions">
                 <button type="button" name="save">Save</button>
                 <button type="button" name="cancel">Cancel</button>
             </td>

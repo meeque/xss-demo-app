@@ -2,9 +2,7 @@ document.addEventListener(
     'DOMContentLoaded',
     () => {
         const $$storage = document.getElementById('storage').content;
-        const $$storageNewEntry = document.getElementById('storageNewEntry').content;
-        const $$storageEntryDisplay = document.getElementById('storageEntryDisplay').content;
-        const $$storageEntryEdit = document.getElementById('storageEntryEdit').content;
+        const $$storageEntry = document.getElementById('storageEntry').content;
 
         for (const localStorageViewContainer of document.querySelectorAll('.localStorage')) {
             storageController(localStorageViewContainer, window.localStorage);
@@ -32,7 +30,7 @@ document.addEventListener(
             $buttonNew.addEventListener(
                 'click',
                 () => {
-                    newEntryController();
+                    entryController();
                 }
             );
 
@@ -47,112 +45,112 @@ document.addEventListener(
 
             $container.insertAdjacentElement('beforeend', $tableStorage);
 
-            function newEntryController() {
-                disableButtons();
+            function entryController(index) {
 
-                const $rowNewEntry = $$storageNewEntry.cloneNode(true).querySelector('tr');
-                const $inputKey = $rowNewEntry.querySelector('.key input');
-                const $inputValue = $rowNewEntry.querySelector('.item input');
-                const $cellActions = $rowNewEntry.querySelector('.actions')
+                const $entry = $$storageEntry.cloneNode(true).querySelector('tr');
+                $rowActions.insertAdjacentElement('beforebegin', $entry);
+
+                const $inputIndex = $entry.querySelector('.index input');
+                const $inputKey = $entry.querySelector('.key input');
+                const $inputItem = $entry.querySelector('.item input');
+                const $cellActions = $entry.querySelector('.actions');
+                const $buttonEdit = $cellActions.querySelector('button[name=edit]');
+                const $buttonDelete = $cellActions.querySelector('button[name=delete]');
                 const $buttonSave = $cellActions.querySelector('button[name=save]');
                 const $buttonCancel = $cellActions.querySelector('button[name=cancel]');
 
-                $buttonSave.addEventListener(
-                    'click',
-                    () => {
-                        storage.setItem($inputKey.value, $inputValue.value);
-                        storageController($container, storage);
-                    }
-                );
+                var key = null;
+                var item = null;
 
-                $buttonCancel.addEventListener(
-                    'click',
-                    () => {
-                        storageController($container, storage);
-                    }
-                );
+                if (isExistingEntry()) {
+                    display();
+                } else {
+                    newEntry();
+                }
 
-                $rowActions.insertAdjacentElement('beforebegin', $rowNewEntry);
-            }
+                $buttonEdit.addEventListener('click', edit);
+                $buttonDelete.addEventListener('click', deleteEntry);
+                $buttonSave.addEventListener('click', save);
+                $buttonCancel.addEventListener('click', cancel);
 
-            function entryController(index) {
-                const key = storage.key(index)
-                const item = storage.getItem(key);
+                function display() {
+                    enableStandardButtons();
+                    $disable($inputKey, $inputItem, $buttonSave, $buttonCancel);
+                    refresh();
+                }
 
-                const $rowEntryDisplay = $$storageEntryDisplay.cloneNode(true).querySelector('tr');
-                const $cellIndex = $rowEntryDisplay.querySelector('.index');
-                const $cellKey = $rowEntryDisplay.querySelector('.key');
-                const $cellItem = $rowEntryDisplay.querySelector('.item');
-                const $cellActions = $rowEntryDisplay.querySelector('.actions');
-                const $buttonEdit = $cellActions.querySelector('button[name=edit]');
-                const $buttonDelete = $cellActions.querySelector('button[name=delete]');
-
-                $cellIndex.textContent = index;
-                $cellKey.textContent = key;
-                $cellItem.textContent = item;
-
-                $buttonEdit.addEventListener(
-                    'click',
-                    (event) => {
-                        editController();
-                    }
-                );
-
-                $buttonDelete.addEventListener(
-                    'click',
-                    () => {
-                        storage.removeItem(key);
-                        storageController($container, storage);
-                    }
-                );
-
-                $rowActions.insertAdjacentElement('beforebegin', $rowEntryDisplay);
-
-                function editController() {
+                function edit() {
                     disableButtons();
+                    $enable($inputItem, $buttonSave, $buttonCancel);
+                    refresh();
+                }
 
-                    const $rowEntryEdit = $$storageEntryEdit.cloneNode(true).querySelector('tr');
-                    const $cellIndex = $rowEntryEdit.querySelector('.index');
-                    const $cellKey = $rowEntryEdit.querySelector('.key');
-                    const $inputItem = $rowEntryEdit.querySelector('.item input');
-                    const $cellActions = $rowEntryEdit.querySelector('.actions');
-                    const $buttonSave = $cellActions.querySelector('button[name=save]');
-                    const $buttonCancel = $cellActions.querySelector('button[name=cancel]');
+                function newEntry() {
+                    disableButtons();
+                    $enable($inputKey, $inputItem, $buttonSave, $buttonCancel);
+                }
 
-                    $cellIndex.textContent = index;
-                    $cellKey.textContent = key;
+                function deleteEntry() {
+                    storage.removeItem(key);
+                    storageController($container, storage);
+                }
+
+                function save() {
+                    storage.setItem($inputKey.value, $inputItem.value);
+                    if (isExistingEntry()) {
+                        display();
+                    } else {
+                        storageController($container, storage);
+                    }
+                }
+
+                function cancel() {
+                    if (isExistingEntry()) {
+                        display();
+                    } else {
+                        $remove($entry);
+                        enableStandardButtons();
+                    }
+                }
+
+                function refresh() {
+                    key = storage.key(index);
+                    item = storage.getItem(key);
+
+                    $inputIndex.value = index;
+                    $inputKey.value = key;
                     $inputItem.value = item;
+                }
 
-                    $buttonSave.addEventListener(
-                        'click',
-                        () => {
-                            storage.setItem(key, $inputItem.value);
-                            storageController($container, storage);
-                        }
-                    );
-
-                    $buttonCancel.addEventListener(
-                        'click',
-                        () => {
-                            storageController($container, storage);
-                        }
-                    );
-
-                    $rowEntryDisplay.insertAdjacentElement('afterend', $rowEntryEdit);
-                    $remove($rowEntryDisplay);
+                function isExistingEntry() {
+                    return typeof index == "number";
                 }
             }
 
             function disableButtons() {
-                for ($button of $tableStorage.querySelectorAll('button')) {
-                    $button.disabled = true;
-                }
+                $disable(... $tableStorage.querySelectorAll('button'));
+            }
+
+            function enableStandardButtons() {
+                $enable(... $tableStorage.querySelectorAll('button[name=new], button[name=edit], button[name=delete]'));
             }
         }
 
-        function $remove(node) {
-            if (node && node.parentNode) {
-                node.parentNode.removeChild(node);
+        function $enable() {
+            for (arg of arguments) {
+                arg.disabled = false;
+            }
+        }
+
+        function $disable() {
+            for (arg of arguments) {
+                arg.disabled = true;
+            }
+        }
+
+        function $remove($node) {
+            if ($node && $node.parentNode) {
+                $node.parentNode.removeChild($node);
             }
         }
     }
