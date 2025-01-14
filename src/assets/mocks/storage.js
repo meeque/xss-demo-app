@@ -90,6 +90,7 @@ document.addEventListener(
                     $entry.classList.remove('new');
                     disableButtons();
                     $enable($inputItem, $buttonSave, $buttonCancel);
+                    $inputItem.focus();
                     refresh();
                 }
 
@@ -98,6 +99,7 @@ document.addEventListener(
                     $entry.classList.remove('edit');
                     disableButtons();
                     $enable($inputKey, $inputItem, $buttonSave, $buttonCancel);
+                    $inputKey.focus();
                 }
 
                 function deleteEntry() {
