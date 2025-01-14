@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>XSS Demo: Browser Storage Mock</title>
+    <link rel="stylesheet" href="storage.css">
     <script src="storage.js"></script>
 </head>
 <body>
@@ -27,7 +28,7 @@
                 <th>Item</th>
                 <th></th>
             </tr>
-            <tr class="messageEmpty">
+            <tr class="message empty">
                 <td colspan="4">No items in this storage.</td>
             </tr>
             <tr class="actions">
@@ -38,7 +39,7 @@
     </template>
 
     <template id="storageEntry">
-        <tr>
+        <tr class="entry">
             <td class="index">
                 <input type="text" disabled>
             </td>

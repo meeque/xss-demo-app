@@ -13,37 +13,38 @@ document.addEventListener(
 
         function storageController($container, storage) {
 
-            $remove($container.querySelector('table.storage'));
-
             const $tableStorage = $$storage.cloneNode(true).querySelector('table.storage');
-            const $rowMessageEmpty = $tableStorage.querySelector('tr.messageEmpty');
+            $container.insertAdjacentElement('beforeend', $tableStorage);
+
             const $rowActions = $tableStorage.querySelector('tr.actions');
             const $buttonNew = $rowActions.querySelector('button[name=new]');
 
-            if (storage.length != 0) {
-                $remove($rowMessageEmpty);
-                for (let i = 0; i < storage.length; i++) {
-                    entryController(i);
-                }
-            }
+            init();
 
-            $buttonNew.addEventListener(
-                'click',
-                () => {
-                    entryController();
-                }
-            );
+            $buttonNew.addEventListener('click', entryController);
 
             window.addEventListener(
                 'storage',
                 (event) => {
                     if (event.storageArea === storage) {
-                        storageController($container, storage);
+                        init();
                     }
                 }
             );
 
-            $container.insertAdjacentElement('beforeend', $tableStorage);
+            function init() {
+                for ( const $entry of $tableStorage.querySelectorAll('tr.entry')) {
+                    $remove($entry);
+                }
+                if (storage.length != 0) {
+                    for (let i = 0; i < storage.length; i++) {
+                        entryController(i);
+                    }
+                    $tableStorage.classList.remove('empty');
+                } else {
+                    $tableStorage.classList.add('empty');
+                }
+            }
 
             function entryController(index) {
 
@@ -74,25 +75,30 @@ document.addEventListener(
                 $buttonCancel.addEventListener('click', cancel);
 
                 function display() {
+                    $entry.classList.remove('new', 'edit');
                     enableStandardButtons();
                     $disable($inputKey, $inputItem, $buttonSave, $buttonCancel);
                     refresh();
                 }
 
                 function edit() {
+                    $entry.classList.add('edit');
+                    $entry.classList.remove('new');
                     disableButtons();
                     $enable($inputItem, $buttonSave, $buttonCancel);
                     refresh();
                 }
 
                 function newEntry() {
+                    $entry.classList.add('new');
+                    $entry.classList.remove('edit');
                     disableButtons();
                     $enable($inputKey, $inputItem, $buttonSave, $buttonCancel);
                 }
 
                 function deleteEntry() {
                     storage.removeItem(key);
-                    storageController($container, storage);
+                    init();
                 }
 
                 function save() {
@@ -100,7 +106,7 @@ document.addEventListener(
                     if (isExistingEntry()) {
                         display();
                     } else {
-                        storageController($container, storage);
+                        init($container, storage);
                     }
                 }
 
@@ -137,13 +143,13 @@ document.addEventListener(
         }
 
         function $enable() {
-            for (arg of arguments) {
+            for (const arg of arguments) {
                 arg.disabled = false;
             }
         }
 
         function $disable() {
-            for (arg of arguments) {
+            for (const arg of arguments) {
                 arg.disabled = true;
             }
         }

@@ -1,0 +1,24 @@
+
+table.storage tr.message {
+    display: none;
+}
+
+table.storage.empty tr.message.empty {
+    display: table-row;
+}
+
+table.storage tr.entry button[name=save],
+table.storage tr.entry button[name=cancel],
+table.storage tr.entry.edit button[name=edit],
+table.storage tr.entry.edit button[name=delete],
+table.storage tr.entry.new button[name=edit],
+table.storage tr.entry.new button[name=delete] {
+    display: none;
+}
+
+table.storage tr.entry.edit button[name=save],
+table.storage tr.entry.edit button[name=cancel],
+table.storage tr.entry.new button[name=save],
+table.storage tr.entry.new button[name=cancel] {
+    display: inline-block;
+}
