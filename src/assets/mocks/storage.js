@@ -38,7 +38,8 @@ document.addEventListener(
                 }
                 if (storage.length != 0) {
                     for (let i = 0; i < storage.length; i++) {
-                        entryController(i);
+                        // TODO sort entries by key
+                        entryController(storage.key(i));
                     }
                     $tableStorage.classList.remove('empty');
                 } else {
@@ -46,12 +47,13 @@ document.addEventListener(
                 }
             }
 
-            function entryController(index) {
+            function entryController(key) {
+
+                var item = null;
 
                 const $entry = $$storageEntry.cloneNode(true).querySelector('tr');
                 $rowActions.insertAdjacentElement('beforebegin', $entry);
 
-                const $inputIndex = $entry.querySelector('.index input');
                 const $inputKey = $entry.querySelector('.key input');
                 const $inputItem = $entry.querySelector('.item input');
                 const $cellActions = $entry.querySelector('.actions');
@@ -59,9 +61,6 @@ document.addEventListener(
                 const $buttonDelete = $cellActions.querySelector('button[name=delete]');
                 const $buttonSave = $cellActions.querySelector('button[name=save]');
                 const $buttonCancel = $cellActions.querySelector('button[name=cancel]');
-
-                var key = null;
-                var item = null;
 
                 if (isExistingEntry()) {
                     display();
@@ -120,16 +119,14 @@ document.addEventListener(
                 }
 
                 function refresh() {
-                    key = storage.key(index);
                     item = storage.getItem(key);
 
-                    $inputIndex.value = index;
                     $inputKey.value = key;
                     $inputItem.value = item;
                 }
 
                 function isExistingEntry() {
-                    return typeof index == "number";
+                    return typeof key == "string";
                 }
             }
 

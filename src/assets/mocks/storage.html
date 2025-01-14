@@ -23,16 +23,15 @@
     <template id="storage">
         <table class="storage">
             <tr class="head">
-                <th>Index</th>
                 <th>Key</th>
                 <th>Item</th>
                 <th></th>
             </tr>
             <tr class="message empty">
-                <td colspan="4">No items in this storage.</td>
+                <td colspan="3">No items in this storage.</td>
             </tr>
             <tr class="actions">
-                <td colspan="3"></td>
+                <td colspan="2"></td>
                 <td><button type="button" name="new">Add New Item...</button></td>
             </tr>
         </table>
@@ -40,9 +39,6 @@
 
     <template id="storageEntry">
         <tr class="entry">
-            <td class="index">
-                <input type="text" disabled>
-            </td>
             <td class="key">
                 <input type="text" disabled>
             </td>
