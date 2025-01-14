@@ -37,11 +37,16 @@ document.addEventListener(
                     $remove($entry);
                 }
                 if (storage.length != 0) {
-                    for (let i = 0; i < storage.length; i++) {
-                        // TODO sort entries by key
-                        entryController(storage.key(i));
-                    }
                     $tableStorage.classList.remove('empty');
+
+                    const keys = [];
+                    for (let i = 0; i < storage.length; i++) {
+                        keys.push(storage.key(i));
+                    }
+                    keys.sort();
+                    for (const key of keys) {
+                        entryController(key);
+                    }
                 } else {
                     $tableStorage.classList.add('empty');
                 }
