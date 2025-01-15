@@ -256,23 +256,21 @@ document.addEventListener(
 
         function parseDate(date) {
             const tenYearsInMillis = 10 * 365 * 24 * 60 * 60 * 1000;
+            const integerRegex = /^(\+|-)?[0-9]+$/;
 
-            if (typeof date == 'number') {
-                if (date > tenYearsInMillis) {
-                    return date;
-                }
-                return Date.now() + date;
-            }
-
-            if (typeof date == 'string') {
-                const parsedDate = Date.parse(date);
-                if (!Number.isNaN(parsedDate)) {
-                    return parsedDate;
-                }
+            if (integerRegex.exec(date) !== null) {
                 const numericDate = Number.parseInt(date);
                 if (!Number.isNaN(numericDate)) {
-                    return parseDate(numericDate);
+                    if (numericDate > tenYearsInMillis) {
+                        return numericDate;
+                    }
+                    return Date.now() + numericDate;
                 }
+            }
+
+            const parsedDate = Date.parse(date);
+            if (!Number.isNaN(parsedDate)) {
+                return parsedDate;
             }
 
             return null;
