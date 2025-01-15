@@ -6,6 +6,13 @@ document.addEventListener(
 
         const $dataListCookieDomains = document.getElementById('cookieDomains');
 
+        const messageExpiresHint = 'Use any of the following date formats:\n'
+            + 'a calendar date and optional time (e.g. in ISO format),\n'
+            + 'or an integer number denoting milliseconds from now (maximum 10 years),\n'
+            + 'or a (larger) integer number denoting milliseconds from 1970.\n'
+            + 'A date in the past will delete the cookie\n.'
+            + 'Enter anything else (e.g. leave this file empty) to create a cookie that does not expire, a.k.a. a session cookie.';
+
         for (const domain of suggestCookieDomains()) {
             const $domainOption = document.createElement('option');
             $domainOption.value = domain;
@@ -100,21 +107,34 @@ document.addEventListener(
                     enableStandardButtons();
                     $disable($inputDomain, $inputPath, $inputName, $inputValue, $selectSameSite, $inputExpires, $buttonSave, $buttonCancel);
                     refresh();
+
+                    if (cookie.expires) {
+                        $inputExpires.title = new Date(cookie.expires).toISOString();
+                    } else {
+                        $inputExpires.value = 'session';
+                        $inputExpires.title = 'This is a session cookie, which does not have a predetermined expiry date.';
+                    }
                 }
 
                 function edit() {
                     $rowCookie.classList.add('edit');
                     $rowCookie.classList.remove('new');
                     disableButtons();
-                    $enable($inputValue, $buttonSave, $buttonCancel);
-                    $inputValue.focus();
+
                     refresh();
+                    $inputExpires.title = messageExpiresHint;
+
+                    $enable($inputValue, $selectSameSite, $inputExpires, $buttonSave, $buttonCancel);
+                    $inputValue.focus();
                 }
 
                 function newCookie() {
                     $rowCookie.classList.add('new');
                     $rowCookie.classList.remove('edit');
                     disableButtons();
+
+                    $inputExpires.title = messageExpiresHint;
+
                     $enable($inputDomain, $inputPath, $inputName, $inputValue, $selectSameSite, $inputExpires, $buttonSave, $buttonCancel);
                     $inputName.focus();
                 }
@@ -236,12 +256,14 @@ document.addEventListener(
 
         function parseDate(date) {
             const tenYearsInMillis = 10 * 365 * 24 * 60 * 60 * 1000;
+
             if (typeof date == 'number') {
                 if (date > tenYearsInMillis) {
                     return date;
                 }
                 return Date.now() + date;
             }
+
             if (typeof date == 'string') {
                 const parsedDate = Date.parse(date);
                 if (!Number.isNaN(parsedDate)) {
@@ -252,6 +274,7 @@ document.addEventListener(
                     return parseDate(numericDate);
                 }
             }
+
             return null;
         }
 
