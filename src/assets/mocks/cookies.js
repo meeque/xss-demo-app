@@ -2,9 +2,7 @@ document.addEventListener(
     'DOMContentLoaded',
     () => {
         const $$cookies = document.getElementById('cookies').content;
-        const $$cookiesNew = document.getElementById('cookiesNew').content;
-        const $$cookieDisplay = document.getElementById('cookieDisplay').content;
-        const $$cookieEdit = document.getElementById('cookieEdit').content;
+        const $$cookie = document.getElementById('cookie').content;
 
         const $dataListCookieDomains = document.getElementById('cookieDomains');
 
@@ -22,201 +20,162 @@ document.addEventListener(
 
         async function cookiesController($container) {
 
-            $remove($container.querySelector('table.cookies'));
-
             const $tableCookies = $$cookies.cloneNode(true).querySelector('table.cookies');
-            const $rowMessageEmpty = $tableCookies.querySelector('tr.messageEmpty');
-            const $rowActions = $tableCookies.querySelector('tr.actions');
-            const $cellMessageError = $rowActions.querySelector('td.messageError');
-            const $buttonNew = $rowActions.querySelector('button[name=new]');
-
-            if (messageError === null) {
-                $cellMessageError.textContent = '';
-            } else {
-                $cellMessageError.textContent = messageError;
-                messageError = null;
-            }
-
-            const cookies = await window.cookieStore.getAll();
-            if (window.cookies.length != 0) {
-
-                cookies.sort( (c1, c2) => c1.name == c2.name ? 0 : (c1.name < c2.name ? -1 : 1 ) );
-                cookies.sort( (c1, c2) => c1.path == c2.path ? 0 : (c1.path < c2.path ? -1 : 1 ) );
-                cookies.sort( (c1, c2) => c1.domain == c2.domain ? 0 : (c1.domain < c2.domain ? -1 : 1 ) );
-
-                $remove($rowMessageEmpty);
-                for (const cookie of cookies) {
-                    cookieDisplayController(cookie);
-                }
-            }
-
-            $buttonNew.addEventListener(
-                'click',
-                () => {
-                    cookiesNewController();
-                }
-            );
-
-            if (hasNativeCookieStore()) {
-                cookieStore.onchange = () => cookiesController($container);
-            }
-
             $container.insertAdjacentElement('beforeend', $tableCookies);
 
-            function cookiesNewController() {
-                disableButtons();
+            const $rowMessageEmpty = $tableCookies.querySelector('tr.messageEmpty');
+            const $rowActions = $tableCookies.querySelector('tr.actions');
+            const $cellMessageError = $rowActions.querySelector('td.message.error');
+            const $buttonNew = $rowActions.querySelector('button[name=new]');
 
-                const $rowCookiesNew = $$cookiesNew.cloneNode(true).querySelector('tr');
-                const $inputDomain = $rowCookiesNew.querySelector('.domain input');
-                const $inputPath = $rowCookiesNew.querySelector('.path input');
-                const $inputName = $rowCookiesNew.querySelector('.name input');
-                const $inputValue = $rowCookiesNew.querySelector('.value input');
-                const $selectSameSite = $rowCookiesNew.querySelector('.sameSite select');
-                const $inputExpires = $rowCookiesNew.querySelector('.expires input');
-                const $cellActions = $rowCookiesNew.querySelector('.actions')
+            init();
+
+            if (hasNativeCookieStore()) {
+                cookieStore.onchange = init;
+            }
+
+            $buttonNew.addEventListener('click', cookieController);
+
+            async function init() {
+
+                for ( const $rowCookie of $tableCookies.querySelectorAll('tr.cookie')) {
+                    $remove($rowCookie);
+                }
+
+                if (messageError === null) {
+                    $cellMessageError.textContent = '';
+                } else {
+                    $cellMessageError.textContent = messageError;
+                    messageError = null;
+                }
+
+                const cookies = await window.cookieStore.getAll();
+                if (cookies.length != 0) {
+                    $tableCookies.classList.remove('empty');
+
+                    cookies.sort( (c1, c2) => c1.name == c2.name ? 0 : (c1.name < c2.name ? -1 : 1 ) );
+                    cookies.sort( (c1, c2) => c1.path == c2.path ? 0 : (c1.path < c2.path ? -1 : 1 ) );
+                    cookies.sort( (c1, c2) => c1.domain == c2.domain ? 0 : (c1.domain < c2.domain ? -1 : 1 ) );
+
+                    $remove($rowMessageEmpty);
+                    for (const cookie of cookies) {
+                        cookieController(cookie);
+                    }
+                } else {
+                    $tableCookies.classList.add('empty');
+                }
+            }
+
+            function cookieController(cookie) {
+
+                const $rowCookie = $$cookie.cloneNode(true).querySelector('tr');
+                $rowActions.insertAdjacentElement('beforebegin', $rowCookie);
+
+                const $inputDomain = $rowCookie.querySelector('.domain input');
+                const $inputPath = $rowCookie.querySelector('.path input');
+                const $inputName = $rowCookie.querySelector('.name input');
+                const $inputValue = $rowCookie.querySelector('.value input');
+                const $checkboxSecure = $rowCookie.querySelector('.secure input');
+                const $selectSameSite = $rowCookie.querySelector('.sameSite select');
+                const $inputExpires = $rowCookie.querySelector('.expires input');
+                const $cellActions = $rowCookie.querySelector('.actions');
+                const $buttonEdit = $cellActions.querySelector('button[name=edit]');
+                const $buttonDelete = $cellActions.querySelector('button[name=delete]');
                 const $buttonSave = $cellActions.querySelector('button[name=save]');
                 const $buttonCancel = $cellActions.querySelector('button[name=cancel]');
 
-                $buttonSave.addEventListener(
-                    'click',
-                    async () => {
-                        await setCookie({
-                            domain: $inputDomain.value,
-                            path: $inputPath.value,
-                            name: $inputName.value,
-                            value: $inputValue.value,
-                            sameSite: $selectSameSite.value,
-                            expires: $inputExpires.value,
-                        });
-
-                        // the polyfill does not support CookieStore change events, so refresh controller manually
-                        // also refresh manually after errors
-                        if (messageError !== null || !hasNativeCookieStore()) {
-                            cookiesController($container);
-                        }
-                    }
-                );
-
-                $buttonCancel.addEventListener(
-                    'click',
-                    () => {
-                        cookiesController($container);
-                    }
-                );
-
-                $rowActions.insertAdjacentElement('beforebegin', $rowCookiesNew);
-            }
-
-            function cookieDisplayController(cookie) {
-
-                const $rowCookieDisplay = $$cookieDisplay.cloneNode(true).querySelector('tr');
-                const $cellDomain = $rowCookieDisplay.querySelector('.domain');
-                const $cellPath = $rowCookieDisplay.querySelector('.path');
-                const $cellName = $rowCookieDisplay.querySelector('.name');
-                const $cellValue = $rowCookieDisplay.querySelector('.value');
-                const $cellSecure = $rowCookieDisplay.querySelector('.secure');
-                const $cellSameSite = $rowCookieDisplay.querySelector('.sameSite');
-                const $cellExpires = $rowCookieDisplay.querySelector('.expires');
-                const $cellActions = $rowCookieDisplay.querySelector('.actions');
-                const $buttonEdit = $cellActions.querySelector('button[name=edit]');
-                const $buttonDelete = $cellActions.querySelector('button[name=delete]');
-
-                $cellDomain.textContent = cookie.domain;
-                $cellPath.textContent = cookie.path;
-                $cellName.textContent = cookie.name;
-                $cellValue.textContent = cookie.value;
-                $cellSecure.textContent = displayOptionalBoolean(cookie.secure);
-                $cellSameSite.textContent = cookie.sameSite;
-
-                if (cookie.expires) {
-                    $cellExpires.textContent = cookie.expires;
-                    $cellExpires.setAttribute('title', new Date(cookie.expires).toISOString());
+                if (isExistingCookie()) {
+                    display();
                 } else {
-                    $cellExpires.textContent = 'session';
-                    $cellExpires.setAttribute('title', 'This is a session cookie, which does not have a predetermined expiry date.');
+                    newCookie();
                 }
 
-                $buttonEdit.addEventListener(
-                    'click',
-                    (event) => {
-                        cookieEditController($rowCookieDisplay, cookie);
-                    }
-                );
+                $buttonEdit.addEventListener('click', edit);
+                $buttonDelete.addEventListener('click', deleteCookie);
+                $buttonSave.addEventListener('click', save);
+                $buttonCancel.addEventListener('click', cancel);
 
-                $buttonDelete.addEventListener(
-                    'click',
-                    async () => {
-                        await deleteCookie(cookie);
+                function display() {
+                    $rowCookie.classList.remove('new', 'edit');
+                    enableStandardButtons();
+                    $disable($inputDomain, $inputPath, $inputName, $inputValue, $selectSameSite, $inputExpires, $buttonSave, $buttonCancel);
+                    refresh();
+                }
 
-                        // the polyfill does not support CookieStore change events, so refresh controller manually
-                        // also refresh manually after errors
-                        if (messageError !== null || !hasNativeCookieStore()) {
-                            cookiesController($container);
-                        }
-                    }
-                );
-
-                $rowActions.insertAdjacentElement('beforebegin', $rowCookieDisplay);
-
-                function cookieEditController() {
+                function edit() {
+                    $rowCookie.classList.add('edit');
+                    $rowCookie.classList.remove('new');
                     disableButtons();
+                    $enable($inputValue, $buttonSave, $buttonCancel);
+                    $inputValue.focus();
+                    refresh();
+                }
 
-                    const $rowEntryEdit = $$cookieEdit.cloneNode(true).querySelector('tr');
-                    const $cellDomain = $rowEntryEdit.querySelector('.domain');
-                    const $cellPath = $rowEntryEdit.querySelector('.path');
-                    const $cellName = $rowEntryEdit.querySelector('.name');
-                    const $inputValue = $rowEntryEdit.querySelector('.value input');
-                    const $checkboxSecure = $rowEntryEdit.querySelector('.secure input');
-                    const $selectSameSite = $rowEntryEdit.querySelector('.sameSite select');
-                    const $inputExpires = $rowEntryEdit.querySelector('.expires input');
-                    const $cellActions = $rowEntryEdit.querySelector('.actions');
-                    const $buttonSave = $cellActions.querySelector('button[name=save]');
-                    const $buttonCancel = $cellActions.querySelector('button[name=cancel]');
+                function newCookie() {
+                    $rowCookie.classList.add('new');
+                    $rowCookie.classList.remove('edit');
+                    disableButtons();
+                    $enable($inputDomain, $inputPath, $inputName, $inputValue, $selectSameSite, $inputExpires, $buttonSave, $buttonCancel);
+                    $inputName.focus();
+                }
 
-                    $cellDomain.textContent = cookie.domain;
-                    $cellPath.textContent = cookie.path;
-                    $cellName.textContent = cookie.name;
+                async function deleteCookie() {
+                    await unsetCookie(cookie);
+
+                    // the polyfill does not support CookieStore change events, so refresh controller manually
+                    // also refresh manually after errors
+                    if (messageError !== null || !hasNativeCookieStore()) {
+                        init();
+                    }
+                }
+
+                async function save() {
+                    await setCookie({
+                        domain: $inputDomain.value,
+                        path: $inputPath.value,
+                        name: $inputName.value,
+                        value: $inputValue.value,
+                        sameSite: $selectSameSite.value,
+                        expires: $inputExpires.value,
+                    });
+
+                    // the polyfill does not support CookieStore change events, so refresh controller manually
+                    // also refresh manually after errors
+                    if (messageError !== null || !hasNativeCookieStore()) {
+                        init();
+                    }
+                }
+
+                function cancel() {
+                    if (isExistingCookie()) {
+                        display();
+                    } else {
+                        $remove($rowCookie);
+                        enableStandardButtons();
+                    }
+                }
+
+                function refresh() {
+                    $inputDomain.value = cookie.domain;
+                    $inputPath.value = cookie.path;
+                    $inputName.value = cookie.name;
                     $inputValue.value = cookie.value;
                     $checkboxSecure.checked = !!cookie.secure;
                     $selectSameSite.value = cookie.sameSite;
                     $inputExpires.value = cookie.expires;
+                }
 
-                    $buttonSave.addEventListener(
-                        'click',
-                        async () => {
-                            await setCookie({
-                                domain: $cellDomain.textContent,
-                                path: $cellPath.textContent,
-                                name: $cellName.textContent,
-                                value: $inputValue.value,
-                                sameSite: $selectSameSite.value,
-                                expires: $inputExpires.value,
-                            });
-
-                            // the polyfill does not support CookieStore change events, so refresh controller manually
-                            // also refresh manually after errors
-                            if (messageError !== null || !hasNativeCookieStore()) {
-                                cookiesController($container);
-                            }
-                        }
-                    );
-
-                    $buttonCancel.addEventListener(
-                        'click',
-                        () => {
-                            cookiesController($container);
-                        }
-                    );
-
-                    $rowCookieDisplay.insertAdjacentElement('afterend', $rowEntryEdit);
-                    $remove($rowCookieDisplay);
+                function isExistingCookie() {
+                    return (typeof cookie == "object") && !(cookie instanceof Event);
                 }
             }
 
             function disableButtons() {
-                for ($button of $tableCookies.querySelectorAll('button')) {
-                    $button.disabled = true;
-                }
+                $disable(... $tableCookies.querySelectorAll('button'));
+            }
+
+            function enableStandardButtons() {
+                $enable(... $tableCookies.querySelectorAll('button[name=new], button[name=edit], button[name=delete]'));
             }
         }
 
@@ -243,7 +202,7 @@ document.addEventListener(
             }
         }
 
-        async function deleteCookie(options) {
+        async function unsetCookie(options) {
             try {
                 if (hasNativeCookieStore()) {
                     await window.cookieStore.delete({
@@ -296,8 +255,16 @@ document.addEventListener(
             return null;
         }
 
-        function displayOptionalBoolean(value) {
-            return (value === true) ? '✔' : (value === false) ? '✗' : '-';
+        function $enable() {
+            for (const arg of arguments) {
+                arg.disabled = false;
+            }
+        }
+
+        function $disable() {
+            for (const arg of arguments) {
+                arg.disabled = true;
+            }
         }
 
         function $remove(node) {

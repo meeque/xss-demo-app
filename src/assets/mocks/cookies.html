@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>XSS Demo: Browser Storage Mock</title>
+    <title>XSS Demo: Cookies Mock</title>
+    <link rel="stylesheet" href="cookies.css">
     <script src="/scripts.js"></script>
     <script src="cookies.js"></script>
 </head>
@@ -9,10 +10,10 @@
 
     <h1>XSS Demo: Cookies Mock</h1>
     <p>
-        This is a simple HTML document that displays the contents of browser cookies.
+        This is a simple HTML document that displays browser cookies.
     </p>
     <p>
-        For technical reasons, this client-side mock can only work with cookies that are not <code>HTTPOnly</code>.
+        For technical reasons, this client-side mock can only work with cookies that are <strong>not</strong> <code>HTTPOnly</code>.
     </p>
 
     <div class="cookies">
@@ -32,18 +33,18 @@
                 <th>Expires</th>
                 <th>Actions</th>
             </tr>
-            <tr class="messageEmpty">
+            <tr class="message empty">
                 <td colspan="9">No non-<code>HTTPOnly</code> cookies set for this domain.</td>
             </tr>
             <tr class="actions">
-                <td colspan="8" class="messageError">An error has occurred.</td>
+                <td colspan="8" class="message error">An error has occurred.</td>
                 <td><button type="button" name="new">Create New Cookie...</button></td>
             </tr>
         </table>
     </template>
 
-    <template id="cookiesNew">
-        <tr>
+    <template id="cookie">
+        <tr class="cookie">
             <td class="domain">
                 <input type="text" list="cookieDomains">
             </td>
@@ -73,62 +74,15 @@
                 <input type="text">
             </td>
             <td class="actions">
-                <button type="button" name="save">Save</button>
-                <button type="button" name="cancel">Cancel</button>
-            </td>
-        </tr>
-    </template>
-
-    <template id="cookieDisplay">
-        <tr>
-            <td class="domain"></td>
-            <td class="path"></td>
-            <td class="name"></td>
-            <td class="value"></td>
-            <td class="secure"></td>
-            <td class="httpOnly">✗</td>
-            <td class="sameSite"></td>
-            <td class="expires"></td>
-            <td class="actions">
                 <button type="button" name="edit">Edit</button>
                 <button type="button" name="delete">Delete</button>
-            </td>
-        </tr>
-    </template>
-
-    <template id="cookieEdit">
-        <tr>
-            <td class="domain"></td>
-            <td class="path"></td>
-            <td class="name"></td>
-            <td class="value">
-                <input type="text">
-            </td>
-            <td class="secure">
-                <input type="checkbox" disabled checked>
-            </td>
-            <td class="httpOnly">
-                <input type="checkbox" disabled>
-            </td>
-            <td class="sameSite">
-                <select>
-                    <option value="strict">strict</option>
-                    <option value="lax">lax</option>
-                    <option value="none">none</option>
-                </select>
-            </td>
-            <td class="expires">
-                <input type="text">
-            </td>
-            <td class="actions">
                 <button type="button" name="save">Save</button>
                 <button type="button" name="cancel">Cancel</button>
             </td>
         </tr>
     </template>
 
-    <datalist id="cookieDomains">
-    </datalist>
+    <datalist id="cookieDomains"></datalist>
 
 </body>
 </html>

@@ -1,0 +1,24 @@
+
+table.cookies tr.message {
+    display: none;
+}
+
+table.cookies.empty tr.message.empty {
+    display: table-row;
+}
+
+table.cookies tr.cookie button[name=save],
+table.cookies tr.cookie button[name=cancel],
+table.cookies tr.cookie.edit button[name=edit],
+table.cookies tr.cookie.edit button[name=delete],
+table.cookies tr.cookie.new button[name=edit],
+table.cookies tr.cookie.new button[name=delete] {
+    display: none;
+}
+
+table.cookies tr.cookie.edit button[name=save],
+table.cookies tr.cookie.edit button[name=cancel],
+table.cookies tr.cookie.new button[name=save],
+table.cookies tr.cookie.new button[name=cancel] {
+    display: inline-block;
+}
