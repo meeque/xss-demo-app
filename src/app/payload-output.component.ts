@@ -1,16 +1,8 @@
-import {
-  Component,
-  ViewChild,
-  ElementRef,
-  Input,
-  Output,
-  EventEmitter
-} from '@angular/core';
-import {
-  PayloadOutputDescriptor
-} from './payload-output.service';
 import { NgIf, NgClass } from '@angular/common';
+import { Component, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
+import { PayloadOutputDescriptor } from './payload-output.service';
 
 @Component({
     selector: 'payload-output',

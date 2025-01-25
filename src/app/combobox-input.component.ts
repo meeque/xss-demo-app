@@ -1,16 +1,6 @@
-import {
-  Component,
-  Input,
-  ViewChild,
-  ViewChildren,
-  QueryList,
-  ViewContainerRef,
-  ChangeDetectorRef,
-  TemplateRef,
-  AfterViewChecked
-} from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { NgFor, NgIf } from '@angular/common';
+import { Component, Input, ViewChild, ViewChildren, QueryList, ViewContainerRef, ChangeDetectorRef, TemplateRef, AfterViewChecked } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 
 export interface MenuEntry<T> {

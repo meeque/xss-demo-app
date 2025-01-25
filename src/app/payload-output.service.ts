@@ -1,9 +1,5 @@
-import {
-  Injectable
-} from '@angular/core';
-import {
-  DomSanitizer
-} from '@angular/platform-browser';
+import { Injectable } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 declare var DOMPurify: any;
 

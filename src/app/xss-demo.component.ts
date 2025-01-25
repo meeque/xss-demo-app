@@ -1,24 +1,10 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  ViewChild,
-  ChangeDetectorRef,
-  TemplateRef
-} from '@angular/core';
-import {
-  HttpClient
-} from '@angular/common/http';
-import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from './combobox-input.component';
-import {
-  PayloadOutputService,
-  PayloadOutputContext,
-  ContextDescriptor,
-  PayloadOutputDescriptor,
-  PayloadOutputQuality
-} from './payload-output.service';
-import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor, NgStyle } from '@angular/common';
+import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, TemplateRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+
+import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from './combobox-input.component';
+import { PayloadOutputService, PayloadOutputContext, ContextDescriptor, PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
 
 
