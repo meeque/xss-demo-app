@@ -9,11 +9,7 @@ import {
 import {
   HttpClient
 } from '@angular/common/http';
-import {
-  MenuItem,
-  MenuGroup,
-  MenuItemContext
-} from './combobox-input.component';
+import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from './combobox-input.component';
 import {
   PayloadOutputService,
   PayloadOutputContext,
@@ -21,12 +17,17 @@ import {
   PayloadOutputDescriptor,
   PayloadOutputQuality
 } from './payload-output.service';
+import { FormsModule } from '@angular/forms';
+import { NgIf, NgFor, NgStyle } from '@angular/common';
+import { PayloadOutputComponent } from './payload-output.component';
 
 
 @Component({
-  selector: 'xss-demo-root',
-  templateUrl: './xss-demo.component.html',
-  styleUrls: ['./xss-demo.component.css']
+    selector: 'xss-demo-root',
+    templateUrl: './xss-demo.component.html',
+    styleUrls: ['./xss-demo.component.css'],
+    standalone: true,
+    imports: [ComboboxInputComponent, FormsModule, NgIf, NgFor, PayloadOutputComponent, NgStyle]
 })
 export class XssDemoComponent implements OnInit, AfterViewInit {
 

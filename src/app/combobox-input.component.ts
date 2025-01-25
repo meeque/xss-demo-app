@@ -9,6 +9,8 @@ import {
   TemplateRef,
   AfterViewChecked
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NgFor, NgIf } from '@angular/common';
 
 
 export interface MenuEntry<T> {
@@ -46,8 +48,10 @@ export class MenuItemContext {
 
 
 @Component({
-  selector: 'combobox-input',
-  templateUrl: './combobox-input.component.html'
+    selector: 'combobox-input',
+    templateUrl: './combobox-input.component.html',
+    standalone: true,
+    imports: [FormsModule, NgFor, NgIf]
 })
 export class ComboboxInputComponent implements AfterViewChecked {
 

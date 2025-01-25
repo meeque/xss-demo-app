@@ -9,11 +9,15 @@ import {
 import {
   PayloadOutputDescriptor
 } from './payload-output.service';
+import { NgIf, NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'payload-output',
-  templateUrl: './payload-output.component.html',
-  styleUrls: ['./payload-output.component.css']
+    selector: 'payload-output',
+    templateUrl: './payload-output.component.html',
+    styleUrls: ['./payload-output.component.css'],
+    standalone: true,
+    imports: [NgIf, NgClass, FormsModule]
 })
 export class PayloadOutputComponent<T> {
 
