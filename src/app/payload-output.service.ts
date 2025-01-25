@@ -14,7 +14,7 @@ export enum PayloadOutputContext {
 }
 
 
-export const enum PayloadOutputQuality {
+export enum PayloadOutputQuality {
   Recommended = 'Recommended',
   Questionable = 'Questionable',
   Insecure = 'Insecure'

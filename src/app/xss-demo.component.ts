@@ -276,7 +276,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   payloadOutputTechnologyFilters : string[] = [];
 
-  payloadOutputQualityFilters : PayloadOutputQuality[] = [];
+  payloadOutputQualityFilters : string[] = [];
 
   private _activeContext : string = 'HtmlContent';
 
@@ -371,7 +371,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     this.payloadOutputTechnologyFilters = newFilters;
   }
 
-  togglePayloadOutputQualityFilter(value : PayloadOutputQuality) {
+  togglePayloadOutputQualityFilter(value : string) {
     const newFilters = [];
     for (const currentValue of this.payloadOutputQualityFilters) {
       if (currentValue != value) {
