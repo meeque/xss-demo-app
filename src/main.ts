@@ -1,7 +1,7 @@
 import { enableProdMode, importProvidersFrom } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
-import { withInterceptorsFromDi, provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withNoXsrfProtection } from '@angular/common/http';
 
 import { PayloadOutputService } from './app/payload-output.service';
 import { XssDemoComponent } from './app/xss-demo.component';
@@ -16,7 +16,7 @@ bootstrapApplication(XssDemoComponent, {
     providers: [
         importProvidersFrom(BrowserModule, FormsModule),
         PayloadOutputService,
-        provideHttpClient(withInterceptorsFromDi())
+        provideHttpClient(withNoXsrfProtection())
     ]
 })
   .catch(err => console.error(err));
