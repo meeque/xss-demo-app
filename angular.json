@@ -113,7 +113,6 @@
       }
     }
   },
-  "defaultProject": "xss-app",
   "cli": {
     "analytics": false
   }
