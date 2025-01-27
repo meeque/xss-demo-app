@@ -1,11 +1,18 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { ComboboxInputComponent, MenuItem } from './combobox-input.component';
+import { ComboboxInputComponent, MenuGroup, MenuItem } from './combobox-input.component';
 
 describe('ComboboxInputComponent', () => {
 
   let fixture : ComponentFixture<ComboboxInputComponent>;
   let component : ComboboxInputComponent;
   let element : HTMLElement;
+
+  let selectedValue : string;
+
+  function selectValue(item : MenuItem<string>) : boolean {
+    selectedValue = item.value;
+    return true;
+  }
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
@@ -39,13 +46,6 @@ describe('ComboboxInputComponent', () => {
   });
 
   describe('with plain menu items', () => {
-
-    let selectedValue : string;
-
-    function selectValue(item : MenuItem<string>) : boolean {
-      selectedValue = item.value;
-      return true; 
-    }
 
     const plainMenuItems : MenuItem<string>[] = [
       {
@@ -104,5 +104,97 @@ describe('ComboboxInputComponent', () => {
       fixture.detectChanges();
       expect(element.querySelector('input').placeholder).toBe(plainMenuItems[2].name);
     });
+  });
+
+  describe('with grouped menu items', () => {
+
+    const groupedMenuItems : MenuGroup<string>[] = [
+      {
+        name : 'Menu Group A',
+        value : 'value a',
+        items : [
+          {
+            name : 'Menu Item A One',
+            value : 'value a1',
+            select : selectValue
+          },
+          {
+            name : 'Menu Item A Two',
+            value : 'value a2',
+            select : selectValue
+          }
+        ]
+      },
+      {
+        name : 'Menu Group B',
+        value : 'value b',
+        items : [
+          {
+            name : 'Menu Item B One',
+            value : 'value b1',
+            select : selectValue
+          },
+          {
+            name : 'Menu Item B Two',
+            value : 'value b2',
+            select : selectValue
+          },
+          {
+            name : 'Menu Item B Three',
+            value : 'value b3',
+            select : selectValue
+          }
+        ]
+      },
+      {
+        name : 'Menu Group C',
+        value : 'group c',
+        items : []
+      }
+    ];
+
+    beforeEach(() => {
+      component.groups = groupedMenuItems;
+      fixture.detectChanges();
+    });
+
+    it('should display a header for each group', () => {
+      const groupHeaders = element.querySelectorAll('label.fd-list__group-header');
+
+      expect(groupHeaders.length).toEqual(groupedMenuItems.length);
+
+      expect(groupHeaders[0].querySelector('span').textContent).toBe(groupedMenuItems[0].name);
+      expect(groupHeaders[1].querySelector('span').textContent).toBe(groupedMenuItems[1].name);
+      expect(groupHeaders[2].querySelector('span').textContent).toBe(groupedMenuItems[2].name);
+    });
+
+    it('should display a list for of each group', () => {
+      const menuLists = element.querySelectorAll('ul');
+
+      // split off leading list of ungrouped menu items
+      let plainList : HTMLElement;
+      let groupLists : HTMLElement[];
+      [plainList, ... groupLists] = menuLists.values();
+
+      expect(plainList.querySelectorAll('li').length).toEqual(0);
+      expect(groupLists.length).toEqual(groupedMenuItems.length);
+
+      let groupListItems : HTMLElement[][] = [];
+      [... groupListItems[0]] = groupLists[0].querySelectorAll('li').values();
+      [... groupListItems[1]] = groupLists[1].querySelectorAll('li').values();
+      [... groupListItems[2]] = groupLists[2].querySelectorAll('li').values();
+
+      expect(groupListItems[0].length).toBe(groupedMenuItems[0].items.length);
+      expect(groupListItems[0][0].querySelector('a').textContent).toBe(groupedMenuItems[0].items[0].name);
+      expect(groupListItems[0][1].querySelector('a').textContent).toBe(groupedMenuItems[0].items[1].name);
+
+      expect(groupListItems[1].length).toBe(groupedMenuItems[1].items.length);
+      expect(groupListItems[1][0].querySelector('a').textContent).toBe(groupedMenuItems[1].items[0].name);
+      expect(groupListItems[1][1].querySelector('a').textContent).toBe(groupedMenuItems[1].items[1].name);
+      expect(groupListItems[1][2].querySelector('a').textContent).toBe(groupedMenuItems[1].items[2].name);
+
+      expect(groupListItems[2].length).toBe(groupedMenuItems[2].items.length);
+    });
+
   });
 });
