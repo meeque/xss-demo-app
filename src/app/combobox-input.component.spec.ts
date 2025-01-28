@@ -14,6 +14,19 @@ describe('ComboboxInputComponent', () => {
     return true;
   }
 
+  function queryMenuListsItems() : {plain: HTMLElement[], grouped: HTMLElement[][]} {
+    const menuLists = element.querySelectorAll('ul');
+
+    let plainList : HTMLElement;
+    let groupLists : HTMLElement[];
+    [plainList, ... groupLists] = menuLists.values();
+
+    const plainListItems : HTMLElement[] = Array.from(plainList.querySelectorAll('li'));
+    const groupListsItems : HTMLElement[][] = groupLists.map((list) => Array.from(list.querySelectorAll('li')));
+
+    return {plain: plainListItems, grouped: groupListsItems};
+  }
+
   beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [ComboboxInputComponent]
@@ -71,17 +84,21 @@ describe('ComboboxInputComponent', () => {
     });
 
     it('should display a list item for each menu item', () => {
-      const listItems = element.querySelectorAll('ul li');
+      const listItems = queryMenuListsItems().plain;
   
-      expect(listItems.length).toEqual(plainMenuItems.length);
+      expect(listItems.length).toBe(plainMenuItems.length);
 
       expect(listItems[0].querySelector('a').textContent).toBe(plainMenuItems[0].name);
       expect(listItems[1].querySelector('a').textContent).toBe(plainMenuItems[1].name);
       expect(listItems[2].querySelector('a').textContent).toBe(plainMenuItems[2].name);
     });
 
-    it('should select value when menu item is clicked', () => {
-      const listItems = element.querySelectorAll('ul li');
+    it('should not display any grouped menu items', () => {
+      expect(queryMenuListsItems().grouped.length).toBe(0);
+    });
+
+    it('should select value when menu items are clicked', () => {
+      const listItems = queryMenuListsItems().plain;
 
       listItems[0].querySelector('a').click();
       expect(selectedValue).toBe(plainMenuItems[0].value);
@@ -91,16 +108,16 @@ describe('ComboboxInputComponent', () => {
       expect(selectedValue).toBe(plainMenuItems[2].value);
     });
 
-    it('should adjust placeholder when menu item is clicked', () => {
-      element.querySelectorAll('ul li')[0].querySelector('a').click();
+    it('should adjust placeholder when menu items are clicked', () => {
+      queryMenuListsItems().plain[0].querySelector('a').click();
       fixture.detectChanges();
       expect(element.querySelector('input').placeholder).toBe(plainMenuItems[0].name);
 
-      element.querySelectorAll('ul li')[1].querySelector('a').click();
+      queryMenuListsItems().plain[1].querySelector('a').click();
       fixture.detectChanges();
       expect(element.querySelector('input').placeholder).toBe(plainMenuItems[1].name);
 
-      element.querySelectorAll('ul li')[2].querySelector('a').click();
+      queryMenuListsItems().plain[2].querySelector('a').click();
       fixture.detectChanges();
       expect(element.querySelector('input').placeholder).toBe(plainMenuItems[2].name);
     });
@@ -158,6 +175,10 @@ describe('ComboboxInputComponent', () => {
       fixture.detectChanges();
     });
 
+    it('should not display any plain menu items', () => {
+      expect(queryMenuListsItems().plain.length).toBe(0);
+    });
+
     it('should display a header for each group', () => {
       const groupHeaders = element.querySelectorAll('label.fd-list__group-header');
 
@@ -168,21 +189,8 @@ describe('ComboboxInputComponent', () => {
       expect(groupHeaders[2].querySelector('span').textContent).toBe(groupedMenuItems[2].name);
     });
 
-    it('should display a list for of each group', () => {
-      const menuLists = element.querySelectorAll('ul');
-
-      // split off leading list of ungrouped menu items
-      let plainList : HTMLElement;
-      let groupLists : HTMLElement[];
-      [plainList, ... groupLists] = menuLists.values();
-
-      expect(plainList.querySelectorAll('li').length).toEqual(0);
-      expect(groupLists.length).toEqual(groupedMenuItems.length);
-
-      let groupListItems : HTMLElement[][] = [];
-      [... groupListItems[0]] = groupLists[0].querySelectorAll('li').values();
-      [... groupListItems[1]] = groupLists[1].querySelectorAll('li').values();
-      [... groupListItems[2]] = groupLists[2].querySelectorAll('li').values();
+    it('should display list items for of each group', () => {
+      const groupListItems = queryMenuListsItems().grouped;
 
       expect(groupListItems[0].length).toBe(groupedMenuItems[0].items.length);
       expect(groupListItems[0][0].querySelector('a').textContent).toBe(groupedMenuItems[0].items[0].name);
@@ -196,5 +204,42 @@ describe('ComboboxInputComponent', () => {
       expect(groupListItems[2].length).toBe(groupedMenuItems[2].items.length);
     });
 
+    it('should select value when menu items are clicked', () => {
+      const groupListItems = queryMenuListsItems().grouped;
+
+      groupListItems[0][0].querySelector('a').click();
+      expect(selectedValue).toBe(groupedMenuItems[0].items[0].value);
+      groupListItems[0][1].querySelector('a').click();
+      expect(selectedValue).toBe(groupedMenuItems[0].items[1].value);
+
+      groupListItems[1][0].querySelector('a').click();
+      expect(selectedValue).toBe(groupedMenuItems[1].items[0].value);
+      groupListItems[1][1].querySelector('a').click();
+      expect(selectedValue).toBe(groupedMenuItems[1].items[1].value);
+      groupListItems[1][2].querySelector('a').click();
+      expect(selectedValue).toBe(groupedMenuItems[1].items[2].value);
+    });
+
+    it('should adjust placeholder when menu item are clicked', () => {
+      queryMenuListsItems().grouped[0][0].querySelector('a').click();
+      fixture.detectChanges();
+      expect(element.querySelector('input').placeholder).toBe(groupedMenuItems[0].items[0].name);
+
+      queryMenuListsItems().grouped[0][1].querySelector('a').click();
+      fixture.detectChanges();
+      expect(element.querySelector('input').placeholder).toBe(groupedMenuItems[0].items[1].name);
+
+      queryMenuListsItems().grouped[1][0].querySelector('a').click();
+      fixture.detectChanges();
+      expect(element.querySelector('input').placeholder).toBe(groupedMenuItems[1].items[0].name);
+
+      queryMenuListsItems().grouped[1][1].querySelector('a').click();
+      fixture.detectChanges();
+      expect(element.querySelector('input').placeholder).toBe(groupedMenuItems[1].items[1].name);
+
+      queryMenuListsItems().grouped[1][2].querySelector('a').click();
+      fixture.detectChanges();
+      expect(element.querySelector('input').placeholder).toBe(groupedMenuItems[1].items[2].name);
+    });
   });
 });
