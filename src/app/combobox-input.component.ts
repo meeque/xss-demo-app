@@ -16,8 +16,8 @@ export interface MenuItem<T> extends MenuEntry<T> {
 }
 
 
-export interface MenuGroup<T> extends MenuEntry<T> {
-  items : MenuItem<any>[];
+export interface MenuGroup<T,U> extends MenuEntry<T> {
+  items : MenuItem<U>[];
 }
 
 
@@ -68,7 +68,7 @@ export class ComboboxInputComponent implements AfterViewChecked {
   items : MenuItem<any>[] = [];
 
   @Input()
-  groups : MenuGroup<any>[] = [];
+  groups : MenuGroup<any, any>[] = [];
 
   @Input()
   placeholder : string = null;

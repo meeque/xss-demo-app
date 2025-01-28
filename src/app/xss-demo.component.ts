@@ -58,7 +58,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     }
   ];
 
-  presetGroups : MenuGroup<PayloadOutputContext>[] = [
+  presetGroups : MenuGroup<PayloadOutputContext, string>[] = [
     {
       name: 'HTML Content',
       value: PayloadOutputContext.HtmlContent,
@@ -270,7 +270,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   payloadOutputFilters : MenuItem<any>[] = [];
 
-  payloadOutputGroups : MenuGroup<ContextDescriptor>[] = [];
+  payloadOutputGroups : MenuGroup<ContextDescriptor, PayloadOutputDescriptor<any>>[] = [];
 
   xssTriggered : number = 0;
 
@@ -311,7 +311,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
     this.payloadOutputGroups = [];
     for (const context of this._payloadOutputService.descriptors) {
-      const group : MenuGroup<ContextDescriptor> = {
+      const group : MenuGroup<ContextDescriptor, PayloadOutputDescriptor<any>> = {
         name : context.name,
         value : context,
         items : []

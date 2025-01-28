@@ -118,7 +118,7 @@ describe('ComboboxInputComponent', () => {
 
   describe('with grouped menu items', () => {
 
-    const groupedMenuItems : MenuGroup<string>[] = [
+    const groupedMenuItems : MenuGroup<string, string>[] = [
       {
         name : 'Menu Group A',
         value : 'value a',
