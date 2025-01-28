@@ -2,7 +2,7 @@ import { NgIf, NgClass } from '@angular/common';
 import { Component, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { PayloadOutputDescriptor } from './payload-output.service';
+import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 
 @Component({
     selector: 'payload-output',
@@ -16,6 +16,8 @@ export class PayloadOutputComponent<T> {
   static nextComponentId : number = 0;
 
   componentId : number = PayloadOutputComponent.nextComponentId++;
+
+  readonly PayloadOutputQuality = PayloadOutputQuality;
 
   @ViewChild('output')
   outputContent : ElementRef;

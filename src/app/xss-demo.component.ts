@@ -21,7 +21,9 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   componentId : number = XssDemoComponent.nextComponentId++;
 
-  payloadOutputContexts : typeof PayloadOutputContext = PayloadOutputContext;
+  readonly PayloadOutputContext = PayloadOutputContext;
+
+  readonly PayloadOutputQuality = PayloadOutputQuality;
 
   @ViewChild('payloadOutputMenuItem')
   payloadOutputMenuItemTemplate : TemplateRef<MenuItemContext>;
@@ -276,9 +278,9 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   payloadOutputTechnologyFilters : string[] = [];
 
-  payloadOutputQualityFilters : string[] = [];
+  payloadOutputQualityFilters : PayloadOutputQuality[] = [];
 
-  private _activeContext : string = 'HtmlContent';
+  private _activeContext : PayloadOutputContext = PayloadOutputContext.HtmlContent;
 
   private _activeOutput : string = 'HtmlEncodedContent';
 
@@ -348,11 +350,11 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
         });
   }
 
-  isActiveOutput(context : string, output : string) {
+  isActiveOutput(context : PayloadOutputContext, output : string) {
     return (context == this._activeContext) && (output == this._activeOutput);
   }
 
-  activateOutput(context : string, output : string) {
+  activateOutput(context : PayloadOutputContext, output : string) {
     this._activeContext = context;
     this._activeOutput = output;
     return false;
@@ -371,7 +373,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     this.payloadOutputTechnologyFilters = newFilters;
   }
 
-  togglePayloadOutputQualityFilter(value : string) {
+  togglePayloadOutputQualityFilter(value : PayloadOutputQuality) {
     const newFilters = [];
     for (const currentValue of this.payloadOutputQualityFilters) {
       if (currentValue != value) {

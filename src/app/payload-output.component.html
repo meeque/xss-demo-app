@@ -8,9 +8,9 @@
         <img *ngIf="outputDescriptor.jQueryInjector" class="technology-icon" src="assets/img/jquery-logo-black.svg">
         <img *ngIf="outputDescriptor.templateCode" class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
         <span> {{ outputDescriptor.title }} </span>
-        <span *ngIf="outputDescriptor.quality == 'Recommended'" class="sap-icon--accept"></span>
-        <span *ngIf="outputDescriptor.quality == 'Questionable'" class="sap-icon--question-mark"></span>
-        <span *ngIf="outputDescriptor.quality == 'Insecure'" class="sap-icon--alert"></span>
+        <span *ngIf="outputDescriptor.quality == PayloadOutputQuality.Recommended" class="sap-icon--accept"></span>
+        <span *ngIf="outputDescriptor.quality == PayloadOutputQuality.Questionable" class="sap-icon--question-mark"></span>
+        <span *ngIf="outputDescriptor.quality == PayloadOutputQuality.Insecure" class="sap-icon--alert"></span>
       </h3>
     </div>
   </div>

@@ -83,22 +83,22 @@
                     {{ item.name }}
                     <button
                         class="fd-button"
-                        (click)="togglePayloadOutputQualityFilter('Recommended')"
-                        [attr.aria-selected]="payloadOutputQualityFilters.includes('Recommended')">
+                        (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Recommended)"
+                        [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)">
                       <span>Recommended </span>
                       <span class="sap-icon--accept"></span>
                     </button>
                     <button
                         class="fd-button"
-                        (click)="togglePayloadOutputQualityFilter('Questionable')"
-                        [attr.aria-selected]="payloadOutputQualityFilters.includes('Questionable')">
+                        (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Questionable)"
+                        [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)">
                       <span> Questionable </span>
                       <span class="sap-icon--question-mark"></span>
                     </button>
                     <button
                         class="fd-button"
-                        (click)="togglePayloadOutputQualityFilter('Insecure')"
-                        [attr.aria-selected]="payloadOutputQualityFilters.includes('Insecure')">
+                        (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Insecure)"
+                        [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)">
                       <span> Insecure </span>
                       <span class="sap-icon--alert"></span>
                     </button>
@@ -145,8 +145,8 @@
 
                 <payload-output
                     #output1
-                    [active]="isActiveOutput('HtmlContent', 'NgEncodedTemplate')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent,'NgEncodedTemplate')"
+                    [active]="isActiveOutput(PayloadOutputContext.HtmlContent, 'NgEncodedTemplate')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlContent,'NgEncodedTemplate')"
                     [payload]="payload"
                     (change)="resetXss()">
                   {{ output1.payload }}
@@ -154,8 +154,8 @@
 
                 <payload-output
                     #output2
-                    [active]="isActiveOutput('HtmlContent', 'NgEncodedTextContent')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent, 'NgEncodedTextContent')"
+                    [active]="isActiveOutput(PayloadOutputContext.HtmlContent, 'NgEncodedTextContent')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlContent, 'NgEncodedTextContent')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [textContent]="output2.payload"></div>
@@ -163,8 +163,8 @@
 
                 <payload-output
                     #output2
-                    [active]="isActiveOutput('HtmlContent', 'NgEncodedInnerText')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent, 'NgEncodedInnerText')"
+                    [active]="isActiveOutput(PayloadOutputContext.HtmlContent, 'NgEncodedInnerText')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlContent, 'NgEncodedInnerText')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [innerText]="output2.payload"></div>
@@ -172,8 +172,8 @@
 
                 <payload-output
                     #output4
-                    [active]="isActiveOutput('HtmlContent', 'NgSanitized')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent, 'NgSanitized')"
+                    [active]="isActiveOutput(PayloadOutputContext.HtmlContent, 'NgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlContent, 'NgSanitized')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [innerHTML]="output4.payload"></div>
@@ -181,8 +181,8 @@
 
                <payload-output
                     #output5
-                    [active]="isActiveOutput('HtmlContent', 'NgTrusted')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlContent, 'NgTrusted')"
+                    [active]="isActiveOutput(PayloadOutputContext.HtmlContent, 'NgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlContent, 'NgTrusted')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [innerHTML]="output5.payload"></div>
@@ -192,8 +192,8 @@
 
                 <payload-output
                     #output6
-                    [active]="isActiveOutput('HtmlAttribute', 'NgEncodedAttributeValue')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlAttribute, 'NgEncodedAttributeValue')"
+                    [active]="isActiveOutput(PayloadOutputContext.HtmlAttribute, 'NgEncodedAttributeValue')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlAttribute, 'NgEncodedAttributeValue')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <p [title]="output6.payload">This paragraph has a title.</p>
@@ -201,8 +201,8 @@
 
                 <payload-output
                     #output7
-                    [active]="isActiveOutput('HtmlAttribute', 'NgTrustedAttributeValue')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.HtmlAttribute, 'NgTrustedAttributeValue')"
+                    [active]="isActiveOutput(PayloadOutputContext.HtmlAttribute, 'NgTrustedAttributeValue')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlAttribute, 'NgTrustedAttributeValue')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <p [title]="output7.payload">This paragraph has a title.</p>
@@ -212,8 +212,8 @@
 
                 <payload-output
                     #output8
-                    [active]="isActiveOutput('Url', 'LinkNgSanitized')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Url, 'LinkNgSanitized')"
+                    [active]="isActiveOutput(PayloadOutputContext.Url, 'LinkNgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Url, 'LinkNgSanitized')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <a [href]="output8.payload">Click here to test your payload as a URL!</a>
@@ -221,8 +221,8 @@
 
                 <payload-output
                     #output9
-                    [active]="isActiveOutput('Url', 'LinkNgTrusted')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Url, 'LinkNgTrusted')"
+                    [active]="isActiveOutput(PayloadOutputContext.Url, 'LinkNgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Url, 'LinkNgTrusted')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <a [href]="output9.payload">Click here to test your payload as a URL!</a>
@@ -230,8 +230,8 @@
 
                 <payload-output
                     #output10
-                    [active]="isActiveOutput('Url', 'IframeNgSanitized')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Url, 'IframeNgSanitized')"
+                    [active]="isActiveOutput(PayloadOutputContext.Url, 'IframeNgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Url, 'IframeNgSanitized')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <iframe [src]="output10.payload"></iframe>
@@ -239,8 +239,8 @@
 
                 <payload-output
                     #output11
-                    [active]="isActiveOutput('Url', 'IframeNgTrusted')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Url, 'IframeNgTrusted')"
+                    [active]="isActiveOutput(PayloadOutputContext.Url, 'IframeNgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Url, 'IframeNgTrusted')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <iframe [src]="output11.payload"></iframe>
@@ -250,8 +250,8 @@
 
                 <payload-output
                     #output12
-                    [active]="isActiveOutput('Css', 'BlockNgSanitized')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'BlockNgSanitized')"
+                    [active]="isActiveOutput(PayloadOutputContext.Css, 'BlockNgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Css, 'BlockNgSanitized')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <style type="text/css" [innerHTML]="output12.payload"></style>
@@ -259,8 +259,8 @@
 
                 <payload-output
                     #output13
-                    [active]="isActiveOutput('Css', 'BlockNgTrusted')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'BlockNgTrusted')"
+                    [active]="isActiveOutput(PayloadOutputContext.Css, 'BlockNgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Css, 'BlockNgTrusted')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <style type="text/css" [innerHTML]="output13.payload"></style>
@@ -268,8 +268,8 @@
 
                 <payload-output
                     #output14
-                    [active]="isActiveOutput('Css', 'AttributeNgSanitized')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'AttributeNgSanitized')"
+                    [active]="isActiveOutput(PayloadOutputContext.Css, 'AttributeNgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Css, 'AttributeNgSanitized')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [style]="output14.payload">Element with custom style</div>
@@ -277,8 +277,8 @@
 
                 <payload-output
                     #output15
-                    [active]="isActiveOutput('Css', 'AttributeNgTrusted')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'AttributeNgTrusted')"
+                    [active]="isActiveOutput(PayloadOutputContext.Css, 'AttributeNgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Css, 'AttributeNgTrusted')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [style]="output15.payload">Element with custom style</div>
@@ -286,8 +286,8 @@
 
                 <payload-output
                     #output16
-                    [active]="isActiveOutput('Css', 'AttributeNgStructured')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(payloadOutputContexts.Css, 'AttributeNgStructured')"
+                    [active]="isActiveOutput(PayloadOutputContext.Css, 'AttributeNgStructured')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Css, 'AttributeNgStructured')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [ngStyle]="output16.payload">Element with custom style</div>

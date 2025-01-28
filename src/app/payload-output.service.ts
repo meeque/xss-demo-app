@@ -6,18 +6,18 @@ declare var DOMPurify: any;
 declare var $: any;
 
 export enum PayloadOutputContext {
-  HtmlContent = 'HtmlContent',
-  HtmlAttribute = 'HtmlAttribute',
-  Url = 'Url',
-  Css = 'Css',
-  JavaScript = 'JavaScript'
+  HtmlContent,
+  HtmlAttribute,
+  Url,
+  Css,
+  JavaScript
 }
 
 
 export enum PayloadOutputQuality {
-  Recommended = 'Recommended',
-  Questionable = 'Questionable',
-  Insecure = 'Insecure'
+  Recommended,
+  Questionable,
+  Insecure
 }
 
 
