@@ -37,7 +37,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  private payloadOutputMenuItemFilter = (item : MenuItem<PayloadOutputDescriptor<any>>, query : string) => {
+  private payloadOutputMenuItemFilter = (item : MenuItem<PayloadOutputDescriptor>, query : string) => {
     if (query && !item.name.toLowerCase().includes(query.toLowerCase())) {
       return false;
     }
@@ -270,7 +270,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   payloadOutputFilters : MenuItem<any>[] = [];
 
-  payloadOutputGroups : MenuGroup<ContextDescriptor, PayloadOutputDescriptor<any>>[] = [];
+  payloadOutputGroups : MenuGroup<ContextDescriptor, PayloadOutputDescriptor>[] = [];
 
   xssTriggered : number = 0;
 
@@ -311,16 +311,16 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
     this.payloadOutputGroups = [];
     for (const context of this._payloadOutputService.descriptors) {
-      const group : MenuGroup<ContextDescriptor, PayloadOutputDescriptor<any>> = {
+      const group : MenuGroup<ContextDescriptor, PayloadOutputDescriptor> = {
         name : context.name,
         value : context,
         items : []
       };
       for (const payloadOutput of context.payloadOutputs) {
-        const item : MenuItem<PayloadOutputDescriptor<any>> = {
+        const item : MenuItem<PayloadOutputDescriptor> = {
           name : payloadOutput.name,
           value : payloadOutput,
-          select : (item : MenuItem<PayloadOutputDescriptor<any>>, $event? : any) => {
+          select : (item : MenuItem<PayloadOutputDescriptor>, $event? : any) => {
             return this.activateOutput(context.id, payloadOutput.id);
           },
           filter : this.payloadOutputMenuItemFilter,

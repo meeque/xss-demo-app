@@ -21,7 +21,7 @@ export class PayloadOutputComponent<T> {
   outputContent : ElementRef;
 
   @Input()
-  outputDescriptor : PayloadOutputDescriptor<T>;
+  outputDescriptor : PayloadOutputDescriptor;
 
   liveCode : string = '';
 

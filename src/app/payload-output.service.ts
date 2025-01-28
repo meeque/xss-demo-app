@@ -21,48 +21,48 @@ export enum PayloadOutputQuality {
 }
 
 
-interface PayloadProcessor<T> {
-  (payload : string) : T;
+interface PayloadProcessor {
+  (payload : string) : any;
 }
 
 
-interface HtmlSourceProvider<T> {
-  (payload : T) : string;
+interface HtmlSourceProvider {
+  (payload : string) : string;
 }
 
 
-interface Injector<T> {
-  (element : any, payload : T) : void;
+interface Injector {
+  (element : any, payload : string) : void;
 }
 
-interface DomInjector<T> extends Injector<T> {};
+interface DomInjector extends Injector {};
 
-interface JQueryInjector<T> extends Injector<T> {};
+interface JQueryInjector extends Injector {};
 
 
-export interface PayloadOutputDescriptor<T> {
+export interface PayloadOutputDescriptor {
   readonly id : string;
   readonly quality : PayloadOutputQuality;
   readonly name : string;
   readonly title : string;
-  readonly payloadProcessor? : PayloadProcessor<T>;
-  readonly htmlSourceProvider? : HtmlSourceProvider<T>;
-  readonly domInjector? : DomInjector<T>;
-  readonly jQueryInjector? : JQueryInjector<T>;
+  readonly payloadProcessor? : PayloadProcessor;
+  readonly htmlSourceProvider? : HtmlSourceProvider;
+  readonly domInjector? : DomInjector;
+  readonly jQueryInjector? : JQueryInjector;
   readonly templateCode? : string;
 }
 
 export interface ContextDescriptor {
   readonly id : PayloadOutputContext;
   readonly name : string;
-  payloadOutputs : PayloadOutputDescriptor<any>[];
+  payloadOutputs : PayloadOutputDescriptor[];
 }
 
 
 @Injectable()
 export class PayloadOutputService {
 
-  private readonly _processors : { [prop: string] : PayloadProcessor<any> } =
+  private readonly _processors : { [prop: string] : PayloadProcessor } =
   {
     ngTrustedHtml : (payload) => {
       return this.sanitizer.bypassSecurityTrustHtml(payload);
@@ -155,7 +155,7 @@ export class PayloadOutputService {
     }
   };
 
-  private readonly _providers : { [prop : string] : HtmlSourceProvider<any> } =
+  private readonly _providers : { [prop : string] : HtmlSourceProvider } =
   {
     raw(payload) {
       return payload;
@@ -170,7 +170,7 @@ export class PayloadOutputService {
     }
   };
 
-  private readonly _domInjectors : { [prop : string] : DomInjector<any> } =
+  private readonly _domInjectors : { [prop : string] : DomInjector } =
   {
     textContent(element, payload) {
       element.textContent = payload;
@@ -230,7 +230,7 @@ export class PayloadOutputService {
     }
   };
 
-  private readonly _jQueryInjectors : { [prop : string] : JQueryInjector<any> } =
+  private readonly _jQueryInjectors : { [prop : string] : JQueryInjector } =
   {
     text(element, payload) {
       $(element).text(payload);
@@ -848,7 +848,7 @@ export class PayloadOutputService {
     return null;
   }
 
-  outputDescriptorById(contextId : PayloadOutputContext, outputId : string) : PayloadOutputDescriptor<any> {
+  outputDescriptorById(contextId : PayloadOutputContext, outputId : string) : PayloadOutputDescriptor {
     const context = this.contextDescriptorById(contextId);
     if (context) {
       for (const output of context.payloadOutputs) {
