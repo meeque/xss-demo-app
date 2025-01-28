@@ -3,21 +3,21 @@ import { Component, Input, ViewChild, ViewChildren, QueryList, ViewContainerRef,
 import { FormsModule } from '@angular/forms';
 
 
-export interface MenuEntry<T> {
+export interface MenuEntry<V> {
   name : string;
-  value : T;
+  value : V;
 }
 
 
-export interface MenuItem<T> extends MenuEntry<T> {
-  select : (item : MenuItem<T>, $event? : any) => boolean;
-  filter? : (item : MenuItem<T>, query : string) => boolean;
+export interface MenuItem<V> extends MenuEntry<V> {
+  select : (item : MenuItem<V>, $event? : any) => boolean;
+  filter? : (item : MenuItem<V>, query : string) => boolean;
   template? : TemplateRef<MenuItemContext>;
 }
 
 
-export interface MenuGroup<T,U> extends MenuEntry<T> {
-  items : MenuItem<U>[];
+export interface MenuGroup<V,W> extends MenuEntry<V> {
+  items : MenuItem<W>[];
 }
 
 
