@@ -28,7 +28,7 @@ module.exports = function(config) {
         { type: 'text-summary' }
       ]
     },
-    reporters: ['progress', 'kjhtml', 'spec'],
+    reporters: ['kjhtml', 'spec'],
     customLaunchers: {
       // the XSS Demo App is being developed in an lxc container
       // this seems to cause trouble with app armor sandboxing
