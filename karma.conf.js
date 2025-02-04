@@ -7,6 +7,7 @@ module.exports = function(config) {
       require('karma-jasmine'),
       require('karma-chrome-launcher'),
       require('karma-jasmine-html-reporter'),
+      require('karma-spec-reporter'),
       require('karma-coverage'),
       require('@angular-devkit/build-angular/plugins/karma')
     ],
@@ -27,10 +28,10 @@ module.exports = function(config) {
         { type: 'text-summary' }
       ]
     },
-    reporters: ['progress', 'kjhtml'],
+    reporters: ['progress', 'kjhtml', 'spec'],
     customLaunchers: {
       // the XSS Demo App is being developed in an lxc container
-      // this seems to cause trouble with app armor sand boxing
+      // this seems to cause trouble with app armor sandboxing
       // on the other hand, additional sandboxing is less necessary when already running in a container
       ChromiumHeadlessContainerized: {
         base: 'ChromiumHeadless',
