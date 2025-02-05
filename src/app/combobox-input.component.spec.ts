@@ -16,7 +16,7 @@ describe('ComboboxInputComponent', () => {
     return true;
   }
 
-  function inputText(text : string) : void {
+  function enterQuery(text : string) : void {
       textInput.value = text;
       textInput.dispatchEvent(new Event('input'));
       fixture.detectChanges();
@@ -73,17 +73,17 @@ describe('ComboboxInputComponent', () => {
 
     const plainMenuItems : MenuItem<string>[] = [
       {
-        name : 'Menu Item One',
+        name : 'First Menu Item: One',
         value : 'value one',
         select : selectValue
       },
       {
-        name : 'Menu Item Two',
+        name : 'Another Menu Item: Two',
         value : 'value two',
         select : selectValue
       },
       {
-        name : 'Menu Item Three',
+        name : 'Another Menu Item: Three',
         value : 'value three',
         select : selectValue
       }
@@ -126,9 +126,27 @@ describe('ComboboxInputComponent', () => {
       }
     });
 
-    it('should filter menu items by name matching input query', () => {
-      inputText('foo');
-      expect(queryMenuListsItems().plain).toHaveSize(0);
+    describe('and default name-based menu item filter', () => {
+
+      it('should display full menu when query is empty', () => {
+        enterQuery('');
+        expect(queryMenuListsItems().plain).toHaveSize(plainMenuItems.length);
+      });
+
+      it('should display empty menu when query is mismatched', () => {
+        enterQuery('foo');
+        expect(queryMenuListsItems().plain).toHaveSize(0);
+      });
+
+      it('should only display menu items that match query', () => {
+        expect(queryMenuListsItems().plain).toHaveSize(plainMenuItems.length);
+        enterQuery('Menu Item');
+        expect(queryMenuListsItems().plain).toHaveSize(3);
+        enterQuery('First');
+        expect(queryMenuListsItems().plain).toHaveSize(1);
+        enterQuery('Another');
+        expect(queryMenuListsItems().plain).toHaveSize(2);
+      });
     });
   });
 
