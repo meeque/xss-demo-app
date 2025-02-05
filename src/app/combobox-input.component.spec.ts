@@ -6,12 +6,20 @@ describe('ComboboxInputComponent', () => {
   let fixture : ComponentFixture<ComboboxInputComponent>;
   let component : ComboboxInputComponent;
   let element : HTMLElement;
+  let textInput : HTMLInputElement;
+  let menuButton : HTMLButtonElement;
 
   let selectedValue : string;
 
   function selectValue(item : MenuItem<string>) : boolean {
     selectedValue = item.value;
     return true;
+  }
+
+  function inputText(text : string) : void {
+      textInput.value = text;
+      textInput.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
   }
 
   function queryMenuListsItems() : {plain: HTMLElement[], grouped: HTMLElement[][]} {
@@ -34,8 +42,11 @@ describe('ComboboxInputComponent', () => {
     await TestBed.compileComponents();
     fixture = TestBed.createComponent(ComboboxInputComponent);
     fixture.detectChanges();
+
     component = fixture.componentInstance;
     element = fixture.nativeElement;
+    textInput = element.querySelector('input[type=text]');
+    menuButton = element.querySelector('button');
   });
 
   describe('initially', () => {
@@ -50,11 +61,11 @@ describe('ComboboxInputComponent', () => {
     });
 
     it('should have empty value', () => {
-      expect(element.querySelector('input')?.value).toBe('');
+      expect(textInput.value).toBe('');
     });
 
     it('should have empty placeholder', () => {
-      expect(element.querySelector('input')?.value).toBe('');
+      expect(textInput.value).toBe('');
     });
   });
 
@@ -111,8 +122,13 @@ describe('ComboboxInputComponent', () => {
       for (const [i, menuItem] of plainMenuItems.entries() ) {
         queryMenuListsItems().plain[i].querySelector('a').click();
         fixture.detectChanges();
-        expect(element.querySelector('input').placeholder).toBe(menuItem.name);
+        expect(textInput.placeholder).toBe(menuItem.name);
       }
+    });
+
+    it('should filter menu items by name matching input query', () => {
+      inputText('foo');
+      expect(queryMenuListsItems().plain).toHaveSize(0);
     });
   });
 
@@ -210,7 +226,7 @@ describe('ComboboxInputComponent', () => {
         for (const [j, menuItem] of menuGroup.items.entries()) {
           queryMenuListsItems().grouped[i][j].querySelector('a').click();
           fixture.detectChanges();
-          expect(element.querySelector('input').placeholder).toBe(menuItem.name);
+          expect(textInput.placeholder).toBe(menuItem.name);
         }
       }
     });
