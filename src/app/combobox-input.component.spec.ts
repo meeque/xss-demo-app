@@ -7,6 +7,7 @@ describe('ComboboxInputComponent', () => {
   let component : ComboboxInputComponent;
   let element : HTMLElement;
   let textInput : HTMLInputElement;
+  let menuPopover : HTMLElement;
   let menuButton : HTMLButtonElement;
 
   let selectedValue : string;
@@ -46,6 +47,7 @@ describe('ComboboxInputComponent', () => {
     component = fixture.componentInstance;
     element = fixture.nativeElement;
     textInput = element.querySelector('input[type=text]');
+    menuPopover = element.querySelector('div.fd-popover__body');
     menuButton = element.querySelector('button');
   });
 
@@ -53,6 +55,10 @@ describe('ComboboxInputComponent', () => {
 
     it('should be created', () => {
       expect(component).toBeDefined();
+    });
+
+    it('should hide menu', () => {
+      expect(menuPopover.getAttribute('aria-hidden')).toBe('true');
     });
 
     it('should have no menu items or groups', () => {
@@ -92,6 +98,22 @@ describe('ComboboxInputComponent', () => {
     beforeEach(() => {
       component.items = plainMenuItems;
       fixture.detectChanges();
+    });
+
+    it('should initially hide menu initially', () => {
+      expect(menuPopover.getAttribute('aria-hidden')).toBe('true');
+    });
+
+    it('should show menu when button is clicked', () => {
+      menuButton.click();
+      fixture.detectChanges();
+      expect(menuPopover.getAttribute('aria-hidden')).toBe('false');
+    });
+
+    it('should show menu when query text inpot gets focus', () => {
+      textInput.focus();
+      fixture.detectChanges();
+      expect(menuPopover.getAttribute('aria-hidden')).toBe('false');
     });
 
     it('should display a list item for each menu item', () => {
