@@ -50,8 +50,6 @@ export class PayloadOutputComponent<T> {
 
   private _asyncChange = new EventEmitter(true);
 
-  private _active : boolean = false;
-
   private _autoUpdate : boolean = true;
 
   private _inputPayload : any = '';
@@ -77,18 +75,6 @@ export class PayloadOutputComponent<T> {
           this.liveCode = outputElement.innerHTML;
         }
       });
-  }
-
-  @Input()
-  set active(active : boolean) {
-    this._active = active;
-    if (active) {
-      this.update();
-    }
-  }
-
-  get active() : boolean {
-    return this._active;
   }
 
   @Input()
@@ -118,15 +104,13 @@ export class PayloadOutputComponent<T> {
   }
 
   update() {
-    if (this.active) {
-      if (this.outputDescriptor?.payloadProcessor) {
-        this._outputPayload = this.outputDescriptor.payloadProcessor(this._inputPayload);
-      } else {
-        this._outputPayload = this._inputPayload;
-      }
-      this.change.emit();
-      this._asyncChange.emit();
+    if (this.outputDescriptor?.payloadProcessor) {
+      this._outputPayload = this.outputDescriptor.payloadProcessor(this._inputPayload);
+    } else {
+      this._outputPayload = this._inputPayload;
     }
+    this.change.emit();
+    this._asyncChange.emit();
     return false;
   }
 }
