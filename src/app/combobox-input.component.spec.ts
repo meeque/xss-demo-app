@@ -100,7 +100,7 @@ describe('ComboboxInputComponent', () => {
       fixture.detectChanges();
     });
 
-    it('should initially hide menu initially', () => {
+    it('should initially hide menu', () => {
       expect(menuPopover.getAttribute('aria-hidden')).toBe('true');
     });
 
@@ -110,7 +110,7 @@ describe('ComboboxInputComponent', () => {
       expect(menuPopover.getAttribute('aria-hidden')).toBe('false');
     });
 
-    it('should show menu when query text inpot gets focus', () => {
+    it('should show menu when query text input gets focus', () => {
       textInput.focus();
       fixture.detectChanges();
       expect(menuPopover.getAttribute('aria-hidden')).toBe('false');
