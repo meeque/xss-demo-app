@@ -119,7 +119,7 @@ export class PayloadOutputComponent<T> {
 
   update() {
     if (this.active) {
-      if (this.outputDescriptor.payloadProcessor) {
+      if (this.outputDescriptor?.payloadProcessor) {
         this._outputPayload = this.outputDescriptor.payloadProcessor(this._inputPayload);
       } else {
         this._outputPayload = this._inputPayload;
