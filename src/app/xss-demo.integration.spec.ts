@@ -12,8 +12,29 @@ describe('Xss Demo App', () => {
   let payloadOutputComboBox;
   let alertOverlay;
 
-  function timeout(millis : number) : Promise<void> {
+  function timeout(millis: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, millis));
+  }
+
+  function spyOnAndCallThroughAndPromise(object: any, method: string): Promise<any> {
+    let spyCallResolve: (value: any) => void;
+    const spyInvokePromise = new Promise<any>((resolve) => spyCallResolve = resolve );
+    const methodImpl = object[method];
+    spyOn(object, method).and.callFake((... invokeArgs) => spyCallResolve(methodImpl(... invokeArgs)));
+    return spyInvokePromise;
+  }
+
+  async function select(input: string, output: string) {
+    const payloadInputMenuLink =
+      Array.from(payloadInputComboBox.querySelectorAll('div.fd-popover__body a'))
+      .find((a : HTMLLinkElement) => a.textContent == input) as HTMLLinkElement;
+    const payloadOutputMenuLink =
+      Array.from(payloadOutputComboBox.querySelectorAll('div.fd-popover__body a'))
+      .find((a : HTMLLinkElement) => a.textContent.trim() == output) as HTMLLinkElement;
+    payloadOutputMenuLink.click();
+    payloadInputMenuLink.click();
+    await fixture.whenStable();
+    fixture.detectChanges();
   }
 
   beforeEach(async () => {
@@ -35,22 +56,9 @@ describe('Xss Demo App', () => {
   });
 
   it('with image onerror input and raw HTML output should trigger XSS', async () => {
-    const doXssSpy = spyOn(component, 'doXss').and.callThrough();
-    await fixture.whenStable();
-    const inputLink = Array.from(payloadInputComboBox.querySelectorAll('div.fd-popover__body a'))
-        .find((a : HTMLLinkElement) => a.textContent == 'Image onerror') as HTMLLinkElement;
-    inputLink.click();
-    await fixture.whenStable();
-    fixture.detectChanges();
-    const outputLink = Array.from(payloadOutputComboBox.querySelectorAll('div.fd-popover__body a'))
-        .find((a : HTMLLinkElement) => a.textContent.trim() == 'Raw HTML') as HTMLLinkElement;
-    outputLink.click();
-    await fixture.whenStable();
-    fixture.detectChanges();
-    await doXssSpy;
-    await timeout(1000);
-    await fixture.whenStable();
-    fixture.detectChanges();
+    const xssPromise = spyOnAndCallThroughAndPromise(window, 'xss');
+    await select('Image onerror', 'Raw HTML');
+    await Promise.race([xssPromise, timeout(1000)]);
     expect(alertOverlay.querySelector('.alert-xss-triggered')).not.toBeNull();
   });
 });
