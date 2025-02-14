@@ -91,9 +91,15 @@
               }
             ],
             "styles": [
+              "node_modules/@sap-theming/theming-base-content/content/Base/baseLib/sap_fiori_3/css_variables.css",
+              "node_modules/fundamental-styles/dist/fundamental-styles.css",
               "src/styles.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/dompurify/dist/purify.min.js",
+              "node_modules/jquery/dist/jquery.slim.min.js",
+              "node_modules/cookie-store/index.js"
+            ],
             "karmaConfig": "karma.conf.js"
           }
         },
