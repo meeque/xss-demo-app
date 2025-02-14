@@ -86,12 +86,18 @@ describe('Xss Demo App', async () => {
       continue;
     }
 
-    describe('in the context of ' + contextDescriptor.name, () => {
+    describe('in the context of "' + contextDescriptor.name + '"', () => {
       for (const outputDescriptor of contextDescriptor.payloadOutputs) {
 
-        describe('with payload output ' + outputDescriptor.name, () => {
+        describe('with payload output "' + outputDescriptor.name + '"', () => {
 
-          it('should trigger XSS for appropriate presets', async () => {
+          const xssTriggeringPresetNames : string[] = xssTriggeringPresetsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id] || [];
+          const specExpectation =
+            (xssTriggeringPresetNames.length == 0) ?
+            'should NOT trigger XSS for any presets' :
+            'should only trigger XSS for presets ' + xssTriggeringPresetNames.map(presetName => '"' + presetName +'"').join(', ');
+
+          it(specExpectation, async () => {
             const matchingPresetGroup = component.presetGroups.find(menuGroup => menuGroup.value == contextDescriptor.id);
 
             for (const matchingPreset of matchingPresetGroup.items) {
@@ -100,7 +106,7 @@ describe('Xss Demo App', async () => {
               const timeoutPromise = timeout(500);
               await Promise.race([xssPromise, timeoutPromise]);
 
-              if (matchingPreset.name in (xssTriggeringPresetsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id] || [])) {
+              if (matchingPreset.name in xssTriggeringPresetNames) {
                 await expectAsync(xssPromise).withContext("preset " + matchingPreset.name + " should trigger XSS").already.toBeResolved();
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext("preset " + matchingPreset.name + " should show XSS alert message").not.toBeNull();
               } else {
