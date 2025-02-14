@@ -91,11 +91,6 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
           select : this.selectPreset
         },
         {
-          name : 'Image onerror (SAP Commerce mini-cart credit card attack)',
-          value : 'assets/presets/html/commerce-minicart-cc-attack.txt',
-          select : this.selectPreset
-        },
-        {
             name : 'A link href',
             value : 'assets/presets/html/a-href.txt',
             select : this.selectPreset
