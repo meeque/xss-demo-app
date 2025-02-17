@@ -7,13 +7,13 @@ describe('Xss Demo App', async () => {
 
   let payloadOutputService = new PayloadOutputService(null);
 
-  let fixture : ComponentFixture<XssDemoComponent>;
-  let component : XssDemoComponent;
-  let element : HTMLElement;
+  let fixture: ComponentFixture<XssDemoComponent>;
+  let component: XssDemoComponent;
+  let element: HTMLElement;
 
-  let payloadInputComboBox : HTMLElement;
-  let payloadOutputComboBox : HTMLElement;
-  let alertOverlay : HTMLElement;
+  let payloadInputComboBox: HTMLElement;
+  let payloadOutputComboBox: HTMLElement;
+  let alertOverlay: HTMLElement;
 
   let xssResolve = (value: any) => {};
 
@@ -28,17 +28,17 @@ describe('Xss Demo App', async () => {
   async function select(input: string, output: string) {
     const payloadInputMenuLink =
       Array.from(payloadInputComboBox.querySelectorAll('div.fd-popover__body a'))
-      .find((a : HTMLLinkElement) => a.textContent == input) as HTMLLinkElement;
+      .find((a: HTMLLinkElement) => a.textContent == input) as HTMLLinkElement;
     const payloadOutputMenuLink =
       Array.from(payloadOutputComboBox.querySelectorAll('div.fd-popover__body a'))
-      .find((a : HTMLLinkElement) => a.textContent.trim() == output) as HTMLLinkElement;
-    payloadOutputMenuLink.click();
+      .find((a: HTMLLinkElement) => a.textContent.trim() == output) as HTMLLinkElement;
     payloadInputMenuLink.click();
+    payloadOutputMenuLink.click();
     await fixture.whenStable();
     fixture.detectChanges();
   }
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     TestBed.configureTestingModule(xssDemoConfig);
     await TestBed.compileComponents();
     fixture = TestBed.createComponent(XssDemoComponent);
@@ -51,11 +51,11 @@ describe('Xss Demo App', async () => {
     payloadOutputComboBox = element.querySelector('section.output-area combobox-input');
     alertOverlay = element.querySelector('.fd-shell__overlay.fd-overlay--alert');
 
-    const xssOriginal = window['xss'];
-    spyOn(window as any, 'xss').and.callFake(() => {
+    const xssOriginal: () => any = (window as any).xss;
+    (window as any).xss = () => {
       xssOriginal();
       xssResolve(null);
-    });
+    };
   });
 
   it('should be created', async () => {
@@ -63,21 +63,30 @@ describe('Xss Demo App', async () => {
   });
 
   const xssTriggeringPresetsByContextAndOutput = {};
+
   xssTriggeringPresetsByContextAndOutput[PayloadOutputContext.HtmlContent.toString()] = {
-    "HtmlContent" : ["IFrame src", "Image onerror", "Image onerror (legacy flavors)", "Mixed HTML Content"],
-    "DomInnerHtml" : ["IFrame src", "Image onerror", "Image onerror (legacy flavors)", "Mixed HTML Content"],
-    "DomInnerHtmlNoOutput" : ["Image onerror"],
-    "JQueryHtml" : ["IFrame src", "Image onerror", "Image onerror (legacy flavors)", "Mixed HTML Content"],
-    "JQueryConstructor" : ["IFrame src", "Image onerror", "Image onerror (legacy flavors)", "Mixed HTML Content"],
-    "JQueryPrepend" : ["IFrame src", "Image onerror", "Image onerror (legacy flavors)", "Mixed HTML Content"],
-    "JQueryAppend" : ["IFrame src", "Image onerror", "Image onerror (legacy flavors)", "Mixed HTML Content"],
-    "JQueryBefore" : ["IFrame src", "Image onerror", "Image onerror (legacy flavors)", "Mixed HTML Content"],
-    "JQueryAfter" : ["IFrame src", "Image onerror", "Image onerror (legacy flavors)", "Mixed HTML Content"],
-    "JQueryWrapInner" : ["IFrame src", "Image onerror", "Image onerror (legacy flavors)", "Mixed HTML Content"],
-    "JQueryWrap" : ["IFrame src", "Image onerror", "Image onerror (legacy flavors)", "Mixed HTML Content"],
-    "JQueryReplaceWith" : ["IFrame src", "Image onerror", "Image onerror (legacy flavors)", "Mixed HTML Content"],
-    "NgTrusted" : ["IFrame src", "Image onerror", "Image onerror (legacy flavors)", "Mixed HTML Content"],
+    'HtmlContent':          ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'DomInnerHtml':         ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'DomInnerHtmlNoOutput': ['Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'JQueryHtml':           ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'JQueryConstructor':    ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'JQueryPrepend':        ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'JQueryAppend':         ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'JQueryBefore':         ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'JQueryAfter':          ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'JQueryWrapInner':      ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'JQueryWrap':           ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'JQueryReplaceWith':    ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'NgTrusted':            ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
   }
+
+  /*
+  xssTriggeringPresetsByContextAndOutput[PayloadOutputContext.HtmlAttribute.toString()] = {
+    'HtmlAttribute':                 ['IFrame src', 'Image onerror', 'Mixed HTML Content'],
+    'HtmlEncodedUnquotedAttribute':  [],
+    'HtmlUnquotedAttribute':         [],
+  }
+  */
 
   for (const contextDescriptor of payloadOutputService.descriptors) {
 
@@ -91,10 +100,10 @@ describe('Xss Demo App', async () => {
 
         describe('with payload output "' + outputDescriptor.name + '"', () => {
 
-          const xssTriggeringPresetNames : string[] = xssTriggeringPresetsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id] || [];
+          const xssTriggeringPresetNames: string[] = xssTriggeringPresetsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id] || [];
           const specExpectation =
             (xssTriggeringPresetNames.length == 0) ?
-            'should NOT trigger XSS for any presets' :
+            'should NOT trigger XSS for any presets':
             'should only trigger XSS for presets ' + xssTriggeringPresetNames.map(presetName => '"' + presetName +'"').join(', ');
 
           it(specExpectation, async () => {
@@ -106,12 +115,12 @@ describe('Xss Demo App', async () => {
               const timeoutPromise = timeout(500);
               await Promise.race([xssPromise, timeoutPromise]);
 
-              if (matchingPreset.name in xssTriggeringPresetNames) {
-                await expectAsync(xssPromise).withContext("preset " + matchingPreset.name + " should trigger XSS").already.toBeResolved();
-                expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext("preset " + matchingPreset.name + " should show XSS alert message").not.toBeNull();
+              if (xssTriggeringPresetNames.includes(matchingPreset.name)) {
+                await expectAsync(xssPromise).withContext('preset "' + matchingPreset.name + '" should trigger XSS').already.toBeResolved();
+                expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should show XSS alert message').not.toBeNull();
               } else {
-                await expectAsync(timeoutPromise).withContext("preset " + matchingPreset.name + " should NOT trigger XSS").already.toBeResolved();
-                expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext("preset " + matchingPreset.name + " should NOT show XSS alert message").toBeNull();
+                await expectAsync(timeoutPromise).withContext('preset "' + matchingPreset.name + '" should NOT trigger XSS').already.toBeResolved();
+                expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should NOT show XSS alert message').toBeNull();
               }
             }
           }, 30000);
