@@ -22,7 +22,7 @@ describe('Xss Demo App', async () => {
   }
 
   function nextXssPromise(): Promise<any> {
-    return new Promise<any>((resolve) => xssResolve = resolve );
+    return new Promise<any>((resolve, reject) => xssResolve = resolve);
   }
 
   async function select(input: string, output: string) {
@@ -116,10 +116,10 @@ describe('Xss Demo App', async () => {
               await Promise.race([xssPromise, timeoutPromise]);
 
               if (xssTriggeringPresetNames.includes(matchingPreset.name)) {
-                await expectAsync(xssPromise).withContext('preset "' + matchingPreset.name + '" should trigger XSS').already.toBeResolved();
+                await expectAsync(xssPromise).withContext('preset "' + matchingPreset.name + '" should trigger XSS').toBeResolved();
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should show XSS alert message').not.toBeNull();
               } else {
-                await expectAsync(timeoutPromise).withContext('preset "' + matchingPreset.name + '" should NOT trigger XSS').already.toBeResolved();
+                await expectAsync(timeoutPromise).withContext('preset "' + matchingPreset.name + '" should NOT trigger XSS').toBeResolved();
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should NOT show XSS alert message').toBeNull();
               }
             }
