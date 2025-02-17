@@ -621,7 +621,7 @@ export class PayloadOutputService {
         },
 
         {
-          id : 'DomHtmlUnquotedAttribute',
+          id : 'HtmlUnquotedAttribute',
           quality : PayloadOutputQuality.Insecure,
           name : 'HTML paragraph title unquoted',
           title : 'Payload as Unquoted HTML Attribute (<p title=>)',
