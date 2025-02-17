@@ -1,1 +1,1 @@
-"></iframe> <iframe src="javascript:alert('XSS!')"></iframe>
+"></iframe> <iframe src="javascript:parent.xss()"></iframe>
