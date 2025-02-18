@@ -62,15 +62,27 @@ export class PayloadOutputComponent<T> {
         if (this.outputContent) {
           let outputElement = this.outputContent.nativeElement;
           if (this.outputDescriptor.htmlSourceProvider) {
-            outputElement.innerHTML = this.outputDescriptor.htmlSourceProvider(this._outputPayload);
+            try {
+              outputElement.innerHTML = this.outputDescriptor.htmlSourceProvider(this._outputPayload);
+            } catch (err) {
+              console.error(err);
+            }
           }
           else if (this.outputDescriptor.domInjector) {
             outputElement.textContent = '';
-            this.outputDescriptor.domInjector(outputElement, this._outputPayload);
+            try {
+              this.outputDescriptor.domInjector(outputElement, this._outputPayload);
+            } catch (err) {
+              console.error(err);
+            }
           }
           else if (this.outputDescriptor.jQueryInjector) {
             outputElement.textContent = '';
-            this.outputDescriptor.jQueryInjector(outputElement, this._outputPayload);
+            try {
+              this.outputDescriptor.jQueryInjector(outputElement, this._outputPayload);
+            } catch (err) {
+              console.error(err);
+            }
           }
           this.liveCode = outputElement.innerHTML;
         }
