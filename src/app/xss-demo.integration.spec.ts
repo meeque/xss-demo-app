@@ -73,6 +73,11 @@ describe('Xss Demo App', async () => {
     payloadOutputComboBox = element.querySelector('section.output-area combobox-input');
     alertOverlay = element.querySelector('.fd-shell__overlay.fd-overlay--alert');
 
+    // ignore global errors caused by dynamically loaded scripts (e.g. script blocks from xss payloads)
+    window.onerror = (message, source, lineno, colno, error) => {
+      console.error(error);
+    };
+
     const xssOriginal: () => any = (window as any).xss;
     (window as any).xss = () => {
       xssOriginal();
