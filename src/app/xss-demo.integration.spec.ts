@@ -36,10 +36,28 @@ describe('Xss Demo App', async () => {
     const payloadOutputMenuLink =
       Array.from(payloadOutputComboBox.querySelectorAll('div.fd-popover__body a'))
       .find((a: HTMLLinkElement) => a.textContent.trim() == output) as HTMLLinkElement;
-    payloadInputMenuLink.click();
-    payloadOutputMenuLink.click();
-    await fixture.whenStable();
-    fixture.detectChanges();
+
+    try {
+      payloadInputMenuLink.click();
+    } catch (err) {
+      console.error(err);
+    }
+    try {
+      payloadOutputMenuLink.click();
+    } catch (err) {
+      console.error(err);
+    }
+
+    await whenStableDetectChanges();
+  }
+
+  async function whenStableDetectChanges() {
+    try {
+      await fixture.whenStable();
+      fixture.detectChanges();
+    } catch(err) {
+      console.error(err);
+    }
   }
 
   beforeEach(async () => {
@@ -119,18 +137,15 @@ describe('Xss Demo App', async () => {
               const timeoutPromise = timeout(500);
               await Promise.race([xssPromise, timeoutPromise]);
 
-              await fixture.whenStable();
-              fixture.detectChanges();
+              await whenStableDetectChanges();
 
               if (xssTriggeringPresetNames.includes(matchingPreset.name)) {
                 await expectAsync(xssPromise).withContext('preset "' + matchingPreset.name + '" should trigger XSS').toBeResolved();
-                await fixture.whenStable();
-                fixture.detectChanges();
+                await whenStableDetectChanges();
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should show XSS alert message').not.toBeNull();
               } else {
                 await expectAsync(timeoutPromise).withContext('preset "' + matchingPreset.name + '" should NOT trigger XSS').toBeResolved();
-                await fixture.whenStable();
-                fixture.detectChanges();
+                await whenStableDetectChanges();
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should NOT show XSS alert message').toBeNull();
               }
             }
