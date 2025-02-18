@@ -18,11 +18,15 @@ describe('Xss Demo App', async () => {
   let xssResolve = (value: any) => {};
 
   function timeout(millis: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, millis));
+    return new Promise(resolve => {
+      setTimeout(resolve, millis);
+    });
   }
 
   function nextXssPromise(): Promise<any> {
-    return new Promise<any>((resolve, reject) => xssResolve = resolve);
+    return new Promise<any>(resolve => {
+      xssResolve = resolve;
+    });
   }
 
   async function select(input: string, output: string) {
