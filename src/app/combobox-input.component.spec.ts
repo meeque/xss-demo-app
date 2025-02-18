@@ -111,7 +111,7 @@ describe('ComboboxInputComponent', () => {
     });
 
     it('should show menu when query text input gets focus', () => {
-      textInput.focus();
+      textInput.dispatchEvent(new Event('focus'));
       fixture.detectChanges();
       expect(menuPopover.getAttribute('aria-hidden')).toBe('false');
     });
