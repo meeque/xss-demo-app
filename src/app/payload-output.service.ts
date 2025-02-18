@@ -263,7 +263,9 @@ export class PayloadOutputService {
     },
     wrapInner(element, payload) {
       $(element)
-        .html($('<p>').text('This is a static paragraph. Wrapping around its contents...').wrapInner(payload));
+        .html(
+          $('<p>').text('This is a static paragraph. Wrapping around its contents...').wrapInner(payload)
+        );
     },
     wrap(element, payload) {
       $('<p>').text('This is a static paragraph. Wrapping around all its parent\'s contents...')
