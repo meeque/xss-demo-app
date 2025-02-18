@@ -15,7 +15,7 @@ describe('Xss Demo App', async () => {
   let payloadOutputComboBox: HTMLElement;
   let alertOverlay: HTMLElement;
 
-  let xssResolve = (value: any) => {};
+  let xssResolve = (value?: any) => {};
 
   function timeout(millis: number): Promise<void> {
     return new Promise(resolve => {
@@ -58,7 +58,7 @@ describe('Xss Demo App', async () => {
     const xssOriginal: () => any = (window as any).xss;
     (window as any).xss = () => {
       xssOriginal();
-      xssResolve(null);
+      xssResolve();
     };
   });
 
@@ -119,11 +119,18 @@ describe('Xss Demo App', async () => {
               const timeoutPromise = timeout(500);
               await Promise.race([xssPromise, timeoutPromise]);
 
+              await fixture.whenStable();
+              fixture.detectChanges();
+
               if (xssTriggeringPresetNames.includes(matchingPreset.name)) {
                 await expectAsync(xssPromise).withContext('preset "' + matchingPreset.name + '" should trigger XSS').toBeResolved();
+                await fixture.whenStable();
+                fixture.detectChanges();
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should show XSS alert message').not.toBeNull();
               } else {
                 await expectAsync(timeoutPromise).withContext('preset "' + matchingPreset.name + '" should NOT trigger XSS').toBeResolved();
+                await fixture.whenStable();
+                fixture.detectChanges();
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should NOT show XSS alert message').toBeNull();
               }
             }
