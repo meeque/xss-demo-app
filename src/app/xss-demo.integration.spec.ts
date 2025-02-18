@@ -122,39 +122,42 @@ describe('Xss Demo App', async () => {
       continue;
     }
 
-    describe('in the context of "' + contextDescriptor.name + '"', () => {
+    describe('"' + contextDescriptor.name + '"', () => {
+
       for (const outputDescriptor of contextDescriptor.payloadOutputs) {
 
-        describe('with payload output "' + outputDescriptor.name + '"', () => {
+        describe('payload output "' + outputDescriptor.name + '"', () => {
 
           const xssTriggeringPresetNames: string[] = xssTriggeringPresetsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id] || [];
-          const specExpectation =
-            (xssTriggeringPresetNames.length == 0) ?
-            'should NOT trigger XSS for any presets':
-            'should only trigger XSS for presets ' + xssTriggeringPresetNames.map(presetName => '"' + presetName +'"').join(', ');
 
-          it(specExpectation, async () => {
-            const matchingPresetGroup = component.presetGroups.find(menuGroup => menuGroup.value == contextDescriptor.id);
+          it(
+            xssTriggeringPresetNames.length == 0
+              ? 'should NOT trigger XSS for any presets'
+              : 'should trigger XSS for presets ' + xssTriggeringPresetNames.map(presetName => '"' + presetName +'"').join(', '), 
+            async () => {
+              const matchingPresetGroup = component.presetGroups.find(menuGroup => menuGroup.value == contextDescriptor.id);
 
-            for (const matchingPreset of matchingPresetGroup.items) {
-              const xssPromise = nextXssPromise();
-              await select(matchingPreset.name, outputDescriptor.name);
-              const timeoutPromise = timeout(500);
-              await Promise.race([xssPromise, timeoutPromise]);
+              for (const matchingPreset of matchingPresetGroup.items) {
+                const xssPromise = nextXssPromise();
+                await select(matchingPreset.name, outputDescriptor.name);
+                const timeoutPromise = timeout(200);
+                await Promise.race([xssPromise, timeoutPromise]);
 
-              await whenStableDetectChanges();
-
-              if (xssTriggeringPresetNames.includes(matchingPreset.name)) {
-                await expectAsync(xssPromise).withContext('preset "' + matchingPreset.name + '" should trigger XSS').toBeResolved();
                 await whenStableDetectChanges();
-                expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should show XSS alert message').not.toBeNull();
-              } else {
-                await expectAsync(timeoutPromise).withContext('preset "' + matchingPreset.name + '" should NOT trigger XSS').toBeResolved();
-                await whenStableDetectChanges();
-                expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should NOT show XSS alert message').toBeNull();
+
+                if (xssTriggeringPresetNames.includes(matchingPreset.name)) {
+                  await expectAsync(xssPromise).withContext('preset "' + matchingPreset.name + '" should trigger XSS').toBeResolved();
+                  await whenStableDetectChanges();
+                  expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should show XSS alert message').not.toBeNull();
+                } else {
+                  await expectAsync(timeoutPromise).withContext('preset "' + matchingPreset.name + '" should NOT trigger XSS').toBeResolved();
+                  await whenStableDetectChanges();
+                  expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should NOT show XSS alert message').toBeNull();
+                }
               }
-            }
-          }, 30000);
+            },
+            30000
+          );
         });
       }
     });
