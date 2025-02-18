@@ -105,7 +105,7 @@ describe('ComboboxInputComponent', () => {
     });
 
     it('should show menu when button is clicked', () => {
-      menuButton.click();
+      menuButton.dispatchEvent(new Event('click'));
       fixture.detectChanges();
       expect(menuPopover.getAttribute('aria-hidden')).toBe('false');
     });
@@ -134,7 +134,7 @@ describe('ComboboxInputComponent', () => {
       const listItems = queryMenuListsItems().plain;
 
       for (const [i, menuItem] of plainMenuItems.entries()) {
-        listItems[i].querySelector('a').click();
+        listItems[i].querySelector('a').dispatchEvent(new Event('click'));
         expect(selectedValue).toBe(menuItem.value);
       }
     });
@@ -142,7 +142,7 @@ describe('ComboboxInputComponent', () => {
     it('should adjust placeholder when menu items are clicked', () => {
 
       for (const [i, menuItem] of plainMenuItems.entries() ) {
-        queryMenuListsItems().plain[i].querySelector('a').click();
+        queryMenuListsItems().plain[i].querySelector('a').dispatchEvent(new Event('click'));
         fixture.detectChanges();
         expect(textInput.placeholder).toBe(menuItem.name);
       }
@@ -255,7 +255,7 @@ describe('ComboboxInputComponent', () => {
 
       for (const [i, menuGroup] of groupedMenuItems.entries()) {
         for (const [j, menuItem] of menuGroup.items.entries()) {
-          groupListItems[i][j].querySelector('a').click();
+          groupListItems[i][j].querySelector('a').dispatchEvent(new Event('click'));
           expect(selectedValue).toBe(menuItem.value);
         }
       }
@@ -264,7 +264,7 @@ describe('ComboboxInputComponent', () => {
     it('should adjust placeholder when menu item are clicked', () => {
       for (const [i, menuGroup] of groupedMenuItems.entries()) {
         for (const [j, menuItem] of menuGroup.items.entries()) {
-          queryMenuListsItems().grouped[i][j].querySelector('a').click();
+          queryMenuListsItems().grouped[i][j].querySelector('a').dispatchEvent(new Event('click'));
           fixture.detectChanges();
           expect(textInput.placeholder).toBe(menuItem.name);
         }
