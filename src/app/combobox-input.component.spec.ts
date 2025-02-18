@@ -12,30 +12,6 @@ describe('ComboboxInputComponent', () => {
 
   let selectedValue : string;
 
-  function selectValue(item : MenuItem<string>) : boolean {
-    selectedValue = item.value;
-    return true;
-  }
-
-  function enterQuery(text : string) : void {
-      textInput.value = text;
-      textInput.dispatchEvent(new Event('input'));
-      fixture.detectChanges();
-  }
-
-  function queryMenuListsItems() : {plain: HTMLElement[], grouped: HTMLElement[][]} {
-    const menuLists = element.querySelectorAll('ul');
-
-    let plainList : HTMLElement;
-    let groupLists : HTMLElement[];
-    [plainList, ... groupLists] = menuLists.values();
-
-    const plainListItems : HTMLElement[] = Array.from(plainList.querySelectorAll('li'));
-    const groupListsItems : HTMLElement[][] = groupLists.map((list) => Array.from(list.querySelectorAll('li')));
-
-    return {plain: plainListItems, grouped: groupListsItems};
-  }
-
   beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [ComboboxInputComponent]
@@ -271,4 +247,28 @@ describe('ComboboxInputComponent', () => {
       }
     });
   });
+
+  function selectValue(item : MenuItem<string>) : boolean {
+    selectedValue = item.value;
+    return true;
+  }
+
+  function enterQuery(text : string) : void {
+      textInput.value = text;
+      textInput.dispatchEvent(new Event('input'));
+      fixture.detectChanges();
+  }
+
+  function queryMenuListsItems() : {plain: HTMLElement[], grouped: HTMLElement[][]} {
+    const menuLists = element.querySelectorAll('ul');
+
+    let plainList : HTMLElement;
+    let groupLists : HTMLElement[];
+    [plainList, ... groupLists] = menuLists.values();
+
+    const plainListItems : HTMLElement[] = Array.from(plainList.querySelectorAll('li'));
+    const groupListsItems : HTMLElement[][] = groupLists.map((list) => Array.from(list.querySelectorAll('li')));
+
+    return {plain: plainListItems, grouped: groupListsItems};
+  }
 });

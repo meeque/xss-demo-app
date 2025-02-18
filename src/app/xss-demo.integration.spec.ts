@@ -17,49 +17,6 @@ describe('Xss Demo App', async () => {
 
   let xssResolve = (value?: any) => {};
 
-  function timeout(millis: number): Promise<void> {
-    return new Promise(resolve => {
-      setTimeout(resolve, millis);
-    });
-  }
-
-  function nextXssPromise(): Promise<any> {
-    return new Promise<any>(resolve => {
-      xssResolve = resolve;
-    });
-  }
-
-  async function select(input: string, output: string) {
-    const payloadInputMenuLink =
-      Array.from(payloadInputComboBox.querySelectorAll('div.fd-popover__body a'))
-      .find((a: HTMLLinkElement) => a.textContent == input) as HTMLLinkElement;
-    const payloadOutputMenuLink =
-      Array.from(payloadOutputComboBox.querySelectorAll('div.fd-popover__body a'))
-      .find((a: HTMLLinkElement) => a.textContent.trim() == output) as HTMLLinkElement;
-
-    try {
-      payloadInputMenuLink.click();
-    } catch (err) {
-      console.error(err);
-    }
-    try {
-      payloadOutputMenuLink.click();
-    } catch (err) {
-      console.error(err);
-    }
-
-    await whenStableDetectChanges();
-  }
-
-  async function whenStableDetectChanges() {
-    try {
-      await fixture.whenStable();
-      fixture.detectChanges();
-    } catch(err) {
-      console.error(err);
-    }
-  }
-
   beforeEach(async () => {
     TestBed.configureTestingModule(xssDemoConfig);
     await TestBed.compileComponents();
@@ -133,13 +90,13 @@ describe('Xss Demo App', async () => {
           it(
             xssTriggeringPresetNames.length == 0
               ? 'should NOT trigger XSS for any presets'
-              : 'should trigger XSS for presets ' + xssTriggeringPresetNames.map(presetName => '"' + presetName +'"').join(', '), 
+              : 'should trigger XSS for presets ' + xssTriggeringPresetNames.map(presetName => '"' + presetName + '"').join(', '),
             async () => {
               const matchingPresetGroup = component.presetGroups.find(menuGroup => menuGroup.value == contextDescriptor.id);
 
               for (const matchingPreset of matchingPresetGroup.items) {
                 const xssPromise = nextXssPromise();
-                await select(matchingPreset.name, outputDescriptor.name);
+                await selectInputOutput(matchingPreset.name, outputDescriptor.name);
                 const timeoutPromise = timeout(200);
                 await Promise.race([xssPromise, timeoutPromise]);
 
@@ -160,6 +117,49 @@ describe('Xss Demo App', async () => {
           );
         });
       }
+    });
+  }
+
+  async function selectInputOutput(input: string, output: string): Promise<void> {
+    const payloadInputMenuLink =
+      Array.from(payloadInputComboBox.querySelectorAll('div.fd-popover__body a'))
+      .find((a: HTMLLinkElement) => a.textContent == input) as HTMLLinkElement;
+    const payloadOutputMenuLink =
+      Array.from(payloadOutputComboBox.querySelectorAll('div.fd-popover__body a'))
+      .find((a: HTMLLinkElement) => a.textContent.trim() == output) as HTMLLinkElement;
+
+    try {
+      payloadInputMenuLink.click();
+    } catch (err) {
+      console.error(err);
+    }
+    try {
+      payloadOutputMenuLink.click();
+    } catch (err) {
+      console.error(err);
+    }
+
+    await whenStableDetectChanges();
+  }
+
+  async function whenStableDetectChanges(): Promise<void> {
+    try {
+      await fixture.whenStable();
+      fixture.detectChanges();
+    } catch(err) {
+      console.error(err);
+    }
+  }
+
+  function timeout(millis: number): Promise<void> {
+    return new Promise(resolve => {
+      setTimeout(resolve, millis);
+    });
+  }
+
+  function nextXssPromise(): Promise<any> {
+    return new Promise<any>(resolve => {
+      xssResolve = resolve;
     });
   }
 });
