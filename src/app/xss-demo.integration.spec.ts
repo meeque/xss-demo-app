@@ -19,34 +19,7 @@ describe('Xss Demo App', async () => {
 
   let xssResolve = (value?: any) => {};
 
-  beforeEach(async () => {
-    TestBed.configureTestingModule(xssDemoConfig);
-    await TestBed.compileComponents();
-    fixture = TestBed.createComponent(XssDemoComponent);
-    fixture.detectChanges();
 
-    component = fixture.componentInstance;
-    element = fixture.nativeElement;
-
-    payloadInputCombobox = element.querySelector('section.input-area combobox-input');
-    payloadOutputCombobox = element.querySelector('section.output-area combobox-input');
-    alertOverlay = element.querySelector('.fd-shell__overlay.fd-overlay--alert');
-
-    // ignore global errors caused by dynamically loaded scripts (e.g. script blocks from xss payloads)
-    window.onerror = (message, source, lineno, colno, error) => {
-      console.error(error);
-    };
-
-    const xssOriginal: () => any = (window as any).xss;
-    (window as any).xss = () => {
-      xssOriginal();
-      xssResolve();
-    };
-  });
-
-  it('should be created', async () => {
-    expect(component).toBeDefined();
-  });
 
   const xssTriggeringPresetsByContextAndOutput = {};
 
@@ -83,6 +56,37 @@ describe('Xss Demo App', async () => {
     'SqStringDomTrusted': ['JS code breaking \'string\''],
     'BlockDomTrusted': ['pure JS code'],
   }
+
+
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule(xssDemoConfig);
+    await TestBed.compileComponents();
+    fixture = TestBed.createComponent(XssDemoComponent);
+    fixture.detectChanges();
+
+    component = fixture.componentInstance;
+    element = fixture.nativeElement;
+
+    payloadInputCombobox = element.querySelector('section.input-area combobox-input');
+    payloadOutputCombobox = element.querySelector('section.output-area combobox-input');
+    alertOverlay = element.querySelector('.fd-shell__overlay.fd-overlay--alert');
+
+    // ignore global errors caused by dynamically loaded scripts (e.g. script blocks from xss payloads)
+    window.onerror = (message, source, lineno, colno, error) => {
+      console.error(error);
+    };
+
+    const xssOriginal: () => any = (window as any).xss;
+    (window as any).xss = () => {
+      xssOriginal();
+      xssResolve();
+    };
+  });
+
+  it('should be created', async () => {
+    expect(component).toBeDefined();
+  });
 
   for (const contextDescriptor of payloadOutputService.descriptors) {
 
