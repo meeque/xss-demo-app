@@ -84,11 +84,6 @@ describe('Xss Demo App', async () => {
 
   for (const contextDescriptor of payloadOutputService.descriptors) {
 
-    // XXX ignore contexts that have not been configured yet
-    if (!Object.hasOwn(xssTriggeringPresetsByContextAndOutput, contextDescriptor.id.toString())) {
-      continue;
-    }
-
     describe('"' + contextDescriptor.name + '"', () => {
 
       for (const outputDescriptor of contextDescriptor.payloadOutputs) {
