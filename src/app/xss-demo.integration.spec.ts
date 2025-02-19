@@ -68,6 +68,11 @@ describe('Xss Demo App', async () => {
     'HtmlAttribute':        ['IFrame src', 'Image onerror', 'Mixed HTML Content'],
   }
 
+  xssTriggeringPresetsByContextAndOutput[PayloadOutputContext.Url.toString()] = {
+    'IframeDomTrusted': ['javascript URL'],
+    'IframeNgTrusted': ['javascript URL'],
+  }
+
   for (const contextDescriptor of payloadOutputService.descriptors) {
 
     // XXX ignore contexts that have not been configured yet
