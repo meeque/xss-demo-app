@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from './combobox-input.component';
 import { PayloadOutputService, PayloadOutputContext, ContextDescriptor, PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
+import { PayloadPresetService, PresetContextDescriptor, PayloadPresetDescriptor } from './payload-preset.service';
 import { PayloadOutputComponent } from './payload-output.component';
 
 
@@ -34,9 +35,9 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   @ViewChild('payloadOutputMenuQualityFilters')
   payloadOutputMenuQualityFiltersTemplate : TemplateRef<MenuItemContext>;
 
-  private selectPreset = (presetItem : MenuItem<string>) => {
-    this.loadPresetPayload(presetItem.value);
-    return false;
+  private selectPreset = (presetItem : MenuItem<PayloadPresetDescriptor>) => {
+    this.loadPresetPayload(presetItem.value.url);
+    return true;
   }
 
   private payloadOutputMenuItemFilter = (item : MenuItem<PayloadOutputDescriptor>, query : string) => {
@@ -52,216 +53,9 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     return true;
   }
 
-  presetItems : MenuItem<String>[] = [
-    {
-      name : 'Introduction',
-      value : 'assets/presets/intro.txt',
-      select : this.selectPreset
-    }
-  ];
+  presetItems: MenuItem<PayloadPresetDescriptor>[];
 
-  presetGroups : MenuGroup<PayloadOutputContext, string>[] = [
-    {
-      name: 'HTML Content',
-      value: PayloadOutputContext.HtmlContent,
-      items: [
-        {
-          name : 'Script tag',
-          value : 'assets/presets/html/script-tag.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'IFrame src',
-          value : 'assets/presets/html/iframe-src.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'Image src',
-          value : 'assets/presets/html/img-src.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'Image onerror',
-          value : 'assets/presets/html/img-onerror.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'Image onerror (legacy flavors)',
-          value : 'assets/presets/html/img-onerror-legacy.txt',
-          select : this.selectPreset
-        },
-        {
-            name : 'A link href',
-            value : 'assets/presets/html/a-href.txt',
-            select : this.selectPreset
-        },
-        {
-            name : 'Input field onfocus',
-            value : 'assets/presets/html/input-onfocus.txt',
-            select : this.selectPreset
-        },
-        {
-            name : 'Div onmouseenter',
-            value : 'assets/presets/html/div-onmouseenter.txt',
-            select : this.selectPreset
-        },
-        {
-          name : 'SVG onload',
-          value : 'assets/presets/html/svg-onload.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'Style block',
-          value : 'assets/presets/html/style-block.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'Style attribute',
-          value : 'assets/presets/html/style-attr.txt',
-          select : this.selectPreset
-        },
-        {
-            name : 'Mixed HTML Content',
-            value : 'assets/presets/html/mixed-content.txt',
-            select : this.selectPreset
-          }
-      ]
-    },
-    {
-      name: 'HTML Attributes',
-      value: PayloadOutputContext.HtmlAttribute,
-      items: [
-        {
-          name : 'IFrame src',
-          value : 'assets/presets/html-attr/iframe-src.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'Image src',
-          value : 'assets/presets/html-attr/img-src.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'Image onerror',
-          value : 'assets/presets/html-attr/img-onerror.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'SVG onload',
-          value : 'assets/presets/html-attr/svg-onload.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'onload attribute',
-          value : 'assets/presets/html-attr/onload-attr.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'onload attribute (unquoted)',
-          value : 'assets/presets/html-attr/onload-attr-unquoted.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'onmouseenter attribute',
-          value : 'assets/presets/html-attr/onmouseenter-attr.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'onmouseenter attribute (unquoted)',
-          value : 'assets/presets/html-attr/onmouseenter-attr-unquoted.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'style attribute',
-          value : 'assets/presets/html-attr/style-attr.txt',
-          select : this.selectPreset
-        }
-      ]
-    },
-    {
-      name: 'URLs',
-      value: PayloadOutputContext.Url,
-      items: [
-        {
-          name : 'javascript URL',
-          value : 'assets/presets/url/script-url.txt',
-          select : this.selectPreset
-        }
-      ]
-    },
-    {
-      name: 'CSS Styles',
-      value: PayloadOutputContext.Css,
-      items: [
-        {
-          name : 'ruleset with javascript URL',
-          value : 'assets/presets/css/background-js-ruleset.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'declarations with javascript URL',
-          value : 'assets/presets/css/background-js-declarations.txt',
-          select : this.selectPreset
-        }
-      ]
-    },
-    {
-      name: 'JavaScript',
-      value: PayloadOutputContext.JavaScript,
-      items: [
-        {
-          name : 'pure JS code',
-          value : 'assets/presets/js/pure.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'pure JS defacement attack',
-          value : 'assets/presets/js/defacement.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'JS code breaking "string"',
-          value : 'assets/presets/js/break-double-quotes.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'JS code breaking \'string\'',
-          value : 'assets/presets/js/break-single-quotes.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'JS attack on a plain HTML page in an iframe',
-          value : 'assets/presets/js/attack-plain-html-mock-in-frame.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'JS attack on a plain HTML page in a new top-level browsing context',
-          value : 'assets/presets/js/attack-plain-html-mock-in-tlbc.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'JS attack on browser storage with an iframe',
-          value : 'assets/presets/js/attack-storage-in-frame.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'JS attack on browser storage with a new top-level browsing context',
-          value : 'assets/presets/js/attack-storage-in-tlbc.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'JS attack on cookies with an iframe',
-          value : 'assets/presets/js/attack-cookies-in-frame.txt',
-          select : this.selectPreset
-        },
-        {
-          name : 'JS attack on cookies with a new top-level browsing context',
-          value : 'assets/presets/js/attack-cookies-in-tlbc.txt',
-          select : this.selectPreset
-        },
-      ]
-    }
-  ];
+  presetGroups: MenuGroup<PresetContextDescriptor, PayloadPresetDescriptor>[];
 
   payload : string = '';
 
@@ -280,9 +74,10 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   private _activeOutput : string = 'HtmlEncodedContent';
 
   constructor(
-      private readonly _payloadOutputService : PayloadOutputService,
-      private readonly _changeDetector: ChangeDetectorRef,
-      private readonly _http: HttpClient) {
+    private readonly _payloadPresetService: PayloadPresetService,
+    private readonly _payloadOutputService : PayloadOutputService,
+    private readonly _changeDetector: ChangeDetectorRef
+  ) {
   }
 
   ngOnInit() {
@@ -291,6 +86,31 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.presetItems = [];
+    this.presetGroups = [];
+    for (const context of this._payloadPresetService.descriptors) {
+      const group : MenuGroup<PresetContextDescriptor, PayloadPresetDescriptor> = {
+        name : context.name,
+        value : context,
+        items : []
+      };
+      const items: MenuItem<PayloadPresetDescriptor>[] = [];
+      for (const payloadPreset of context.payloadPresets) {
+        const item : MenuItem<PayloadPresetDescriptor> = {
+          name : payloadPreset.name,
+          value : payloadPreset,
+          select : this.selectPreset
+        };
+        items.push(item);
+      }
+      if (group.value.id == null) {
+        this.presetItems = items;
+      } else {
+        group.items = items;
+        this.presetGroups.push(group);
+      }
+    }
+
     this.payloadOutputFilters = [
         {
           name : 'by technology:',
@@ -317,7 +137,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
         const item : MenuItem<PayloadOutputDescriptor> = {
           name : payloadOutput.name,
           value : payloadOutput,
-          select : (item : MenuItem<PayloadOutputDescriptor>, $event? : any) => {
+          select : (item : MenuItem<PayloadOutputDescriptor>) => {
             return this.activateOutput(context.id, payloadOutput.id);
           },
           filter : this.payloadOutputMenuItemFilter,
@@ -334,15 +154,8 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     return this._payloadOutputService;
   }
 
-  loadPresetPayload(presetUrl: string) {
-    this._http.get(
-        presetUrl,
-        {responseType: 'text'})
-      .subscribe(
-        (presetPayload: string) => {
-          console.log("Loaded preset payload from " + presetUrl);
-          this.payload = presetPayload;
-        });
+  async loadPresetPayload(presetUrl: string) {
+    this.payload = await this._payloadPresetService.loadPresetPayload(presetUrl);
   }
 
   isActiveOutput(context : PayloadOutputContext, output : string) {

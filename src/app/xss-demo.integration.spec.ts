@@ -97,7 +97,7 @@ describe('Xss Demo App', async () => {
               ? 'should NOT trigger XSS for any presets'
               : 'should trigger XSS for presets ' + xssTriggeringPresetNames.map(presetName => '"' + presetName + '"').join(', '),
             async () => {
-              const matchingPresetGroup = component.presetGroups.find(menuGroup => menuGroup.value == contextDescriptor.id);
+              const matchingPresetGroup = component.presetGroups.find(menuGroup => menuGroup.value.id == contextDescriptor.id);
 
               for (const matchingPreset of matchingPresetGroup.items) {
                 const xssPromise = nextXssPromise();
