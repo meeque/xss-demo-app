@@ -73,6 +73,15 @@ describe('Xss Demo App', async () => {
     'IframeNgTrusted': ['javascript URL'],
   }
 
+  xssTriggeringPresetsByContextAndOutput[PayloadOutputContext.Css.toString()] = {
+  }
+
+  xssTriggeringPresetsByContextAndOutput[PayloadOutputContext.JavaScript.toString()] = {
+    'DqStringDomTrusted': ['JS code breaking "string"'],
+    'SqStringDomTrusted': ['JS code breaking \'string\''],
+    'BlockDomTrusted': ['pure JS code'],
+  }
+
   for (const contextDescriptor of payloadOutputService.descriptors) {
 
     // XXX ignore contexts that have not been configured yet
