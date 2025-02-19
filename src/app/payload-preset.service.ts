@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-// TODO extract these to a common utilities file
-import { PayloadOutputContext } from './payload-output.service';
+import { XssContext } from './xss-demo.common';
+
+
 
 export interface PayloadPresetDescriptor {
   readonly name: string;
@@ -10,10 +11,12 @@ export interface PayloadPresetDescriptor {
 }
 
 export interface PresetContextDescriptor {
-  readonly id: PayloadOutputContext;
+  readonly id: XssContext;
   readonly name: string;
   readonly payloadPresets: PayloadPresetDescriptor[];
 }
+
+
 
 @Injectable()
 export class PayloadPresetService {
@@ -32,7 +35,7 @@ export class PayloadPresetService {
     },
 
     {
-      id: PayloadOutputContext.HtmlContent,
+      id: XssContext.HtmlContent,
       name: 'HTML Content',
       payloadPresets: [
         {
@@ -86,7 +89,7 @@ export class PayloadPresetService {
       ]
     },
     {
-      id: PayloadOutputContext.HtmlAttribute,
+      id: XssContext.HtmlAttribute,
       name: 'HTML Attributes',
       payloadPresets: [
         {
@@ -128,7 +131,7 @@ export class PayloadPresetService {
       ]
     },
     {
-      id: PayloadOutputContext.Url,
+      id: XssContext.Url,
       name: 'URLs',
       payloadPresets: [
         {
@@ -138,7 +141,7 @@ export class PayloadPresetService {
       ]
     },
     {
-      id: PayloadOutputContext.Css,
+      id: XssContext.Css,
       name: 'CSS Styles',
       payloadPresets: [
         {
@@ -152,7 +155,7 @@ export class PayloadPresetService {
       ]
     },
     {
-      id: PayloadOutputContext.JavaScript,
+      id: XssContext.JavaScript,
       name: 'JavaScript',
       payloadPresets: [
         {

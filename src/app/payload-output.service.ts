@@ -1,17 +1,13 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-declare var DOMPurify: any;
+import { XssContext } from './xss-demo.common';
 
+
+
+declare var DOMPurify: any;
 declare var $: any;
 
-export enum PayloadOutputContext {
-  HtmlContent,
-  HtmlAttribute,
-  Url,
-  Css,
-  JavaScript
-}
 
 
 export enum PayloadOutputQuality {
@@ -21,15 +17,14 @@ export enum PayloadOutputQuality {
 }
 
 
+
 interface PayloadProcessor {
   (payload: string): any;
 }
 
-
 interface HtmlSourceProvider {
   (payload: string): string;
 }
-
 
 interface Injector {
   (element: any, payload: string): void;
@@ -38,6 +33,7 @@ interface Injector {
 interface DomInjector extends Injector {};
 
 interface JQueryInjector extends Injector {};
+
 
 
 export interface PayloadOutputDescriptor {
@@ -53,10 +49,11 @@ export interface PayloadOutputDescriptor {
 }
 
 export interface ContextDescriptor {
-  readonly id: PayloadOutputContext;
+  readonly id: XssContext;
   readonly name: string;
   payloadOutputs: PayloadOutputDescriptor[];
 }
+
 
 
 @Injectable()
@@ -283,7 +280,7 @@ export class PayloadOutputService {
   [
 
     {
-      id: PayloadOutputContext.HtmlContent,
+      id: XssContext.HtmlContent,
       name: 'HTML Content',
       payloadOutputs: [
 
@@ -592,7 +589,7 @@ export class PayloadOutputService {
     },
 
     {
-      id: PayloadOutputContext.HtmlAttribute,
+      id: XssContext.HtmlAttribute,
       name: 'HTML Attributes',
       payloadOutputs: [
 
@@ -658,7 +655,7 @@ export class PayloadOutputService {
     },
 
     {
-      id: PayloadOutputContext.Url,
+      id: XssContext.Url,
       name: 'URLs',
       payloadOutputs: [
 
@@ -733,7 +730,7 @@ export class PayloadOutputService {
     },
 
     {
-      id: PayloadOutputContext.Css,
+      id: XssContext.Css,
       name: 'CSS Styles',
       payloadOutputs: [
 
@@ -799,7 +796,7 @@ export class PayloadOutputService {
     },
 
     {
-      id: PayloadOutputContext.JavaScript,
+      id: XssContext.JavaScript,
       name: 'JavaScript',
       payloadOutputs: [
 
@@ -844,7 +841,7 @@ export class PayloadOutputService {
   constructor(private readonly sanitizer: DomSanitizer) {
   }
 
-  contextDescriptorById(contextId: PayloadOutputContext): ContextDescriptor {
+  contextDescriptorById(contextId: XssContext): ContextDescriptor {
     for (const context of this.descriptors) {
       if (context.id == contextId) {
         return context;
@@ -853,7 +850,7 @@ export class PayloadOutputService {
     return null;
   }
 
-  outputDescriptorById(contextId: PayloadOutputContext, outputId: string): PayloadOutputDescriptor {
+  outputDescriptorById(contextId: XssContext, outputId: string): PayloadOutputDescriptor {
     const context = this.contextDescriptorById(contextId);
     if (context) {
       for (const output of context.payloadOutputs) {

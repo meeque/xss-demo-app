@@ -1,11 +1,11 @@
 import { NgIf, NgFor, NgStyle } from '@angular/common';
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 
 import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from './combobox-input.component';
-import { PayloadOutputService, PayloadOutputContext, ContextDescriptor, PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
+import { XssContext } from './xss-demo.common';
 import { PayloadPresetService, PresetContextDescriptor, PayloadPresetDescriptor } from './payload-preset.service';
+import { PayloadOutputService, ContextDescriptor, PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
 
 
@@ -18,29 +18,29 @@ import { PayloadOutputComponent } from './payload-output.component';
 })
 export class XssDemoComponent implements OnInit, AfterViewInit {
 
-  static nextComponentId : number = 0;
+  static nextComponentId: number = 0;
 
-  componentId : number = XssDemoComponent.nextComponentId++;
+  componentId: number = XssDemoComponent.nextComponentId++;
 
-  readonly PayloadOutputContext = PayloadOutputContext;
+  readonly XssContext = XssContext;
 
   readonly PayloadOutputQuality = PayloadOutputQuality;
 
   @ViewChild('payloadOutputMenuItem')
-  payloadOutputMenuItemTemplate : TemplateRef<MenuItemContext>;
+  payloadOutputMenuItemTemplate: TemplateRef<MenuItemContext>;
 
   @ViewChild('payloadOutputMenuTechnologyFilters')
-  payloadOutputMenuTechnologyFiltersTemplate : TemplateRef<MenuItemContext>;
+  payloadOutputMenuTechnologyFiltersTemplate: TemplateRef<MenuItemContext>;
 
   @ViewChild('payloadOutputMenuQualityFilters')
-  payloadOutputMenuQualityFiltersTemplate : TemplateRef<MenuItemContext>;
+  payloadOutputMenuQualityFiltersTemplate: TemplateRef<MenuItemContext>;
 
-  private selectPreset = (presetItem : MenuItem<PayloadPresetDescriptor>) => {
+  private selectPreset = (presetItem: MenuItem<PayloadPresetDescriptor>) => {
     this.loadPresetPayload(presetItem.value.url);
     return true;
   }
 
-  private payloadOutputMenuItemFilter = (item : MenuItem<PayloadOutputDescriptor>, query : string) => {
+  private payloadOutputMenuItemFilter = (item: MenuItem<PayloadOutputDescriptor>, query: string) => {
     if (query && !item.name.toLowerCase().includes(query.toLowerCase())) {
       return false;
     }
@@ -57,25 +57,25 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   presetGroups: MenuGroup<PresetContextDescriptor, PayloadPresetDescriptor>[];
 
-  payload : string = '';
+  payload: string = '';
 
-  payloadOutputFilters : MenuItem<any>[] = [];
+  payloadOutputFilters: MenuItem<any>[] = [];
 
-  payloadOutputGroups : MenuGroup<ContextDescriptor, PayloadOutputDescriptor>[] = [];
+  payloadOutputGroups: MenuGroup<ContextDescriptor, PayloadOutputDescriptor>[] = [];
 
-  xssTriggered : number = 0;
+  xssTriggered: number = 0;
 
-  payloadOutputTechnologyFilters : string[] = [];
+  payloadOutputTechnologyFilters: string[] = [];
 
-  payloadOutputQualityFilters : PayloadOutputQuality[] = [];
+  payloadOutputQualityFilters: PayloadOutputQuality[] = [];
 
-  private _activeContext : PayloadOutputContext = PayloadOutputContext.HtmlContent;
+  private _activeContext: XssContext = XssContext.HtmlContent;
 
-  private _activeOutput : string = 'HtmlEncodedContent';
+  private _activeOutput: string = 'HtmlEncodedContent';
 
   constructor(
     private readonly _payloadPresetService: PayloadPresetService,
-    private readonly _payloadOutputService : PayloadOutputService,
+    private readonly _payloadOutputService: PayloadOutputService,
     private readonly _changeDetector: ChangeDetectorRef
   ) {
   }
@@ -89,17 +89,17 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     this.presetItems = [];
     this.presetGroups = [];
     for (const context of this._payloadPresetService.descriptors) {
-      const group : MenuGroup<PresetContextDescriptor, PayloadPresetDescriptor> = {
-        name : context.name,
-        value : context,
-        items : []
+      const group: MenuGroup<PresetContextDescriptor, PayloadPresetDescriptor> = {
+        name: context.name,
+        value: context,
+        items: []
       };
       const items: MenuItem<PayloadPresetDescriptor>[] = [];
       for (const payloadPreset of context.payloadPresets) {
-        const item : MenuItem<PayloadPresetDescriptor> = {
-          name : payloadPreset.name,
-          value : payloadPreset,
-          select : this.selectPreset
+        const item: MenuItem<PayloadPresetDescriptor> = {
+          name: payloadPreset.name,
+          value: payloadPreset,
+          select: this.selectPreset
         };
         items.push(item);
       }
@@ -113,35 +113,35 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
     this.payloadOutputFilters = [
         {
-          name : 'by technology:',
-          value : [],
-          select : () => { return false },
-          template : this.payloadOutputMenuTechnologyFiltersTemplate
+          name: 'by technology:',
+          value: [],
+          select: () => { return false },
+          template: this.payloadOutputMenuTechnologyFiltersTemplate
         },
         {
-          name : 'by quality:',
-          value : [],
-          select : () => { return false },
-          template : this.payloadOutputMenuQualityFiltersTemplate
+          name: 'by quality:',
+          value: [],
+          select: () => { return false },
+          template: this.payloadOutputMenuQualityFiltersTemplate
         }
     ];
 
     this.payloadOutputGroups = [];
     for (const context of this._payloadOutputService.descriptors) {
-      const group : MenuGroup<ContextDescriptor, PayloadOutputDescriptor> = {
-        name : context.name,
-        value : context,
-        items : []
+      const group: MenuGroup<ContextDescriptor, PayloadOutputDescriptor> = {
+        name: context.name,
+        value: context,
+        items: []
       };
       for (const payloadOutput of context.payloadOutputs) {
-        const item : MenuItem<PayloadOutputDescriptor> = {
-          name : payloadOutput.name,
-          value : payloadOutput,
-          select : (item : MenuItem<PayloadOutputDescriptor>) => {
+        const item: MenuItem<PayloadOutputDescriptor> = {
+          name: payloadOutput.name,
+          value: payloadOutput,
+          select: (item: MenuItem<PayloadOutputDescriptor>) => {
             return this.activateOutput(context.id, payloadOutput.id);
           },
-          filter : this.payloadOutputMenuItemFilter,
-          template : this.payloadOutputMenuItemTemplate
+          filter: this.payloadOutputMenuItemFilter,
+          template: this.payloadOutputMenuItemTemplate
         };
         group.items.push(item);
       }
@@ -158,17 +158,17 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     this.payload = await this._payloadPresetService.loadPresetPayload(presetUrl);
   }
 
-  isActiveOutput(context : PayloadOutputContext, output : string) {
+  isActiveOutput(context: XssContext, output: string) {
     return (context == this._activeContext) && (output == this._activeOutput);
   }
 
-  activateOutput(context : PayloadOutputContext, output : string) {
+  activateOutput(context: XssContext, output: string) {
     this._activeContext = context;
     this._activeOutput = output;
     return false;
   }
 
-  togglePayloadOutputTechnologyFilter(value : string) {
+  togglePayloadOutputTechnologyFilter(value: string) {
     const newFilters = [];
     for (const currentValue of this.payloadOutputTechnologyFilters) {
       if (currentValue != value) {
@@ -181,7 +181,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     this.payloadOutputTechnologyFilters = newFilters;
   }
 
-  togglePayloadOutputQualityFilter(value : PayloadOutputQuality) {
+  togglePayloadOutputQualityFilter(value: PayloadOutputQuality) {
     const newFilters = [];
     for (const currentValue of this.payloadOutputQualityFilters) {
       if (currentValue != value) {

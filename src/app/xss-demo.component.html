@@ -144,8 +144,8 @@
 
                 <payload-output
                     #output1
-                    *ngIf="isActiveOutput(PayloadOutputContext.HtmlContent, 'NgEncodedTemplate')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlContent,'NgEncodedTemplate')"
+                    *ngIf="isActiveOutput(XssContext.HtmlContent, 'NgEncodedTemplate')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.HtmlContent,'NgEncodedTemplate')"
                     [payload]="payload"
                     (change)="resetXss()">
                   {{ output1.payload }}
@@ -153,8 +153,8 @@
 
                 <payload-output
                     #output2
-                    *ngIf="isActiveOutput(PayloadOutputContext.HtmlContent, 'NgEncodedTextContent')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlContent, 'NgEncodedTextContent')"
+                    *ngIf="isActiveOutput(XssContext.HtmlContent, 'NgEncodedTextContent')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.HtmlContent, 'NgEncodedTextContent')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [textContent]="output2.payload"></div>
@@ -162,8 +162,8 @@
 
                 <payload-output
                     #output2
-                    *ngIf="isActiveOutput(PayloadOutputContext.HtmlContent, 'NgEncodedInnerText')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlContent, 'NgEncodedInnerText')"
+                    *ngIf="isActiveOutput(XssContext.HtmlContent, 'NgEncodedInnerText')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.HtmlContent, 'NgEncodedInnerText')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [innerText]="output2.payload"></div>
@@ -171,8 +171,8 @@
 
                 <payload-output
                     #output4
-                    *ngIf="isActiveOutput(PayloadOutputContext.HtmlContent, 'NgSanitized')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlContent, 'NgSanitized')"
+                    *ngIf="isActiveOutput(XssContext.HtmlContent, 'NgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.HtmlContent, 'NgSanitized')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [innerHTML]="output4.payload"></div>
@@ -180,8 +180,8 @@
 
                <payload-output
                     #output5
-                    *ngIf="isActiveOutput(PayloadOutputContext.HtmlContent, 'NgTrusted')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlContent, 'NgTrusted')"
+                    *ngIf="isActiveOutput(XssContext.HtmlContent, 'NgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.HtmlContent, 'NgTrusted')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [innerHTML]="output5.payload"></div>
@@ -191,8 +191,8 @@
 
                 <payload-output
                     #output6
-                    *ngIf="isActiveOutput(PayloadOutputContext.HtmlAttribute, 'NgEncodedAttributeValue')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlAttribute, 'NgEncodedAttributeValue')"
+                    *ngIf="isActiveOutput(XssContext.HtmlAttribute, 'NgEncodedAttributeValue')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.HtmlAttribute, 'NgEncodedAttributeValue')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <p [title]="output6.payload">This paragraph has a title.</p>
@@ -200,8 +200,8 @@
 
                 <payload-output
                     #output7
-                    *ngIf="isActiveOutput(PayloadOutputContext.HtmlAttribute, 'NgTrustedAttributeValue')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.HtmlAttribute, 'NgTrustedAttributeValue')"
+                    *ngIf="isActiveOutput(XssContext.HtmlAttribute, 'NgTrustedAttributeValue')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.HtmlAttribute, 'NgTrustedAttributeValue')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <p [title]="output7.payload">This paragraph has a title.</p>
@@ -211,8 +211,8 @@
 
                 <payload-output
                     #output8
-                    *ngIf="isActiveOutput(PayloadOutputContext.Url, 'LinkNgSanitized')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Url, 'LinkNgSanitized')"
+                    *ngIf="isActiveOutput(XssContext.Url, 'LinkNgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.Url, 'LinkNgSanitized')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <a [href]="output8.payload">Click here to test your payload as a URL!</a>
@@ -220,8 +220,8 @@
 
                 <payload-output
                     #output9
-                    *ngIf="isActiveOutput(PayloadOutputContext.Url, 'LinkNgTrusted')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Url, 'LinkNgTrusted')"
+                    *ngIf="isActiveOutput(XssContext.Url, 'LinkNgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.Url, 'LinkNgTrusted')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <a [href]="output9.payload">Click here to test your payload as a URL!</a>
@@ -229,8 +229,8 @@
 
                 <payload-output
                     #output10
-                    *ngIf="isActiveOutput(PayloadOutputContext.Url, 'IframeNgSanitized')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Url, 'IframeNgSanitized')"
+                    *ngIf="isActiveOutput(XssContext.Url, 'IframeNgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.Url, 'IframeNgSanitized')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <iframe [src]="output10.payload"></iframe>
@@ -238,8 +238,8 @@
 
                 <payload-output
                     #output11
-                    *ngIf="isActiveOutput(PayloadOutputContext.Url, 'IframeNgTrusted')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Url, 'IframeNgTrusted')"
+                    *ngIf="isActiveOutput(XssContext.Url, 'IframeNgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.Url, 'IframeNgTrusted')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <iframe [src]="output11.payload"></iframe>
@@ -249,8 +249,8 @@
 
                 <payload-output
                     #output12
-                    *ngIf="isActiveOutput(PayloadOutputContext.Css, 'BlockNgSanitized')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Css, 'BlockNgSanitized')"
+                    *ngIf="isActiveOutput(XssContext.Css, 'BlockNgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.Css, 'BlockNgSanitized')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <style type="text/css" [innerHTML]="output12.payload"></style>
@@ -258,8 +258,8 @@
 
                 <payload-output
                     #output13
-                    *ngIf="isActiveOutput(PayloadOutputContext.Css, 'BlockNgTrusted')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Css, 'BlockNgTrusted')"
+                    *ngIf="isActiveOutput(XssContext.Css, 'BlockNgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.Css, 'BlockNgTrusted')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <style type="text/css" [innerHTML]="output13.payload"></style>
@@ -267,8 +267,8 @@
 
                 <payload-output
                     #output14
-                    *ngIf="isActiveOutput(PayloadOutputContext.Css, 'AttributeNgSanitized')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Css, 'AttributeNgSanitized')"
+                    *ngIf="isActiveOutput(XssContext.Css, 'AttributeNgSanitized')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.Css, 'AttributeNgSanitized')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [style]="output14.payload">Element with custom style</div>
@@ -276,8 +276,8 @@
 
                 <payload-output
                     #output15
-                    *ngIf="isActiveOutput(PayloadOutputContext.Css, 'AttributeNgTrusted')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Css, 'AttributeNgTrusted')"
+                    *ngIf="isActiveOutput(XssContext.Css, 'AttributeNgTrusted')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.Css, 'AttributeNgTrusted')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [style]="output15.payload">Element with custom style</div>
@@ -285,8 +285,8 @@
 
                 <payload-output
                     #output16
-                    *ngIf="isActiveOutput(PayloadOutputContext.Css, 'AttributeNgStructured')"
-                    [outputDescriptor]="payloadOutputService.outputDescriptorById(PayloadOutputContext.Css, 'AttributeNgStructured')"
+                    *ngIf="isActiveOutput(XssContext.Css, 'AttributeNgStructured')"
+                    [outputDescriptor]="payloadOutputService.outputDescriptorById(XssContext.Css, 'AttributeNgStructured')"
                     [payload]="payload"
                     (change)="resetXss()">
                   <div [ngStyle]="output16.payload">Element with custom style</div>

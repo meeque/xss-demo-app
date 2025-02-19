@@ -1,7 +1,9 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
+
 import { xssDemoConfig } from './xss-demo.config';
+import { PayloadOutputService } from './payload-output.service';
 import { XssDemoComponent } from './xss-demo.component';
-import { PayloadOutputContext, PayloadOutputService } from './payload-output.service';
+import { XssContext } from './xss-demo.common';
 
 describe('Xss Demo App', async () => {
 
@@ -48,7 +50,7 @@ describe('Xss Demo App', async () => {
 
   const xssTriggeringPresetsByContextAndOutput = {};
 
-  xssTriggeringPresetsByContextAndOutput[PayloadOutputContext.HtmlContent.toString()] = {
+  xssTriggeringPresetsByContextAndOutput[XssContext.HtmlContent.toString()] = {
     'HtmlContent':          ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
     'DomInnerHtml':         ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
     'DomInnerHtmlNoOutput': ['Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
@@ -64,19 +66,19 @@ describe('Xss Demo App', async () => {
     'NgTrusted':            ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
   }
 
-  xssTriggeringPresetsByContextAndOutput[PayloadOutputContext.HtmlAttribute.toString()] = {
+  xssTriggeringPresetsByContextAndOutput[XssContext.HtmlAttribute.toString()] = {
     'HtmlAttribute':        ['IFrame src', 'Image onerror', 'Mixed HTML Content'],
   }
 
-  xssTriggeringPresetsByContextAndOutput[PayloadOutputContext.Url.toString()] = {
+  xssTriggeringPresetsByContextAndOutput[XssContext.Url.toString()] = {
     'IframeDomTrusted': ['javascript URL'],
     'IframeNgTrusted': ['javascript URL'],
   }
 
-  xssTriggeringPresetsByContextAndOutput[PayloadOutputContext.Css.toString()] = {
+  xssTriggeringPresetsByContextAndOutput[XssContext.Css.toString()] = {
   }
 
-  xssTriggeringPresetsByContextAndOutput[PayloadOutputContext.JavaScript.toString()] = {
+  xssTriggeringPresetsByContextAndOutput[XssContext.JavaScript.toString()] = {
     'DqStringDomTrusted': ['JS code breaking "string"'],
     'SqStringDomTrusted': ['JS code breaking \'string\''],
     'BlockDomTrusted': ['pure JS code'],
