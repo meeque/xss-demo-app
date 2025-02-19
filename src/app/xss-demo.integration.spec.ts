@@ -11,8 +11,8 @@ describe('Xss Demo App', async () => {
   let component: XssDemoComponent;
   let element: HTMLElement;
 
-  let payloadInputComboBox: HTMLElement;
-  let payloadOutputComboBox: HTMLElement;
+  let payloadInputCombobox: HTMLElement;
+  let payloadOutputCombobox: HTMLElement;
   let alertOverlay: HTMLElement;
 
   let xssResolve = (value?: any) => {};
@@ -26,8 +26,8 @@ describe('Xss Demo App', async () => {
     component = fixture.componentInstance;
     element = fixture.nativeElement;
 
-    payloadInputComboBox = element.querySelector('section.input-area combobox-input');
-    payloadOutputComboBox = element.querySelector('section.output-area combobox-input');
+    payloadInputCombobox = element.querySelector('section.input-area combobox-input');
+    payloadOutputCombobox = element.querySelector('section.output-area combobox-input');
     alertOverlay = element.querySelector('.fd-shell__overlay.fd-overlay--alert');
 
     // ignore global errors caused by dynamically loaded scripts (e.g. script blocks from xss payloads)
@@ -64,13 +64,9 @@ describe('Xss Demo App', async () => {
     'NgTrusted':            ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
   }
 
-  /*
   xssTriggeringPresetsByContextAndOutput[PayloadOutputContext.HtmlAttribute.toString()] = {
-    'HtmlAttribute':                 ['IFrame src', 'Image onerror', 'Mixed HTML Content'],
-    'HtmlEncodedUnquotedAttribute':  [],
-    'HtmlUnquotedAttribute':         [],
+    'HtmlAttribute':        ['IFrame src', 'Image onerror', 'Mixed HTML Content'],
   }
-  */
 
   for (const contextDescriptor of payloadOutputService.descriptors) {
 
@@ -96,7 +92,7 @@ describe('Xss Demo App', async () => {
 
               for (const matchingPreset of matchingPresetGroup.items) {
                 const xssPromise = nextXssPromise();
-                await selectInputOutput(matchingPreset.name, outputDescriptor.name);
+                await selectInputOutput(contextDescriptor.name, matchingPreset.name, outputDescriptor.name);
                 const timeoutPromise = timeout(200);
                 await Promise.race([xssPromise, timeoutPromise]);
 
@@ -120,26 +116,30 @@ describe('Xss Demo App', async () => {
     });
   }
 
-  async function selectInputOutput(input: string, output: string): Promise<void> {
-    const payloadInputMenuLink =
-      Array.from(payloadInputComboBox.querySelectorAll('div.fd-popover__body a'))
-      .find((a: HTMLLinkElement) => a.textContent == input) as HTMLLinkElement;
-    const payloadOutputMenuLink =
-      Array.from(payloadOutputComboBox.querySelectorAll('div.fd-popover__body a'))
-      .find((a: HTMLLinkElement) => a.textContent.trim() == output) as HTMLLinkElement;
+  async function selectInputOutput(context: string, input: string, output: string): Promise<void> {
 
     try {
-      payloadInputMenuLink.click();
+      queryMenuLink(payloadInputCombobox, context, input).dispatchEvent(new Event('click'));
     } catch (err) {
       console.error(err);
     }
+
     try {
-      payloadOutputMenuLink.click();
+      queryMenuLink(payloadOutputCombobox, context, output).dispatchEvent(new Event('click'));
     } catch (err) {
       console.error(err);
     }
 
     await whenStableDetectChanges();
+  }
+
+  function queryMenuLink(combobox: HTMLElement, groupLabelText: string, linkText: string): HTMLLinkElement {
+    const groupLabelElement = Array
+      .from(combobox.querySelectorAll('div.fd-popover__body label'))
+      .find((label: HTMLLabelElement) => label.textContent.trim() == groupLabelText) as HTMLElement;
+    return Array
+      .from(groupLabelElement.nextElementSibling.querySelectorAll('li a'))
+      .find((a: HTMLLinkElement) => a.textContent.trim() == linkText) as HTMLLinkElement;
   }
 
   async function whenStableDetectChanges(): Promise<void> {
