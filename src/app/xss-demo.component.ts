@@ -128,7 +128,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
       ]
     },
     {
-      name: 'HTML Attribute Values',
+      name: 'HTML Attributes',
       value: PayloadOutputContext.HtmlAttribute,
       items: [
         {
@@ -179,7 +179,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
       ]
     },
     {
-      name: 'URL',
+      name: 'URLs',
       value: PayloadOutputContext.Url,
       items: [
         {
@@ -190,7 +190,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
       ]
     },
     {
-      name: 'CSS',
+      name: 'CSS Styles',
       value: PayloadOutputContext.Css,
       items: [
         {
