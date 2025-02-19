@@ -134,9 +134,9 @@ describe('Xss Demo App', async () => {
   ): Promise<boolean> {
     const xssPromise = nextXssPromise();
     await selectInputOutput(contextDescriptor.name, presetDescriptor.name, outputDescriptor.name);
-    const timeoutPromise = timeout(200);
+    const timeoutPromise = timeout(500);
     const result = await Promise.race([xssPromise, timeoutPromise]);
-    await whenStableDetectChanges();
+    await Promise.all([timeoutPromise, whenStableDetectChanges()]);
     return result;
   }
 
