@@ -1,13 +1,14 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 
-import { xssDemoConfig } from './xss-demo.config';
-import { PayloadOutputService } from './payload-output.service';
-import { XssDemoComponent } from './xss-demo.component';
 import { XssContext } from './xss-demo.common';
+import { xssDemoConfig } from './xss-demo.config';
+import { PayloadPresetDescriptor, PayloadPresetService } from './payload-preset.service';
+import { ContextDescriptor, PayloadOutputDescriptor, PayloadOutputService } from './payload-output.service';
+import { XssDemoComponent } from './xss-demo.component';
+
+
 
 describe('Xss Demo App', async () => {
-
-  let payloadOutputService = new PayloadOutputService(null);
 
   let fixture: ComponentFixture<XssDemoComponent>;
   let component: XssDemoComponent;
@@ -17,7 +18,10 @@ describe('Xss Demo App', async () => {
   let payloadOutputCombobox: HTMLElement;
   let alertOverlay: HTMLElement;
 
-  let xssResolve = (value?: any) => {};
+  let payloadPresetServiceStub = new PayloadPresetService(null);
+  let payloadOutputServiceStub = new PayloadOutputService(null);
+
+  let xssResolve = () => {};
 
 
 
@@ -88,47 +92,52 @@ describe('Xss Demo App', async () => {
     expect(component).toBeDefined();
   });
 
-  for (const contextDescriptor of payloadOutputService.descriptors) {
+  for (const contextDescriptor of payloadOutputServiceStub.descriptors) {
 
     describe('"' + contextDescriptor.name + '"', () => {
 
+      const presetContextDescriptor = payloadPresetServiceStub.descriptors.find(descriptor => descriptor.id == contextDescriptor.id);
+
       for (const outputDescriptor of contextDescriptor.payloadOutputs) {
+
+        const xssTriggeringPresetNames: string[] = xssTriggeringPresetsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id] || [];
 
         describe('payload output "' + outputDescriptor.name + '"', () => {
 
-          const xssTriggeringPresetNames: string[] = xssTriggeringPresetsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id] || [];
+          for (const presetDescriptor of presetContextDescriptor.payloadPresets) {
 
-          it(
-            xssTriggeringPresetNames.length == 0
-              ? 'should NOT trigger XSS for any presets'
-              : 'should trigger XSS for presets ' + xssTriggeringPresetNames.map(presetName => '"' + presetName + '"').join(', '),
-            async () => {
-              const matchingPresetGroup = component.presetGroups.find(menuGroup => menuGroup.value.id == contextDescriptor.id);
+            if (xssTriggeringPresetNames.includes(presetDescriptor.name)) {
 
-              for (const matchingPreset of matchingPresetGroup.items) {
-                const xssPromise = nextXssPromise();
-                await selectInputOutput(contextDescriptor.name, matchingPreset.name, outputDescriptor.name);
-                const timeoutPromise = timeout(200);
-                await Promise.race([xssPromise, timeoutPromise]);
+              it('should trigger XSS for payload ' + presetDescriptor.name, async () => {
+                await expectAsync(raceForXss(contextDescriptor, presetDescriptor, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(true);
+                expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('show XSS alert message').not.toBeNull();
+              });
 
-                await whenStableDetectChanges();
+            } else {
 
-                if (xssTriggeringPresetNames.includes(matchingPreset.name)) {
-                  await expectAsync(xssPromise).withContext('preset "' + matchingPreset.name + '" should trigger XSS').toBeResolved();
-                  await whenStableDetectChanges();
-                  expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should show XSS alert message').not.toBeNull();
-                } else {
-                  await expectAsync(timeoutPromise).withContext('preset "' + matchingPreset.name + '" should NOT trigger XSS').toBeResolved();
-                  await whenStableDetectChanges();
-                  expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('preset "' + matchingPreset.name + '" should NOT show XSS alert message').toBeNull();
-                }
-              }
-            },
-            30000
-          );
+              it('should NOT trigger xss for payload ' + presetDescriptor.name, async () => {
+                await expectAsync(raceForXss(contextDescriptor, presetDescriptor, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(false);
+                expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('show XSS alert message').toBeNull();
+              });
+
+            }
+          }
         });
       }
     });
+  }
+
+  async function raceForXss(
+    contextDescriptor: ContextDescriptor,
+    presetDescriptor: PayloadPresetDescriptor,
+    outputDescriptor: PayloadOutputDescriptor
+  ): Promise<boolean> {
+    const xssPromise = nextXssPromise();
+    await selectInputOutput(contextDescriptor.name, presetDescriptor.name, outputDescriptor.name);
+    const timeoutPromise = timeout(200);
+    const result = await Promise.race([xssPromise, timeoutPromise]);
+    await whenStableDetectChanges();
+    return result;
   }
 
   async function selectInputOutput(context: string, input: string, output: string): Promise<void> {
@@ -166,15 +175,15 @@ describe('Xss Demo App', async () => {
     }
   }
 
-  function timeout(millis: number): Promise<void> {
+  function timeout(millis: number): Promise<boolean> {
     return new Promise(resolve => {
-      setTimeout(resolve, millis);
+      setTimeout(() => resolve(false), millis);
     });
   }
 
-  function nextXssPromise(): Promise<any> {
-    return new Promise<any>(resolve => {
-      xssResolve = resolve;
+  function nextXssPromise(): Promise<boolean> {
+    return new Promise(resolve => {
+      xssResolve = () => resolve(true);
     });
   }
 });
