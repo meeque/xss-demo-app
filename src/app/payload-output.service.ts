@@ -739,7 +739,7 @@ export class PayloadOutputService {
 
         {
           id : 'BlockDomTrusted',
-          quality : PayloadOutputQuality.Insecure,
+          quality : PayloadOutputQuality.Questionable,
           name : 'Style Block DOM .textContent',
           title : 'Payload CSS Raw (Style Block with DOM .textContent)',
           domInjector : this._domInjectors.trustedStyleBlock,
@@ -747,7 +747,7 @@ export class PayloadOutputService {
 
         {
           id : 'AttributeDomTrusted',
-          quality : PayloadOutputQuality.Insecure,
+          quality : PayloadOutputQuality.Questionable,
           name : 'Style Attribute DOM .style',
           title : 'Payload CSS Raw (Style Attribute with DOM .style)',
           domInjector : this._domInjectors.trustedStyleAttribute,
@@ -780,7 +780,7 @@ export class PayloadOutputService {
 
         {
           id : 'AttributeNgTrusted',
-          quality : PayloadOutputQuality.Insecure,
+          quality : PayloadOutputQuality.Questionable,
           name : 'Trusted Style Attribute ng [style]',
           title : 'Payload CSS Trusted (Style attribute with Angular [style] and DomSanitizer.bypassSecurityTrustStyle()',
           payloadProcessor: this._processors.ngTrustedStyle,
@@ -789,7 +789,7 @@ export class PayloadOutputService {
 
         {
           id : 'AttributeNgStructured',
-          quality : PayloadOutputQuality.Insecure,
+          quality : PayloadOutputQuality.Questionable,
           name : 'Structured Style Attribute ng [ngStyle]',
           title : 'Payload CSS Sanitized (Style attribute with Angular [ngStyle] and JSON data)',
           payloadProcessor: this._processors.jsonParsing,
