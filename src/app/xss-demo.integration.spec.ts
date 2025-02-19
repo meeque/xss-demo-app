@@ -3,7 +3,7 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { XssContext, XssContextCollection } from './xss-demo.common';
 import { xssDemoConfig } from './xss-demo.config';
 import { PayloadPresetDescriptor, PayloadPresetService } from './payload-preset.service';
-import { PayloadOutputDescriptor, PayloadOutputService } from './payload-output.service';
+import { PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputService } from './payload-output.service';
 import { XssDemoComponent } from './xss-demo.component';
 
 
@@ -103,6 +103,14 @@ describe('Xss Demo App', async () => {
         const xssTriggeringPresetNames: string[] = xssTriggeringPresetsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id] || [];
 
         describe('payload output "' + outputDescriptor.name + '"', () => {
+
+          if(xssTriggeringPresetNames.length > 0) {
+
+            it('should not be marked as "Recommended"', () => {
+              expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
+            });
+
+          }
 
           for (const presetDescriptor of presetContextDescriptor.items) {
 
