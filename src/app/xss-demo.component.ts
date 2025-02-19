@@ -3,9 +3,9 @@ import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, Templat
 import { FormsModule } from '@angular/forms';
 
 import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from './combobox-input.component';
-import { XssContext } from './xss-demo.common';
-import { PayloadPresetService, PresetContextDescriptor, PayloadPresetDescriptor } from './payload-preset.service';
-import { PayloadOutputService, ContextDescriptor, PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
+import { XssContext, XssContextCollection } from './xss-demo.common';
+import { PayloadPresetService, PayloadPresetDescriptor } from './payload-preset.service';
+import { PayloadOutputService, PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
 
 
@@ -55,13 +55,13 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   presetItems: MenuItem<PayloadPresetDescriptor>[];
 
-  presetGroups: MenuGroup<PresetContextDescriptor, PayloadPresetDescriptor>[];
+  presetGroups: MenuGroup<XssContextCollection<PayloadPresetDescriptor>, PayloadPresetDescriptor>[];
 
   payload: string = '';
 
   payloadOutputFilters: MenuItem<any>[] = [];
 
-  payloadOutputGroups: MenuGroup<ContextDescriptor, PayloadOutputDescriptor>[] = [];
+  payloadOutputGroups: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor>[] = [];
 
   xssTriggered: number = 0;
 
@@ -89,13 +89,13 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     this.presetItems = [];
     this.presetGroups = [];
     for (const context of this._payloadPresetService.descriptors) {
-      const group: MenuGroup<PresetContextDescriptor, PayloadPresetDescriptor> = {
+      const group: MenuGroup<XssContextCollection<PayloadPresetDescriptor>, PayloadPresetDescriptor> = {
         name: context.name,
         value: context,
         items: []
       };
       const items: MenuItem<PayloadPresetDescriptor>[] = [];
-      for (const payloadPreset of context.payloadPresets) {
+      for (const payloadPreset of context.items) {
         const item: MenuItem<PayloadPresetDescriptor> = {
           name: payloadPreset.name,
           value: payloadPreset,
@@ -128,12 +128,12 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
     this.payloadOutputGroups = [];
     for (const context of this._payloadOutputService.descriptors) {
-      const group: MenuGroup<ContextDescriptor, PayloadOutputDescriptor> = {
+      const group: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor> = {
         name: context.name,
         value: context,
         items: []
       };
-      for (const payloadOutput of context.payloadOutputs) {
+      for (const payloadOutput of context.items) {
         const item: MenuItem<PayloadOutputDescriptor> = {
           name: payloadOutput.name,
           value: payloadOutput,

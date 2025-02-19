@@ -130,7 +130,7 @@
                 <!-- All outputs *without* Angular template code -->
 
                 <ng-container *ngFor="let context of payloadOutputService.descriptors">
-                  <ng-container *ngFor="let output of context.payloadOutputs">
+                  <ng-container *ngFor="let output of context.items">
                     <payload-output
                         *ngIf="!output.templateCode && isActiveOutput(context.id, output.id)"
                         [outputDescriptor]="output"

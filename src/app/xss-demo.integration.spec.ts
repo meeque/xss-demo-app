@@ -1,9 +1,9 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 
-import { XssContext } from './xss-demo.common';
+import { XssContext, XssContextCollection } from './xss-demo.common';
 import { xssDemoConfig } from './xss-demo.config';
 import { PayloadPresetDescriptor, PayloadPresetService } from './payload-preset.service';
-import { ContextDescriptor, PayloadOutputDescriptor, PayloadOutputService } from './payload-output.service';
+import { PayloadOutputDescriptor, PayloadOutputService } from './payload-output.service';
 import { XssDemoComponent } from './xss-demo.component';
 
 
@@ -98,24 +98,24 @@ describe('Xss Demo App', async () => {
 
       const presetContextDescriptor = payloadPresetServiceStub.descriptors.find(descriptor => descriptor.id == contextDescriptor.id);
 
-      for (const outputDescriptor of contextDescriptor.payloadOutputs) {
+      for (const outputDescriptor of contextDescriptor.items) {
 
         const xssTriggeringPresetNames: string[] = xssTriggeringPresetsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id] || [];
 
         describe('payload output "' + outputDescriptor.name + '"', () => {
 
-          for (const presetDescriptor of presetContextDescriptor.payloadPresets) {
+          for (const presetDescriptor of presetContextDescriptor.items) {
 
             if (xssTriggeringPresetNames.includes(presetDescriptor.name)) {
 
-              it('should trigger XSS for payload ' + presetDescriptor.name, async () => {
+              it('should trigger XSS for payload "' + presetDescriptor.name + '"', async () => {
                 await expectAsync(raceForXss(contextDescriptor, presetDescriptor, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(true);
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('show XSS alert message').not.toBeNull();
               });
 
             } else {
 
-              it('should NOT trigger xss for payload ' + presetDescriptor.name, async () => {
+              it('should NOT trigger xss for payload "' + presetDescriptor.name + '"', async () => {
                 await expectAsync(raceForXss(contextDescriptor, presetDescriptor, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(false);
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('show XSS alert message').toBeNull();
               });
@@ -128,7 +128,7 @@ describe('Xss Demo App', async () => {
   }
 
   async function raceForXss(
-    contextDescriptor: ContextDescriptor,
+    contextDescriptor: XssContextCollection<any>,
     presetDescriptor: PayloadPresetDescriptor,
     outputDescriptor: PayloadOutputDescriptor
   ): Promise<boolean> {

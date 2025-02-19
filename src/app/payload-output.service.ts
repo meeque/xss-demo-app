@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
-import { XssContext } from './xss-demo.common';
+import { XssContext, XssContextCollection } from './xss-demo.common';
 
 
 
@@ -15,8 +15,6 @@ export enum PayloadOutputQuality {
   Questionable,
   Insecure
 }
-
-
 
 interface PayloadProcessor {
   (payload: string): any;
@@ -34,8 +32,6 @@ interface DomInjector extends Injector {};
 
 interface JQueryInjector extends Injector {};
 
-
-
 export interface PayloadOutputDescriptor {
   readonly id: string;
   readonly quality: PayloadOutputQuality;
@@ -46,12 +42,6 @@ export interface PayloadOutputDescriptor {
   readonly domInjector?: DomInjector;
   readonly jQueryInjector?: JQueryInjector;
   readonly templateCode?: string;
-}
-
-export interface ContextDescriptor {
-  readonly id: XssContext;
-  readonly name: string;
-  payloadOutputs: PayloadOutputDescriptor[];
 }
 
 
@@ -276,13 +266,13 @@ export class PayloadOutputService {
     },
   };
 
-  readonly descriptors: ContextDescriptor[] =
+  readonly descriptors: XssContextCollection<PayloadOutputDescriptor>[] =
   [
 
     {
       id: XssContext.HtmlContent,
       name: 'HTML Content',
-      payloadOutputs: [
+      items: [
 
         {
           id: 'HtmlEncodedContent',
@@ -591,7 +581,7 @@ export class PayloadOutputService {
     {
       id: XssContext.HtmlAttribute,
       name: 'HTML Attributes',
-      payloadOutputs: [
+      items: [
 
         {
           id: 'HtmlEncodedAttribute',
@@ -657,7 +647,7 @@ export class PayloadOutputService {
     {
       id: XssContext.Url,
       name: 'URLs',
-      payloadOutputs: [
+      items: [
 
         {
           id: 'LinkDomValidated',
@@ -732,7 +722,7 @@ export class PayloadOutputService {
     {
       id: XssContext.Css,
       name: 'CSS Styles',
-      payloadOutputs: [
+      items: [
 
         {
           id: 'BlockDomTrusted',
@@ -798,7 +788,7 @@ export class PayloadOutputService {
     {
       id: XssContext.JavaScript,
       name: 'JavaScript',
-      payloadOutputs: [
+      items: [
 
         {
           id: 'ValueDomEncoded',
@@ -841,7 +831,7 @@ export class PayloadOutputService {
   constructor(private readonly sanitizer: DomSanitizer) {
   }
 
-  contextDescriptorById(contextId: XssContext): ContextDescriptor {
+  contextDescriptorById(contextId: XssContext): XssContextCollection<PayloadOutputDescriptor> {
     for (const context of this.descriptors) {
       if (context.id == contextId) {
         return context;
@@ -853,7 +843,7 @@ export class PayloadOutputService {
   outputDescriptorById(contextId: XssContext, outputId: string): PayloadOutputDescriptor {
     const context = this.contextDescriptorById(contextId);
     if (context) {
-      for (const output of context.payloadOutputs) {
+      for (const output of context.items) {
         if (output.id == outputId) {
           return output;
         }

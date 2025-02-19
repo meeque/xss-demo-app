@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { XssContext } from './xss-demo.common';
+import { XssContext, XssContextCollection } from './xss-demo.common';
 
 
 
@@ -10,23 +10,17 @@ export interface PayloadPresetDescriptor {
   readonly url: string;
 }
 
-export interface PresetContextDescriptor {
-  readonly id: XssContext;
-  readonly name: string;
-  readonly payloadPresets: PayloadPresetDescriptor[];
-}
-
 
 
 @Injectable()
 export class PayloadPresetService {
 
-  readonly descriptors: PresetContextDescriptor[] =
+  readonly descriptors: XssContextCollection<PayloadPresetDescriptor>[] =
   [
     {
       id: null,
       name: null,
-      payloadPresets: [
+      items: [
         {
         name: 'Introduction',
         url: 'assets/presets/intro.txt',
@@ -37,7 +31,7 @@ export class PayloadPresetService {
     {
       id: XssContext.HtmlContent,
       name: 'HTML Content',
-      payloadPresets: [
+      items: [
         {
           name: 'Script tag',
           url: 'assets/presets/html/script-tag.txt'
@@ -91,7 +85,7 @@ export class PayloadPresetService {
     {
       id: XssContext.HtmlAttribute,
       name: 'HTML Attributes',
-      payloadPresets: [
+      items: [
         {
           name: 'IFrame src',
           url: 'assets/presets/html-attr/iframe-src.txt'
@@ -133,7 +127,7 @@ export class PayloadPresetService {
     {
       id: XssContext.Url,
       name: 'URLs',
-      payloadPresets: [
+      items: [
         {
           name: 'javascript URL',
           url: 'assets/presets/url/script-url.txt'
@@ -143,7 +137,7 @@ export class PayloadPresetService {
     {
       id: XssContext.Css,
       name: 'CSS Styles',
-      payloadPresets: [
+      items: [
         {
           name: 'ruleset with javascript URL',
           url: 'assets/presets/css/background-js-ruleset.txt'
@@ -157,7 +151,7 @@ export class PayloadPresetService {
     {
       id: XssContext.JavaScript,
       name: 'JavaScript',
-      payloadPresets: [
+      items: [
         {
           name: 'pure JS code',
           url: 'assets/presets/js/pure.txt'

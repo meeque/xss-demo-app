@@ -5,3 +5,9 @@ export enum XssContext {
   Css,
   JavaScript
 }
+
+export interface XssContextCollection<P> {
+  readonly id: XssContext;
+  readonly name: string;
+  readonly items: P[];
+}
