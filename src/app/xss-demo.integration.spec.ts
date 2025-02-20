@@ -7,36 +7,60 @@ import { PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputService } f
 import { XssDemoComponent } from './xss-demo.component';
 
 
-class PresetTestConfig {
+interface PresetTestConfig {
+  readonly presetName: string;
+  readonly trigger?: () => Promise<void>;
+  readonly expectXss?: boolean;
+  readonly expect?: () => Promise<void>;
+  readonly cleanup?: () => Promise<void>;
+}
+
+class DefaultPresetTestConfig implements PresetTestConfig {
   readonly presetName: string;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
   readonly expect?: () => Promise<void>;
   readonly cleanup?: () => Promise<void>;
 
-  static fromRaw(configs?: string[] | object[]): PresetTestConfig[] {
-    return (configs || []).map(config => new PresetTestConfig(config));
+  static fromRaw(configs?: string[] | PresetTestConfig[]): DefaultPresetTestConfig[] {
+    return (configs || []).map(config => new DefaultPresetTestConfig(config));
   }
 
-  static hasAnyXss(configs: PresetTestConfig[]): boolean {
+  static hasAnyXss(configs: DefaultPresetTestConfig[]): boolean {
     return null != (configs || []).find((config) => config.expectXss !== false);
   }
 
-  static getByName(configs: PresetTestConfig[], name: string): PresetTestConfig {
+  static getByName(configs: DefaultPresetTestConfig[], name: string): DefaultPresetTestConfig {
     return (configs || []).find((config) => config.presetName === name);
   }
 
-  static getByNameOrDefault(configs: PresetTestConfig[], name: string): PresetTestConfig {
-    return PresetTestConfig.getByName(configs, name) || new PresetTestConfig({presetName: name, expectXss: false});
+  static getByNameOrDefault(configs: DefaultPresetTestConfig[], name: string): DefaultPresetTestConfig {
+    return DefaultPresetTestConfig.getByName(configs, name) || new DefaultPresetTestConfig({presetName: name, expectXss: false});
   }
 
-  constructor(config: string | object) {
+  constructor(config: string | PresetTestConfig) {
     if (typeof config === 'object') {
       Object.assign(this, config);
     } else if (typeof config === 'string') {
       this.presetName = config;
     } else {
       throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
+    }
+  }
+
+  public async doExpect(): Promise<void> {
+    if (this.expect) {
+      return this.expect();
+    }
+  }
+
+  public async doCleanup(): Promise<void> {
+    if (this.cleanup) {
+      try {
+        return this.cleanup();
+      } catch(err) {
+        console.error('Ignoring error in custom cleanup function: ' + err);
+      }
     }
   }
 }
@@ -62,6 +86,10 @@ describe('Xss Demo App', async () => {
     defacement: {
       presetName: 'pure JS defacement attack',
       expectXss: false,
+      expect: async () => {
+        expect(document.body.childElementCount).toBe(1);
+        expect(document.querySelector('div.xss-demo-defacement')).not.toBeNull();
+      },
       cleanup: async () => {
         const element = document.querySelector('div.xss-demo-defacement');
         element.parentNode.removeChild(element);
@@ -145,11 +173,11 @@ describe('Xss Demo App', async () => {
 
       for (const outputDescriptor of contextDescriptor.items) {
 
-        let presetTestConfigs = PresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id]);
+        let presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id]);
 
         describe('payload output "' + outputDescriptor.name + '"', () => {
 
-          if(PresetTestConfig.hasAnyXss(presetTestConfigs)) {
+          if(DefaultPresetTestConfig.hasAnyXss(presetTestConfigs)) {
 
             it('should not be marked as "Recommended"', () => {
               expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
@@ -159,19 +187,15 @@ describe('Xss Demo App', async () => {
 
           for (const presetDescriptor of presetContextDescriptor.items) {
 
-            const presetTestConfig = PresetTestConfig.getByNameOrDefault(presetTestConfigs, presetDescriptor.name);
+            const presetTestConfig = DefaultPresetTestConfig.getByNameOrDefault(presetTestConfigs, presetDescriptor.name);
 
             if (presetTestConfig.expectXss !== false) {
 
               it('should trigger XSS for payload "' + presetDescriptor.name + '"', async () => {
                 await expectAsync(raceForXss(contextDescriptor, presetDescriptor, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(true);
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('show XSS alert message').not.toBeNull();
-                if (presetTestConfig.expect) {
-                  await presetTestConfig.expect();
-                }
-                if (presetTestConfig.cleanup) {
-                  await presetTestConfig.cleanup();
-                }
+                await presetTestConfig.doExpect();
+                await presetTestConfig.doCleanup();
               });
 
             } else {
@@ -179,12 +203,8 @@ describe('Xss Demo App', async () => {
               it('should NOT trigger xss for payload "' + presetDescriptor.name + '"', async () => {
                 await expectAsync(raceForXss(contextDescriptor, presetDescriptor, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(false);
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('show XSS alert message').toBeNull();
-                if (presetTestConfig.expect) {
-                  await presetTestConfig.expect();
-                }
-                if (presetTestConfig.cleanup) {
-                  await presetTestConfig.cleanup();
-                }
+                await presetTestConfig.doExpect();
+                await presetTestConfig.doCleanup();
               });
 
             }
