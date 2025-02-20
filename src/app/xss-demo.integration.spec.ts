@@ -16,6 +16,7 @@ interface PresetTestConfig {
 }
 
 interface EnhancedPresetTestConfig extends PresetTestConfig {
+  doTrigger(): Promise<void>;
   doExpect(): Promise<void>;
   doCleanup(): Promise<void>;
 }
@@ -27,7 +28,7 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
   readonly expect?: () => Promise<void>;
   readonly cleanup?: () => Promise<void>;
 
-  static fromRaw(configs?: string[] | PresetTestConfig[]): EnhancedPresetTestConfig[] {
+  static fromRaw(configs: string[] | PresetTestConfig[]): EnhancedPresetTestConfig[] {
     return (configs || []).map(config => new DefaultPresetTestConfig(config));
   }
 
@@ -50,6 +51,12 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
       this.presetName = config;
     } else {
       throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
+    }
+  }
+
+  public async doTrigger(): Promise<void> {
+    if (this.trigger) {
+      return this.trigger();
     }
   }
 
@@ -100,34 +107,41 @@ describe('Xss Demo App', async () => {
         element.parentNode.removeChild(element);
         document.body.style.background = null;
       }
+    },
+    link: {
+      presetName: 'A link href',
+      trigger: async () => {
+        await timeout(200);
+        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('a').click();
+      }
     }
   };
 
   const presetsTestConfigsByContextAndOutput = {};
 
   presetsTestConfigsByContextAndOutput[XssContext.HtmlContent.toString()] = {
-    'HtmlContent':          ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
-    'DomInnerHtml':         ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
-    'DomInnerHtmlNoOutput': ['Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
-    'JQueryHtml':           ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
-    'JQueryConstructor':    ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
-    'JQueryPrepend':        ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
-    'JQueryAppend':         ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
-    'JQueryBefore':         ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
-    'JQueryAfter':          ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
-    'JQueryWrapInner':      ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
-    'JQueryWrap':           ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
-    'JQueryReplaceWith':    ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
-    'NgTrusted':            ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
+    'HtmlContent':          [              'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
+    'DomInnerHtml':         [              'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
+    'DomInnerHtmlNoOutput': [                            'Image onerror', 'Image onerror (legacy flavors)',                            'Mixed HTML Content'],
+    'JQueryHtml':           ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
+    'JQueryConstructor':    ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
+    'JQueryPrepend':        ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
+    'JQueryAppend':         ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
+    'JQueryBefore':         ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
+    'JQueryAfter':          ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
+    'JQueryWrapInner':      [              'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
+    'JQueryWrap':           ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
+    'JQueryReplaceWith':    ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
+    'NgTrusted':            [              'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
   }
 
   presetsTestConfigsByContextAndOutput[XssContext.HtmlAttribute.toString()] = {
-    'HtmlAttribute':        ['IFrame src', 'Image onerror', 'Mixed HTML Content'],
+    'HtmlAttribute': ['IFrame src', 'Image onerror', 'Mixed HTML Content'],
   }
 
   presetsTestConfigsByContextAndOutput[XssContext.Url.toString()] = {
     'IframeDomTrusted': ['javascript URL'],
-    'IframeNgTrusted': ['javascript URL'],
+    'IframeNgTrusted':  ['javascript URL'],
   }
 
   presetsTestConfigsByContextAndOutput[XssContext.Css.toString()] = {
@@ -136,7 +150,7 @@ describe('Xss Demo App', async () => {
   presetsTestConfigsByContextAndOutput[XssContext.JavaScript.toString()] = {
     'DqStringDomTrusted': ['JS code breaking "string"'],
     'SqStringDomTrusted': ['JS code breaking \'string\''],
-    'BlockDomTrusted': ['pure JS code', presetTestConfigsLib.defacement],
+    'BlockDomTrusted':    ['pure JS code', presetTestConfigsLib.defacement],
   }
 
 
@@ -170,15 +184,15 @@ describe('Xss Demo App', async () => {
     expect(component).toBeDefined();
   });
 
-  for (const contextDescriptor of payloadOutputServiceStub.descriptors) {
+  for (const context of payloadOutputServiceStub.descriptors) {
 
-    describe('"' + contextDescriptor.name + '"', () => {
+    describe('"' + context.name + '"', () => {
 
-      const presetContextDescriptor = payloadPresetServiceStub.descriptors.find(descriptor => descriptor.id == contextDescriptor.id);
+      const presetContextDescriptor = payloadPresetServiceStub.descriptors.find(descriptor => descriptor.id == context.id);
 
-      for (const outputDescriptor of contextDescriptor.items) {
+      for (const outputDescriptor of context.items) {
 
-        let presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id]);
+        const presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[context.id.toString()][outputDescriptor.id]);
 
         describe('payload output "' + outputDescriptor.name + '"', () => {
 
@@ -197,18 +211,18 @@ describe('Xss Demo App', async () => {
             if (presetTestConfig.expectXss !== false) {
 
               it('should trigger XSS for payload "' + presetDescriptor.name + '"', async () => {
-                await expectAsync(raceForXss(contextDescriptor, presetDescriptor, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(true);
+                await expectAsync(raceForXss(context, presetTestConfig, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(true);
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('show XSS alert message').not.toBeNull();
-                await presetTestConfig.doExpect();
+                await expectAsync(presetTestConfig.doExpect()).withContext('run custom except handler').toBeResolved();
                 await presetTestConfig.doCleanup();
               });
 
             } else {
 
               it('should NOT trigger xss for payload "' + presetDescriptor.name + '"', async () => {
-                await expectAsync(raceForXss(contextDescriptor, presetDescriptor, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(false);
+                await expectAsync(raceForXss(context, presetTestConfig, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(false);
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('show XSS alert message').toBeNull();
-                await presetTestConfig.doExpect();
+                await expectAsync(presetTestConfig.doExpect()).withContext('run custom except handler').toBeResolved();
                 await presetTestConfig.doCleanup();
               });
 
@@ -222,15 +236,16 @@ describe('Xss Demo App', async () => {
 
 
   async function raceForXss(
-    contextDescriptor: XssContextCollection<any>,
-    presetDescriptor: PayloadPresetDescriptor,
+    context: XssContextCollection<any>,
+    presetTestConfig: EnhancedPresetTestConfig,
     outputDescriptor: PayloadOutputDescriptor
   ): Promise<boolean> {
     const xssPromise = nextXssPromise();
-    await selectInputOutput(contextDescriptor.name, presetDescriptor.name, outputDescriptor.name);
+    await selectInputOutput(context.name, presetTestConfig.presetName, outputDescriptor.name);
+    const triggerPromise = presetTestConfig.doTrigger();
     const timeoutPromise = timeout(500);
     const result = await Promise.race([xssPromise, timeoutPromise]);
-    await Promise.all([timeoutPromise, whenStableDetectChanges()]);
+    await Promise.all([timeoutPromise, triggerPromise, whenStableDetectChanges()]);
     return result;
   }
 
@@ -258,6 +273,10 @@ describe('Xss Demo App', async () => {
     return Array
       .from(groupLabelElement.nextElementSibling.querySelectorAll('li a'))
       .find((a: HTMLLinkElement) => a.textContent.trim() == linkText) as HTMLLinkElement;
+  }
+
+  function queryPayloadOutput(): HTMLLinkElement {
+    return element.querySelector('section.output-area payload-output');
   }
 
   async function whenStableDetectChanges(): Promise<void> {
