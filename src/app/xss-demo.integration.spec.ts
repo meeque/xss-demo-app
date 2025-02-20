@@ -15,26 +15,31 @@ interface PresetTestConfig {
   readonly cleanup?: () => Promise<void>;
 }
 
-class DefaultPresetTestConfig implements PresetTestConfig {
+interface EnhancedPresetTestConfig extends PresetTestConfig {
+  doExpect(): Promise<void>;
+  doCleanup(): Promise<void>;
+}
+
+class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
   readonly presetName: string;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
   readonly expect?: () => Promise<void>;
   readonly cleanup?: () => Promise<void>;
 
-  static fromRaw(configs?: string[] | PresetTestConfig[]): DefaultPresetTestConfig[] {
+  static fromRaw(configs?: string[] | PresetTestConfig[]): EnhancedPresetTestConfig[] {
     return (configs || []).map(config => new DefaultPresetTestConfig(config));
   }
 
-  static hasAnyXss(configs: DefaultPresetTestConfig[]): boolean {
+  static hasAnyXss(configs: PresetTestConfig[]): boolean {
     return null != (configs || []).find((config) => config.expectXss !== false);
   }
 
-  static getByName(configs: DefaultPresetTestConfig[], name: string): DefaultPresetTestConfig {
+  static getByName(configs: EnhancedPresetTestConfig[], name: string): EnhancedPresetTestConfig {
     return (configs || []).find((config) => config.presetName === name);
   }
 
-  static getByNameOrDefault(configs: DefaultPresetTestConfig[], name: string): DefaultPresetTestConfig {
+  static getByNameOrDefault(configs: EnhancedPresetTestConfig[], name: string): EnhancedPresetTestConfig {
     return DefaultPresetTestConfig.getByName(configs, name) || new DefaultPresetTestConfig({presetName: name, expectXss: false});
   }
 
