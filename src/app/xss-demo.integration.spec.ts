@@ -7,6 +7,39 @@ import { PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputService } f
 import { XssDemoComponent } from './xss-demo.component';
 
 
+class PresetTestConfig {
+  readonly presetName: string;
+  readonly trigger?: () => Promise<void>;
+  readonly expectXss?: boolean;
+  readonly expect?: () => Promise<void>;
+  readonly cleanup?: () => Promise<void>;
+
+  static fromRaw(configs?: string[] | object[]): PresetTestConfig[] {
+    return (configs || []).map(config => new PresetTestConfig(config));
+  }
+
+  static hasAnyXss(configs: PresetTestConfig[]): boolean {
+    return null != (configs || []).find((config) => config.expectXss !== false);
+  }
+
+  static getByName(configs: PresetTestConfig[], name: string): PresetTestConfig {
+    return (configs || []).find((config) => config.presetName === name);
+  }
+
+  static getByNameOrDefault(configs: PresetTestConfig[], name: string): PresetTestConfig {
+    return PresetTestConfig.getByName(configs, name) || new PresetTestConfig({presetName: name, expectXss: false});
+  }
+
+  constructor(config: string | object) {
+    if (typeof config === 'object') {
+      Object.assign(this, config);
+    } else if (typeof config === 'string') {
+      this.presetName = config;
+    } else {
+      throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
+    }
+  }
+}
 
 describe('Xss Demo App', async () => {
 
@@ -25,9 +58,21 @@ describe('Xss Demo App', async () => {
 
 
 
-  const xssTriggeringPresetsByContextAndOutput = {};
+  const presetTestConfigsLib: {[prop: string]: PresetTestConfig} = {
+    defacement: {
+      presetName: 'pure JS defacement attack',
+      expectXss: false,
+      cleanup: async () => {
+        const element = document.querySelector('div.xss-demo-defacement');
+        element.parentNode.removeChild(element);
+        document.body.style.background = null;
+      }
+    }
+  };
 
-  xssTriggeringPresetsByContextAndOutput[XssContext.HtmlContent.toString()] = {
+  const presetsTestConfigsByContextAndOutput = {};
+
+  presetsTestConfigsByContextAndOutput[XssContext.HtmlContent.toString()] = {
     'HtmlContent':          ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
     'DomInnerHtml':         ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
     'DomInnerHtmlNoOutput': ['Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
@@ -43,22 +88,22 @@ describe('Xss Demo App', async () => {
     'NgTrusted':            ['IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', 'Mixed HTML Content'],
   }
 
-  xssTriggeringPresetsByContextAndOutput[XssContext.HtmlAttribute.toString()] = {
+  presetsTestConfigsByContextAndOutput[XssContext.HtmlAttribute.toString()] = {
     'HtmlAttribute':        ['IFrame src', 'Image onerror', 'Mixed HTML Content'],
   }
 
-  xssTriggeringPresetsByContextAndOutput[XssContext.Url.toString()] = {
+  presetsTestConfigsByContextAndOutput[XssContext.Url.toString()] = {
     'IframeDomTrusted': ['javascript URL'],
     'IframeNgTrusted': ['javascript URL'],
   }
 
-  xssTriggeringPresetsByContextAndOutput[XssContext.Css.toString()] = {
+  presetsTestConfigsByContextAndOutput[XssContext.Css.toString()] = {
   }
 
-  xssTriggeringPresetsByContextAndOutput[XssContext.JavaScript.toString()] = {
+  presetsTestConfigsByContextAndOutput[XssContext.JavaScript.toString()] = {
     'DqStringDomTrusted': ['JS code breaking "string"'],
     'SqStringDomTrusted': ['JS code breaking \'string\''],
-    'BlockDomTrusted': ['pure JS code'],
+    'BlockDomTrusted': ['pure JS code', presetTestConfigsLib.defacement],
   }
 
 
@@ -100,11 +145,11 @@ describe('Xss Demo App', async () => {
 
       for (const outputDescriptor of contextDescriptor.items) {
 
-        const xssTriggeringPresetNames: string[] = xssTriggeringPresetsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id] || [];
+        let presetTestConfigs = PresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[contextDescriptor.id.toString()][outputDescriptor.id]);
 
         describe('payload output "' + outputDescriptor.name + '"', () => {
 
-          if(xssTriggeringPresetNames.length > 0) {
+          if(PresetTestConfig.hasAnyXss(presetTestConfigs)) {
 
             it('should not be marked as "Recommended"', () => {
               expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
@@ -114,11 +159,19 @@ describe('Xss Demo App', async () => {
 
           for (const presetDescriptor of presetContextDescriptor.items) {
 
-            if (xssTriggeringPresetNames.includes(presetDescriptor.name)) {
+            const presetTestConfig = PresetTestConfig.getByNameOrDefault(presetTestConfigs, presetDescriptor.name);
+
+            if (presetTestConfig.expectXss !== false) {
 
               it('should trigger XSS for payload "' + presetDescriptor.name + '"', async () => {
                 await expectAsync(raceForXss(contextDescriptor, presetDescriptor, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(true);
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('show XSS alert message').not.toBeNull();
+                if (presetTestConfig.expect) {
+                  await presetTestConfig.expect();
+                }
+                if (presetTestConfig.cleanup) {
+                  await presetTestConfig.cleanup();
+                }
               });
 
             } else {
@@ -126,6 +179,12 @@ describe('Xss Demo App', async () => {
               it('should NOT trigger xss for payload "' + presetDescriptor.name + '"', async () => {
                 await expectAsync(raceForXss(contextDescriptor, presetDescriptor, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(false);
                 expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('show XSS alert message').toBeNull();
+                if (presetTestConfig.expect) {
+                  await presetTestConfig.expect();
+                }
+                if (presetTestConfig.cleanup) {
+                  await presetTestConfig.cleanup();
+                }
               });
 
             }
@@ -134,6 +193,8 @@ describe('Xss Demo App', async () => {
       }
     });
   }
+
+
 
   async function raceForXss(
     contextDescriptor: XssContextCollection<any>,
