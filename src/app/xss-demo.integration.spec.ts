@@ -267,13 +267,13 @@ describe('Xss Demo App', async () => {
                 await selectInputOutput(context.name, presetTestConfig.presetName, outputDescriptor.name);
                 const triggerPromise = presetTestConfig.doTrigger();
                 const timeoutPromise = timeout(500);
-                await expectAsync(Promise.race([xssPromise, timeoutPromise])).toBeResolvedTo(expectXss);
+                await expectAsync(Promise.race([xssPromise, timeoutPromise]))
+                  .withContext('call xss() probe before timeout')
+                  .toBeResolvedTo(expectXss);
 
-                conditionalNot(
-                  expectXss,
-                  expect(alertOverlay.querySelector('.alert-xss-triggered'))
-                    .withContext('show XSS alert message'))
-                    .toBeNull();
+                expect(alertOverlay.querySelector('.alert-xss-triggered'))
+                  .withContext('show XSS alert message')
+                  .toEqual(expectXss ? jasmine.anything() : null);
 
                 await expectAsync(presetTestConfig.doExpect())
                   .withContext('custom expectations')
@@ -338,9 +338,5 @@ describe('Xss Demo App', async () => {
     return new Promise(resolve => {
       xssResolve = () => resolve(true);
     });
-  }
-
-  function conditionalNot<T>(condition: boolean, matchers: jasmine.Matchers<T>): jasmine.Matchers<T>{
-    return condition ? matchers.not : matchers;
   }
 });
