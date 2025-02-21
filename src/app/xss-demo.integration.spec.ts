@@ -114,25 +114,32 @@ describe('Xss Demo App', async () => {
         await timeout(200);
         queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('a').click();
       }
+    },
+    focus: {
+      presetName: 'Input field onfocus',
+      trigger: async () => {
+        await timeout(200);
+        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('input').dispatchEvent(new Event('focus'));
+      }
     }
   };
 
   const presetsTestConfigsByContextAndOutput = {};
 
   presetsTestConfigsByContextAndOutput[XssContext.HtmlContent.toString()] = {
-    'HtmlContent':          [              'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
-    'DomInnerHtml':         [              'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
-    'DomInnerHtmlNoOutput': [                            'Image onerror', 'Image onerror (legacy flavors)',                            'Mixed HTML Content'],
-    'JQueryHtml':           ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
-    'JQueryConstructor':    ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
-    'JQueryPrepend':        ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
-    'JQueryAppend':         ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
-    'JQueryBefore':         ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
-    'JQueryAfter':          ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
-    'JQueryWrapInner':      [              'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
-    'JQueryWrap':           ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
-    'JQueryReplaceWith':    ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
-    'NgTrusted':            [              'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, 'Mixed HTML Content'],
+    'HtmlContent':          [              'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.focus, 'Mixed HTML Content'],
+    'DomInnerHtml':         [              'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.focus, 'Mixed HTML Content'],
+    'DomInnerHtmlNoOutput': [                            'Image onerror', 'Image onerror (legacy flavors)',                                                        'Mixed HTML Content'],
+    'JQueryHtml':           ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.focus, 'Mixed HTML Content'],
+    'JQueryConstructor':    ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.focus, 'Mixed HTML Content'],
+    'JQueryPrepend':        ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.focus, 'Mixed HTML Content'],
+    'JQueryAppend':         ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.focus, 'Mixed HTML Content'],
+    'JQueryBefore':         ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.focus, 'Mixed HTML Content'],
+    'JQueryAfter':          ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.focus, 'Mixed HTML Content'],
+    'JQueryWrapInner':      [              'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.focus, 'Mixed HTML Content'],
+    'JQueryWrap':           ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.focus, 'Mixed HTML Content'],
+    'JQueryReplaceWith':    ['Script tag', 'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.focus, 'Mixed HTML Content'],
+    'NgTrusted':            [              'IFrame src', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.focus, 'Mixed HTML Content'],
   }
 
   presetsTestConfigsByContextAndOutput[XssContext.HtmlAttribute.toString()] = {
