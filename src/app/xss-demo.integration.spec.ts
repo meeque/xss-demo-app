@@ -263,9 +263,11 @@ describe('Xss Demo App', async () => {
                 + (presetTestConfig.expect ? ' with custom expectation' : ''),
               async () => {
 
-                await expectAsync(raceForXss(context, presetTestConfig, outputDescriptor))
-                  .withContext('invoke global xss() callback')
-                  .toBeResolvedTo(expectXss);
+                const xssPromise = nextXssPromise();
+                await selectInputOutput(context.name, presetTestConfig.presetName, outputDescriptor.name);
+                const triggerPromise = presetTestConfig.doTrigger();
+                const timeoutPromise = timeout(500);
+                await expectAsync(Promise.race([xssPromise, timeoutPromise])).toBeResolvedTo(expectXss);
 
                 conditionalNot(
                   expectXss,
@@ -277,29 +279,14 @@ describe('Xss Demo App', async () => {
                   .withContext('custom expectations')
                   .toBeResolved();
 
-                await presetTestConfig.doCleanup();
+                const cleanupPromise = presetTestConfig.doCleanup();
+                await Promise.all([timeoutPromise, triggerPromise, cleanupPromise, whenStableDetectChanges()]);
               });
 
           }
         });
       }
     });
-  }
-
-
-
-  async function raceForXss(
-    context: XssContextCollection<any>,
-    presetTestConfig: EnhancedPresetTestConfig,
-    outputDescriptor: PayloadOutputDescriptor
-  ): Promise<boolean> {
-    const xssPromise = nextXssPromise();
-    await selectInputOutput(context.name, presetTestConfig.presetName, outputDescriptor.name);
-    const triggerPromise = presetTestConfig.doTrigger();
-    const timeoutPromise = timeout(500);
-    const result = await Promise.race([xssPromise, timeoutPromise]);
-    await Promise.all([timeoutPromise, triggerPromise, whenStableDetectChanges()]);
-    return result;
   }
 
   async function selectInputOutput(context: string, input: string, output: string): Promise<void> {
