@@ -242,6 +242,12 @@ describe('Xss Demo App', async () => {
               expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
             });
 
+          } else {
+
+            it('should not be marked as "Insecure"', () => {
+              expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Insecure);
+            });
+
           }
 
           for (const presetDescriptor of presetContextDescriptor.items) {
