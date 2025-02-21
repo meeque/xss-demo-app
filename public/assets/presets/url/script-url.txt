@@ -1,1 +1,1 @@
-javascript:parent.xss()
+javascript:xss()

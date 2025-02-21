@@ -2,7 +2,7 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 
 import { XssContext, XssContextCollection } from './xss-demo.common';
 import { xssDemoConfig } from './xss-demo.config';
-import { PayloadPresetDescriptor, PayloadPresetService } from './payload-preset.service';
+import { PayloadPresetService } from './payload-preset.service';
 import { PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputService } from './payload-output.service';
 import { XssDemoComponent } from './xss-demo.component';
 
@@ -130,6 +130,13 @@ describe('Xss Demo App', async () => {
         queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
       }
     },
+    linkUrl: {
+      presetName: 'javascript URL',
+      trigger: async () => {
+        await timeout(200);
+        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('a').click();
+      }
+    },
     defacement: {
       presetName: 'pure JS defacement attack',
       expectXss: false,
@@ -171,17 +178,19 @@ describe('Xss Demo App', async () => {
   }
 
   presetsTestConfigsByContextAndOutput[XssContext.Url.toString()] = {
-    'IframeDomTrusted': ['javascript URL'],
-    'IframeNgTrusted':  ['javascript URL'],
+    'IframeDomTrusted': ['javascript URL (for parent)'                              ],
+    'IframeNgTrusted':  ['javascript URL (for parent)'                              ],
+    'LinkDomTrusted':   [                               presetTestConfigsLib.linkUrl],
+    'LinkNgTrusted':    [                               presetTestConfigsLib.linkUrl],
   }
 
   presetsTestConfigsByContextAndOutput[XssContext.Css.toString()] = {
   }
 
   presetsTestConfigsByContextAndOutput[XssContext.JavaScript.toString()] = {
-    'DqStringDomTrusted': ['JS code breaking "string"'],
-    'SqStringDomTrusted': ['JS code breaking \'string\''],
-    'BlockDomTrusted':    ['pure JS code', presetTestConfigsLib.defacement],
+    'DqStringDomTrusted': ['JS code breaking "string"'                                                                               ],
+    'SqStringDomTrusted': [                            'JS code breaking \'string\''                                                 ],
+    'BlockDomTrusted':    [                                                           'pure JS code', presetTestConfigsLib.defacement],
   }
 
 

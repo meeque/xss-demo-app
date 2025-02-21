@@ -131,6 +131,10 @@ export class PayloadPresetService {
         {
           name: 'javascript URL',
           url: 'assets/presets/url/script-url.txt'
+        },
+        {
+          name: 'javascript URL (for parent)',
+          url: 'assets/presets/url/script-url-parent.txt'
         }
       ]
     },
