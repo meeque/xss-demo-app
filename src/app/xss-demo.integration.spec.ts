@@ -113,7 +113,21 @@ describe('Xss Demo App', async () => {
       presetName: 'Div onmouseenter',
       trigger: async() => {
         await timeout(200);
-        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('div[onmouseenter]').dispatchEvent(new Event('mouseenter'));
+        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
+      }
+    },
+    mouseenterAttr: {
+      presetName: 'onmouseenter attribute',
+      trigger: async() => {
+        await timeout(200);
+        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
+      }
+    },
+    mouseenterUnquotedAttr: {
+      presetName: 'onmouseenter attribute (unquoted)',
+      trigger: async() => {
+        await timeout(200);
+        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
       }
     },
     defacement: {
@@ -151,7 +165,9 @@ describe('Xss Demo App', async () => {
   }
 
   presetsTestConfigsByContextAndOutput[XssContext.HtmlAttribute.toString()] = {
-    'HtmlAttribute': ['IFrame src', 'Image onerror', 'Mixed HTML Content'],
+    'HtmlAttribute':                 ['IFrame src', 'Image onerror', presetTestConfigsLib.mouseenterAttr,                                              'Mixed HTML Content'],
+    'HtmlUnquotedAttribute':         [                                                                    presetTestConfigsLib.mouseenterUnquotedAttr                      ],
+    'HtmlEncodedUnquotedAttribute' : [                                                                    presetTestConfigsLib.mouseenterUnquotedAttr                      ],
   }
 
   presetsTestConfigsByContextAndOutput[XssContext.Url.toString()] = {
