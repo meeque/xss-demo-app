@@ -253,26 +253,33 @@ describe('Xss Demo App', async () => {
           for (const presetDescriptor of presetContextDescriptor.items) {
 
             const presetTestConfig = DefaultPresetTestConfig.getByNameOrDefault(presetTestConfigs, presetDescriptor.name);
+            const expectXss = presetTestConfig.expectXss !== false;
 
-            if (presetTestConfig.expectXss !== false) {
+            it(
+              'should '
+                + (expectXss ? '' : 'NOT ')
+                + 'trigger XSS for payload "' + presetDescriptor.name + '"'
+                + (presetTestConfig.trigger ? ' with custom trigger' : '')
+                + (presetTestConfig.expect ? ' with custom expectation' : ''),
+              async () => {
 
-              it('should trigger XSS for payload "' + presetDescriptor.name + '"', async () => {
-                await expectAsync(raceForXss(context, presetTestConfig, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(true);
-                expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('show XSS alert message').not.toBeNull();
-                await expectAsync(presetTestConfig.doExpect()).withContext('run custom except handler').toBeResolved();
+                await expectAsync(raceForXss(context, presetTestConfig, outputDescriptor))
+                  .withContext('invoke global xss() callback')
+                  .toBeResolvedTo(expectXss);
+
+                conditionalNot(
+                  expectXss,
+                  expect(alertOverlay.querySelector('.alert-xss-triggered'))
+                    .withContext('show XSS alert message'))
+                    .toBeNull();
+
+                await expectAsync(presetTestConfig.doExpect())
+                  .withContext('custom expectations')
+                  .toBeResolved();
+
                 await presetTestConfig.doCleanup();
               });
 
-            } else {
-
-              it('should NOT trigger xss for payload "' + presetDescriptor.name + '"', async () => {
-                await expectAsync(raceForXss(context, presetTestConfig, outputDescriptor)).withContext('invoke global xss() callback').toBeResolvedTo(false);
-                expect(alertOverlay.querySelector('.alert-xss-triggered')).withContext('show XSS alert message').toBeNull();
-                await expectAsync(presetTestConfig.doExpect()).withContext('run custom except handler').toBeResolved();
-                await presetTestConfig.doCleanup();
-              });
-
-            }
           }
         });
       }
@@ -344,5 +351,9 @@ describe('Xss Demo App', async () => {
     return new Promise(resolve => {
       xssResolve = () => resolve(true);
     });
+  }
+
+  function conditionalNot<T>(condition: boolean, matchers: jasmine.Matchers<T>): jasmine.Matchers<T>{
+    return condition ? matchers.not : matchers;
   }
 });
