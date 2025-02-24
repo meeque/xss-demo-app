@@ -1,0 +1,1 @@
+<iframe src="/assets/probes/xss.html" style="width:100%;height:40em;"/>
