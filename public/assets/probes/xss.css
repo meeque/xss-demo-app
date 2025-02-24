@@ -1,0 +1,25 @@
+li.target ul.status li {
+    display: none;
+}
+
+li.target ul.status.has-no-target li.has-no-target,
+li.target ul.status.xss-unavailable li.xss-unavailable,
+li.target ul.status.xss-not-invoked li.xss-not-invoked,
+li.target ul.status.xss-error li.xss-error
+ {
+    display: list-item;
+    color: red;
+    list-style-type: "x ";
+}
+
+li.target ul.status.has-target li.has-target,
+li.target ul.status.xss-available li.xss-available,
+li.target ul.status.xss-invoked li.xss-invoked,
+li.target ul.status.xss-success li.xss-success {
+    display: list-item;
+    list-style-type: "✔ ";
+}
+
+li.target ul.status.xss-success li.xss-success {
+    color: green;
+}

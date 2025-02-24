@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XSS Demo: XSS Probe</title>
+    <link rel="stylesheet" href="xss.css">
+    <script src="xss.js"></script>
+</head>
+<body>
+    <h1>XSS Demo: XSS Probe</h1>
+    <p>
+        This simple HTML page tries to invoke the XSS Demo App's global <code>xss()<code> function.
+        It can therefore be used to trigger an XSS alert in the XSS Demo App, when the XSS demo page loads this XSS probe page.
+    </p>
+    <p>
+        This probe attempts to invoke <code>xss()<code> in two different ways:
+        <ul>
+            <li class="target parent">
+                <h3>Page Parent</h3>
+                <p>Run <strong><code>window.parent.xss()</code></strong>.<br>This works when the XSS Demo App opens this page in a <code>frame</code> or <code>iframe</code>.</p>
+                <p>Diagnostic status:</p>
+                <ul class="status">
+                    <li class="has-target">      This probe page <strong>does</strong> have a parent. </li>
+                    <li class="has-no-target">   This probe page <strong>does not</strong> have a parent. </li>
+                    <li class="xss-available">   The parent <strong>does</strong> have an <code>xss</code> entry in its global namespace. </li>
+                    <li class="xss-unavailable"> The parent <strong>does not</strong> have an <code>xss</code> entry in its global namespace. </li>
+                    <li class="xss-invoked">     This probe <strong>has</strong> invoked <code>xss()</code> in the parent. </li>
+                    <li class="xss-not-invoked"> This probe <strong>has not</strong> invoked <code>xss()</code> in the parent, because it is not a function. </li>
+                    <li class="xss-success">     This probe has <strong>successfully</strong> exectuted <code>xss()</code> in the parent. </li>
+                    <li class="xss-error">       This probe has <strong>failed</strong> to exectute <code>xss()</code> in the parent with the following <strong>error</strong>:<br> <code class="error"></code> </li>
+                </ul>
+            </li>
+            <li class="target opener">
+                <h3>Page Opener</h3>
+                <p>Run <strong><code>window.opener.xss()</code></strong>.<br> This works when the XSS Demo App opens this page in a new window or tab, e.g. through a link with <code>target="_blank"</code>.</p>
+                <p>Diagnostic status:</p>
+                <ul class="status">
+                    <li class="has-target">      This probe page <strong>does</strong> have an opener. </li>
+                    <li class="has-no-target">   This probe page <strong>does not</strong> have an opener. </li>
+                    <li class="xss-available">   The opener <strong>does</strong> have an <code>xss</code> entry in its global namespace. </li>
+                    <li class="xss-unavailable"> The opener <strong>does not</strong> have an <code>xss</code> entry in its global namespace. </li>
+                    <li class="xss-invoked">     This probe <strong>has</strong> invoked <code>xss()</code> in the opener. </li>
+                    <li class="xss-not-invoked"> This probe <strong>has not</strong> invoked <code>xss()</code> in the opener, because it is not a function. </li>
+                    <li class="xss-success">     This probe has <strong>successfully</strong> exectuted <code>xss()</code> in the opener. </li>
+                    <li class="xss-error">       This probe has <strong>failed</strong> to exectute <code>xss()</code> in the opener with the following <strong>error</strong>:<br> <code class="error"></code> </li>
+                </ul>
+            </li>
+        </ul>
+    </p>
+    <p>
+        <em>
+            Note:<br>
+            Successful triggering of <code>xss()</code> and and other diagnostic status printed above may be subject to same-origin-pulicy.<br>
+            If the XSS Demo App is running on a different origin, some of the above may fail!
+        </em>
+    </p>
+</body>
+</html>
