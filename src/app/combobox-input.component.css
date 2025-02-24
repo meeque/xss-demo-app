@@ -1,0 +1,7 @@
+div[aria-haspopup=true] button .sap-icon--navigation-down-arrow::before {
+    content: "\02C5";
+}
+
+div[aria-haspopup=true][aria-expanded=true] button .sap-icon--navigation-down-arrow::before {
+    content: "\02C4";
+}

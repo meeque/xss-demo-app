@@ -40,6 +40,7 @@ export class MenuItemContext {
 @Component({
     selector: 'combobox-input',
     templateUrl: './combobox-input.component.html',
+    styleUrl: './combobox-input.component.css',
     standalone: true,
     imports: [FormsModule, NgFor, NgIf]
 })

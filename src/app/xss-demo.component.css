@@ -57,7 +57,17 @@
   filter: unset;
 }
 
+.output-area .sap-icon--accept::before {
+  content: "\2714";
+}
 
+.output-area .sap-icon--question-mark::before {
+  content: "\2370";
+}
+
+.output-area .sap-icon--alert::before {
+  content: "\26A0";
+}
 
 .fd-shell__overlay {
   display: flex;

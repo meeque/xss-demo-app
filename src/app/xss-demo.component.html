@@ -117,9 +117,9 @@
                       <img *ngIf="item.value.jQueryInjector" class="technology-icon" src="assets/img/jquery-logo-black.svg">
                       <img *ngIf="item.value.templateCode" class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
                       {{ item.name }}
-                      <span *ngIf="item.value.quality == 'Recommended'" class="sap-icon--accept"></span>
-                      <span *ngIf="item.value.quality == 'Questionable'" class="sap-icon--question-mark"></span>
-                      <span *ngIf="item.value.quality == 'Insecure'" class="sap-icon--alert"></span>
+                      <span *ngIf="item.value.quality == PayloadOutputQuality.Recommended" class="sap-icon--accept"></span>
+                      <span *ngIf="item.value.quality == PayloadOutputQuality.Questionable" class="sap-icon--question-mark"></span>
+                      <span *ngIf="item.value.quality == PayloadOutputQuality.Insecure" class="sap-icon--alert"></span>
                     </a>
                   </li>
                 </ng-container>

@@ -14,6 +14,26 @@
   opacity: 0.8;
 }
 
+.fd-layout-panel .fd-layout-panel__header .fd-layout-panel__title .sap-icon--accept::before {
+  content: "\2714";
+}
+
+.fd-layout-panel .fd-layout-panel__header .fd-layout-panel__title .sap-icon--question-mark::before {
+  content: "\2370";
+}
+
+.fd-layout-panel .fd-layout-panel__header .fd-layout-panel__title .sap-icon--alert::before {
+  content: "\26A0";
+}
+
+.fd-layout-panel .fd-layout-panel__header .fd-layout-panel__expand button .sap-icon--slim-arrow-down::before {
+  content: "\02C5";
+}
+
+.fd-layout-panel .fd-layout-panel__header .fd-layout-panel__expand button .sap-icon--slim-arrow-right::before {
+  content: "\02C3";
+}
+
 .live-code .fd-layout-panel__body,
 .payload-processor .fd-layout-panel__body,
 .html-source-provider .fd-layout-panel__body,
