@@ -28,7 +28,7 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
   readonly expect?: () => Promise<void>;
   readonly cleanup?: () => Promise<void>;
 
-  static fromRaw(configs: string[] | PresetTestConfig[]): EnhancedPresetTestConfig[] {
+  static fromRaw(configs: (string | PresetTestConfig)[]): EnhancedPresetTestConfig[] {
     return (configs || []).map(config => new DefaultPresetTestConfig(config));
   }
 
@@ -77,6 +77,12 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
   }
 }
 
+interface PresetTestConfigFactory {
+  [config: string]: (presetName: string) => EnhancedPresetTestConfig;
+}
+
+
+
 describe('Xss Demo App', async () => {
 
   let fixture: ComponentFixture<XssDemoComponent>;
@@ -94,111 +100,91 @@ describe('Xss Demo App', async () => {
 
 
 
-  const presetTestConfigsLib: {[prop: string]: PresetTestConfig} = {
-    link: {
-      presetName: 'A link href',
-      trigger: async () => {
-        await timeout(200);
-        queryOutput().querySelector('a').click();
-      }
+  const cf: PresetTestConfigFactory = {
+    clickLink: (name: string) => {
+      return new DefaultPresetTestConfig({
+        presetName: name,
+        trigger: async () => {
+          await timeout(200);
+          queryOutput().querySelector('a').click();
+        }
+      });
     },
-    linkTargetContent: {
-      presetName: 'A link target content',
-      trigger: async () => {
-        await timeout(500);
-        queryOutput().querySelector('a').click();
-      }
+    focusInput: (name: string) => {
+      return new DefaultPresetTestConfig({
+        presetName: name,
+        trigger: async () => {
+          await timeout(200);
+          queryOutput().querySelector('input').dispatchEvent(new Event('focus'));
+        }
+      });
     },
-    focus: {
-      presetName: 'Input field onfocus',
-      trigger: async () => {
-        await timeout(200);
-        queryOutput().querySelector('input').dispatchEvent(new Event('focus'));
-      }
+    mouseenter: (name: string) => {
+      return new DefaultPresetTestConfig({
+        presetName: name,
+        trigger: async () => {
+          await timeout(200);
+          queryOutput().querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
+        }
+      });
     },
-    mouseenter: {
-      presetName: 'Div onmouseenter',
-      trigger: async() => {
-        await timeout(200);
-        queryOutput().querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
-      }
-    },
-    mouseenterAttr: {
-      presetName: 'onmouseenter attribute',
-      trigger: async() => {
-        await timeout(200);
-        queryOutput().querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
-      }
-    },
-    mouseenterUnquotedAttr: {
-      presetName: 'onmouseenter attribute (unquoted)',
-      trigger: async() => {
-        await timeout(200);
-        queryOutput().querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
-      }
-    },
-    linkUrl: {
-      presetName: 'javascript URL',
-      trigger: async () => {
-        await timeout(200);
-        queryOutput().querySelector('a').click();
-      }
-    },
-    defacement: {
-      presetName: 'pure JS defacement attack',
-      expectXss: false,
-      expect: async () => {
-        const element = document.querySelector('article.fd-shell__app');
-        expect(element.childElementCount).toBe(1);
-        expect(element.querySelector('div.xss-demo-defacement')).not.toBeNull();
-      },
-      cleanup: async () => {
-        const element = document.querySelector('div.xss-demo-defacement');
-        element.parentNode.removeChild(element);
-        document.body.style.background = null;
-      }
-    },
-  };
+    deface: (name: string) => {
+      return new DefaultPresetTestConfig({
+        presetName: name,
+        expectXss: false,
+        expect: async () => {
+          const element = document.querySelector('article.fd-shell__app');
+          expect(element.childElementCount).toBe(1);
+          expect(element.querySelector('div.xss-demo-defacement')).not.toBeNull();
+        },
+        cleanup: async () => {
+          const element = document.querySelector('div.xss-demo-defacement');
+          element.parentNode.removeChild(element);
+          document.body.style.background = null;
+        }
+      });
+    }
+  }
 
-  const presetsTestConfigsByContextAndOutput = {};
+  const presetsTestConfigsByContextAndOutput: {[context: string]: { [output: string]: (string|EnhancedPresetTestConfig)[] }} = {};
 
   presetsTestConfigsByContextAndOutput[XssContext.HtmlContent.toString()] = {
-    'HtmlContent':          [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.linkTargetContent, presetTestConfigsLib.focus, presetTestConfigsLib.mouseenter, 'Mixed HTML Content'],
-    'DomInnerHtml':         [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.linkTargetContent, presetTestConfigsLib.focus, presetTestConfigsLib.mouseenter, 'Mixed HTML Content'],
-    'DomInnerHtmlNoOutput': [                                              'Image onerror', 'Image onerror (legacy flavors)',                                                                                                                                 'Mixed HTML Content'],
-    'JQueryHtml':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.linkTargetContent, presetTestConfigsLib.focus, presetTestConfigsLib.mouseenter, 'Mixed HTML Content'],
-    'JQueryConstructor':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.linkTargetContent, presetTestConfigsLib.focus, presetTestConfigsLib.mouseenter, 'Mixed HTML Content'],
-    'JQueryPrepend':        ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.linkTargetContent, presetTestConfigsLib.focus, presetTestConfigsLib.mouseenter, 'Mixed HTML Content'],
-    'JQueryAppend':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.linkTargetContent, presetTestConfigsLib.focus, presetTestConfigsLib.mouseenter, 'Mixed HTML Content'],
-    'JQueryBefore':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.linkTargetContent, presetTestConfigsLib.focus, presetTestConfigsLib.mouseenter, 'Mixed HTML Content'],
-    'JQueryAfter':          ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.linkTargetContent, presetTestConfigsLib.focus, presetTestConfigsLib.mouseenter, 'Mixed HTML Content'],
-    'JQueryWrapInner':      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.linkTargetContent, presetTestConfigsLib.focus, presetTestConfigsLib.mouseenter, 'Mixed HTML Content'],
-    'JQueryWrap':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.linkTargetContent, presetTestConfigsLib.focus, presetTestConfigsLib.mouseenter, 'Mixed HTML Content'],
-    'JQueryReplaceWith':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.linkTargetContent, presetTestConfigsLib.focus, presetTestConfigsLib.mouseenter, 'Mixed HTML Content'],
-    'NgTrusted':            [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', presetTestConfigsLib.link, presetTestConfigsLib.linkTargetContent, presetTestConfigsLib.focus, presetTestConfigsLib.mouseenter, 'Mixed HTML Content'],
-  }
+    'HtmlContent':          [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'DomInnerHtml':         [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'DomInnerHtmlNoOutput': [                                              'Image onerror', 'Image onerror (legacy flavors)',                                                                                                                                              'Mixed HTML Content'],
+    'JQueryHtml':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryConstructor':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryPrepend':        ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryAppend':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryBefore':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryAfter':          ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryWrapInner':      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryWrap':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryReplaceWith':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'NgTrusted':            [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+  };
 
   presetsTestConfigsByContextAndOutput[XssContext.HtmlAttribute.toString()] = {
-    'HtmlAttribute':                 ['IFrame src', 'Image onerror', presetTestConfigsLib.mouseenterAttr,                                              'Mixed HTML Content'],
-    'HtmlUnquotedAttribute':         [                                                                    presetTestConfigsLib.mouseenterUnquotedAttr                      ],
-    'HtmlEncodedUnquotedAttribute' : [                                                                    presetTestConfigsLib.mouseenterUnquotedAttr                      ],
-  }
+    'HtmlAttribute':                 ['IFrame src', 'Image onerror', cf.mouseenter('onmouseenter attribute'),                                                     'Mixed HTML Content'],
+    'HtmlUnquotedAttribute':         [                                                                        cf.mouseenter('onmouseenter attribute (unquoted)'),                     ],
+    'HtmlEncodedUnquotedAttribute' : [                                                                        cf.mouseenter('onmouseenter attribute (unquoted)'),                     ],
+  };
 
   presetsTestConfigsByContextAndOutput[XssContext.Url.toString()] = {
-    'IframeDomTrusted': ['javascript URL (for parent)'                              ],
-    'IframeNgTrusted':  ['javascript URL (for parent)'                              ],
-    'LinkDomTrusted':   [                               presetTestConfigsLib.linkUrl],
-    'LinkNgTrusted':    [                               presetTestConfigsLib.linkUrl],
-  }
+    'IframeDomTrusted': ['javascript URL (for parent)'                                ],
+    'IframeNgTrusted':  ['javascript URL (for parent)'                                ],
+    'LinkDomTrusted':   [                               cf.clickLink('javascript URL')],
+    'LinkNgTrusted':    [                               cf.clickLink('javascript URL')],
+  };
 
   presetsTestConfigsByContextAndOutput[XssContext.Css.toString()] = {
-  }
+  };
 
   presetsTestConfigsByContextAndOutput[XssContext.JavaScript.toString()] = {
-    'DqStringDomTrusted': ['JS code breaking "string"'                                                                               ],
-    'SqStringDomTrusted': [                            'JS code breaking \'string\''                                                 ],
-    'BlockDomTrusted':    [                                                           'pure JS code', presetTestConfigsLib.defacement],
-  }
+    'DqStringDomTrusted': ['JS code breaking "string"'                                                                                       ],
+    'SqStringDomTrusted': [                             'JS code breaking \'string\''                                                        ],
+    'BlockDomTrusted':    [                                                            'pure JS code', cf.deface('pure JS defacement attack')],
+  };
 
 
 
