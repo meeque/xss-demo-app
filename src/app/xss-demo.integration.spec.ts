@@ -1,9 +1,9 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 
-import { XssContext, XssContextCollection } from './xss-demo.common';
+import { XssContext } from './xss-demo.common';
 import { xssDemoConfig } from './xss-demo.config';
 import { PayloadPresetService } from './payload-preset.service';
-import { PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputService } from './payload-output.service';
+import { PayloadOutputQuality, PayloadOutputService } from './payload-output.service';
 import { XssDemoComponent } from './xss-demo.component';
 
 
@@ -99,49 +99,49 @@ describe('Xss Demo App', async () => {
       presetName: 'A link href',
       trigger: async () => {
         await timeout(200);
-        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('a').click();
+        queryOutput().querySelector('a').click();
       }
     },
     linkTargetContent: {
       presetName: 'A link target content',
       trigger: async () => {
         await timeout(500);
-        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('a').click();
+        queryOutput().querySelector('a').click();
       }
     },
     focus: {
       presetName: 'Input field onfocus',
       trigger: async () => {
         await timeout(200);
-        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('input').dispatchEvent(new Event('focus'));
+        queryOutput().querySelector('input').dispatchEvent(new Event('focus'));
       }
     },
     mouseenter: {
       presetName: 'Div onmouseenter',
       trigger: async() => {
         await timeout(200);
-        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
+        queryOutput().querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
       }
     },
     mouseenterAttr: {
       presetName: 'onmouseenter attribute',
       trigger: async() => {
         await timeout(200);
-        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
+        queryOutput().querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
       }
     },
     mouseenterUnquotedAttr: {
       presetName: 'onmouseenter attribute (unquoted)',
       trigger: async() => {
         await timeout(200);
-        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
+        queryOutput().querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
       }
     },
     linkUrl: {
       presetName: 'javascript URL',
       trigger: async () => {
         await timeout(200);
-        queryPayloadOutput().querySelector('.output.fd-layout-panel .fd-layout-panel__body').querySelector('a').click();
+        queryOutput().querySelector('a').click();
       }
     },
     defacement: {
@@ -273,7 +273,7 @@ describe('Xss Demo App', async () => {
                 const xssPromise = nextXssPromise();
                 await selectInputOutput(context.name, presetTestConfig.presetName, outputDescriptor.name);
                 const triggerPromise = presetTestConfig.doTrigger();
-                const timeoutPromise = timeout(1000);
+                const timeoutPromise = timeout(500);
                 await expectAsync(Promise.race([xssPromise, timeoutPromise]))
                   .withContext('call xss() probe before timeout')
                   .toBeResolvedTo(expectXss);
@@ -322,8 +322,12 @@ describe('Xss Demo App', async () => {
       .find((a: HTMLLinkElement) => a.textContent.trim() == linkText) as HTMLLinkElement;
   }
 
-  function queryPayloadOutput(): HTMLLinkElement {
+  function queryPayloadOutputComponent(): HTMLElement {
     return element.querySelector('section.output-area payload-output');
+  }
+
+  function queryOutput(): HTMLElement {
+    return queryPayloadOutputComponent().querySelector('.output.fd-layout-panel .fd-layout-panel__body');
   }
 
   async function whenStableDetectChanges(): Promise<void> {
