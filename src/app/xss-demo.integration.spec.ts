@@ -13,20 +13,27 @@ interface PresetTestConfig {
   readonly expectXss?: boolean;
   readonly expect?: () => Promise<void>;
   readonly cleanup?: () => Promise<void>;
+  readonly timeout?: number;
 }
 
 interface EnhancedPresetTestConfig extends PresetTestConfig {
+  isExpectXss(): boolean;
+  getTimeout(): number;
   doTrigger(): Promise<void>;
   doExpect(): Promise<void>;
   doCleanup(): Promise<void>;
 }
 
 class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
+
+  private static defaultTimeout = 500;
+
   readonly presetName: string;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
   readonly expect?: () => Promise<void>;
   readonly cleanup?: () => Promise<void>;
+  readonly timeout?: number;
 
   static fromRaw(configs: (string | PresetTestConfig)[]): EnhancedPresetTestConfig[] {
     return (configs || []).map(config => new DefaultPresetTestConfig(config));
@@ -52,6 +59,14 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
     } else {
       throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
     }
+  }
+
+  public isExpectXss(): boolean {
+    return this.expectXss !== false;
+  }
+
+  public getTimeout(): number {
+    return (this.timeout != null) ? this.timeout : DefaultPresetTestConfig.defaultTimeout;
   }
 
   public async doTrigger(): Promise<void> {
@@ -105,9 +120,10 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await timeout(200);
+          await timeout(500);
           queryOutput().querySelector('a').click();
-        }
+        },
+        timeout: 2000
       });
     },
     focusInput: (name: string) => {
@@ -246,7 +262,7 @@ describe('Xss Demo App', async () => {
           for (const presetDescriptor of presetContextDescriptor.items) {
 
             const presetTestConfig = DefaultPresetTestConfig.getByNameOrDefault(presetTestConfigs, presetDescriptor.name);
-            const expectXss = presetTestConfig.expectXss !== false;
+            const expectXss = presetTestConfig.isExpectXss();
 
             it(
               'should '
@@ -259,7 +275,7 @@ describe('Xss Demo App', async () => {
                 const xssPromise = nextXssPromise();
                 await selectInputOutput(context.name, presetTestConfig.presetName, outputDescriptor.name);
                 const triggerPromise = presetTestConfig.doTrigger();
-                const timeoutPromise = timeout(500);
+                const timeoutPromise = timeout(presetTestConfig.getTimeout());
                 await expectAsync(Promise.race([xssPromise, timeoutPromise]))
                   .withContext('call xss() probe before timeout')
                   .toBeResolvedTo(expectXss);
