@@ -26,7 +26,7 @@ interface EnhancedPresetTestConfig extends PresetTestConfig {
 
 class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
 
-  private static defaultTimeout = 500;
+  private static defaultTimeout = 200;
 
   readonly presetName: string;
   readonly trigger?: () => Promise<void>;
@@ -120,8 +120,28 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await timeout(500);
+          await timeout(200);
           queryOutput().querySelector('a').click();
+        },
+        timeout: 500
+      });
+    },
+    clickLinkToNewWindow: (name: string) => {
+      const mockLinkTarget = 'xss-demo_integration-test_click-link-to-new-window';
+      return new DefaultPresetTestConfig({
+        presetName: name,
+        trigger: async () => {
+          await timeout(500);
+          const link = queryOutput().querySelector('a');
+          if (link.target === '_blank') {
+            console.log('Tweaking link with target "_blank" to use target "' + mockLinkTarget + '" instead.');
+            link.target = mockLinkTarget;
+          }
+          link.click();
+        },
+        cleanup: async () => {
+          await timeout(100);
+          window.open('javascript:window.close();', mockLinkTarget);
         },
         timeout: 2000
       });
@@ -132,7 +152,8 @@ describe('Xss Demo App', async () => {
         trigger: async () => {
           await timeout(200);
           queryOutput().querySelector('input').dispatchEvent(new Event('focus'));
-        }
+        },
+        timeout: 500
       });
     },
     mouseenter: (name: string) => {
@@ -141,7 +162,8 @@ describe('Xss Demo App', async () => {
         trigger: async () => {
           await timeout(200);
           queryOutput().querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
-        }
+        },
+        timeout: 500
       });
     },
     deface: (name: string) => {
@@ -157,7 +179,8 @@ describe('Xss Demo App', async () => {
           const element = document.querySelector('div.xss-demo-defacement');
           element.parentNode.removeChild(element);
           document.body.style.background = null;
-        }
+        },
+        timeout: 1000
       });
     }
   }
@@ -165,19 +188,19 @@ describe('Xss Demo App', async () => {
   const presetsTestConfigsByContextAndOutput: {[context: string]: { [output: string]: (string|EnhancedPresetTestConfig)[] }} = {};
 
   presetsTestConfigsByContextAndOutput[XssContext.HtmlContent.toString()] = {
-    'HtmlContent':          [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'DomInnerHtml':         [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'HtmlContent':          [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkToNewWindow('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'DomInnerHtml':         [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkToNewWindow('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
     'DomInnerHtmlNoOutput': [                                              'Image onerror', 'Image onerror (legacy flavors)',                                                                                                                                              'Mixed HTML Content'],
-    'JQueryHtml':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryConstructor':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryPrepend':        ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryAppend':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryBefore':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryAfter':          ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryWrapInner':      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryWrap':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryReplaceWith':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'NgTrusted':            [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryHtml':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkToNewWindow('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryConstructor':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkToNewWindow('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryPrepend':        ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkToNewWindow('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryAppend':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkToNewWindow('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryBefore':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkToNewWindow('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryAfter':          ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkToNewWindow('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryWrapInner':      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkToNewWindow('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryWrap':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkToNewWindow('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryReplaceWith':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkToNewWindow('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'NgTrusted':            [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkToNewWindow('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.HtmlAttribute.toString()] = {
