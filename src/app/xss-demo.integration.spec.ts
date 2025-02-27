@@ -9,16 +9,18 @@ import { XssDemoComponent } from './xss-demo.component';
 
 interface PresetTestConfig {
   readonly presetName: string;
+  readonly before?: () => Promise<void>;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
   readonly expect?: () => Promise<void>;
-  readonly cleanup?: () => Promise<void>;
+  readonly after?: () => Promise<void>;
   readonly timeout?: number;
 }
 
 interface EnhancedPresetTestConfig extends PresetTestConfig {
   isExpectXss(): boolean;
   getTimeout(): number;
+  doBefore(): Promise<void>;
   doTrigger(): Promise<void>;
   doExpect(): Promise<void>;
   doCleanup(): Promise<void>;
@@ -29,10 +31,11 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
   private static defaultTimeout = 200;
 
   readonly presetName: string;
+  readonly before?: () => Promise<void>;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
   readonly expect?: () => Promise<void>;
-  readonly cleanup?: () => Promise<void>;
+  readonly after?: () => Promise<void>;
   readonly timeout?: number;
 
   static fromRaw(configs: (string | PresetTestConfig)[]): EnhancedPresetTestConfig[] {
@@ -69,6 +72,12 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
     return (this.timeout != null) ? this.timeout : DefaultPresetTestConfig.defaultTimeout;
   }
 
+  public async doBefore(): Promise<void> {
+    if (this.before) {
+      return this.before();
+    }
+  }
+
   public async doTrigger(): Promise<void> {
     if (this.trigger) {
       return this.trigger();
@@ -82,9 +91,9 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
   }
 
   public async doCleanup(): Promise<void> {
-    if (this.cleanup) {
+    if (this.after) {
       try {
-        return this.cleanup();
+        return this.after();
       } catch(err) {
         console.error('Ignoring error in custom cleanup function: ' + err);
       }
@@ -139,8 +148,7 @@ describe('Xss Demo App', async () => {
           }
           link.click();
         },
-        cleanup: async () => {
-          await timeout(100);
+        after: async () => {
           window.open('javascript:window.close();', mockLinkTarget);
         },
         timeout: 2000
@@ -175,12 +183,26 @@ describe('Xss Demo App', async () => {
           expect(element.childElementCount).toBe(1);
           expect(element.querySelector('div.xss-demo-defacement')).not.toBeNull();
         },
-        cleanup: async () => {
+        after: async () => {
           const element = document.querySelector('div.xss-demo-defacement');
           element.parentNode.removeChild(element);
           document.body.style.background = null;
         },
         timeout: 1000
+      });
+    },
+    newWindow: (name: string) => {
+      let windowOpenSpy: jasmine.Spy;
+      return new DefaultPresetTestConfig({
+        presetName: name,
+        expectXss: false,
+        before: async () => {
+          windowOpenSpy = spyOn(window, 'open').and.callThrough();
+        },
+        after: async () => {
+          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent().returnValue;
+          openedWindow.close();
+        }
       });
     }
   }
@@ -220,9 +242,9 @@ describe('Xss Demo App', async () => {
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.JavaScript.toString()] = {
-    'DqStringDomTrusted': ['JS code breaking "string"'                                                                                       ],
-    'SqStringDomTrusted': [                             'JS code breaking \'string\''                                                        ],
-    'BlockDomTrusted':    [                                                            'pure JS code', cf.deface('pure JS defacement attack')],
+    'DqStringDomTrusted': ['JS code breaking "string"'                                                                                                                                                                                                                                                      ],
+    'SqStringDomTrusted': [                             'JS code breaking \'string\''                                                                                                                                                                                                                       ],
+    'BlockDomTrusted':    [                                                            'pure JS code', cf.deface('pure JS defacement attack'), cf.newWindow('JS attack on a plain HTML page (window)'), cf.newWindow('JS attack on browser storage (window)'), cf.newWindow('JS attack on cookies (window)')],
   };
 
 
@@ -294,7 +316,7 @@ describe('Xss Demo App', async () => {
                 + (presetTestConfig.trigger ? ' with custom trigger' : '')
                 + (presetTestConfig.expect ? ' with custom expectation' : ''),
               async () => {
-
+                await presetTestConfig.doBefore();
                 const xssPromise = nextXssPromise();
                 await selectInputOutput(context.name, presetTestConfig.presetName, outputDescriptor.name);
                 const triggerPromise = presetTestConfig.doTrigger();
