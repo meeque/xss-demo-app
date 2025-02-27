@@ -264,6 +264,13 @@ export class PayloadOutputService {
         .appendTo(element)
         .replaceWith(payload);
     },
+
+    titleAttribute(element, payload) {
+      $(element)
+        .html(
+          $('<p>').text('This paragraph has a title.').attr('title', payload)
+        );
+    },
   };
 
   readonly descriptors: XssContextCollection<PayloadOutputDescriptor>[] =
@@ -620,9 +627,17 @@ export class PayloadOutputService {
         {
           id: 'DomAttributeValue',
           quality: PayloadOutputQuality.Recommended,
-          name: 'DOM paragraph .title',
-          title: 'Payload as HTML Attribute (DOM p.title)',
+          name: 'DOM paragraph title',
+          title: 'Payload as HTML Attribute (DOM p[title])',
           domInjector: this._domInjectors.titleAttribute
+        },
+
+        {
+          id: 'JQueryAttributeValue',
+          quality: PayloadOutputQuality.Recommended,
+          name: 'jQuery paragraph title',
+          title: 'Paylaod as HTML Attribute (jQuery(\'<p>\').attr(\'title\', ...))',
+          jQueryInjector: this._jQueryInjectors.titleAttribute
         },
 
         {
