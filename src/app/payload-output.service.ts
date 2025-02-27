@@ -745,6 +745,7 @@ export class PayloadOutputService {
           title: 'Payload URL Raw (DOM iframe.src)',
           domInjector: this._domInjectors.iframeSrc
         },
+
         {
           id: 'IframeJQueryValidated',
           quality: PayloadOutputQuality.Recommended,
