@@ -182,14 +182,14 @@ export class PayloadOutputService {
       element.insertAdjacentElement('beforeend', paragraph);
     },
 
-    trustedUrlLinkHref(element, payload) {
+    linkHref(element, payload) {
       let link = document.createElement('a');
       link.textContent = 'Click here to test your payload as a URL!'
       link.href = payload;
       element.insertAdjacentElement('beforeend', link);
     },
 
-    trustedUrlIframeSrc(element, payload) {
+    iframeSrc(element, payload) {
       let iframe = document.createElement('iframe');
       iframe.src = payload;
       element.insertAdjacentElement('beforeend', iframe);
@@ -269,6 +269,20 @@ export class PayloadOutputService {
       $(element)
         .html(
           $('<p>').text('This paragraph has a title.').attr('title', payload)
+        );
+    },
+
+    linkHref(element, payload) {
+      $(element)
+        .html(
+          $('<a>').text('Click here to test your payload as a URL!').attr('href', payload)
+        );
+    },
+
+    iframeSrc(element, payload) {
+      $(element)
+        .html(
+          $('<iframe>').attr('src', payload)
         );
     },
   };
@@ -636,7 +650,7 @@ export class PayloadOutputService {
           id: 'JQueryAttributeValue',
           quality: PayloadOutputQuality.Recommended,
           name: 'jQuery paragraph title',
-          title: 'Paylaod as HTML Attribute (jQuery(\'<p>\').attr(\'title\', ...))',
+          title: 'Paylaod as HTML Attribute ($(\'<p>\').attr(\'title\', ...))',
           jQueryInjector: this._jQueryInjectors.titleAttribute
         },
 
@@ -667,24 +681,41 @@ export class PayloadOutputService {
         {
           id: 'LinkDomValidated',
           quality: PayloadOutputQuality.Recommended,
-          name: 'URL-validated DOM a.href',
+          name: 'URL-validated DOM <a href>',
           title: 'Payload URL Validated (DOM a.href)',
           payloadProcessor: this._processors.urlValidation,
-          domInjector: this._domInjectors.trustedUrlLinkHref
+          domInjector: this._domInjectors.linkHref
         },
 
         {
           id: 'LinkDomTrusted',
           quality: PayloadOutputQuality.Insecure,
-          name: 'DOM a.href',
+          name: 'DOM <a href>',
           title: 'Payload URL Raw (DOM a.href)',
-          domInjector: this._domInjectors.trustedUrlLinkHref
+          domInjector: this._domInjectors.linkHref
+        },
+
+        {
+          id: 'LinkJQueryValidated',
+          quality: PayloadOutputQuality.Recommended,
+          name: 'URL-validated jQuery <a href>',
+          title: 'Payload URL Validated ($.attr(\'href\', ...))',
+          payloadProcessor: this._processors.urlValidation,
+          jQueryInjector: this._jQueryInjectors.linkHref
+        },
+
+        {
+          id: 'LinkJQueryTrusted',
+          quality: PayloadOutputQuality.Insecure,
+          name: 'jQuery <a href>',
+          title: 'Payload URL Raw ($.attr(\'href\', ...))',
+          jQueryInjector: this._jQueryInjectors.linkHref
         },
 
         {
           id: 'LinkNgSanitized',
           quality: PayloadOutputQuality.Recommended,
-          name: 'Sanitized ng a [href]',
+          name: 'Sanitized ng <a href>',
           title: 'Payload URL Sanitized (Angular a [href])',
           templateCode: '<a [href]="payload">Click here to test your payload as a URL!</a>'
         },
@@ -692,7 +723,7 @@ export class PayloadOutputService {
         {
           id: 'LinkNgTrusted',
           quality: PayloadOutputQuality.Insecure,
-          name: 'Trusted ng a [href]',
+          name: 'Trusted ng <a href>',
           title: 'Payload URL Trusted!!! (Angular a [href] and DomSanitizer.bypassSecurityTrustUrl())',
           payloadProcessor: this._processors.ngTrustedUrl,
           templateCode: '<a [href]="payload">Click here to test your payload as a URL!</a>'
@@ -701,24 +732,40 @@ export class PayloadOutputService {
         {
           id: 'IframeDomValidated',
           quality: PayloadOutputQuality.Recommended,
-          name: 'URL-validated DOM iframe.src ',
+          name: 'URL-validated DOM <iframe src>',
           title: 'Payload URL Validated (DOM iframe.src)',
           payloadProcessor: this._processors.urlValidation,
-          domInjector: this._domInjectors.trustedUrlIframeSrc
+          domInjector: this._domInjectors.iframeSrc
         },
 
         {
           id: 'IframeDomTrusted',
           quality: PayloadOutputQuality.Insecure,
-          name: 'DOM iframe.src',
+          name: 'DOM <iframe src>',
           title: 'Payload URL Raw (DOM iframe.src)',
-          domInjector: this._domInjectors.trustedUrlIframeSrc
+          domInjector: this._domInjectors.iframeSrc
+        },
+        {
+          id: 'IframeJQueryValidated',
+          quality: PayloadOutputQuality.Recommended,
+          name: 'URL-validated jQuery <iframe src>',
+          title: 'Payload URL Validated ($.attr(\'src\', ...))',
+          payloadProcessor: this._processors.urlValidation,
+          jQueryInjector: this._jQueryInjectors.iframeSrc
+        },
+
+        {
+          id: 'IframeJQueryTrusted',
+          quality: PayloadOutputQuality.Insecure,
+          name: 'jQuery <iframe src>',
+          title: 'Payload URL Raw ($.attr(\'src\', ...))',
+          jQueryInjector: this._jQueryInjectors.iframeSrc
         },
 
         {
           id: 'IframeNgSanitized',
           quality: PayloadOutputQuality.Questionable,
-          name: 'Sanitized ng iframe [src]',
+          name: 'Sanitized ng <iframe src>',
           title: 'Payload URL Sanitized (Angular iframe [src])',
           templateCode: '<iframe [src]="payload"></iframe>'
         },
@@ -726,7 +773,7 @@ export class PayloadOutputService {
         {
           id: 'IframeNgTrusted',
           quality: PayloadOutputQuality.Insecure,
-          name: 'Trusted ng iframe [src]',
+          name: 'Trusted ng <iframe src>',
           title: 'Payload URL Trusted! (Angular iframe [src] and DomSanitizer.bypassSecurityTrustResourceUrl())',
           payloadProcessor: this._processors.ngTrustedResourceUrl,
           templateCode: '<iframe [src]="payload"></iframe>'

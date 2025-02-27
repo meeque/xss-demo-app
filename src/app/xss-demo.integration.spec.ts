@@ -232,10 +232,12 @@ describe('Xss Demo App', async () => {
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.Url.toString()] = {
-    'IframeDomTrusted': ['javascript URL (for parent)'                                ],
-    'IframeNgTrusted':  ['javascript URL (for parent)'                                ],
-    'LinkDomTrusted':   [                               cf.clickLink('javascript URL')],
-    'LinkNgTrusted':    [                               cf.clickLink('javascript URL')],
+    'LinkDomTrusted':      [                               cf.clickLink('javascript URL')],
+    'LinkNgTrusted':       [                               cf.clickLink('javascript URL')],
+    'LinkJQueryTrusted':   [                               cf.clickLink('javascript URL')],
+    'IframeDomTrusted':    ['javascript URL (for parent)'                                ],
+    'IframeJQueryTrusted': ['javascript URL (for parent)'                                ],
+    'IframeNgTrusted':     ['javascript URL (for parent)'                                ],
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.Css.toString()] = {
