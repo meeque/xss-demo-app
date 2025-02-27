@@ -181,27 +181,27 @@ export class PayloadPresetService {
           url: 'assets/presets/js/break-single-quotes.txt'
         },
         {
-          name: 'JS attack on a plain HTML page in an iframe',
+          name: 'JS attack on a plain HTML page (iframe)',
           url: 'assets/presets/js/attack-plain-html-mock-in-frame.txt'
         },
         {
-          name: 'JS attack on a plain HTML page in a new top-level browsing context',
+          name: 'JS attack on a plain HTML page (window)',
           url: 'assets/presets/js/attack-plain-html-mock-in-tlbc.txt'
         },
         {
-          name: 'JS attack on browser storage with an iframe',
+          name: 'JS attack on browser storage (iframe)',
           url: 'assets/presets/js/attack-storage-in-frame.txt'
         },
         {
-          name: 'JS attack on browser storage with a new top-level browsing context',
+          name: 'JS attack on browser storage (window)',
           url: 'assets/presets/js/attack-storage-in-tlbc.txt'
         },
         {
-          name: 'JS attack on cookies with an iframe',
+          name: 'JS attack on cookies (iframe)',
           url: 'assets/presets/js/attack-cookies-in-frame.txt'
         },
         {
-          name: 'JS attack on cookies with a new top-level browsing context',
+          name: 'JS attack on cookies (window)',
           url: 'assets/presets/js/attack-cookies-in-tlbc.txt'
         },
       ]
