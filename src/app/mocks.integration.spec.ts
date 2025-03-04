@@ -37,7 +37,11 @@ describe('XSS Demo Mocks', () => {
       localStorage.clear();
     });
 
-    it('shouild be loaded', () => {
+    afterEach(() => {
+      localStorage.clear();
+    });
+
+    it('should be loaded', () => {
       expect(mockPageDoc).toEqual(jasmine.anything());
     });
 
@@ -53,11 +57,11 @@ describe('XSS Demo Mocks', () => {
       expect(storageRows[2].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
     });
 
-    it('should have add new item button', () => {
+    it('should have "add new item" button', () => {
       queryAndExpectOne(queryStorageTable(), 'tr.actions button[name=new]');
     });
 
-    it('should show add new item form', () => {
+    it('should show "add new item" form', async () => {
       const storageTable = queryStorageTable();
       const addNewItemButton = queryAndExpectOne(storageTable, 'tr.actions button[name=new]');
 
@@ -97,11 +101,11 @@ describe('XSS Demo Mocks', () => {
       expect(entryKeyField.value).toBe('xss-demo-storage-mock-item-foo');
       expect(entryItemField.value).toBe('Mock Value for storage item with key "xss-demo-storage-mock-item-foo"');
     });
-  });
 
-  function queryStorageTable(): HTMLTableElement {
-    return mockPageDoc.body.querySelector('div.localStorage table.storage');
-  }
+    function queryStorageTable(): HTMLTableElement {
+      return mockPageDoc.body.querySelector('div.localStorage table.storage');
+    }
+  });
 
   function queryAndExpectOne(context: HTMLElement, selector: string): HTMLElement {
     const result = context.querySelectorAll(selector);
