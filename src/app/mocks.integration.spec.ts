@@ -21,7 +21,7 @@ describe('XSS Demo Mocks', () => {
     mockPageDoc = null;
   });
 
-  describe('Plain', () => {
+  describe('Plain Page', () => {
     mockUrl = '/assets/mocks/plain.html'
 
     it('is loaded', () => {
@@ -30,80 +30,107 @@ describe('XSS Demo Mocks', () => {
 
   });
 
-  describe('Storage Mock', () => {
+  describe('Storage Page', () => {
     mockUrl = '/assets/mocks/storage.html'
 
-    beforeEach(() => {
-      localStorage.clear();
-    });
+    const storageTestData = {
+      foo: 'storage item with key "foo"',
+      bar: 'storage item with key "bar"',
+      xxx: 'storage item with key "xxx"'
+    }
 
-    afterEach(() => {
-      localStorage.clear();
-    });
+    for (const testStorageName of ['localStorage', 'sessionStorage']) {
 
-    it('should be loaded', () => {
-      expect(mockPageDoc).toEqual(jasmine.anything());
-    });
+      const testStorage = window[testStorageName] as Storage;
 
-    it('should initially be empty', () => {
-      const storageTable = queryStorageTable();
-      expect(storageTable.classList).toContain('empty');
+      beforeEach(() => {
+        testStorage.clear();
+      });
 
-      const storageRows = storageTable.querySelectorAll('tr');
-      expect(storageRows.length).toBe(3);
+      afterEach(() => {
+        testStorage.clear();
+      });
 
-      expect(storageRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
-      expect(storageRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
-      expect(storageRows[2].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
-    });
+      it('should manage ' + testStorageName, () => {
 
-    it('should have "add new item" button', () => {
-      queryAndExpectOne(queryStorageTable(), 'tr.actions button[name=new]');
-    });
+        const storageTable = queryStorageTable();
 
-    it('should show "add new item" form', async () => {
-      const storageTable = queryStorageTable();
-      const addNewItemButton = queryAndExpectOne(storageTable, 'tr.actions button[name=new]');
+        // check empty storage table
+        {
+          expect(storageTable.classList).toContain('empty');
+          const storageRows = storageTable.querySelectorAll('tr');
+          expect(storageRows.length).toBe(3);
+          expect(storageRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
+          expect(storageRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
+          expect(storageRows[2].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
+        }
 
-      addNewItemButton.click();
+        // check "add new item" form
+        const addNewItemButton = queryAndExpectOne(storageTable, 'tr.actions button[name=new]');
+        addNewItemButton.click();
+        expect(storageTable.querySelectorAll('tr').length).toBe(4);
+        const newItemRow = queryAndExpectOne(storageTable, 'tr.entry.new') as HTMLTableRowElement;
+        const newKeyField = queryAndExpectOne(newItemRow, 'td.key input[type=text]') as HTMLInputElement;
+        const newItemField = queryAndExpectOne(newItemRow, 'td.item input[type=text]') as HTMLInputElement;
+        const saveButton = queryAndExpectOne(newItemRow, 'td.actions button[name=save]') as HTMLButtonElement;
 
-      expect(storageTable.querySelectorAll('tr').length).toBe(4);
+        // submit "add new item" form
+        newKeyField.value = 'foo';
+        newItemField.value = storageTestData.foo;
+        saveButton.click();
+        expectStorageToContain(testStorage, (({foo}) => ({foo}))(storageTestData));
 
-      const newItemRow = queryAndExpectOne(storageTable, 'tr.entry.new');
-      queryAndExpectOne(newItemRow, 'td.key input[type=text]');
-      queryAndExpectOne(newItemRow, 'td.item input[type=text]');
-      queryAndExpectOne(newItemRow, 'td.actions button[name=save]');
-      queryAndExpectOne(newItemRow, 'td.actions button[name=cancel]');
-    });
+        // re-check storage table
+        expect(storageTable.classList).not.toContain('empty');
+        const storageRows2 = storageTable.querySelectorAll('tr');
+        expect(storageRows2.length).toBe(4);
+        expect(storageRows2[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
+        expect(storageRows2[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
+        expect(storageRows2[2].classList).toEqual(jasmine.arrayWithExactContents(['entry']));
+        expect(storageRows2[3].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
 
-    it('should add new storage item', () => {
-      const storageTable = queryStorageTable();
-      const addNewItemButton = queryAndExpectOne(storageTable, 'tr.actions button[name=new]') as HTMLButtonElement;
+        // check display of storage item foo
+        const entryRow = queryAndExpectOne(storageTable, 'tr.entry') as HTMLTableRowElement;
+        const entryKeyField = queryAndExpectOne(entryRow, 'td.key input[type=text]') as HTMLInputElement;
+        const entryItemField = queryAndExpectOne(entryRow, 'td.item input[type=text]') as HTMLInputElement;
+        expect(entryKeyField.value).toBe('foo');
+        expect(entryItemField.value).toBe(storageTestData.foo);
 
-      addNewItemButton.click();
+        // use "add new item" form again
+        const addNewItemButton2 = queryAndExpectOne(storageTable, 'tr.actions button[name=new]');
+        addNewItemButton2.click();
+        expect(storageTable.querySelectorAll('tr').length).toBe(5);
+        const newItemRow2 = queryAndExpectOne(storageTable, 'tr.entry.new') as HTMLTableRowElement;
+        const newKeyField2 = queryAndExpectOne(newItemRow2, 'td.key input[type=text]') as HTMLInputElement;
+        const newItemField2 = queryAndExpectOne(newItemRow2, 'td.item input[type=text]') as HTMLInputElement;
+        const cancelButton2 = queryAndExpectOne(newItemRow2, 'td.actions button[name=cancel]') as HTMLButtonElement;
 
-      const newItemRow = queryAndExpectOne(storageTable, 'tr.entry.new') as HTMLTableRowElement;
-      const newKeyField = queryAndExpectOne(newItemRow, 'td.key input[type=text]') as HTMLInputElement;
-      const newItemField = queryAndExpectOne(newItemRow, 'td.item input[type=text]') as HTMLInputElement;
-      const saveButton = queryAndExpectOne(newItemRow, 'td.actions button[name=save]') as HTMLButtonElement;
+        // cancel "add new item" form
+        newKeyField2.value = 'bar';
+        newItemField2.value = storageTestData.bar;
+        cancelButton2.click();
+        expectStorageToContain(testStorage, (({foo}) => ({foo}))(storageTestData));
 
-      newKeyField.value = 'xss-demo-storage-mock-item-foo';
-      newItemField.value = 'Mock Value for storage item with key "xss-demo-storage-mock-item-foo"';
-      saveButton.click();
+        // re-check storage table
+        expect(storageTable.classList).not.toContain('empty');
+        const storageRows3 = storageTable.querySelectorAll('tr');
+        expect(storageRows3.length).toBe(4);
+        expect(storageRows3[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
+        expect(storageRows3[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
+        expect(storageRows3[2].classList).toEqual(jasmine.arrayWithExactContents(['entry']));
+        expect(storageRows3[3].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
+      });
 
-      expect(storageTable.querySelectorAll('tr').length).toBe(4);
-      expect(storageTable.classList).not.toContain('empty');
+      function queryStorageTable(): HTMLTableElement {
+        return mockPageDoc.body.querySelector('div.' + testStorageName + ' table.storage');
+      }
 
-      const entryRow = queryAndExpectOne(storageTable, 'tr.entry') as HTMLTableRowElement;
-      const entryKeyField = queryAndExpectOne(entryRow, 'td.key input[type=text]') as HTMLInputElement;
-      const entryItemField = queryAndExpectOne(entryRow, 'td.item input[type=text]') as HTMLInputElement;
-
-      expect(entryKeyField.value).toBe('xss-demo-storage-mock-item-foo');
-      expect(entryItemField.value).toBe('Mock Value for storage item with key "xss-demo-storage-mock-item-foo"');
-    });
-
-    function queryStorageTable(): HTMLTableElement {
-      return mockPageDoc.body.querySelector('div.localStorage table.storage');
+      function expectStorageToContain(storage: Storage, data: {[key: string]: string}) {
+        expect(storage.length).toBe(Object.values(data).length);
+        for (const [key, item] of Object.entries(data)) {
+          expect(storage.getItem(key)).toBe(item);
+        }
+      }
     }
   });
 
