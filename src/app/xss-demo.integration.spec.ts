@@ -129,8 +129,8 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await timeout(250);
-          queryOutput().querySelector('a').click();
+          const link = await waitForElement(queryOutput(), 'a');
+          link.click();
         },
         timeout: 1000
       });
@@ -140,8 +140,7 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await timeout(500);
-          const link = queryOutput().querySelector('a');
+          const link = await waitForElement(queryOutput(), 'a') as HTMLLinkElement;
           if (link.target === '_blank') {
             console.log('Tweaking link with target "_blank" to use target "' + mockLinkTarget + '" instead.');
             link.target = mockLinkTarget;
@@ -158,8 +157,8 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await timeout(200);
-          queryOutput().querySelector('input').dispatchEvent(new Event('focus'));
+          const input = await waitForElement(queryOutput(), 'input');
+          input.dispatchEvent(new Event('focus'));
         },
         timeout: 500
       });
@@ -168,8 +167,8 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await timeout(200);
-          queryOutput().querySelector('[onmouseenter]').dispatchEvent(new Event('mouseenter'));
+          const element = await waitForElement(queryOutput(), '[onmouseenter]');
+          element.dispatchEvent(new Event('mouseenter'));
         },
         timeout: 500
       });
@@ -386,6 +385,26 @@ describe('Xss Demo App', async () => {
     } catch(err) {
       console.error(err);
     }
+  }
+
+  function waitForElement(context: HTMLElement, selector: string): Promise<HTMLElement> {
+
+    const element = context.querySelector(selector) as HTMLElement;
+    if (element) {
+      return Promise.resolve(element);
+    }
+
+    const {promise, resolve} = Promise.withResolvers<HTMLElement>();
+    const observer = new MutationObserver(() => {
+      const element = context.querySelector(selector) as HTMLElement;
+      if (element) {
+        observer.disconnect();
+        resolve(element);
+      }
+    });
+    observer.observe(context, {childList: true, subtree: true});
+
+    return promise;
   }
 
   function timeout(millis: number): Promise<boolean> {
