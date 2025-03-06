@@ -55,14 +55,9 @@ describe('XSS Demo Mocks', () => {
 
         const storageTable = queryStorageTable();
 
-        {
-          // check empty storage table
-          expect(storageTable.classList).toContain('empty');
-          const storageRows = queryAndExpectCount(storageTable, 'tr', 3);
-          expect(storageRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
-          expect(storageRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
-          expect(storageRows[2].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
-        }
+        // check empty storage and table
+        expectStorageToContain({});
+        expectStorageTable({});
 
         {
           // use "add new item" form
@@ -78,17 +73,10 @@ describe('XSS Demo Mocks', () => {
           newKeyField.value = 'foo';
           newItemField.value = storageTestData.foo;
           saveButton.click();
-          expectStorageToContain(pick(storageTestData, 'foo'));
 
-          // re-check storage table
-          expect(storageTable.classList).not.toContain('empty');
-          const storageRows = queryAndExpectCount(storageTable, 'tr', 4);
-          expect(storageRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
-          expect(storageRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
-          expect(storageRows[2].classList).toEqual(jasmine.arrayWithExactContents(['entry']));
-          expect(storageRows[3].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
-
-          expectEntryRowValues(storageRows[2], 'foo', storageTestData.foo);
+          const expectedData = pick(storageTestData, 'foo');
+          expectStorageToContain(expectedData);
+          expectStorageTable(expectedData);
         }
 
         {
@@ -105,17 +93,10 @@ describe('XSS Demo Mocks', () => {
           newKeyField.value = 'bar';
           newItemField.value = storageTestData.bar;
           cancelButton.click();
-          expectStorageToContain(pick(storageTestData, 'foo'));
 
-          // re-check storage table
-          expect(storageTable.classList).not.toContain('empty');
-          const storageRows = queryAndExpectCount(storageTable, 'tr', 4);
-          expect(storageRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
-          expect(storageRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
-          expect(storageRows[2].classList).toEqual(jasmine.arrayWithExactContents(['entry']));
-          expect(storageRows[3].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
-
-          expectEntryRowValues(storageRows[2], 'foo', storageTestData.foo);
+          const expectedData = pick(storageTestData, 'foo');
+          expectStorageToContain(expectedData);
+          expectStorageTable(expectedData);
         }
 
         {
@@ -134,17 +115,9 @@ describe('XSS Demo Mocks', () => {
           saveButton.click();
           expectStorageToContain(pick(storageTestData, 'foo', 'xxx'));
 
-          // re-check storage table
-          expect(storageTable.classList).not.toContain('empty');
-          const storageRows = queryAndExpectCount(storageTable, 'tr', 5);
-          expect(storageRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
-          expect(storageRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
-          expect(storageRows[2].classList).toEqual(jasmine.arrayWithExactContents(['entry']));
-          expect(storageRows[3].classList).toEqual(jasmine.arrayWithExactContents(['entry']));
-          expect(storageRows[4].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
-
-          expectEntryRowValues(storageRows[2], 'foo', storageTestData.foo);
-          expectEntryRowValues(storageRows[3], 'xxx', storageTestData.xxx);
+          const expectedData = pick(storageTestData, 'foo', 'xxx');
+          expectStorageToContain(expectedData);
+          expectStorageTable(expectedData);
         }
 
         {
@@ -152,17 +125,10 @@ describe('XSS Demo Mocks', () => {
           const entryRowFoo = storageTable.querySelectorAll('tr')[2];
           const deleteButtonFoo = queryAndExpectOne(entryRowFoo, 'td.actions button[name=delete]') as HTMLButtonElement;
           deleteButtonFoo.click();
-          expectStorageToContain(pick(storageTestData, 'xxx'));
 
-          // re-check storage table
-          expect(storageTable.classList).not.toContain('empty');
-          const storageRows = queryAndExpectCount(storageTable, 'tr', 4);
-          expect(storageRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
-          expect(storageRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
-          expect(storageRows[2].classList).toEqual(jasmine.arrayWithExactContents(['entry']));
-          expect(storageRows[3].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
-
-          expectEntryRowValues(storageRows[2], 'xxx', storageTestData.xxx);
+          const expectedData = pick(storageTestData, 'xxx');
+          expectStorageToContain(expectedData);
+          expectStorageTable(expectedData);
         }
 
         {
@@ -179,19 +145,10 @@ describe('XSS Demo Mocks', () => {
           newKeyField.value = 'bar';
           newItemField.value = storageTestData.bar;
           saveButton.click();
-          expectStorageToContain(pick(storageTestData, 'bar', 'xxx'));
 
-          // re-check storage table
-          expect(storageTable.classList).not.toContain('empty');
-          const storageRows = queryAndExpectCount(storageTable, 'tr', 5);
-          expect(storageRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
-          expect(storageRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
-          expect(storageRows[2].classList).toEqual(jasmine.arrayWithExactContents(['entry']));
-          expect(storageRows[3].classList).toEqual(jasmine.arrayWithExactContents(['entry']));
-          expect(storageRows[4].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
-
-          expectEntryRowValues(storageRows[2], 'bar', storageTestData.bar);
-          expectEntryRowValues(storageRows[3], 'xxx', storageTestData.xxx);
+          const expectedData = pick(storageTestData, 'bar', 'xxx');
+          expectStorageToContain(expectedData);
+          expectStorageTable(expectedData);
         }
 
         {
@@ -208,21 +165,9 @@ describe('XSS Demo Mocks', () => {
           newKeyField.value = 'foo';
           newItemField.value = storageTestData.foo;
           saveButton.click();
+
           expectStorageToContain(storageTestData);
-
-          // re-check storage table
-          expect(storageTable.classList).not.toContain('empty');
-          const storageRows = queryAndExpectCount(storageTable, 'tr', 6);
-          expect(storageRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
-          expect(storageRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
-          expect(storageRows[2].classList).toEqual(jasmine.arrayWithExactContents(['entry']));
-          expect(storageRows[3].classList).toEqual(jasmine.arrayWithExactContents(['entry']));
-          expect(storageRows[4].classList).toEqual(jasmine.arrayWithExactContents(['entry']));
-          expect(storageRows[5].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
-
-          expectEntryRowValues(storageRows[2], 'bar', storageTestData.bar);
-          expectEntryRowValues(storageRows[3], 'foo', storageTestData.foo);
-          expectEntryRowValues(storageRows[4], 'xxx', storageTestData.xxx);
+          expectStorageTable(storageTestData);
         }
       });
 
@@ -242,6 +187,33 @@ describe('XSS Demo Mocks', () => {
         const entryItemField = queryAndExpectOne(row, 'td.item input[type=text]') as HTMLInputElement;
         expect(entryKeyField.value).toBe(key);
         expect(entryItemField.value).toBe(item);
+      }
+
+      function expectStorageTable(data: {[key: string]: string}) {
+        const dataKeys = Object.keys(data).sort();
+        const entryCount = dataKeys.length;
+        const rowCount = entryCount + 3;
+
+        const storageTable = queryStorageTable();
+        if (entryCount === 0) {
+          expect(storageTable.classList).withContext('storage table "empty" class').toContain('empty');
+        } else {
+          expect(storageTable.classList).withContext('storage table "empty" class').not.toContain('empty');
+        }
+
+        const storageRows = queryAndExpectCount(storageTable, 'tr', rowCount);
+        expect(storageRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
+        expect(storageRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
+        expect(storageRows[rowCount-1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
+
+        let index = 2;
+        for (const dataKey of dataKeys) {
+          const dataItem = data[dataKey];
+
+          const entryRow = storageRows[index++];
+          expect(entryRow.classList).toEqual(jasmine.arrayWithExactContents(['entry']));
+          expectEntryRowValues(entryRow, dataKey, dataItem);
+        }
       }
     }
   });
