@@ -53,119 +53,53 @@ describe('XSS Demo Mocks', () => {
 
       it('should manage ' + testStorageName, () => {
 
-        const storageTable = queryStorageTable();
-
         // check empty storage and table
         expectStorageToContain({});
         expectStorageTable({});
 
         {
-          // use "add new item" form
-          const addNewItemButton = queryAndExpectOne(storageTable, 'tr.actions button[name=new]');
-          addNewItemButton.click();
-          queryAndExpectCount(storageTable, 'tr', 4);
-          const newItemRow = queryAndExpectOne(storageTable, 'tr.entry.new') as HTMLTableRowElement;
-          const newKeyField = queryAndExpectOne(newItemRow, 'td.key input[type=text]') as HTMLInputElement;
-          const newItemField = queryAndExpectOne(newItemRow, 'td.item input[type=text]') as HTMLInputElement;
-          const saveButton = queryAndExpectOne(newItemRow, 'td.actions button[name=save]') as HTMLButtonElement;
-
-          // submit "add new item" form for storage item "foo"
-          newKeyField.value = 'foo';
-          newItemField.value = storageTestData.foo;
-          saveButton.click();
-
+          // add  "foo"
+          fillAddNewItemForm('foo', storageTestData.foo);
           const expectedData = pick(storageTestData, 'foo');
           expectStorageToContain(expectedData);
           expectStorageTable(expectedData);
         }
 
         {
-          // use "add new item" form again
-          const addNewItemButton = queryAndExpectOne(storageTable, 'tr.actions button[name=new]');
-          addNewItemButton.click();
-          expect(storageTable.querySelectorAll('tr').length).toBe(5);
-          const newItemRow = queryAndExpectOne(storageTable, 'tr.entry.new') as HTMLTableRowElement;
-          const newKeyField = queryAndExpectOne(newItemRow, 'td.key input[type=text]') as HTMLInputElement;
-          const newItemField = queryAndExpectOne(newItemRow, 'td.item input[type=text]') as HTMLInputElement;
-          const cancelButton = queryAndExpectOne(newItemRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
-
-          // cancel "add new item" form
-          newKeyField.value = 'bar';
-          newItemField.value = storageTestData.bar;
-          cancelButton.click();
-
+          // add "bar", but cancel
+          fillAddNewItemForm('bar', storageTestData.bar, false);
           const expectedData = pick(storageTestData, 'foo');
           expectStorageToContain(expectedData);
           expectStorageTable(expectedData);
         }
 
         {
-          // use "add new item" form once again
-          const addNewItemButton = queryAndExpectOne(storageTable, 'tr.actions button[name=new]');
-          addNewItemButton.click();
-          queryAndExpectCount(storageTable, 'tr', 5);
-          const newItemRow = queryAndExpectOne(storageTable, 'tr.entry.new') as HTMLTableRowElement;
-          const newKeyField = queryAndExpectOne(newItemRow, 'td.key input[type=text]') as HTMLInputElement;
-          const newItemField = queryAndExpectOne(newItemRow, 'td.item input[type=text]') as HTMLInputElement;
-          const saveButton = queryAndExpectOne(newItemRow, 'td.actions button[name=save]') as HTMLButtonElement;
-
-          // submit "add new item" form for storage item "xxx"
-          newKeyField.value = 'xxx';
-          newItemField.value = storageTestData.xxx;
-          saveButton.click();
-          expectStorageToContain(pick(storageTestData, 'foo', 'xxx'));
-
+          // add "xxx"
+          fillAddNewItemForm('xxx', storageTestData.xxx);
           const expectedData = pick(storageTestData, 'foo', 'xxx');
           expectStorageToContain(expectedData);
           expectStorageTable(expectedData);
         }
 
         {
-          // delete storage item "foo"
-          const entryRowFoo = storageTable.querySelectorAll('tr')[2];
-          const deleteButtonFoo = queryAndExpectOne(entryRowFoo, 'td.actions button[name=delete]') as HTMLButtonElement;
-          deleteButtonFoo.click();
-
+          // delete "foo"
+          deleteStorageTableEntry(0);
           const expectedData = pick(storageTestData, 'xxx');
           expectStorageToContain(expectedData);
           expectStorageTable(expectedData);
         }
 
         {
-          // use "add new item" form yet again
-          const addNewItemButton = queryAndExpectOne(storageTable, 'tr.actions button[name=new]');
-          addNewItemButton.click();
-          queryAndExpectCount(storageTable, 'tr', 5);
-          const newItemRow = queryAndExpectOne(storageTable, 'tr.entry.new') as HTMLTableRowElement;
-          const newKeyField = queryAndExpectOne(newItemRow, 'td.key input[type=text]') as HTMLInputElement;
-          const newItemField = queryAndExpectOne(newItemRow, 'td.item input[type=text]') as HTMLInputElement;
-          const saveButton = queryAndExpectOne(newItemRow, 'td.actions button[name=save]') as HTMLButtonElement;
-
-          // submit "add new item" form for storage item "bar"
-          newKeyField.value = 'bar';
-          newItemField.value = storageTestData.bar;
-          saveButton.click();
-
+          // add "bar"
+          fillAddNewItemForm('bar', storageTestData.bar);
           const expectedData = pick(storageTestData, 'bar', 'xxx');
           expectStorageToContain(expectedData);
           expectStorageTable(expectedData);
         }
 
         {
-          // use "add new item" form yet again
-          const addNewItemButton = queryAndExpectOne(storageTable, 'tr.actions button[name=new]');
-          addNewItemButton.click();
-          queryAndExpectCount(storageTable, 'tr', 6);
-          const newItemRow = queryAndExpectOne(storageTable, 'tr.entry.new') as HTMLTableRowElement;
-          const newKeyField = queryAndExpectOne(newItemRow, 'td.key input[type=text]') as HTMLInputElement;
-          const newItemField = queryAndExpectOne(newItemRow, 'td.item input[type=text]') as HTMLInputElement;
-          const saveButton = queryAndExpectOne(newItemRow, 'td.actions button[name=save]') as HTMLButtonElement;
-
-          // submit "add new item" form for storage item "bar"
-          newKeyField.value = 'foo';
-          newItemField.value = storageTestData.foo;
-          saveButton.click();
-
+          // re-add "foo"
+          fillAddNewItemForm('foo', storageTestData.foo);
           expectStorageToContain(storageTestData);
           expectStorageTable(storageTestData);
         }
@@ -173,6 +107,34 @@ describe('XSS Demo Mocks', () => {
 
       function queryStorageTable(): HTMLTableElement {
         return mockPageDoc.body.querySelector('div.' + testStorageName + ' table.storage');
+      }
+
+      function fillAddNewItemForm(key: string, item: string, save = true) {
+        const storageTable = queryStorageTable();
+        const storageTableRows = storageTable.querySelectorAll('tr');
+
+        const addNewItemButton = queryAndExpectOne(storageTable, 'tr.actions button[name=new]');
+        addNewItemButton.click();
+
+        queryAndExpectCount(storageTable, 'tr', storageTableRows.length + 1);
+        const newItemRow = queryAndExpectOne(storageTable, 'tr.entry.new') as HTMLTableRowElement;
+        const newKeyField = queryAndExpectOne(newItemRow, 'td.key input[type=text]') as HTMLInputElement;
+        const newItemField = queryAndExpectOne(newItemRow, 'td.item input[type=text]') as HTMLInputElement;
+        const saveButton = queryAndExpectOne(newItemRow, 'td.actions button[name=save]') as HTMLButtonElement;
+        const cancelButton = queryAndExpectOne(newItemRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
+
+        // submit "add new item" form for storage item "foo"
+        newKeyField.value = key;
+        newItemField.value = item;
+        save ? saveButton.click() : cancelButton.click();
+      }
+
+      function deleteStorageTableEntry(index) {
+        const storageRows = queryStorageTable().querySelectorAll('tr');
+        expect(storageRows.length).withContext('total number of storage table rows, including boilerplate').toBeGreaterThanOrEqual(index + 3);
+        const entryRow = storageRows[index + 2];
+        const deleteButton = queryAndExpectOne(entryRow, 'td.actions button[name=delete]') as HTMLButtonElement;
+        deleteButton.click();
       }
 
       function expectStorageToContain(data: {[key: string]: string}) {
