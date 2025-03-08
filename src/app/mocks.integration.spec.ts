@@ -47,7 +47,7 @@ describe('XSS Demo Mocks', () => {
           testStorage.clear();
         });
 
-        it('should manage storage', async () => {
+        it('should manage storage contents through its web UI', async () => {
 
           const testData: {[key: string]: string} = {};
 
@@ -113,16 +113,75 @@ describe('XSS Demo Mocks', () => {
           expectStorageToContain(testData);
           expectStorageTable(testData);
 
-          // edit "bar" again
+          // edit "bar" again, with funky value
           testData.bar = 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for item with key "bar"';
           editStorageTableEntry('bar', testData.bar);
           expectStorageToContain(testData);
           expectStorageTable(testData);
 
           // wait a bit for async failures
-          const {promise: timeoutPromise, resolve: timeoutResolve} = Promise.withResolvers();
-          setTimeout(timeoutResolve, 500);
-          await timeoutPromise;
+          await timeout(500);
+        });
+
+        it('should reflect external storage changes in its web UI', async () => {
+
+          const testData: {[key: string]: string} = {};
+
+          // check empty storage and table
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
+
+          // add "FOO"
+          testData.FOO = 'storage item with key "FOO"';
+          testStorage.setItem('FOO', testData.FOO);
+          await waitForDom(queryStorageTable(), () => queryStorageTableEntry('FOO') !== null);
+          expectStorageTable(testData);
+
+          // add "BAR"
+          testData.BAR = 'storage item with key "BAR"';
+          testStorage.setItem('BAR', testData.BAR);
+          await waitForDom(queryStorageTable(), () => queryStorageTableEntry('BAR') !== null);
+          expectStorageTable(testData);
+
+          // delete "FOO"
+          delete testData.FOO;
+          testStorage.removeItem('FOO');
+          await waitForDom(queryStorageTable(), () => queryStorageTableEntry('FOO') === null);
+          expectStorageTable(testData);
+
+          // add ""
+          testData[''] = 'storage item with empty key';
+          testStorage.setItem('', testData['']);
+          await waitForDom(queryStorageTable(), () => queryStorageTableEntry('') !== null);
+          expectStorageTable(testData);
+
+          // change "BAR"
+          testData.BAR = 'adjusted storage item with key "BAR"';
+          testStorage.setItem('BAR', testData.BAR);
+          await waitForDom(queryStorageTable(), () => queryStorageTableEntry('BAR', testData.BAR) !== null);
+          expectStorageTable(testData);
+
+          // re-add "FOO"
+          testData.FOO = 'another storage item with key "FOO"';
+          testStorage.setItem('FOO', testData.FOO);
+          await waitForDom(queryStorageTable(), () => queryStorageTableEntry('FOO') !== null);
+          expectStorageTable(testData);
+
+          // add item with funky key
+          const testKey = '<img src="." onerror="parent.fail(\'a storage item has triggered xss!\')">';
+          testData[testKey] = 'they key of this storage item contains xss payload';
+          testStorage.setItem(testKey, testData[testKey]);
+          await waitForDom(queryStorageTable(), () => queryStorageTableEntry(testKey) !== null);
+          expectStorageTable(testData);
+
+          // delete item with funky key
+          delete testData[testKey];
+          testStorage.removeItem(testKey);
+          await waitForDom(queryStorageTable(), () => queryStorageTableEntry(testKey) === null);
+          expectStorageTable(testData);
+
+          // wait a bit for async failures
+          await timeout(500);
         });
       });
 
@@ -130,12 +189,19 @@ describe('XSS Demo Mocks', () => {
         return mockPageDoc.body.querySelector('div.' + testStorageName + ' table.storage');
       }
 
-      function queryStorageTableEntry(key: string): HTMLTableRowElement {
+      function queryStorageTableEntry(key: string, item?: string): HTMLTableRowElement {
         const storageTableEntryRows = queryStorageTable().querySelectorAll('tr.entry') as NodeListOf<HTMLTableRowElement>;
         for (const entryRow of storageTableEntryRows) {
           const entryKeyField = queryAndExpectOne(entryRow, 'td.key input[type=text]') as HTMLInputElement;
-          if (entryKeyField.value === key) {
-            return entryRow;
+          if (item === undefined) {
+            if (entryKeyField.value === key) {
+              return entryRow;
+            }
+          } else {
+            const entryItemField = queryAndExpectOne(entryRow, 'td.item input[type=text]') as HTMLInputElement;
+            if (entryKeyField.value === key && entryItemField.value === item) {
+              return entryRow;
+            }
           }
         }
         return null;
@@ -236,5 +302,29 @@ describe('XSS Demo Mocks', () => {
     const result = context.querySelectorAll(selector);
     expect(result.length).withContext('number of elements matching query "' + selector + '"').toBe(count);
     return Array.from(result) as HTMLElement[];
+  }
+
+  function waitForDom(context: HTMLElement, condition: () => boolean): Promise<void> {
+
+    if (condition()) {
+      return Promise.resolve();
+    }
+
+    const {promise, resolve} = Promise.withResolvers<void>();
+    const observer = new MutationObserver(() => {
+      if (condition()) {
+        observer.disconnect();
+        resolve();
+      }
+    });
+    observer.observe(context, {childList: true, subtree: true});
+
+    return promise;
+  }
+
+  function timeout(millis: number): Promise<void> {
+    const {promise, resolve} = Promise.withResolvers<void>();
+    setTimeout(resolve, millis);
+    return promise;
   }
 });
