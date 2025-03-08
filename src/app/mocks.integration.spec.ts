@@ -108,7 +108,7 @@ describe('XSS Demo Mocks', () => {
           // edit "bar"
           const adjustedTestData = Object.assign({}, storageTestData);
           adjustedTestData.bar = 'new value for item with key "bar"';
-          editStorageTableEntry(0, adjustedTestData.bar);
+          editStorageTableEntry('bar', adjustedTestData.bar);
           expectStorageToContain(adjustedTestData);
           expectStorageTable(adjustedTestData);
         }
