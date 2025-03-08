@@ -37,90 +37,93 @@ describe('XSS Demo Mocks', () => {
 
       const testStorage = window[testStorageName] as Storage;
 
-      beforeEach(() => {
-        testStorage.clear();
-      });
+      describe('for ' + testStorageName, () => {
 
-      afterEach(() => {
-        testStorage.clear();
-      });
+        beforeEach(() => {
+          testStorage.clear();
+        });
 
-      it('should manage ' + testStorageName, async () => {
+        afterEach(() => {
+          testStorage.clear();
+        });
 
-        const testData: {[key: string]: string} = {};
+        it('should manage storage', async () => {
 
-        // check empty storage and table
-        expectStorageToContain(testData);
-        expectStorageTable(testData);
+          const testData: {[key: string]: string} = {};
 
-        // add  "foo"
-        testData.foo = 'storage item with key "foo"';
-        fillAddNewItemForm('foo', testData.foo);
-        expectStorageToContain(testData);
-        expectStorageTable(testData);
+          // check empty storage and table
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
 
-        // start adding "bar", but cancel
-        fillAddNewItemForm('bar', 'wannabe storage item with key "bar"', false);
-        expectStorageToContain(testData);
-        expectStorageTable(testData);
+          // add  "foo"
+          testData.foo = 'storage item with key "foo"';
+          fillAddNewItemForm('foo', testData.foo);
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
 
-        // add "xxx"
-        testData.xxx = 'storage item with key "xxx"';
-        fillAddNewItemForm('xxx', testData.xxx);
-        expectStorageToContain(testData);
-        expectStorageTable(testData);
+          // start adding "bar", but cancel
+          fillAddNewItemForm('bar', 'wannabe storage item with key "bar"', false);
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
 
-        // delete "foo"
-        delete testData.foo;
-        deleteStorageTableEntry('foo');
-        expectStorageToContain(testData);
-        expectStorageTable(testData);
+          // add "xxx"
+          testData.xxx = 'storage item with key "xxx"';
+          fillAddNewItemForm('xxx', testData.xxx);
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
 
-        // add "bar"
-        testData.bar = 'storage item with key "bar"';
-        fillAddNewItemForm('bar', testData.bar);
-        expectStorageToContain(testData);
-        expectStorageTable(testData);
+          // delete "foo"
+          delete testData.foo;
+          deleteStorageTableEntry('foo');
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
 
-        // re-add "foo"
-        testData.foo = 'another storage item with key "foo"';
-        fillAddNewItemForm('foo', testData.foo);
-        expectStorageToContain(testData);
-        expectStorageTable(testData);
+          // add "bar"
+          testData.bar = 'storage item with key "bar"';
+          fillAddNewItemForm('bar', testData.bar);
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
 
-        // edit "bar"
-        testData.bar = 'new value for item with key "bar"';
-        editStorageTableEntry('bar', testData.bar);
-        expectStorageToContain(testData);
-        expectStorageTable(testData);
+          // re-add "foo"
+          testData.foo = 'another storage item with key "foo"';
+          fillAddNewItemForm('foo', testData.foo);
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
 
-        // start editing "xxx", but cancel
-        editStorageTableEntry('xxx', 'unsaved value for item with key "xxx"', false);
-        expectStorageToContain(testData);
-        expectStorageTable(testData);
+          // edit "bar"
+          testData.bar = 'new value for item with key "bar"';
+          editStorageTableEntry('bar', testData.bar);
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
 
-        // edit "foo"
-        testData.foo = 'new value for item with key "foo"';
-        editStorageTableEntry('foo', testData.foo);
-        expectStorageToContain(testData);
-        expectStorageTable(testData);
+          // start editing "xxx", but cancel
+          editStorageTableEntry('xxx', 'unsaved value for item with key "xxx"', false);
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
 
-        // delete "xxx"
-        delete testData.xxx;
-        deleteStorageTableEntry('xxx');
-        expectStorageToContain(testData);
-        expectStorageTable(testData);
+          // edit "foo"
+          testData.foo = 'new value for item with key "foo"';
+          editStorageTableEntry('foo', testData.foo);
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
 
-        // edit "bar" again
-        testData.bar = 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for item with key "bar"';
-        editStorageTableEntry('bar', testData.bar);
-        expectStorageToContain(testData);
-        expectStorageTable(testData);
+          // delete "xxx"
+          delete testData.xxx;
+          deleteStorageTableEntry('xxx');
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
 
-        // wait a bit for async failures
-        const {promise: timeoutPromise, resolve: timeoutResolve} = Promise.withResolvers();
-        setTimeout(timeoutResolve, 500);
-        await timeoutPromise;
+          // edit "bar" again
+          testData.bar = 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for item with key "bar"';
+          editStorageTableEntry('bar', testData.bar);
+          expectStorageToContain(testData);
+          expectStorageTable(testData);
+
+          // wait a bit for async failures
+          const {promise: timeoutPromise, resolve: timeoutResolve} = Promise.withResolvers();
+          setTimeout(timeoutResolve, 500);
+          await timeoutPromise;
+        });
       });
 
       function queryStorageTable(): HTMLTableElement {
