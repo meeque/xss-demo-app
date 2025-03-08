@@ -45,7 +45,7 @@ describe('XSS Demo Mocks', () => {
         testStorage.clear();
       });
 
-      it('should manage ' + testStorageName, () => {
+      it('should manage ' + testStorageName, async () => {
 
         const testData: {[key: string]: string} = {};
 
@@ -110,6 +110,17 @@ describe('XSS Demo Mocks', () => {
         deleteStorageTableEntry('xxx');
         expectStorageToContain(testData);
         expectStorageTable(testData);
+
+        // edit "bar" again
+        testData.bar = 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for item with key "bar"';
+        editStorageTableEntry('bar', testData.bar);
+        expectStorageToContain(testData);
+        expectStorageTable(testData);
+
+        // wait a bit for async failures
+        const {promise: timeoutPromise, resolve: timeoutResolve} = Promise.withResolvers();
+        setTimeout(timeoutResolve, 500);
+        await timeoutPromise;
       });
 
       function queryStorageTable(): HTMLTableElement {
