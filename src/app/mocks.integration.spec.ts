@@ -1,3 +1,4 @@
+import { timeout } from './lib.spec';
 
 describe('XSS Demo Mocks', () => {
 
@@ -319,12 +320,6 @@ describe('XSS Demo Mocks', () => {
     });
     observer.observe(context, {childList: true, subtree: true});
 
-    return promise;
-  }
-
-  function timeout(millis: number): Promise<void> {
-    const {promise, resolve} = Promise.withResolvers<void>();
-    setTimeout(resolve, millis);
     return promise;
   }
 });

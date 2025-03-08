@@ -322,7 +322,7 @@ describe('Xss Demo App', async () => {
                 const xssPromise = nextXssPromise();
                 await selectInputOutput(context.name, presetTestConfig.presetName, outputDescriptor.name);
                 const triggerPromise = presetTestConfig.doTrigger();
-                const timeoutPromise = timeout(presetTestConfig.getTimeout());
+                const timeoutPromise = timeout(presetTestConfig.getTimeout(), false);
                 await expectAsync(Promise.race([xssPromise, timeoutPromise]))
                   .withContext('call xss() probe before timeout')
                   .toBeResolvedTo(expectXss);

@@ -1,5 +1,4 @@
 
-
 export function waitForElement(context: HTMLElement, selector: string): Promise<HTMLElement> {
 
   const element = context.querySelector(selector) as HTMLElement;
@@ -20,8 +19,8 @@ export function waitForElement(context: HTMLElement, selector: string): Promise<
   return promise;
 }
 
-export function timeout(millis: number): Promise<boolean> {
-  return new Promise(resolve => {
-    setTimeout(() => resolve(false), millis);
-  });
+export function timeout<D>(millis: number, data?: D): Promise<D> {
+  const {promise, resolve} = Promise.withResolvers<D>();
+  setTimeout(() => resolve(data), millis);
+  return promise;
 }
