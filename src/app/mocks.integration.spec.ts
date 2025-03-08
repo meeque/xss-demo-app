@@ -33,12 +33,6 @@ describe('XSS Demo Mocks', () => {
   describe('Storage Page', () => {
     mockUrl = '/assets/mocks/storage.html'
 
-    const storageTestData = {
-      foo: 'storage item with key "foo"',
-      bar: 'storage item with key "bar"',
-      xxx: 'storage item with key "xxx"'
-    }
-
     for (const testStorageName of ['localStorage', 'sessionStorage']) {
 
       const testStorage = window[testStorageName] as Storage;
@@ -53,65 +47,69 @@ describe('XSS Demo Mocks', () => {
 
       it('should manage ' + testStorageName, () => {
 
+        const testData: {[key: string]: string} = {};
+
         // check empty storage and table
-        expectStorageToContain({});
-        expectStorageTable({});
+        expectStorageToContain(testData);
+        expectStorageTable(testData);
 
-        {
-          // add  "foo"
-          fillAddNewItemForm('foo', storageTestData.foo);
-          const expectedData = pick(storageTestData, 'foo');
-          expectStorageToContain(expectedData);
-          expectStorageTable(expectedData);
-        }
+        // add  "foo"
+        testData.foo = 'storage item with key "foo"';
+        fillAddNewItemForm('foo', testData.foo);
+        expectStorageToContain(testData);
+        expectStorageTable(testData);
 
-        {
-          // add "bar", but cancel
-          fillAddNewItemForm('bar', storageTestData.bar, false);
-          const expectedData = pick(storageTestData, 'foo');
-          expectStorageToContain(expectedData);
-          expectStorageTable(expectedData);
-        }
+        // start adding "bar", but cancel
+        fillAddNewItemForm('bar', 'wannabe storage item with key "bar"', false);
+        expectStorageToContain(testData);
+        expectStorageTable(testData);
 
-        {
-          // add "xxx"
-          fillAddNewItemForm('xxx', storageTestData.xxx);
-          const expectedData = pick(storageTestData, 'foo', 'xxx');
-          expectStorageToContain(expectedData);
-          expectStorageTable(expectedData);
-        }
+        // add "xxx"
+        testData.xxx = 'storage item with key "xxx"';
+        fillAddNewItemForm('xxx', testData.xxx);
+        expectStorageToContain(testData);
+        expectStorageTable(testData);
 
-        {
-          // delete "foo"
-          deleteStorageTableEntry('foo');
-          const expectedData = pick(storageTestData, 'xxx');
-          expectStorageToContain(expectedData);
-          expectStorageTable(expectedData);
-        }
+        // delete "foo"
+        delete testData.foo;
+        deleteStorageTableEntry('foo');
+        expectStorageToContain(testData);
+        expectStorageTable(testData);
 
-        {
-          // add "bar"
-          fillAddNewItemForm('bar', storageTestData.bar);
-          const expectedData = pick(storageTestData, 'bar', 'xxx');
-          expectStorageToContain(expectedData);
-          expectStorageTable(expectedData);
-        }
+        // add "bar"
+        testData.bar = 'storage item with key "bar"';
+        fillAddNewItemForm('bar', testData.bar);
+        expectStorageToContain(testData);
+        expectStorageTable(testData);
 
-        {
-          // re-add "foo"
-          fillAddNewItemForm('foo', storageTestData.foo);
-          expectStorageToContain(storageTestData);
-          expectStorageTable(storageTestData);
-        }
+        // re-add "foo"
+        testData.foo = 'another storage item with key "foo"';
+        fillAddNewItemForm('foo', testData.foo);
+        expectStorageToContain(testData);
+        expectStorageTable(testData);
 
-        {
-          // edit "bar"
-          const adjustedTestData = Object.assign({}, storageTestData);
-          adjustedTestData.bar = 'new value for item with key "bar"';
-          editStorageTableEntry('bar', adjustedTestData.bar);
-          expectStorageToContain(adjustedTestData);
-          expectStorageTable(adjustedTestData);
-        }
+        // edit "bar"
+        testData.bar = 'new value for item with key "bar"';
+        editStorageTableEntry('bar', testData.bar);
+        expectStorageToContain(testData);
+        expectStorageTable(testData);
+
+        // start editing "xxx", but cancel
+        editStorageTableEntry('xxx', 'unsaved value for item with key "xxx"', false);
+        expectStorageToContain(testData);
+        expectStorageTable(testData);
+
+        // edit "foo"
+        testData.foo = 'new value for item with key "foo"';
+        editStorageTableEntry('foo', testData.foo);
+        expectStorageToContain(testData);
+        expectStorageTable(testData);
+
+        // delete "xxx"
+        delete testData.xxx;
+        deleteStorageTableEntry('xxx');
+        expectStorageToContain(testData);
+        expectStorageTable(testData);
       });
 
       function queryStorageTable(): HTMLTableElement {
@@ -225,12 +223,4 @@ describe('XSS Demo Mocks', () => {
     expect(result.length).withContext('number of elements matching query "' + selector + '"').toBe(count);
     return Array.from(result) as HTMLElement[];
   }
-
-  function pick(obj: {[key: string]: string}, ... props: string[]): {[key: string]: string} {
-    return Object.fromEntries(
-      props
-        .filter(prop => prop in obj)
-        .map(prop => [prop, obj[prop]])
-    );
-  };
 });
