@@ -1,4 +1,5 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { timeout, waitForElement} from './lib.spec';
 
 import { XssContext } from './xss-demo.common';
 import { xssDemoConfig } from './xss-demo.config';
@@ -385,32 +386,6 @@ describe('Xss Demo App', async () => {
     } catch(err) {
       console.error(err);
     }
-  }
-
-  function waitForElement(context: HTMLElement, selector: string): Promise<HTMLElement> {
-
-    const element = context.querySelector(selector) as HTMLElement;
-    if (element) {
-      return Promise.resolve(element);
-    }
-
-    const {promise, resolve} = Promise.withResolvers<HTMLElement>();
-    const observer = new MutationObserver(() => {
-      const element = context.querySelector(selector) as HTMLElement;
-      if (element) {
-        observer.disconnect();
-        resolve(element);
-      }
-    });
-    observer.observe(context, {childList: true, subtree: true});
-
-    return promise;
-  }
-
-  function timeout(millis: number): Promise<boolean> {
-    return new Promise(resolve => {
-      setTimeout(() => resolve(false), millis);
-    });
   }
 
   function nextXssPromise(): Promise<boolean> {
