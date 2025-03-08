@@ -1,5 +1,5 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { timeout, waitForElement} from './lib.spec';
+import { timeout, domTreeAvailable} from './lib.spec';
 
 import { XssContext } from './xss-demo.common';
 import { xssDemoConfig } from './xss-demo.config';
@@ -130,7 +130,7 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const link = await waitForElement(queryOutput(), 'a');
+          const link = await domTreeAvailable<HTMLElement>(queryOutput(), 'a');
           link.click();
         },
         timeout: 1000
@@ -141,7 +141,7 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const link = await waitForElement(queryOutput(), 'a') as HTMLLinkElement;
+          const link = await domTreeAvailable<HTMLLinkElement>(queryOutput(), 'a');
           if (link.target === '_blank') {
             console.log('Tweaking link with target "_blank" to use target "' + mockLinkTarget + '" instead.');
             link.target = mockLinkTarget;
@@ -158,7 +158,7 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const input = await waitForElement(queryOutput(), 'input');
+          const input = await domTreeAvailable<HTMLElement>(queryOutput(), 'input');
           input.dispatchEvent(new Event('focus'));
         },
         timeout: 500
@@ -168,7 +168,7 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const element = await waitForElement(queryOutput(), '[onmouseenter]');
+          const element = await domTreeAvailable<HTMLElement>(queryOutput(), '[onmouseenter]');
           element.dispatchEvent(new Event('mouseenter'));
         },
         timeout: 500
