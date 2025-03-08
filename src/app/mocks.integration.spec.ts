@@ -83,7 +83,7 @@ describe('XSS Demo Mocks', () => {
 
         {
           // delete "foo"
-          deleteStorageTableEntry(0);
+          deleteStorageTableEntry('foo');
           const expectedData = pick(storageTestData, 'xxx');
           expectStorageToContain(expectedData);
           expectStorageTable(expectedData);
@@ -103,10 +103,30 @@ describe('XSS Demo Mocks', () => {
           expectStorageToContain(storageTestData);
           expectStorageTable(storageTestData);
         }
+
+        {
+          // edit "bar"
+          const adjustedTestData = Object.assign({}, storageTestData);
+          adjustedTestData.bar = 'new value for item with key "bar"';
+          editStorageTableEntry(0, adjustedTestData.bar);
+          expectStorageToContain(adjustedTestData);
+          expectStorageTable(adjustedTestData);
+        }
       });
 
       function queryStorageTable(): HTMLTableElement {
         return mockPageDoc.body.querySelector('div.' + testStorageName + ' table.storage');
+      }
+
+      function queryStorageTableEntry(key: string): HTMLTableRowElement {
+        const storageTableEntryRows = queryStorageTable().querySelectorAll('tr.entry') as NodeListOf<HTMLTableRowElement>;
+        for (const entryRow of storageTableEntryRows) {
+          const entryKeyField = queryAndExpectOne(entryRow, 'td.key input[type=text]') as HTMLInputElement;
+          if (entryKeyField.value === key) {
+            return entryRow;
+          }
+        }
+        return null;
       }
 
       function fillAddNewItemForm(key: string, item: string, save = true) {
@@ -123,18 +143,34 @@ describe('XSS Demo Mocks', () => {
         const saveButton = queryAndExpectOne(newItemRow, 'td.actions button[name=save]') as HTMLButtonElement;
         const cancelButton = queryAndExpectOne(newItemRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
 
-        // submit "add new item" form for storage item "foo"
         newKeyField.value = key;
         newItemField.value = item;
         save ? saveButton.click() : cancelButton.click();
       }
 
-      function deleteStorageTableEntry(index) {
-        const storageRows = queryStorageTable().querySelectorAll('tr');
-        expect(storageRows.length).withContext('total number of storage table rows, including boilerplate').toBeGreaterThanOrEqual(index + 3);
-        const entryRow = storageRows[index + 2];
+      function editStorageTableEntry(key: string, item: string, save = true) {
+        const storageTableRows = queryStorageTable().querySelectorAll('tr');
+        const entryRow = queryStorageTableEntry(key);
+        const editButton = queryAndExpectOne(entryRow, 'td.actions button[name=edit]') as HTMLButtonElement;
+
+        editButton.click();
+        queryAndExpectCount(queryStorageTable(), 'tr', storageTableRows.length);
+
+        const entryItemField = queryAndExpectOne(entryRow, 'td.item input[type=text]') as HTMLInputElement;
+        const saveButton = queryAndExpectOne(entryRow, 'td.actions button[name=save]') as HTMLButtonElement;
+        const cancelButton = queryAndExpectOne(entryRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
+
+        entryItemField.value = item;
+        save ? saveButton.click() : cancelButton.click();
+      }
+
+      function deleteStorageTableEntry(key: string) {
+        const storageTableRows = queryStorageTable().querySelectorAll('tr');
+        const entryRow = queryStorageTableEntry(key);
         const deleteButton = queryAndExpectOne(entryRow, 'td.actions button[name=delete]') as HTMLButtonElement;
+
         deleteButton.click();
+        queryAndExpectCount(queryStorageTable(), 'tr', storageTableRows.length - 1);
       }
 
       function expectStorageToContain(data: {[key: string]: string}) {
