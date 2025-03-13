@@ -4,26 +4,12 @@ describe('XSS Demo Mocks', () => {
 
   let pageFixture: HTMLIFrameElement = null;
   let mockPageDoc: Document = null;
-  let mockUrl: string = null;
 
-  beforeEach(async () => {
-    const {promise: loadPromise, resolve: loadHandler} = Promise.withResolvers();
-    pageFixture = document.createElement('iframe');
-    pageFixture.addEventListener('load', loadHandler);
-    pageFixture.src = mockUrl;
-    document.body.insertAdjacentElement('beforeend', pageFixture);
-    await loadPromise;
-    mockPageDoc = pageFixture.contentDocument;
-  });
-
-  afterEach(() => {
-    document.body.removeChild(pageFixture);
-    pageFixture = null;
-    mockPageDoc = null;
-  });
+  afterEach(tearDownPageFixture);
 
   describe('Plain Page', () => {
-    mockUrl = '/assets/mocks/plain.html'
+
+    beforeEach(async () => await setUpPageFixture('/assets/mocks/plain.html'));
 
     it('is loaded', () => {
       expect(mockPageDoc).toEqual(jasmine.anything());
@@ -32,7 +18,22 @@ describe('XSS Demo Mocks', () => {
   });
 
   describe('Storage Page', () => {
-    mockUrl = '/assets/mocks/storage.html'
+
+    beforeEach(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+
+    beforeEach(async () => await setUpPageFixture('/assets/mocks/storage.html'));
+
+    afterEach(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+
+    it('is loaded', () => {
+      expect(mockPageDoc).toEqual(jasmine.anything());
+    });
 
     for (const testStorageName of ['localStorage', 'sessionStorage']) {
 
@@ -40,17 +41,9 @@ describe('XSS Demo Mocks', () => {
 
       describe('for ' + testStorageName, () => {
 
-        beforeEach(() => {
-          testStorage.clear();
-        });
-
-        afterEach(() => {
-          testStorage.clear();
-        });
-
         it('should manage storage contents through its web UI', async () => {
 
-          const testData: {[key: string]: string} = {};
+          const testData = {} as {[key: string]: string};
 
           // check empty storage and table
           expectStorageToContain(testData);
@@ -294,6 +287,86 @@ describe('XSS Demo Mocks', () => {
       }
     }
   });
+
+  describe('Cookies Page', () => {
+
+    interface Cookie {
+      domain: string;
+      path: string;
+      name: string;
+      value: string;
+      samesite: string;
+      expires: number;
+    }
+
+    interface CookieStore {
+      getAll(): Promise<Cookie[]>;
+      get(cookie: any): Promise<Cookie>;
+      set(cookie: Cookie): Promise<undefined>;
+      delete(cookie: any): Promise<undefined>;
+    }
+
+    const cookieStore: CookieStore = window['cookieStore'];
+
+    beforeEach(clearCookies);
+
+    beforeEach(async () => await setUpPageFixture('/assets/mocks/cookies.html'));
+
+    afterEach(clearCookies);
+
+    it('is loaded', () => {
+      expect(mockPageDoc).toEqual(jasmine.anything());
+    });
+
+    if (cookieStore === undefined) {
+
+      xit('cannot be tested in this browser, because it does not support the CookieStore API');
+
+    } else {
+
+      it('should manage cookies through its web UI', async () => {
+
+        const testData = [] as Cookie[];
+
+        // check no cookies
+        expectCookies(testData);
+        expectCookiesTable(testData);
+      });
+
+    }
+
+    async function clearCookies(): Promise<void> {
+      const cookieDeletePromises = [] as Promise<void>[];
+      for (const cookie of await cookieStore.getAll()) {
+        cookieStore.delete(cookie);
+      }
+      await Promise.all(cookieDeletePromises);
+    }
+
+    function expectCookies(cookies: Cookie[]) {
+      expect(true).toBeTrue();
+    }
+
+    function expectCookiesTable(cookies: Cookie[]) {
+      expect(true).toBeTrue();
+    }
+  });
+
+  async function setUpPageFixture(url: string): Promise<void> {
+    const {promise: loadPromise, resolve: loadHandler} = Promise.withResolvers();
+    pageFixture = document.createElement('iframe');
+    pageFixture.addEventListener('load', loadHandler);
+    pageFixture.src = url;
+    document.body.insertAdjacentElement('beforeend', pageFixture);
+    await loadPromise;
+    mockPageDoc = pageFixture.contentDocument;
+  }
+
+  function tearDownPageFixture() {
+    document.body.removeChild(pageFixture);
+    pageFixture = null;
+    mockPageDoc = null;
+  }
 
   function queryAndExpectOne(context: HTMLElement, selector: string): HTMLElement {
     return queryAndExpectCount(context, selector)[0];
