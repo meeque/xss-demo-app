@@ -1,6 +1,9 @@
+const fs = require('fs');
 
 module.exports = function(config) {
-  config.set({
+
+  // static config
+  const cfg = {
     basePath: '',
     frameworks: ['jasmine', '@angular-devkit/build-angular'],
     plugins: [
@@ -35,10 +38,35 @@ module.exports = function(config) {
       // on the other hand, additional sandboxing is less necessary when already running in a container
       ChromiumHeadlessContainerized: {
         base: 'ChromiumHeadless',
-        flags: ['--no-sandbox']
+        flags: ['--no-sandbox', '--ignore-certificate-errors']
       }
     },
     browsers: ['ChromiumHeadlessContainerized'],
     restartOnFileChange: true
-  });
+  };
+
+  // dynamic https config
+  // only if X.509 cert is available, see "tls" directory
+  {
+    let secureContextOptions;
+    try {
+      secureContextOptions = {
+        cert: fs.readFileSync('tls/xss-dev.fullchain.pem', 'utf8'),
+        key: fs.readFileSync('tls/private/xss-dev.key.pem', 'utf8'),
+        passphrase: fs.readFileSync('tls/private/xss-dev.key.pass.txt').toString()
+      }
+    } catch(e) {
+      console.error('XSS Demo App: Failed to read xss-dev certificate files at expected location in the project\'s "tls" directory:', e);
+    }
+
+    if (secureContextOptions) {
+      console.warn('XSS Demo App: Launching Karma test server with TLS config from the project\'s "tls" directory...');
+      cfg.protocol = 'https:';
+      cfg.httpsServerOptions = secureContextOptions;
+    } else {
+      console.warn('XSS Demo App: Launching Karma test server without TLS. Some integration tests may fail!');
+    }
+  }
+
+  config.set(cfg);
 };

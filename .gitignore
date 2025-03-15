@@ -13,6 +13,11 @@
 /tmp
 /out-tsc
 
+# tls config
+/tls/**/*.pem
+/tls/**/*.key.pass.txt
+/tls/private
+
 # misc
 /connect.lock
 /coverage
