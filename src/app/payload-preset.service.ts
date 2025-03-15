@@ -204,6 +204,10 @@ export class PayloadPresetService {
           name: 'JS attack on cookies (window)',
           url: 'assets/presets/js/attack-cookies-in-tlbc.txt'
         },
+        {
+          name: 'JSFuck',
+          url: 'assets/presets/js/jsfuck.txt'
+        },
       ]
     }
   ]
