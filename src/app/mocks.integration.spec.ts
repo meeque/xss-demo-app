@@ -203,12 +203,12 @@ describe('XSS Demo Mocks', () => {
 
       function fillAddNewItemForm(key: string, item: string, save = true) {
         const storageTable = queryStorageTable();
-        const storageTableRows = storageTable.querySelectorAll('tr');
+        const initialStorageTableRows = storageTable.querySelectorAll('tr');
 
         const addNewItemButton = queryAndExpectOne(storageTable, 'tr.actions button[name=new]');
         addNewItemButton.click();
 
-        queryAndExpectCount(storageTable, 'tr', storageTableRows.length + 1);
+        queryAndExpectCount(storageTable, 'tr', initialStorageTableRows.length + 1);
         const newItemRow = queryAndExpectOne(storageTable, 'tr.entry.new') as HTMLTableRowElement;
         const newKeyField = queryAndExpectOne(newItemRow, 'td.key input[type=text]') as HTMLInputElement;
         const newItemField = queryAndExpectOne(newItemRow, 'td.item input[type=text]') as HTMLInputElement;
@@ -295,7 +295,9 @@ describe('XSS Demo Mocks', () => {
       path: string;
       name: string;
       value: string;
-      samesite: string;
+      secure: boolean;
+      sameSite: string;
+      partitioned: boolean;
       expires: number;
     }
 
@@ -326,35 +328,140 @@ describe('XSS Demo Mocks', () => {
 
       it('should manage cookies through its web UI', async () => {
 
-        const testData = [] as Cookie[];
+        const testCookies = [] as Cookie[];
 
         // check no cookies
-        expectCookies(testData);
-        expectCookiesTable(testData);
+        await expectCookies(testCookies);
+        expectCookiesTable(testCookies);
+
+        // add  "foo"
+        const testCookie = {
+          domain: null,
+          path: '/',
+          name: 'foo',
+          value: 'value of cookie with name "foo"',
+          secure: true,
+          sameSite: 'strict',
+          partitioned: false,
+          expires: null
+        };
+        testCookies.push(testCookie);
+        await fillNewCookieForm(testCookie);
+        await expectCookies(testCookies);
+        expectCookiesTable(testCookies);
+
+        // wait a bit for async failures
+        await timeout(500);
       });
 
     }
 
-    async function clearCookies(): Promise<void> {
-      const cookieDeletePromises = [] as Promise<void>[];
-      for (const cookie of await cookieStore.getAll()) {
-        cookieStore.delete(cookie);
-      }
-      await Promise.all(cookieDeletePromises);
+    function queryCookiesTable(): HTMLTableElement {
+      return queryAndExpectOne(mockPageDoc.body, 'div.cookies table.cookies') as HTMLTableElement;
     }
 
-    function expectCookies(cookies: Cookie[]) {
-      expect(true).toBeTrue();
+    async function fillNewCookieForm(testCookie: Cookie, save = true) {
+
+      const cookiesTable = queryCookiesTable();
+      const initialCookiesTableRows = cookiesTable.querySelectorAll('tr');
+
+      const newCookieButton = queryAndExpectOne(cookiesTable, 'tr.actions button[name=new]');
+      newCookieButton.click();
+
+      queryAndExpectCount(cookiesTable, 'tr', initialCookiesTableRows.length + 1);
+      const row = queryAndExpectOne(cookiesTable, 'tr.cookie.new') as HTMLTableRowElement;
+      const domainField = queryAndExpectOne(row, 'td.domain input[type=text]') as HTMLInputElement;
+      const pathField = queryAndExpectOne(row, 'td.path input[type=text]') as HTMLInputElement;
+      const nameField = queryAndExpectOne(row, 'td.name input[type=text]') as HTMLInputElement;
+      const valueField = queryAndExpectOne(row, 'td.value input[type=text]') as HTMLInputElement;
+      const sameSiteSelect = queryAndExpectOne(row, 'td.sameSite select') as HTMLSelectElement;
+      const expiresField = queryAndExpectOne(row, 'td.expires input[type=text]') as HTMLInputElement;
+      const saveButton = queryAndExpectOne(row, 'td.actions button[name=save]') as HTMLButtonElement;
+      const cancelButton = queryAndExpectOne(row, 'td.actions button[name=cancel]') as HTMLButtonElement;
+
+      if (testCookie.domain) domainField.value = testCookie.domain;
+      if (testCookie.path) pathField.value = testCookie.path;
+      if (testCookie.name) nameField.value = testCookie.name;
+      if (testCookie.value) valueField.value = testCookie.value;
+      if (testCookie.sameSite) sameSiteSelect.value = testCookie.sameSite;
+      if (typeof testCookie.expires === 'number') expiresField.value = testCookie.expires.toString();
+      (save ? saveButton : cancelButton).dispatchEvent(new Event('click'));
+
+      await timeout(100);
+    }
+
+    async function clearCookies(): Promise<any> {
+      const cookieDeletePromises = [] as Promise<any>[];
+      for (const cookie of await cookieStore.getAll()) {
+        cookieDeletePromises.push(cookieStore.delete(cookie));
+      }
+      return Promise.all(cookieDeletePromises);
+    }
+
+    async function expectCookies(testCookies: Cookie[]) {
+      const cookies = await cookieStore.getAll();
+      expect(cookies).toEqual(testCookies);
+    }
+
+    function expectCookieRowValues(row: HTMLElement, cookie: Cookie) {
+      const domainField = queryAndExpectOne(row, 'td.domain input[type=text]') as HTMLInputElement;
+      const pathField = queryAndExpectOne(row, 'td.path input[type=text]') as HTMLInputElement;
+      const nameField = queryAndExpectOne(row, 'td.name input[type=text]') as HTMLInputElement;
+      const valueField = queryAndExpectOne(row, 'td.value input[type=text]') as HTMLInputElement;
+      const secureCheckbox = queryAndExpectOne(row, 'td.secure input[type=checkbox]') as HTMLInputElement;
+      const httpOnlyCheckbox = queryAndExpectOne(row, 'td.httpOnly input[type=checkbox]') as HTMLInputElement;
+      const sameSiteSelect = queryAndExpectOne(row, 'td.sameSite select') as HTMLSelectElement;
+      const expiresField = queryAndExpectOne(row, 'td.expires input[type=text]') as HTMLInputElement;
+      expect(domainField.value).toBe(cookie.domain || '');
+      expect(pathField.value).toBe(cookie.path || '/');
+      expect(nameField.value).toBe(cookie.name || '');
+      expect(valueField.value).toBe(cookie.value || '');
+      expect(secureCheckbox.checked).toBe(!!cookie.secure);
+      expect(httpOnlyCheckbox.checked).toBe(false);
+      expect(sameSiteSelect.value).toBe(cookie.sameSite || 'none');
+      expect(expiresField.value).toBe(cookie.expires != null ? cookie.expires.toString() : 'session');
     }
 
     function expectCookiesTable(cookies: Cookie[]) {
-      expect(true).toBeTrue();
+      const cookiesTable = queryCookiesTable();
+
+      // sort cookies, just copied over from cookies.js
+      // this integration test does not care about correct order too much
+      // but separate unit tests for the sort order could be a good idea
+      cookies.sort( (c1, c2) => c1.name == c2.name ? 0 : (c1.name < c2.name ? -1 : 1 ) );
+      cookies.sort( (c1, c2) => c1.path == c2.path ? 0 : (c1.path < c2.path ? -1 : 1 ) );
+      cookies.sort( (c1, c2) => c1.domain == c2.domain ? 0 : (c1.domain < c2.domain ? -1 : 1 ) );
+
+      const cookiesCount = cookies.length;
+      const rowCount = cookiesCount + 3;
+
+      if (cookiesCount === 0) {
+        expect(cookiesTable.classList).withContext('cookies table classes').toContain('empty');
+      } else {
+        expect(cookiesTable.classList).withContext('cookies table classes').not.toContain('empty');
+      }
+
+      const cookieRows = queryAndExpectCount(cookiesTable, 'tr', rowCount);
+      expect(cookieRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
+      expect(cookieRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
+      expect(cookieRows[rowCount-1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
+
+      let index = 2;
+      for (const cookie of cookies) {
+        const cookieRow = cookieRows[index++];
+        expect(cookieRow.classList).toEqual(jasmine.arrayWithExactContents(['cookie']));
+        expectCookieRowValues(cookieRow, cookie);
+      }
     }
   });
 
   async function setUpPageFixture(url: string): Promise<void> {
     const {promise: loadPromise, resolve: loadHandler} = Promise.withResolvers();
     pageFixture = document.createElement('iframe');
+    pageFixture.style.width = '100%';
+    pageFixture.style.height = '30em';
+    pageFixture.style.overflow = 'scroll';
+    pageFixture.style.border = 'none';
     pageFixture.addEventListener('load', loadHandler);
     pageFixture.src = url;
     document.body.insertAdjacentElement('beforeend', pageFixture);
