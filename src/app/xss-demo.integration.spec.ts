@@ -244,9 +244,9 @@ describe('Xss Demo App', async () => {
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.JavaScript.toString()] = {
-    'DqStringDomTrusted': ['JS code breaking "string"'                                                                                                                                                                                                                                                      ],
-    'SqStringDomTrusted': [                             'JS code breaking \'string\''                                                                                                                                                                                                                       ],
-    'BlockDomTrusted':    [                                                            'pure JS code', cf.deface('pure JS defacement attack'), cf.newWindow('JS attack on a plain HTML page (window)'), cf.newWindow('JS attack on browser storage (window)'), cf.newWindow('JS attack on cookies (window)')],
+    'DqStringDomTrusted': ['JS code breaking "string"'                                                                                                                                                                                                                                                                ],
+    'SqStringDomTrusted': [                             'JS code breaking \'string\''                                                                                                                                                                                                                                 ],
+    'BlockDomTrusted':    [                                                            'pure JS code', cf.deface('pure JS defacement attack'), cf.newWindow('JS attack on a plain HTML page (window)'), cf.newWindow('JS attack on browser storage (window)'), cf.newWindow('JS attack on cookies (window)'), 'JSFuck'],
   };
 
 
