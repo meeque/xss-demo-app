@@ -51,9 +51,8 @@ module.exports = function(config) {
     let secureContextOptions;
     try {
       secureContextOptions = {
-        cert: fs.readFileSync('tls/xss-dev.fullchain.pem', 'utf8'),
-        key: fs.readFileSync('tls/private/xss-dev.key.pem', 'utf8'),
-        passphrase: fs.readFileSync('tls/private/xss-dev.key.pass.txt').toString()
+        cert: fs.readFileSync('tls/xss-dev.cert.pem', 'utf8'),
+        key: fs.readFileSync('tls/private/xss-dev.key.pem', 'utf8')
       }
     } catch(e) {
       console.error('XSS Demo App: Failed to read xss-dev certificate files at expected location in the project\'s "tls" directory:', e);
