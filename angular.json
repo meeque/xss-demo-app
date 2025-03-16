@@ -63,6 +63,12 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "host": "0.0.0.0",
+            "ssl": true,
+            "sslCert": "tls/xss-dev.cert.pem",
+            "sslKey": "tls/private/xss-dev.key.pem"
+          },
           "configurations": {
             "production": {
               "buildTarget": "xss-demo-app:build:production"
