@@ -1,4 +1,4 @@
-import { timeout, domTreeAvailable } from './lib.spec';
+import { AsymmetricEqualityTester, timeout, domTreeAvailable } from './lib.spec';
 
 describe('XSS Demo Mocks', () => {
 
@@ -291,14 +291,14 @@ describe('XSS Demo Mocks', () => {
   describe('Cookies Page', () => {
 
     interface Cookie {
-      domain: string;
-      path: string;
+      domain?: string;
+      path?: string;
       name: string;
       value: string;
-      secure: boolean;
-      sameSite: string;
-      partitioned: boolean;
-      expires: number;
+      secure?: boolean;
+      sameSite?: string;
+      partitioned?: boolean;
+      expires?: number;
     }
 
     interface CookieStore {
@@ -336,14 +336,8 @@ describe('XSS Demo Mocks', () => {
 
         // add  "foo"
         const testCookie = {
-          domain: null,
-          path: '/',
           name: 'foo',
-          value: 'value of cookie with name "foo"',
-          secure: true,
-          sameSite: 'strict',
-          partitioned: false,
-          expires: null
+          value: 'value of cookie with name "foo"'
         };
         testCookies.push(testCookie);
         await fillNewCookieForm(testCookie);
@@ -400,7 +394,15 @@ describe('XSS Demo Mocks', () => {
 
     async function expectCookies(testCookies: Cookie[]) {
       const cookies = await cookieStore.getAll();
-      expect(cookies).toEqual(testCookies);
+      expect(cookies.length).withContext('number of cookies').toBe(testCookies.length);
+
+      sortCookies(cookies);
+      sortCookies(cookies);
+
+      let i = 0;
+      for (const cookie of cookies) {
+        expect(cookie).toEqual(cookieProps(testCookies[i++]));
+      }
     }
 
     function expectCookieRowValues(row: HTMLElement, cookie: Cookie) {
@@ -412,26 +414,21 @@ describe('XSS Demo Mocks', () => {
       const httpOnlyCheckbox = queryAndExpectOne(row, 'td.httpOnly input[type=checkbox]') as HTMLInputElement;
       const sameSiteSelect = queryAndExpectOne(row, 'td.sameSite select') as HTMLSelectElement;
       const expiresField = queryAndExpectOne(row, 'td.expires input[type=text]') as HTMLInputElement;
+
       expect(domainField.value).toBe(cookie.domain || '');
       expect(pathField.value).toBe(cookie.path || '/');
       expect(nameField.value).toBe(cookie.name || '');
       expect(valueField.value).toBe(cookie.value || '');
-      expect(secureCheckbox.checked).toBe(!!cookie.secure);
+      expect(secureCheckbox.checked).toBe(typeof cookie.secure === 'boolean' ? cookie.secure : true );
       expect(httpOnlyCheckbox.checked).toBe(false);
-      expect(sameSiteSelect.value).toBe(cookie.sameSite || 'none');
+      expect(sameSiteSelect.value).toBe(typeof cookie.sameSite === 'string' ? cookie.sameSite : 'strict');
       expect(expiresField.value).toBe(cookie.expires != null ? cookie.expires.toString() : 'session');
     }
 
     function expectCookiesTable(cookies: Cookie[]) {
       const cookiesTable = queryCookiesTable();
 
-      // sort cookies, just copied over from cookies.js
-      // this integration test does not care about correct order too much
-      // but separate unit tests for the sort order could be a good idea
-      cookies.sort( (c1, c2) => c1.name == c2.name ? 0 : (c1.name < c2.name ? -1 : 1 ) );
-      cookies.sort( (c1, c2) => c1.path == c2.path ? 0 : (c1.path < c2.path ? -1 : 1 ) );
-      cookies.sort( (c1, c2) => c1.domain == c2.domain ? 0 : (c1.domain < c2.domain ? -1 : 1 ) );
-
+      sortCookies(cookies);
       const cookiesCount = cookies.length;
       const rowCount = cookiesCount + 3;
 
@@ -452,6 +449,58 @@ describe('XSS Demo Mocks', () => {
         expect(cookieRow.classList).toEqual(jasmine.arrayWithExactContents(['cookie']));
         expectCookieRowValues(cookieRow, cookie);
       }
+    }
+
+    function cookieProps(expected: Cookie): AsymmetricEqualityTester<Cookie> {
+      return {
+        asymmetricMatch: function(actual) {
+          if (typeof expected.domain === 'string') {
+            if (actual.domain != expected.domain) return false;
+          } else {
+            if (actual.domain != null) return false;
+          }
+          if (typeof expected.path === 'boolean') {
+            if (actual.path != expected.path) return false;
+          } else {
+            if (actual.path != '/') return false;
+          }
+          if (typeof expected.name === 'string') {
+            if (actual.name != expected.name) return false;
+          }
+          if (typeof expected.value === 'string') {
+            if (actual.value != expected.value) return false;
+          }
+          if (typeof expected.secure === 'boolean') {
+            if (actual.secure !== expected.secure) return false;
+          }
+          if (typeof expected.sameSite === 'string') {
+            if (actual.sameSite != expected.sameSite) return false;
+          } else {
+            if (actual.sameSite != 'strict') return false;
+          }
+          if (typeof expected.partitioned === 'boolean') {
+            if (actual.partitioned != expected.partitioned) return false;
+          }
+          if (typeof expected.expires === 'number') {
+            if (actual.expires != expected.expires) return false;
+          } else {
+            if (actual.expires != null) return false;
+          }
+          return true;
+        },
+        jasmineToString: function() {
+          return '<a cookie with properites ' + expected + '>';
+        }
+      };
+    }
+
+    function sortCookies(cookies: Cookie[]): Cookie[] {
+      // this is just copied over from cookies.js
+      // integration tests do not care about correct order too much, but sorting makes comparisons easier
+      cookies.sort( (c1, c2) => c1.name == c2.name ? 0 : (c1.name < c2.name ? -1 : 1 ) );
+      cookies.sort( (c1, c2) => c1.path == c2.path ? 0 : (c1.path < c2.path ? -1 : 1 ) );
+      cookies.sort( (c1, c2) => c1.domain == c2.domain ? 0 : (c1.domain < c2.domain ? -1 : 1 ) );
+      return cookies;
     }
   });
 
