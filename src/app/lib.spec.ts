@@ -1,10 +1,19 @@
 
-// defining Jasmine's AsymmetricEqualityTester interface, not sure where to import it from
+// defining Jasmine's AsymmetricEqualityTester interface
+// not sure where to import it from
 // https://jasmine.github.io/api/edge/AsymmetricEqualityTester.html
 export interface AsymmetricEqualityTester<T> {
-  asymmetricMatch(actual: T): boolean;
-  jasmineToString(): string;
+  asymmetricMatch(actual: T, matchersUtil: MatchersUtil): boolean;
+  jasmineToString(pp: (value: any) => string): string;
 }
+
+interface MatchersUtil {
+  contains(haystack: any, needle: any): boolean;
+  equals(haystack: any, needle: any): boolean;
+  pp(actual: any): string
+}
+
+
 
 export function timeout<D>(millis: number, data?: D): Promise<D> {
   const {promise, resolve} = Promise.withResolvers<D>();

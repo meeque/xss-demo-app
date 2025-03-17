@@ -334,15 +334,29 @@ describe('XSS Demo Mocks', () => {
         await expectCookies(testCookies);
         expectCookiesTable(testCookies);
 
-        // add  "foo"
-        const testCookie = {
-          name: 'foo',
-          value: 'value of cookie with name "foo"'
-        };
-        testCookies.push(testCookie);
-        await fillNewCookieForm(testCookie);
-        await expectCookies(testCookies);
-        expectCookiesTable(testCookies);
+        {
+          // add  "foo"
+          const testCookie = {
+            name: 'foo',
+            value: 'value of cookie with name "foo"'
+          };
+          testCookies.push(testCookie);
+          await fillNewCookieForm(testCookie);
+          await expectCookies(testCookies);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // add "bar"
+          const testCookie = {
+            name: 'bar',
+            value: 'value of cookie with name "bar"'
+          };
+          testCookies.push(testCookie);
+          await fillNewCookieForm(testCookie);
+          await expectCookies(testCookies);
+          expectCookiesTable(testCookies);
+        }
 
         // wait a bit for async failures
         await timeout(500);
@@ -397,7 +411,7 @@ describe('XSS Demo Mocks', () => {
       expect(cookies.length).withContext('number of cookies').toBe(testCookies.length);
 
       sortCookies(cookies);
-      sortCookies(cookies);
+      sortCookies(testCookies);
 
       let i = 0;
       for (const cookie of cookies) {
@@ -488,8 +502,8 @@ describe('XSS Demo Mocks', () => {
           }
           return true;
         },
-        jasmineToString: function() {
-          return '<a cookie with properites ' + expected + '>';
+        jasmineToString: function(pp) {
+          return 'a cookie with properties ' + pp(expected);
         }
       };
     }
