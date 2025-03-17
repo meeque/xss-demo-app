@@ -347,6 +347,42 @@ describe('XSS Demo Mocks', () => {
         }
 
         {
+          // start adding "bar", but cancel
+          const testCookie = {
+            name: 'bar',
+            value: 'value of cookie with name "bar"'
+          };
+          await fillNewCookieForm(testCookie, false);
+          await expectCookies(testCookies);
+          expectCookiesTable(testCookies);
+
+        }
+
+        {
+          // add "xxx"
+          const testCookie = {
+            name: 'xxx',
+            value: 'value of cookie with name "xxx"'
+          };
+          testCookies.push(testCookie);
+          await fillNewCookieForm(testCookie);
+          await expectCookies(testCookies);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // delete "foo"
+          const testCookie = {
+            name: 'foo',
+            value: null
+          };
+          testCookies.splice(0, 1);
+          await deleteCookieTableCookie(testCookie);
+          await expectCookies(testCookies);
+          expectCookiesTable(testCookies);
+        }
+
+        {
           // add "bar"
           const testCookie = {
             name: 'bar',
@@ -358,8 +394,79 @@ describe('XSS Demo Mocks', () => {
           expectCookiesTable(testCookies);
         }
 
+        {
+          // re-add "foo"
+          const testCookie = {
+            name: 'foo',
+            value: 'value of another cookie with name "foo"'
+          };
+          testCookies.push(testCookie);
+          await fillNewCookieForm(testCookie);
+          await expectCookies(testCookies);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // edit "bar"
+          const testCookie = {
+            name: 'bar',
+            value: 'new value for cookie with name "bar"'
+          };
+          testCookies[0] = testCookie;
+          await editCookieTableCookie(testCookie);
+          await expectCookies(testCookies);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // start editing "xxx", but cancel
+          const testCookie = {
+            name: 'xxx',
+            value: 'unsaved value for item with key "xxx"'
+          };
+          await editCookieTableCookie(testCookie, false);
+          await expectCookies(testCookies);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // edit "foo"
+          const testCookie = {
+            name: 'foo',
+            value: 'new value for cookie with name "foo"'
+          };
+          testCookies[1] = testCookie;
+          await editCookieTableCookie(testCookie);
+          await expectCookies(testCookies);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // delete "xxx"
+          const testCookie = {
+            name: 'xxx',
+            value: null
+          };
+          testCookies.splice(2, 1);
+          await deleteCookieTableCookie(testCookie);
+          await expectCookies(testCookies);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // edit "bar" again, with funky value
+          const testCookie = {
+            name: 'bar',
+            value: 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for cookie with name "bar"'
+          };
+          testCookies[0] = testCookie;
+          await editCookieTableCookie(testCookie);
+          await expectCookies(testCookies);
+          expectCookiesTable(testCookies);
+        }
+
         // wait a bit for async failures
-        await timeout(500);
+        await timeout(200);
       });
 
     }
@@ -368,7 +475,18 @@ describe('XSS Demo Mocks', () => {
       return queryAndExpectOne(mockPageDoc.body, 'div.cookies table.cookies') as HTMLTableElement;
     }
 
-    async function fillNewCookieForm(testCookie: Cookie, save = true) {
+    function queryCookiesTableCookie(cookie: Cookie): HTMLTableRowElement {
+      const storageTableCookieRows = queryCookiesTable().querySelectorAll('tr.cookie') as NodeListOf<HTMLTableRowElement>;
+      for (const cookieRow of storageTableCookieRows) {
+        const cookieNameField = queryAndExpectOne(cookieRow, 'td.name input[type=text]') as HTMLInputElement;
+        if (cookieNameField.value === cookie.name) {
+          return cookieRow;
+        }
+      }
+      return null;
+    }
+
+    function fillNewCookieForm(testCookie: Cookie, save = true): Promise<void> {
 
       const cookiesTable = queryCookiesTable();
       const initialCookiesTableRows = cookiesTable.querySelectorAll('tr');
@@ -395,15 +513,36 @@ describe('XSS Demo Mocks', () => {
       if (typeof testCookie.expires === 'number') expiresField.value = testCookie.expires.toString();
       (save ? saveButton : cancelButton).dispatchEvent(new Event('click'));
 
-      await timeout(100);
+      return timeout(100);
     }
 
-    async function clearCookies(): Promise<any> {
-      const cookieDeletePromises = [] as Promise<any>[];
-      for (const cookie of await cookieStore.getAll()) {
-        cookieDeletePromises.push(cookieStore.delete(cookie));
-      }
-      return Promise.all(cookieDeletePromises);
+    async function editCookieTableCookie(cookie: Cookie, save = true): Promise<void> {
+      const initialCookiesTableRows = queryCookiesTable().querySelectorAll('tr');
+      const cookieRow = queryCookiesTableCookie(cookie);
+      const editButton = queryAndExpectOne(cookieRow, 'td.actions button[name=edit]') as HTMLButtonElement;
+
+      editButton.click();
+      await timeout(100);
+      queryAndExpectCount(queryCookiesTable(), 'tr', initialCookiesTableRows.length);
+
+      const cookieValueField = queryAndExpectOne(cookieRow, 'td.value input[type=text]') as HTMLInputElement;
+      const saveButton = queryAndExpectOne(cookieRow, 'td.actions button[name=save]') as HTMLButtonElement;
+      const cancelButton = queryAndExpectOne(cookieRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
+
+      cookieValueField.value = cookie.value;
+      save ? saveButton.click() : cancelButton.click();
+      await timeout(100);
+      queryAndExpectCount(queryCookiesTable(), 'tr', initialCookiesTableRows.length);
+    }
+
+    async function deleteCookieTableCookie(cookie: Cookie): Promise<void> {
+      const initialCookiesTableRows = queryCookiesTable().querySelectorAll('tr');
+      const cookieRow = queryCookiesTableCookie(cookie);
+      const deleteButton = queryAndExpectOne(cookieRow, 'td.actions button[name=delete]') as HTMLButtonElement;
+
+      deleteButton.click();
+      await timeout(100);
+      queryAndExpectCount(queryCookiesTable(), 'tr', initialCookiesTableRows.length - 1);
     }
 
     async function expectCookies(testCookies: Cookie[]) {
@@ -515,6 +654,14 @@ describe('XSS Demo Mocks', () => {
       cookies.sort( (c1, c2) => c1.path == c2.path ? 0 : (c1.path < c2.path ? -1 : 1 ) );
       cookies.sort( (c1, c2) => c1.domain == c2.domain ? 0 : (c1.domain < c2.domain ? -1 : 1 ) );
       return cookies;
+    }
+
+    async function clearCookies(): Promise<any> {
+      const cookieDeletePromises = [] as Promise<any>[];
+      for (const cookie of await cookieStore.getAll()) {
+        cookieDeletePromises.push(cookieStore.delete(cookie));
+      }
+      return Promise.all(cookieDeletePromises);
     }
   });
 
