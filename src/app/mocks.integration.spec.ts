@@ -290,14 +290,14 @@ describe('XSS Demo Mocks', () => {
 
   describe('Cookies Page', () => {
 
-    interface CookieIdentifiers {
+    interface CookieId {
       domain?: string;
       path?: string;
       name: string;
       partitioned?: boolean;
     }
 
-    interface Cookie extends CookieIdentifiers {
+    interface Cookie extends CookieId {
       value: string;
       secure?: boolean;
       sameSite?: string;
@@ -305,17 +305,17 @@ describe('XSS Demo Mocks', () => {
     }
 
     interface CookieStore {
-      getAll(): Promise<Cookie[]>;
-      get(cookie: any): Promise<Cookie>;
+      getAll(options?: any): Promise<Cookie[]>;
+      get(cookie: CookieId): Promise<Cookie>;
       set(cookie: Cookie): Promise<undefined>;
-      delete(cookie: any): Promise<undefined>;
+      delete(cookie: CookieId): Promise<undefined>;
     }
 
     const cookieStore: CookieStore = window['cookieStore'];
 
-    beforeEach(clearCookies);
-
     beforeEach(async () => await setUpPageFixture('/assets/mocks/cookies.html'));
+
+    beforeEach(clearCookies);
 
     afterEach(clearCookies);
 
@@ -579,7 +579,7 @@ describe('XSS Demo Mocks', () => {
       return queryAndExpectOne(mockPageDoc.body, 'div.cookies table.cookies') as HTMLTableElement;
     }
 
-    function queryCookiesTableCookie(cookie: CookieIdentifiers, value?: string): HTMLTableRowElement {
+    function queryCookiesTableCookie(cookie: CookieId, value?: string): HTMLTableRowElement {
       const storageTableCookieRows = queryCookiesTable().querySelectorAll('tr.cookie') as NodeListOf<HTMLTableRowElement>;
       for (const cookieRow of storageTableCookieRows) {
         const cookieNameField = queryAndExpectOne(cookieRow, 'td.name input[type=text]') as HTMLInputElement;
@@ -767,12 +767,14 @@ describe('XSS Demo Mocks', () => {
       return cookies;
     }
 
-    async function clearCookies(): Promise<any> {
-      const cookieDeletePromises = [] as Promise<any>[];
-      for (const cookie of await cookieStore.getAll()) {
-        cookieDeletePromises.push(cookieStore.delete(cookie));
-      }
-      return Promise.all(cookieDeletePromises);
+    function clearCookies(): Promise<any> {
+      return runInPageFixture(
+        'const cookieDeletePromises = [];',
+        'for (const cookie of await cookieStore.getAll()) {',
+        '  cookieDeletePromises.push(cookieStore.delete(cookie));',
+        '}',
+        'return Promise.all(cookieDeletePromises);'
+      );
     }
   });
 
@@ -788,6 +790,31 @@ describe('XSS Demo Mocks', () => {
     document.body.insertAdjacentElement('beforeend', pageFixture);
     await loadPromise;
     mockPageDoc = pageFixture.contentDocument;
+  }
+
+  async function runInPageFixture(... codeLines: string[]) {
+    let scriptCode = '';
+    scriptCode += '(async function() {\n';
+    scriptCode += 'document.currentScript.setAttribute(\'data-xss-demo-status\', \'pending\');';
+    for (const codeLine of codeLines) {
+      scriptCode += '  ' + codeLine + '\n';
+    }
+    scriptCode += '})()\n';
+    scriptCode += '.then(\n';
+    scriptCode += '  () => document.querySelector(\'script[data-xss-demo-status]\').setAttribute(\'data-xss-demo-status\', \'success\'),\n'
+    scriptCode += '  () => document.querySelector(\'script[data-xss-demo-status]\').setAttribute(\'data-xss-demo-status\', \'error\')\n'
+    scriptCode += '\n);';
+
+    const scriptBlock = mockPageDoc.createElement('script');
+    scriptBlock.setAttribute('type', 'text/javascript');
+    scriptBlock.textContent = scriptCode;
+    mockPageDoc.body.insertAdjacentElement('beforeend', scriptBlock);
+
+    await domTreeAvailable(mockPageDoc.body, 'script[data-xss-demo-status=success],script[data-xss-demo-status=error]');
+    if (scriptBlock.getAttribute('data-xss-demo-status') == 'error') {
+      throw new Error('Failed to run code the following code in the page fixture:\n' + codeLines.join('\n'));
+    }
+    mockPageDoc.body.removeChild(scriptBlock);
   }
 
   function tearDownPageFixture() {

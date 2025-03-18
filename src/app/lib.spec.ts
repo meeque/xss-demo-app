@@ -35,7 +35,7 @@ export function domTreeAvailable<T>(context: HTMLElement, selectorOrCondition: s
       resolve(result);
     }
   });
-  observer.observe(context, {childList: true, subtree: true});
+  observer.observe(context, {attributes: true, childList: true, characterData: true, subtree: true});
 
   return promise;
 }
