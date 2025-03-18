@@ -163,7 +163,7 @@ describe('XSS Demo Mocks', () => {
 
           // add item with funky key
           const testKey = '<img src="." onerror="parent.fail(\'a storage item has triggered xss!\')">';
-          testData[testKey] = 'they key of this storage item contains xss payload';
+          testData[testKey] = 'the key of this storage item contains xss payload';
           testStorage.setItem(testKey, testData[testKey]);
           await domTreeAvailable(queryStorageTable(), () => queryStorageTableEntry(testKey) !== null);
           expectStorageTable(testData);
@@ -290,14 +290,17 @@ describe('XSS Demo Mocks', () => {
 
   describe('Cookies Page', () => {
 
-    interface Cookie {
+    interface CookieIdentifiers {
       domain?: string;
       path?: string;
       name: string;
+      partitioned?: boolean;
+    }
+
+    interface Cookie extends CookieIdentifiers {
       value: string;
       secure?: boolean;
       sameSite?: string;
-      partitioned?: boolean;
       expires?: number;
     }
 
@@ -469,18 +472,126 @@ describe('XSS Demo Mocks', () => {
         await timeout(200);
       });
 
+      it('should reflect external storage changes in its web UI', async () => {
+
+        const testCookies = [] as Cookie[];
+
+        // check no cookies
+        await expectCookies(testCookies);
+        expectCookiesTable(testCookies);
+
+        {
+          // add "FOO"
+          const testCookie = {
+            name: 'FOO',
+            value: 'cookie with name "FOO"'
+          };
+          testCookies.push(testCookie);
+          await cookieStore.set(testCookie);
+          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // add "BAR"
+          const testCookie = {
+            name: 'BAR',
+            value: 'cookie with name "BAR"'
+          };
+          testCookies.push(testCookie);
+          await cookieStore.set(testCookie);
+          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // delete "FOO"
+          const testCookie = {
+            name: 'FOO'
+          };
+          testCookies.splice(1, 1);
+          await cookieStore.delete(testCookie);
+          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) === null && queryCookiesTableCookie(testCookies[0]) !== null);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // add ""
+          const testCookie = {
+            name: '',
+            value: 'cookie with empty name'
+          };
+          testCookies.push(testCookie);
+          await cookieStore.set(testCookie);
+          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // change "BAR"
+          const testCookie = {
+            name: 'BAR',
+            value: 'adjusted cookie with name "BAR"'
+          };
+          testCookies[1] = testCookie;
+          await cookieStore.set(testCookie);
+          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie, testCookie.value) !== null);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // re-add "FOO"
+          const testCookie = {
+            name: 'FOO',
+            value: 'another cookie with key "FOO"'
+          };
+          testCookies.push(testCookie);
+          await cookieStore.set(testCookie);
+          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
+          expectCookiesTable(testCookies);
+        }
+
+        {
+          // add item with funky key
+          const testCookie = {
+            name: encodeURIComponent('<img src="." onerror="parent.fail(\'a storage item has triggered xss!\')">'),
+            value: 'the name of this cookie contains xss payload (when url-decoded)'
+          };
+          testCookies.push(testCookie);
+          await cookieStore.set(testCookie);
+          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
+          expectCookiesTable(testCookies);
+
+          // delete item with funky key
+          testCookies.splice(1, 1);
+          await cookieStore.delete(testCookie);
+          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) === null && queryCookiesTableCookie(testCookies[0]) !== null);
+          expectCookiesTable(testCookies);
+        }
+
+        // wait a bit for async failures
+        await timeout(500);
+      });
+
     }
 
     function queryCookiesTable(): HTMLTableElement {
       return queryAndExpectOne(mockPageDoc.body, 'div.cookies table.cookies') as HTMLTableElement;
     }
 
-    function queryCookiesTableCookie(cookie: Cookie): HTMLTableRowElement {
+    function queryCookiesTableCookie(cookie: CookieIdentifiers, value?: string): HTMLTableRowElement {
       const storageTableCookieRows = queryCookiesTable().querySelectorAll('tr.cookie') as NodeListOf<HTMLTableRowElement>;
       for (const cookieRow of storageTableCookieRows) {
         const cookieNameField = queryAndExpectOne(cookieRow, 'td.name input[type=text]') as HTMLInputElement;
-        if (cookieNameField.value === cookie.name) {
-          return cookieRow;
+        if (value === undefined) {
+          if (cookieNameField.value === cookie.name) {
+            return cookieRow;
+          }
+        } else {
+          const cookieValueField = queryAndExpectOne(cookieRow, 'td.value input[type=text]') as HTMLInputElement;
+          if (cookieNameField.value === cookie.name && cookieValueField.value === value) {
+            return cookieRow;
+          }
         }
       }
       return null;
