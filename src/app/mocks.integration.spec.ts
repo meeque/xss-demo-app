@@ -329,147 +329,163 @@ describe('XSS Demo Mocks', () => {
 
     } else {
 
-      it('should manage cookies through its web UI', async () => {
+      describe('should manage cookies', async () => {
 
-        const testCookies = [] as Cookie[];
+        for (const testPath of [undefined, '/', '/assets/']) {
 
-        // check no cookies
-        await expectCookies(testCookies);
-        expectCookiesTable(testCookies);
+          it ('with path "' + testPath + '"', async () => {
+            const testCookies = [] as Cookie[];
 
-        {
-          // add  "foo"
-          const testCookie = {
-            name: 'foo',
-            value: 'value of cookie with name "foo"'
-          };
-          testCookies.push(testCookie);
-          await fillNewCookieForm(testCookie);
-          await expectCookies(testCookies);
-          expectCookiesTable(testCookies);
+            // check no cookies
+            await expectCookies(testCookies);
+            expectCookiesTable(testCookies);
+
+            {
+              // add  "foo"
+              const testCookie = {
+                path: testPath,
+                name: 'foo',
+                value: 'value of cookie with name "foo"'
+              };
+              testCookies.push(testCookie);
+              await fillNewCookieForm(testCookie);
+              await expectCookies(testCookies);
+              expectCookiesTable(testCookies);
+            }
+
+            {
+              // start adding "bar", but cancel
+              const testCookie = {
+                path: testPath,
+                name: 'bar',
+                value: 'value of cookie with name "bar"'
+              };
+              await fillNewCookieForm(testCookie, false);
+              await expectCookies(testCookies);
+              expectCookiesTable(testCookies);
+
+            }
+
+            {
+              // add "xxx"
+              const testCookie = {
+                path: testPath,
+                name: 'xxx',
+                value: 'value of cookie with name "xxx"'
+              };
+              testCookies.push(testCookie);
+              await fillNewCookieForm(testCookie);
+              await expectCookies(testCookies);
+              expectCookiesTable(testCookies);
+            }
+
+            {
+              // delete "foo"
+              const testCookie = {
+                path: testPath,
+                name: 'foo',
+                value: null
+              };
+              testCookies.splice(0, 1);
+              await deleteCookieTableCookie(testCookie);
+              await expectCookies(testCookies);
+              expectCookiesTable(testCookies);
+            }
+
+            {
+              // add "bar"
+              const testCookie = {
+                path: testPath,
+                name: 'bar',
+                value: 'value of cookie with name "bar"'
+              };
+              testCookies.push(testCookie);
+              await fillNewCookieForm(testCookie);
+              await expectCookies(testCookies);
+              expectCookiesTable(testCookies);
+            }
+
+            {
+              // re-add "foo"
+              const testCookie = {
+                path: testPath,
+                name: 'foo',
+                value: 'value of another cookie with name "foo"'
+              };
+              testCookies.push(testCookie);
+              await fillNewCookieForm(testCookie);
+              await expectCookies(testCookies);
+              expectCookiesTable(testCookies);
+            }
+
+            {
+              // edit "bar"
+              const testCookie = {
+                path: testPath,
+                name: 'bar',
+                value: 'new value for cookie with name "bar"'
+              };
+              testCookies[0] = testCookie;
+              await editCookieTableCookie(testCookie);
+              await expectCookies(testCookies);
+              expectCookiesTable(testCookies);
+            }
+
+            {
+              // start editing "xxx", but cancel
+              const testCookie = {
+                path: testPath,
+                name: 'xxx',
+                value: 'unsaved value for item with key "xxx"'
+              };
+              await editCookieTableCookie(testCookie, false);
+              await expectCookies(testCookies);
+              expectCookiesTable(testCookies);
+            }
+
+            {
+              // edit "foo"
+              const testCookie = {
+                path: testPath,
+                name: 'foo',
+                value: 'new value for cookie with name "foo"'
+              };
+              testCookies[1] = testCookie;
+              await editCookieTableCookie(testCookie);
+              await expectCookies(testCookies);
+              expectCookiesTable(testCookies);
+            }
+
+            {
+              // delete "xxx"
+              const testCookie = {
+                path: testPath,
+                name: 'xxx',
+                value: null
+              };
+              testCookies.splice(2, 1);
+              await deleteCookieTableCookie(testCookie);
+              await expectCookies(testCookies);
+              expectCookiesTable(testCookies);
+            }
+
+            {
+              // edit "bar" again, with funky value
+              const testCookie = {
+                path: testPath,
+                name: 'bar',
+                value: 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for cookie with name "bar"'
+              };
+              testCookies[0] = testCookie;
+              await editCookieTableCookie(testCookie);
+              await expectCookies(testCookies);
+              expectCookiesTable(testCookies);
+            }
+
+            // wait a bit for async failures
+            await timeout(200);
+          });
         }
-
-        {
-          // start adding "bar", but cancel
-          const testCookie = {
-            name: 'bar',
-            value: 'value of cookie with name "bar"'
-          };
-          await fillNewCookieForm(testCookie, false);
-          await expectCookies(testCookies);
-          expectCookiesTable(testCookies);
-
-        }
-
-        {
-          // add "xxx"
-          const testCookie = {
-            name: 'xxx',
-            value: 'value of cookie with name "xxx"'
-          };
-          testCookies.push(testCookie);
-          await fillNewCookieForm(testCookie);
-          await expectCookies(testCookies);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // delete "foo"
-          const testCookie = {
-            name: 'foo',
-            value: null
-          };
-          testCookies.splice(0, 1);
-          await deleteCookieTableCookie(testCookie);
-          await expectCookies(testCookies);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // add "bar"
-          const testCookie = {
-            name: 'bar',
-            value: 'value of cookie with name "bar"'
-          };
-          testCookies.push(testCookie);
-          await fillNewCookieForm(testCookie);
-          await expectCookies(testCookies);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // re-add "foo"
-          const testCookie = {
-            name: 'foo',
-            value: 'value of another cookie with name "foo"'
-          };
-          testCookies.push(testCookie);
-          await fillNewCookieForm(testCookie);
-          await expectCookies(testCookies);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // edit "bar"
-          const testCookie = {
-            name: 'bar',
-            value: 'new value for cookie with name "bar"'
-          };
-          testCookies[0] = testCookie;
-          await editCookieTableCookie(testCookie);
-          await expectCookies(testCookies);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // start editing "xxx", but cancel
-          const testCookie = {
-            name: 'xxx',
-            value: 'unsaved value for item with key "xxx"'
-          };
-          await editCookieTableCookie(testCookie, false);
-          await expectCookies(testCookies);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // edit "foo"
-          const testCookie = {
-            name: 'foo',
-            value: 'new value for cookie with name "foo"'
-          };
-          testCookies[1] = testCookie;
-          await editCookieTableCookie(testCookie);
-          await expectCookies(testCookies);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // delete "xxx"
-          const testCookie = {
-            name: 'xxx',
-            value: null
-          };
-          testCookies.splice(2, 1);
-          await deleteCookieTableCookie(testCookie);
-          await expectCookies(testCookies);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // edit "bar" again, with funky value
-          const testCookie = {
-            name: 'bar',
-            value: 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for cookie with name "bar"'
-          };
-          testCookies[0] = testCookie;
-          await editCookieTableCookie(testCookie);
-          await expectCookies(testCookies);
-          expectCookiesTable(testCookies);
-        }
-
-        // wait a bit for async failures
-        await timeout(200);
       });
 
       it('should reflect external storage changes in its web UI', async () => {
@@ -582,17 +598,31 @@ describe('XSS Demo Mocks', () => {
     function queryCookiesTableCookie(cookie: CookieId, value?: string): HTMLTableRowElement {
       const storageTableCookieRows = queryCookiesTable().querySelectorAll('tr.cookie') as NodeListOf<HTMLTableRowElement>;
       for (const cookieRow of storageTableCookieRows) {
-        const cookieNameField = queryAndExpectOne(cookieRow, 'td.name input[type=text]') as HTMLInputElement;
-        if (value === undefined) {
-          if (cookieNameField.value === cookie.name) {
-            return cookieRow;
-          }
-        } else {
-          const cookieValueField = queryAndExpectOne(cookieRow, 'td.value input[type=text]') as HTMLInputElement;
-          if (cookieNameField.value === cookie.name && cookieValueField.value === value) {
-            return cookieRow;
+        if (typeof cookie.domain === 'string') {
+          const cookieDomainField = queryAndExpectOne(cookieRow, 'td.domain input[type=text]') as HTMLInputElement;
+          if (cookieDomainField.value != cookie.domain) {
+            continue;
           }
         }
+        if (typeof cookie.path === 'string') {
+          const cookiePathField = queryAndExpectOne(cookieRow, 'td.path input[type=text]') as HTMLInputElement;
+          if (cookiePathField.value != cookie.path) {
+            continue;
+          }
+        }
+        if (typeof cookie.name === 'string') {
+          const cookieNameField = queryAndExpectOne(cookieRow, 'td.name input[type=text]') as HTMLInputElement;
+          if (cookieNameField.value != cookie.name) {
+            continue;
+          }
+        }
+        if (typeof value === 'string') {
+          const cookieValueField = queryAndExpectOne(cookieRow, 'td.value input[type=text]') as HTMLInputElement;
+          if (cookieValueField.value != value) {
+            continue;
+          }
+        }
+        return cookieRow;
       }
       return null;
     }
@@ -657,7 +687,7 @@ describe('XSS Demo Mocks', () => {
     }
 
     async function expectCookies(testCookies: Cookie[]) {
-      const cookies = await cookieStore.getAll();
+      const cookies = await getAllCookies();
       expect(cookies.length).withContext('number of cookies').toBe(testCookies.length);
 
       sortCookies(cookies);
@@ -723,7 +753,7 @@ describe('XSS Demo Mocks', () => {
           } else {
             if (actual.domain != null) return false;
           }
-          if (typeof expected.path === 'boolean') {
+          if (typeof expected.path === 'string') {
             if (actual.path != expected.path) return false;
           } else {
             if (actual.path != '/') return false;
@@ -767,7 +797,13 @@ describe('XSS Demo Mocks', () => {
       return cookies;
     }
 
-    function clearCookies(): Promise<any> {
+    function getAllCookies(): Promise<Cookie[]> {
+      return runInPageFixture(
+        'return cookieStore.getAll();'
+      );
+    }
+
+    function clearCookies(): Promise<void> {
       return runInPageFixture(
         'const cookieDeletePromises = [];',
         'for (const cookie of await cookieStore.getAll()) {',
@@ -793,28 +829,53 @@ describe('XSS Demo Mocks', () => {
   }
 
   async function runInPageFixture(... codeLines: string[]) {
-    let scriptCode = '';
-    scriptCode += '(async function() {\n';
-    scriptCode += 'document.currentScript.setAttribute(\'data-xss-demo-status\', \'pending\');';
-    for (const codeLine of codeLines) {
-      scriptCode += '  ' + codeLine + '\n';
+    const enum AttributeNames {
+      status = 'data-xss-demo-tests-run-in-page-fixture-status',
+      result = 'data-xss-demo-tests-run-in-page-fixture-result',
+      error  = 'data-xss-demo-tests-run-in-page-fixture-error'
     }
-    scriptCode += '})()\n';
-    scriptCode += '.then(\n';
-    scriptCode += '  () => document.querySelector(\'script[data-xss-demo-status]\').setAttribute(\'data-xss-demo-status\', \'success\'),\n'
-    scriptCode += '  () => document.querySelector(\'script[data-xss-demo-status]\').setAttribute(\'data-xss-demo-status\', \'error\')\n'
-    scriptCode += '\n);';
+
+    const scriptLines = [
+      '(async function() {',
+      '  document.currentScript.setAttribute("' + AttributeNames.status + '", "pending");',
+      ... codeLines,
+      '})()',
+      '.then(',
+      '  (result) => {',
+      '    const script = document.querySelector("script[' + AttributeNames.status + ']");',
+      '    script.setAttribute("' + AttributeNames.status + '", "success");',
+      '    script.setAttribute("' + AttributeNames.result + '", JSON.stringify(result));',
+      '  },',
+      '  (error) => {',
+      '    const script = document.querySelector("script[' + AttributeNames.status + ']");',
+      '    script.setAttribute("' + AttributeNames.status + '", "error");',
+      '    script.setAttribute("' + AttributeNames.error + '", JSON.stringify(error));',
+      '  }',
+      ');'
+    ];
 
     const scriptBlock = mockPageDoc.createElement('script');
     scriptBlock.setAttribute('type', 'text/javascript');
-    scriptBlock.textContent = scriptCode;
+    scriptBlock.textContent = scriptLines.join('\n');
     mockPageDoc.body.insertAdjacentElement('beforeend', scriptBlock);
 
-    await domTreeAvailable(mockPageDoc.body, 'script[data-xss-demo-status=success],script[data-xss-demo-status=error]');
-    if (scriptBlock.getAttribute('data-xss-demo-status') == 'error') {
-      throw new Error('Failed to run code the following code in the page fixture:\n' + codeLines.join('\n'));
+    await domTreeAvailable(mockPageDoc.body, 'script[' + AttributeNames.status + '=success], script[' + AttributeNames.status + '=error]');
+    if (scriptBlock.getAttribute(AttributeNames.status) == 'success') {
+      const result = JSON.parse(scriptBlock.getAttribute(AttributeNames.result));
+      mockPageDoc.body.removeChild(scriptBlock);
+      return result;
+    } else if (scriptBlock.getAttribute(AttributeNames.status) == 'error') {
+      const error = new Error(
+        'Failed to run code the following code in the page fixture:\n\n'
+        + codeLines.join('\n')
+        + '\n\nThe error was:'
+        + JSON.parse(scriptBlock.getAttribute(AttributeNames.error)));
+      mockPageDoc.body.removeChild(scriptBlock);
+      throw error;
+    } else {
+      mockPageDoc.body.removeChild(scriptBlock);
+      throw new Error('Oops! Something unexpected went wrong when running code in the page fixture.');
     }
-    mockPageDoc.body.removeChild(scriptBlock);
   }
 
   function tearDownPageFixture() {
