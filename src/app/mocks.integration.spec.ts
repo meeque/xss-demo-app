@@ -856,30 +856,26 @@ describe('XSS Demo Mocks', () => {
     mockPageDoc = pageFixture.contentDocument;
   }
 
-  async function runInPageFixture(... codeLines: string[]) {
-    const enum AttributeNames {
-      status = 'data-xss-demo-tests-run-in-page-fixture-status',
-      result = 'data-xss-demo-tests-run-in-page-fixture-result',
-      error  = 'data-xss-demo-tests-run-in-page-fixture-error'
-    }
+  async function runInPageFixture(... codeLines: string[]): Promise<any> {
+
+    const RESULT_ATTRIBUTE = 'data-xss-demo-tests-run-in-page-fixture-result';
+    const ERROR_ATTRIBUTE = 'data-xss-demo-tests-run-in-page-fixture-error';
 
     const scriptLines = [
       '(async function() {',
-      '  document.currentScript.setAttribute("' + AttributeNames.status + '", "pending");',
-      ... codeLines,
-      '})()',
-      '.then(',
-      '  (result) => {',
-      '    const script = document.querySelector("script[' + AttributeNames.status + ']");',
-      '    script.setAttribute("' + AttributeNames.status + '", "success");',
-      '    script.setAttribute("' + AttributeNames.result + '", JSON.stringify(result));',
-      '  },',
-      '  (error) => {',
-      '    const script = document.querySelector("script[' + AttributeNames.status + ']");',
-      '    script.setAttribute("' + AttributeNames.status + '", "error");',
-      '    script.setAttribute("' + AttributeNames.error + '", JSON.stringify(error));',
-      '  }',
-      ');'
+      '  const scriptBlock = document.currentScript;',
+      '  (async function() {',
+      ... codeLines.map(line => '    ' + line),
+      '  })()',
+      '  .then(',
+      '    (result) => {',
+      '      scriptBlock.setAttribute("' + RESULT_ATTRIBUTE + '", JSON.stringify(result));',
+      '    },',
+      '    (error) => {',
+      '      scriptBlock.setAttribute("' + ERROR_ATTRIBUTE + '", error?.stack || error);',
+      '    }',
+      '  );',
+      '})();'
     ];
 
     const scriptBlock = mockPageDoc.createElement('script');
@@ -887,23 +883,22 @@ describe('XSS Demo Mocks', () => {
     scriptBlock.textContent = scriptLines.join('\n');
     mockPageDoc.body.insertAdjacentElement('beforeend', scriptBlock);
 
-    await domTreeAvailable(mockPageDoc.body, 'script[' + AttributeNames.status + '=success], script[' + AttributeNames.status + '=error]');
-    if (scriptBlock.getAttribute(AttributeNames.status) == 'success') {
-      const result = JSON.parse(scriptBlock.getAttribute(AttributeNames.result));
-      mockPageDoc.body.removeChild(scriptBlock);
-      return result;
-    } else if (scriptBlock.getAttribute(AttributeNames.status) == 'error') {
-      const error = new Error(
+    await domTreeAvailable(mockPageDoc.body, 'script[' + RESULT_ATTRIBUTE + '], script[' + ERROR_ATTRIBUTE + ']');
+    const result = scriptBlock.getAttribute(RESULT_ATTRIBUTE);
+    const error = scriptBlock.getAttribute(ERROR_ATTRIBUTE);
+    mockPageDoc.body.removeChild(scriptBlock);
+
+    if (result !== null) {
+      return JSON.parse(result);
+    }
+    if (error !== null) {
+      throw new Error(
         'Failed to run code the following code in the page fixture:\n\n'
         + codeLines.join('\n')
-        + '\n\nThe error was:'
-        + JSON.parse(scriptBlock.getAttribute(AttributeNames.error)));
-      mockPageDoc.body.removeChild(scriptBlock);
-      throw error;
-    } else {
-      mockPageDoc.body.removeChild(scriptBlock);
-      throw new Error('Oops! Something unexpected went wrong when running code in the page fixture.');
+        + '\n\nThe error was:\n'
+        + error);
     }
+    throw new Error('Oops! Something unexpected went wrong when running code in the page fixture.');
   }
 
   function tearDownPageFixture() {
