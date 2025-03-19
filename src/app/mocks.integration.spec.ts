@@ -1,4 +1,4 @@
-import { AsymmetricEqualityTester, timeout, domTreeAvailable } from './lib.spec';
+import { AsymmetricEqualityTester, anyOf, timeout, domTreeAvailable } from './lib.spec';
 
 describe('XSS Demo Mocks', () => {
 
@@ -331,160 +331,174 @@ describe('XSS Demo Mocks', () => {
 
       describe('should manage cookies', async () => {
 
-        for (const testPath of [undefined, '/', '/assets/']) {
+        for (const testDomain of getDomainsHierarchy()) {
 
-          it ('with path "' + testPath + '"', async () => {
-            const testCookies = [] as Cookie[];
+          for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
 
-            // check no cookies
-            await expectCookies(testCookies);
-            expectCookiesTable(testCookies);
+            it ('with domain "' + testDomain + '" and path "' + testPath + '"', async () => {
+              const testCookies = [] as Cookie[];
 
-            {
-              // add  "foo"
-              const testCookie = {
-                path: testPath,
-                name: 'foo',
-                value: 'value of cookie with name "foo"'
-              };
-              testCookies.push(testCookie);
-              await fillNewCookieForm(testCookie);
-              await expectCookies(testCookies);
-              expectCookiesTable(testCookies);
-            }
-
-            {
-              // start adding "bar", but cancel
-              const testCookie = {
-                path: testPath,
-                name: 'bar',
-                value: 'value of cookie with name "bar"'
-              };
-              await fillNewCookieForm(testCookie, false);
+              // check no cookies
               await expectCookies(testCookies);
               expectCookiesTable(testCookies);
 
-            }
+              {
+                // add  "foo"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'foo',
+                  value: 'value of cookie with name "foo"'
+                };
+                testCookies.push(testCookie);
+                await fillNewCookieForm(testCookie);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies);
+              }
 
-            {
-              // add "xxx"
-              const testCookie = {
-                path: testPath,
-                name: 'xxx',
-                value: 'value of cookie with name "xxx"'
-              };
-              testCookies.push(testCookie);
-              await fillNewCookieForm(testCookie);
-              await expectCookies(testCookies);
-              expectCookiesTable(testCookies);
-            }
+              {
+                // start adding "bar", but cancel
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'bar',
+                  value: 'value of cookie with name "bar"'
+                };
+                await fillNewCookieForm(testCookie, false);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies);
 
-            {
-              // delete "foo"
-              const testCookie = {
-                path: testPath,
-                name: 'foo',
-                value: null
-              };
-              testCookies.splice(0, 1);
-              await deleteCookieTableCookie(testCookie);
-              await expectCookies(testCookies);
-              expectCookiesTable(testCookies);
-            }
+              }
 
-            {
-              // add "bar"
-              const testCookie = {
-                path: testPath,
-                name: 'bar',
-                value: 'value of cookie with name "bar"'
-              };
-              testCookies.push(testCookie);
-              await fillNewCookieForm(testCookie);
-              await expectCookies(testCookies);
-              expectCookiesTable(testCookies);
-            }
+              {
+                // add "xxx"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'xxx',
+                  value: 'value of cookie with name "xxx"'
+                };
+                testCookies.push(testCookie);
+                await fillNewCookieForm(testCookie);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies);
+              }
 
-            {
-              // re-add "foo"
-              const testCookie = {
-                path: testPath,
-                name: 'foo',
-                value: 'value of another cookie with name "foo"'
-              };
-              testCookies.push(testCookie);
-              await fillNewCookieForm(testCookie);
-              await expectCookies(testCookies);
-              expectCookiesTable(testCookies);
-            }
+              {
+                // delete "foo"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'foo',
+                  value: null
+                };
+                testCookies.splice(0, 1);
+                await deleteCookieTableCookie(testCookie);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies);
+              }
 
-            {
-              // edit "bar"
-              const testCookie = {
-                path: testPath,
-                name: 'bar',
-                value: 'new value for cookie with name "bar"'
-              };
-              testCookies[0] = testCookie;
-              await editCookieTableCookie(testCookie);
-              await expectCookies(testCookies);
-              expectCookiesTable(testCookies);
-            }
+              {
+                // add "bar"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'bar',
+                  value: 'value of cookie with name "bar"'
+                };
+                testCookies.push(testCookie);
+                await fillNewCookieForm(testCookie);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies);
+              }
 
-            {
-              // start editing "xxx", but cancel
-              const testCookie = {
-                path: testPath,
-                name: 'xxx',
-                value: 'unsaved value for item with key "xxx"'
-              };
-              await editCookieTableCookie(testCookie, false);
-              await expectCookies(testCookies);
-              expectCookiesTable(testCookies);
-            }
+              {
+                // re-add "foo"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'foo',
+                  value: 'value of another cookie with name "foo"'
+                };
+                testCookies.push(testCookie);
+                await fillNewCookieForm(testCookie);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies);
+              }
 
-            {
-              // edit "foo"
-              const testCookie = {
-                path: testPath,
-                name: 'foo',
-                value: 'new value for cookie with name "foo"'
-              };
-              testCookies[1] = testCookie;
-              await editCookieTableCookie(testCookie);
-              await expectCookies(testCookies);
-              expectCookiesTable(testCookies);
-            }
+              {
+                // edit "bar"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'bar',
+                  value: 'new value for cookie with name "bar"'
+                };
+                testCookies[0] = testCookie;
+                await editCookieTableCookie(testCookie);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies);
+              }
 
-            {
-              // delete "xxx"
-              const testCookie = {
-                path: testPath,
-                name: 'xxx',
-                value: null
-              };
-              testCookies.splice(2, 1);
-              await deleteCookieTableCookie(testCookie);
-              await expectCookies(testCookies);
-              expectCookiesTable(testCookies);
-            }
+              {
+                // start editing "xxx", but cancel
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'xxx',
+                  value: 'unsaved value for item with key "xxx"'
+                };
+                await editCookieTableCookie(testCookie, false);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies);
+              }
 
-            {
-              // edit "bar" again, with funky value
-              const testCookie = {
-                path: testPath,
-                name: 'bar',
-                value: 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for cookie with name "bar"'
-              };
-              testCookies[0] = testCookie;
-              await editCookieTableCookie(testCookie);
-              await expectCookies(testCookies);
-              expectCookiesTable(testCookies);
-            }
+              {
+                // edit "foo"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'foo',
+                  value: 'new value for cookie with name "foo"'
+                };
+                testCookies[1] = testCookie;
+                await editCookieTableCookie(testCookie);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies);
+              }
 
-            // wait a bit for async failures
-            await timeout(200);
-          });
+              {
+                // delete "xxx"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'xxx',
+                  value: null
+                };
+                testCookies.splice(2, 1);
+                await deleteCookieTableCookie(testCookie);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies);
+              }
+
+              {
+                // edit "bar" again, with funky value
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'bar',
+                  value: 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for cookie with name "bar"'
+                };
+                testCookies[0] = testCookie;
+                await editCookieTableCookie(testCookie);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies);
+              }
+
+              // wait a bit for async failures
+              await timeout(200);
+            });
+          }
         }
       });
 
@@ -600,8 +614,14 @@ describe('XSS Demo Mocks', () => {
       for (const cookieRow of storageTableCookieRows) {
         if (typeof cookie.domain === 'string') {
           const cookieDomainField = queryAndExpectOne(cookieRow, 'td.domain input[type=text]') as HTMLInputElement;
-          if (cookieDomainField.value != cookie.domain) {
-            continue;
+          if (cookie.domain === document.location.hostname) {
+            if (cookieDomainField.value != cookie.domain && cookieDomainField.value != '') {
+              continue;
+            }
+          } else {
+            if (cookieDomainField.value != cookie.domain) {
+              continue;
+            }
           }
         }
         if (typeof cookie.path === 'string') {
@@ -709,7 +729,11 @@ describe('XSS Demo Mocks', () => {
       const sameSiteSelect = queryAndExpectOne(row, 'td.sameSite select') as HTMLSelectElement;
       const expiresField = queryAndExpectOne(row, 'td.expires input[type=text]') as HTMLInputElement;
 
-      expect(domainField.value).toBe(cookie.domain || '');
+      if (cookie.domain === document.location.hostname) {
+        expect(domainField.value).toEqual(anyOf([cookie.domain, '']));
+      } else {
+        expect(domainField.value).toBe(cookie.domain || '');
+      }
       expect(pathField.value).toBe(cookie.path || '/');
       expect(nameField.value).toBe(cookie.name || '');
       expect(valueField.value).toBe(cookie.value || '');
@@ -749,7 +773,11 @@ describe('XSS Demo Mocks', () => {
       return {
         asymmetricMatch: function(actual) {
           if (typeof expected.domain === 'string') {
-            if (actual.domain != expected.domain) return false;
+            if (expected.domain === document.location.hostname) {
+              if (actual.domain != expected.domain && actual.domain != null) return false;
+            } else {
+              if (actual.domain != expected.domain) return false;
+            }
           } else {
             if (actual.domain != null) return false;
           }
@@ -892,5 +920,29 @@ describe('XSS Demo Mocks', () => {
     const result = context.querySelectorAll(selector);
     expect(result.length).withContext('number of elements matching query "' + selector + '"').toBe(count);
     return Array.from(result) as HTMLElement[];
+  }
+
+  function getDomainsHierarchy() {
+    const ownDomain = document.location.hostname;
+    const domainLabels = ownDomain.split('.').filter((label) => label !== '');
+
+    // unqualified host name or IPv6 address
+    if (domainLabels.length === 1) {
+      return [ownDomain];
+    }
+
+    // IPv4 address
+    if (/^[0-9]+$/.test(domainLabels[-1])) {
+      return [ownDomain];
+    }
+
+    // qualified domain name
+    const domains = [] as string[];
+    for (let i = 0; i < domainLabels.length; i++)
+    {
+      domains.push(domainLabels.slice(i, domainLabels.length).join('.'));
+    }
+    domains.pop();
+    return domains;
   }
 });

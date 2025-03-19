@@ -13,6 +13,16 @@ interface MatchersUtil {
   pp(actual: any): string
 }
 
+export function anyOf(expected: any[]): AsymmetricEqualityTester<any> {
+  return {
+    asymmetricMatch: function(actual, util: MatchersUtil) {
+      return util.contains(expected, actual);
+    },
+    jasmineToString: function(pp) {
+      return 'any of ' + pp(expected);
+    }
+  };
+}
 
 
 export function timeout<D>(millis: number, data?: D): Promise<D> {
