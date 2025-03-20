@@ -761,9 +761,6 @@ describe('XSS Demo Mocks', () => {
       const cookies = await getAllCookies();
       expect(cookies.length).withContext('number of cookies').toBe(testCookies.length);
 
-      sortCookies(cookies);
-      sortCookies(testCookies);
-
       let i = 0;
       for (const cookie of cookies) {
         expect(cookie).toEqual(cookieProps(testCookies[i++]));
@@ -893,7 +890,7 @@ describe('XSS Demo Mocks', () => {
       } else {
         cookies.push(cookie);
       }
-      return cookies;
+      return sortCookies(cookies);
     }
 
     function removeCookie(cookies: Cookie[], id: CookieId): Cookie[] {
@@ -904,9 +901,11 @@ describe('XSS Demo Mocks', () => {
       return cookies;
     }
 
-    function getAllCookies(): Promise<Cookie[]> {
-      return runInPageFixture(
-        'return cookieStore.getAll();'
+    async function getAllCookies(): Promise<Cookie[]> {
+      return sortCookies(
+        await runInPageFixture(
+          'return cookieStore.getAll();'
+        )
       );
     }
 
