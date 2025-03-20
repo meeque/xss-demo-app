@@ -524,6 +524,35 @@ describe('XSS Demo Mocks', () => {
                 expectCookiesTable(testCookies, true);
               }
 
+              {
+                // add ""
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: '',
+                  value: 'value of a cookie with an empty name',
+                  sameSite: SameSite.none,
+                };
+                addCookie(testCookies, testCookie);
+                await fillNewCookieForm(testCookie, true);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies);
+              }
+
+              {
+                // try changing value of "" to an empty string
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: '',
+                  value: '',
+                  sameSite: SameSite.none,
+                };
+                await editCookieTableCookie(testCookie, true);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies, true);
+              }
+
               // wait a bit for async failures
               await timeout(200);
             });
