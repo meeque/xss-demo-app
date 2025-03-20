@@ -745,10 +745,27 @@ describe('XSS Demo Mocks', () => {
       const pathField = queryAndExpectOne(cookieRow, 'td.path input[type=text]') as HTMLInputElement;
       const nameField = queryAndExpectOne(cookieRow, 'td.name input[type=text]') as HTMLInputElement;
       const valueField = queryAndExpectOne(cookieRow, 'td.value input[type=text]') as HTMLInputElement;
+      const secureCheckbox = queryAndExpectOne(cookieRow, 'td.secure input[type=checkbox]') as HTMLInputElement;
+      const httpOnlyCheckbox = queryAndExpectOne(cookieRow, 'td.httpOnly input[type=checkbox]') as HTMLInputElement;
       const sameSiteSelect = queryAndExpectOne(cookieRow, 'td.sameSite select') as HTMLSelectElement;
       const expiresField = queryAndExpectOne(cookieRow, 'td.expires input[type=text]') as HTMLInputElement;
+      const editButton = queryAndExpectOne(cookieRow, 'td.actions button[name=edit]') as HTMLButtonElement;
+      const deleteButton = queryAndExpectOne(cookieRow, 'td.actions button[name=delete]') as HTMLButtonElement;
       const saveButton = queryAndExpectOne(cookieRow, 'td.actions button[name=save]') as HTMLButtonElement;
       const cancelButton = queryAndExpectOne(cookieRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
+
+      expect(domainField.value).toBe('');
+      expect(pathField.value).toBe('/');
+      expect(nameField.value).toBe('');
+      expect(valueField.value).toBe('');
+      expect(secureCheckbox.checked).toBeTrue();
+      expect(httpOnlyCheckbox.checked).toBeFalse();
+      expect(sameSiteSelect.value).toBe(SameSite.strict);
+      expect(expiresField.value).toBe('');
+      expect(editButton.disabled).toBeTrue();
+      expect(deleteButton.disabled).toBeTrue();
+      expect(saveButton.disabled).toBeFalse();
+      expect(cancelButton.disabled).toBeFalse();
 
       if (testCookie.domain !== undefined) domainField.value = testCookie.domain;
       if (testCookie.path !== undefined) pathField.value = testCookie.path;
@@ -773,11 +790,23 @@ describe('XSS Demo Mocks', () => {
       await timeout(100);
       queryAndExpectCount(queryCookiesTable(), 'tr', initialCookiesTableRows.length);
 
+      const domainField = queryAndExpectOne(cookieRow, 'td.domain input[type=text]') as HTMLInputElement;
+      const pathField = queryAndExpectOne(cookieRow, 'td.path input[type=text]') as HTMLInputElement;
+      const nameField = queryAndExpectOne(cookieRow, 'td.name input[type=text]') as HTMLInputElement;
       const valueField = queryAndExpectOne(cookieRow, 'td.value input[type=text]') as HTMLInputElement;
       const sameSiteSelect = queryAndExpectOne(cookieRow, 'td.sameSite select') as HTMLSelectElement;
       const expiresField = queryAndExpectOne(cookieRow, 'td.expires input[type=text]') as HTMLInputElement;
+      const deleteButton = queryAndExpectOne(cookieRow, 'td.actions button[name=delete]') as HTMLButtonElement;
       const saveButton = queryAndExpectOne(cookieRow, 'td.actions button[name=save]') as HTMLButtonElement;
       const cancelButton = queryAndExpectOne(cookieRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
+
+      expect(domainField.value).toBe(testCookie.domain || '');
+      expect(pathField.value).toBe(testCookie.path || '/');
+      expect(nameField.value).toBe(testCookie.name || '');
+      expect(editButton.disabled).toBeTrue();
+      expect(deleteButton.disabled).toBeTrue();
+      expect(saveButton.disabled).toBeFalse();
+      expect(cancelButton.disabled).toBeFalse();
 
       if (testCookie.value !== undefined) valueField.value = testCookie.value;
       if (testCookie.sameSite !== undefined) sameSiteSelect.value = testCookie.sameSite;
@@ -833,13 +862,13 @@ describe('XSS Demo Mocks', () => {
       expect(nameField.value).toBe(cookie.name || '');
       expect(valueField.value).toBe(cookie.value || '');
       expect(secureCheckbox.checked).toBe(typeof cookie.secure === 'boolean' ? cookie.secure : true);
-      expect(httpOnlyCheckbox.checked).toBe(false);
+      expect(httpOnlyCheckbox.checked).toBeFalse();
       expect(sameSiteSelect.value).toBe(typeof cookie.sameSite === 'string' ? cookie.sameSite : 'strict');
       expect(expiresField.value).toBe(cookie.expires != null ? cookie.expires.toString() : 'session');
-      expect(editButton.disabled).toBe(false);
-      expect(deleteButton.disabled).toBe(false);
-      expect(saveButton.disabled).toBe(true);
-      expect(cancelButton.disabled).toBe(true);
+      expect(editButton.disabled).toBeFalse();
+      expect(deleteButton.disabled).toBeFalse();
+      expect(saveButton.disabled).toBeTrue();
+      expect(cancelButton.disabled).toBeTrue();
     }
 
     function expectCookiesTable(cookies: Cookie[], expectError=false) {
@@ -856,7 +885,7 @@ describe('XSS Demo Mocks', () => {
       }
 
       const newCookieButton = queryAndExpectOne(cookiesTable, 'tr.actions button[name=new]') as HTMLButtonElement;
-      expect(newCookieButton.disabled).withContext('"create new cookie" button disabled').toBe(false);
+      expect(newCookieButton.disabled).withContext('"create new cookie" button disabled').toBeFalse();
 
       const cookieRows = queryAndExpectCount(cookiesTable, 'tr', rowCount);
       expect(cookieRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
