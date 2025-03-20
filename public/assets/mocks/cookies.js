@@ -48,16 +48,9 @@ document.addEventListener(
                     $remove($rowCookie);
                 }
 
-                const cookies = await window.cookieStore.getAll();
-                if (cookies.length != 0) {
-
-                    cookies.sort( (c1, c2) => c1.name == c2.name ? 0 : (c1.name < c2.name ? -1 : 1 ) );
-                    cookies.sort( (c1, c2) => c1.path == c2.path ? 0 : (c1.path < c2.path ? -1 : 1 ) );
-                    cookies.sort( (c1, c2) => c1.domain == c2.domain ? 0 : (c1.domain < c2.domain ? -1 : 1 ) );
-
-                    for (const cookie of cookies) {
-                        cookieController(cookie);
-                    }
+                const cookies = sortCookies(await window.cookieStore.getAll());
+                for (const cookie of cookies) {
+                    cookieController(cookie);
                 }
 
                 resetEmptyMessage();
@@ -218,6 +211,13 @@ document.addEventListener(
             function enableStandardButtons() {
                 $enable(... $tableCookies.querySelectorAll('button[name=new], button[name=edit], button[name=delete]'));
             }
+        }
+
+        function sortCookies(cookies) {
+            cookies.sort( (c1, c2) => c1.name == c2.name ? 0 : (c1.name < c2.name ? -1 : 1 ) );
+            cookies.sort( (c1, c2) => c1.path == c2.path ? 0 : (c1.path < c2.path ? -1 : 1 ) );
+            cookies.sort( (c1, c2) => c1.domain == c2.domain ? 0 : (c1.domain < c2.domain ? -1 : 1 ) );
+            return cookies;
         }
 
         async function setCookie(options) {
