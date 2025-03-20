@@ -30,7 +30,6 @@ document.addEventListener(
             const $tableCookies = $$cookies.cloneNode(true).querySelector('table.cookies');
             $container.insertAdjacentElement('beforeend', $tableCookies);
 
-            const $rowMessageEmpty = $tableCookies.querySelector('tr.messageEmpty');
             const $rowActions = $tableCookies.querySelector('tr.actions');
             const $cellMessageError = $rowActions.querySelector('td.message.error');
             const $buttonNew = $rowActions.querySelector('button[name=new]');
@@ -49,24 +48,29 @@ document.addEventListener(
                     $remove($rowCookie);
                 }
 
-                resetErrorMessage();
-
                 const cookies = await window.cookieStore.getAll();
                 if (cookies.length != 0) {
-                    $tableCookies.classList.remove('empty');
 
                     cookies.sort( (c1, c2) => c1.name == c2.name ? 0 : (c1.name < c2.name ? -1 : 1 ) );
                     cookies.sort( (c1, c2) => c1.path == c2.path ? 0 : (c1.path < c2.path ? -1 : 1 ) );
                     cookies.sort( (c1, c2) => c1.domain == c2.domain ? 0 : (c1.domain < c2.domain ? -1 : 1 ) );
 
-                    $remove($rowMessageEmpty);
                     for (const cookie of cookies) {
                         cookieController(cookie);
                     }
-                } else {
-                    $tableCookies.classList.add('empty');
                 }
+
+                resetEmptyMessage();
+                resetErrorMessage();
                 enableStandardButtons();
+            }
+
+            function resetEmptyMessage() {
+                if ($tableCookies.querySelectorAll('tr.cookie').length == 0) {
+                    $tableCookies.classList.add('empty');
+                } else {
+                    $tableCookies.classList.remove('empty');
+                }
             }
 
             function resetErrorMessage() {
@@ -122,9 +126,9 @@ document.addEventListener(
                 }
 
                 function edit() {
-                    resetErrorMessage();
                     $rowCookie.classList.add('edit');
                     $rowCookie.classList.remove('new');
+                    resetErrorMessage();
                     disableButtons();
 
                     refresh();
@@ -135,9 +139,10 @@ document.addEventListener(
                 }
 
                 function newCookie() {
-                    resetErrorMessage();
                     $rowCookie.classList.add('new');
                     $rowCookie.classList.remove('edit');
+                    resetEmptyMessage();
+                    resetErrorMessage();
                     disableButtons();
 
                     $inputExpires.title = messageExpiresHint;
@@ -186,6 +191,7 @@ document.addEventListener(
                         display();
                     } else {
                         $remove($rowCookie);
+                        resetEmptyMessage();
                         enableStandardButtons();
                     }
                 }

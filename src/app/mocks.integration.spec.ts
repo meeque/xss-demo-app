@@ -755,6 +755,7 @@ describe('XSS Demo Mocks', () => {
       newCookieButton.click();
 
       queryAndExpectCount(cookiesTable, 'tr', initialCookiesTableRows.length + 1);
+      expect(cookiesTable.classList).withContext('cookies table classes').not.toContain('empty');
       expect(newCookieButton.disabled).withContext('"create new cookie" button disabled').toBeTrue();
       const errorMessageCell = queryAndExpectOne(cookiesTable, 'tr.actions td.message.error');
       expect(errorMessageCell.textContent.trim()).toBe('');
@@ -811,6 +812,7 @@ describe('XSS Demo Mocks', () => {
       await timeout(100);
 
       queryAndExpectCount(cookiesTable, 'tr', initialCookiesTableRows.length);
+      expect(cookiesTable.classList).withContext('cookies table classes').not.toContain('empty');
       const newCookieButton = queryAndExpectOne(cookiesTable, 'tr.actions button[name=new]') as HTMLButtonElement;
       expect(newCookieButton.disabled).withContext('"create new cookie" button disabled').toBeTrue();
       const errorMessageCell = queryAndExpectOne(cookiesTable, 'tr.actions td.message.error');
