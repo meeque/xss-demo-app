@@ -42,7 +42,8 @@ module.exports = function(config) {
       }
     },
     browsers: ['ChromiumHeadlessContainerized'],
-    restartOnFileChange: true
+    autoWatch: false,
+    restartOnFileChange: false
   };
 
   // dynamic https config
