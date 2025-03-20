@@ -290,6 +290,12 @@ describe('XSS Demo Mocks', () => {
 
   describe('Cookies Page', () => {
 
+    const enum SameSite {
+      strict = 'strict',
+      lax    = 'lax',
+      none   = 'none',
+    }
+
     interface CookieId {
       domain?: string;
       path?: string;
@@ -300,7 +306,7 @@ describe('XSS Demo Mocks', () => {
     interface Cookie extends CookieId {
       value: string;
       secure?: boolean;
-      sameSite?: string;
+      sameSite?: SameSite;
       expires?: number;
     }
 
@@ -335,7 +341,7 @@ describe('XSS Demo Mocks', () => {
 
           for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
 
-            it ('with domain "' + testDomain + '" and path "' + testPath + '"', async () => {
+            it('with domain "' + testDomain + '" and path "' + testPath + '"', async () => {
               const testCookies = [] as Cookie[];
 
               // check no cookies
@@ -367,7 +373,6 @@ describe('XSS Demo Mocks', () => {
                 await fillNewCookieForm(testCookie, false);
                 await expectCookies(testCookies);
                 expectCookiesTable(testCookies);
-
               }
 
               {
@@ -376,7 +381,8 @@ describe('XSS Demo Mocks', () => {
                   domain: testDomain,
                   path: testPath,
                   name: 'xxx',
-                  value: 'value of cookie with name "xxx"'
+                  value: 'value of cookie with name "xxx"',
+                  sameSite: SameSite.lax
                 };
                 testCookies.push(testCookie);
                 await fillNewCookieForm(testCookie);
@@ -389,8 +395,7 @@ describe('XSS Demo Mocks', () => {
                 const testCookie = {
                   domain: testDomain,
                   path: testPath,
-                  name: 'foo',
-                  value: null
+                  name: 'foo'
                 };
                 testCookies.splice(0, 1);
                 await deleteCookieTableCookie(testCookie);
@@ -404,7 +409,9 @@ describe('XSS Demo Mocks', () => {
                   domain: testDomain,
                   path: testPath,
                   name: 'bar',
-                  value: 'value of cookie with name "bar"'
+                  value: 'value of cookie with name "bar"',
+                  sameSite: SameSite.none,
+                  expires: Date.now() + (60 * 1000)
                 };
                 testCookies.push(testCookie);
                 await fillNewCookieForm(testCookie);
@@ -418,7 +425,8 @@ describe('XSS Demo Mocks', () => {
                   domain: testDomain,
                   path: testPath,
                   name: 'foo',
-                  value: 'value of another cookie with name "foo"'
+                  value: 'value of another cookie with name "foo"',
+                  sameSite: SameSite.none,
                 };
                 testCookies.push(testCookie);
                 await fillNewCookieForm(testCookie);
@@ -432,7 +440,9 @@ describe('XSS Demo Mocks', () => {
                   domain: testDomain,
                   path: testPath,
                   name: 'bar',
-                  value: 'new value for cookie with name "bar"'
+                  value: 'new value for cookie with name "bar"',
+                  sameSite: SameSite.strict,
+                  expires: Date.now() + (60 * 1000)
                 };
                 testCookies[0] = testCookie;
                 await editCookieTableCookie(testCookie);
@@ -446,7 +456,9 @@ describe('XSS Demo Mocks', () => {
                   domain: testDomain,
                   path: testPath,
                   name: 'xxx',
-                  value: 'unsaved value for item with key "xxx"'
+                  value: 'unsaved value for item with key "xxx"',
+                  sameSite: SameSite.lax,
+                  expires: null
                 };
                 await editCookieTableCookie(testCookie, false);
                 await expectCookies(testCookies);
@@ -459,7 +471,9 @@ describe('XSS Demo Mocks', () => {
                   domain: testDomain,
                   path: testPath,
                   name: 'foo',
-                  value: 'new value for cookie with name "foo"'
+                  value: 'new value for cookie with name "foo"',
+                  sameSite: SameSite.strict,
+                  expires: Date.now() + (10 * 60 * 1000)
                 };
                 testCookies[1] = testCookie;
                 await editCookieTableCookie(testCookie);
@@ -472,8 +486,7 @@ describe('XSS Demo Mocks', () => {
                 const testCookie = {
                   domain: testDomain,
                   path: testPath,
-                  name: 'xxx',
-                  value: null
+                  name: 'xxx'
                 };
                 testCookies.splice(2, 1);
                 await deleteCookieTableCookie(testCookie);
@@ -487,7 +500,9 @@ describe('XSS Demo Mocks', () => {
                   domain: testDomain,
                   path: testPath,
                   name: 'bar',
-                  value: 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for cookie with name "bar"'
+                  value: 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for cookie with name "bar"',
+                  sameSite: SameSite.strict,
+                  expires: null
                 };
                 testCookies[0] = testCookie;
                 await editCookieTableCookie(testCookie);
@@ -647,7 +662,7 @@ describe('XSS Demo Mocks', () => {
       return null;
     }
 
-    function fillNewCookieForm(testCookie: Cookie, save = true): Promise<void> {
+    async function fillNewCookieForm(testCookie: Cookie, save = true): Promise<void> {
 
       const cookiesTable = queryCookiesTable();
       const initialCookiesTableRows = cookiesTable.querySelectorAll('tr');
@@ -656,47 +671,57 @@ describe('XSS Demo Mocks', () => {
       newCookieButton.click();
 
       queryAndExpectCount(cookiesTable, 'tr', initialCookiesTableRows.length + 1);
-      const row = queryAndExpectOne(cookiesTable, 'tr.cookie.new') as HTMLTableRowElement;
-      const domainField = queryAndExpectOne(row, 'td.domain input[type=text]') as HTMLInputElement;
-      const pathField = queryAndExpectOne(row, 'td.path input[type=text]') as HTMLInputElement;
-      const nameField = queryAndExpectOne(row, 'td.name input[type=text]') as HTMLInputElement;
-      const valueField = queryAndExpectOne(row, 'td.value input[type=text]') as HTMLInputElement;
-      const sameSiteSelect = queryAndExpectOne(row, 'td.sameSite select') as HTMLSelectElement;
-      const expiresField = queryAndExpectOne(row, 'td.expires input[type=text]') as HTMLInputElement;
-      const saveButton = queryAndExpectOne(row, 'td.actions button[name=save]') as HTMLButtonElement;
-      const cancelButton = queryAndExpectOne(row, 'td.actions button[name=cancel]') as HTMLButtonElement;
+      const cookieRow = queryAndExpectOne(cookiesTable, 'tr.cookie.new') as HTMLTableRowElement;
+      const domainField = queryAndExpectOne(cookieRow, 'td.domain input[type=text]') as HTMLInputElement;
+      const pathField = queryAndExpectOne(cookieRow, 'td.path input[type=text]') as HTMLInputElement;
+      const nameField = queryAndExpectOne(cookieRow, 'td.name input[type=text]') as HTMLInputElement;
+      const valueField = queryAndExpectOne(cookieRow, 'td.value input[type=text]') as HTMLInputElement;
+      const sameSiteSelect = queryAndExpectOne(cookieRow, 'td.sameSite select') as HTMLSelectElement;
+      const expiresField = queryAndExpectOne(cookieRow, 'td.expires input[type=text]') as HTMLInputElement;
+      const saveButton = queryAndExpectOne(cookieRow, 'td.actions button[name=save]') as HTMLButtonElement;
+      const cancelButton = queryAndExpectOne(cookieRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
 
-      if (testCookie.domain) domainField.value = testCookie.domain;
-      if (testCookie.path) pathField.value = testCookie.path;
-      if (testCookie.name) nameField.value = testCookie.name;
-      if (testCookie.value) valueField.value = testCookie.value;
-      if (testCookie.sameSite) sameSiteSelect.value = testCookie.sameSite;
-      if (typeof testCookie.expires === 'number') expiresField.value = testCookie.expires.toString();
+      if (testCookie.domain !== undefined) domainField.value = testCookie.domain;
+      if (testCookie.path !== undefined) pathField.value = testCookie.path;
+      if (testCookie.name !== undefined) nameField.value = testCookie.name;
+      if (testCookie.value !== undefined) valueField.value = testCookie.value;
+      if (testCookie.sameSite !== undefined) sameSiteSelect.value = testCookie.sameSite;
+      if (testCookie.expires !== undefined) {
+        expiresField.value = (typeof testCookie.expires === 'number') ? testCookie.expires.toString() : '';
+      }
+
       (save ? saveButton : cancelButton).dispatchEvent(new Event('click'));
-
-      return timeout(100);
+      await timeout(100);
+      queryAndExpectCount(queryCookiesTable(), 'tr', initialCookiesTableRows.length + (save ? 1 : 0));
     }
 
-    async function editCookieTableCookie(cookie: Cookie, save = true): Promise<void> {
+    async function editCookieTableCookie(testCookie: Cookie, save = true): Promise<void> {
       const initialCookiesTableRows = queryCookiesTable().querySelectorAll('tr');
-      const cookieRow = queryCookiesTableCookie(cookie);
+      const cookieRow = queryCookiesTableCookie(testCookie);
       const editButton = queryAndExpectOne(cookieRow, 'td.actions button[name=edit]') as HTMLButtonElement;
 
       editButton.click();
       await timeout(100);
       queryAndExpectCount(queryCookiesTable(), 'tr', initialCookiesTableRows.length);
 
-      const cookieValueField = queryAndExpectOne(cookieRow, 'td.value input[type=text]') as HTMLInputElement;
+      const valueField = queryAndExpectOne(cookieRow, 'td.value input[type=text]') as HTMLInputElement;
+      const sameSiteSelect = queryAndExpectOne(cookieRow, 'td.sameSite select') as HTMLSelectElement;
+      const expiresField = queryAndExpectOne(cookieRow, 'td.expires input[type=text]') as HTMLInputElement;
       const saveButton = queryAndExpectOne(cookieRow, 'td.actions button[name=save]') as HTMLButtonElement;
       const cancelButton = queryAndExpectOne(cookieRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
 
-      cookieValueField.value = cookie.value;
+      if (testCookie.value !== undefined) valueField.value = testCookie.value;
+      if (testCookie.sameSite !== undefined) sameSiteSelect.value = testCookie.sameSite;
+      if (testCookie.expires !== undefined) {
+        expiresField.value = (typeof testCookie.expires === 'number') ? testCookie.expires.toString() : '';
+      }
+
       save ? saveButton.click() : cancelButton.click();
       await timeout(100);
       queryAndExpectCount(queryCookiesTable(), 'tr', initialCookiesTableRows.length);
     }
 
-    async function deleteCookieTableCookie(cookie: Cookie): Promise<void> {
+    async function deleteCookieTableCookie(cookie: CookieId): Promise<void> {
       const initialCookiesTableRows = queryCookiesTable().querySelectorAll('tr');
       const cookieRow = queryCookiesTableCookie(cookie);
       const deleteButton = queryAndExpectOne(cookieRow, 'td.actions button[name=delete]') as HTMLButtonElement;
@@ -737,7 +762,7 @@ describe('XSS Demo Mocks', () => {
       expect(pathField.value).toBe(cookie.path || '/');
       expect(nameField.value).toBe(cookie.name || '');
       expect(valueField.value).toBe(cookie.value || '');
-      expect(secureCheckbox.checked).toBe(typeof cookie.secure === 'boolean' ? cookie.secure : true );
+      expect(secureCheckbox.checked).toBe(typeof cookie.secure === 'boolean' ? cookie.secure : true);
       expect(httpOnlyCheckbox.checked).toBe(false);
       expect(sameSiteSelect.value).toBe(typeof cookie.sameSite === 'string' ? cookie.sameSite : 'strict');
       expect(expiresField.value).toBe(cookie.expires != null ? cookie.expires.toString() : 'session');
