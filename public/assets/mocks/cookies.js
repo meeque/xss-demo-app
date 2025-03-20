@@ -49,12 +49,7 @@ document.addEventListener(
                     $remove($rowCookie);
                 }
 
-                if (messageError === null) {
-                    $cellMessageError.textContent = '';
-                } else {
-                    $cellMessageError.textContent = messageError;
-                    messageError = null;
-                }
+                resetErrorMessage();
 
                 const cookies = await window.cookieStore.getAll();
                 if (cookies.length != 0) {
@@ -70,6 +65,16 @@ document.addEventListener(
                     }
                 } else {
                     $tableCookies.classList.add('empty');
+                }
+                enableStandardButtons();
+            }
+
+            function resetErrorMessage() {
+                if (messageError === null) {
+                    $cellMessageError.textContent = '';
+                } else {
+                    $cellMessageError.textContent = messageError;
+                    messageError = null;
                 }
             }
 
@@ -117,6 +122,7 @@ document.addEventListener(
                 }
 
                 function edit() {
+                    resetErrorMessage();
                     $rowCookie.classList.add('edit');
                     $rowCookie.classList.remove('new');
                     disableButtons();
@@ -129,6 +135,7 @@ document.addEventListener(
                 }
 
                 function newCookie() {
+                    resetErrorMessage();
                     $rowCookie.classList.add('new');
                     $rowCookie.classList.remove('edit');
                     disableButtons();
