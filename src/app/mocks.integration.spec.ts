@@ -510,6 +510,20 @@ describe('XSS Demo Mocks', () => {
                 expectCookiesTable(testCookies);
               }
 
+              {
+                // try adding "" with empty value
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: '',
+                  value: '',
+                  sameSite: SameSite.none,
+                };
+                await fillNewCookieForm(testCookie, true, true);
+                await expectCookies(testCookies);
+                expectCookiesTable(testCookies, true);
+              }
+
               // wait a bit for async failures
               await timeout(200);
             });
@@ -688,7 +702,7 @@ describe('XSS Demo Mocks', () => {
       return null;
     }
 
-    async function fillNewCookieForm(testCookie: Cookie, save = true): Promise<void> {
+    async function fillNewCookieForm(testCookie: Cookie, save = true, expectError = false): Promise<void> {
 
       const cookiesTable = queryCookiesTable();
       const initialCookiesTableRows = cookiesTable.querySelectorAll('tr');
@@ -718,7 +732,7 @@ describe('XSS Demo Mocks', () => {
 
       (save ? saveButton : cancelButton).dispatchEvent(new Event('click'));
       await timeout(100);
-      queryAndExpectCount(queryCookiesTable(), 'tr', initialCookiesTableRows.length + (save ? 1 : 0));
+      queryAndExpectCount(queryCookiesTable(), 'tr', initialCookiesTableRows.length + (save && !expectError ? 1 : 0));
     }
 
     async function editCookieTableCookie(testCookie: Cookie, save = true): Promise<void> {
@@ -767,15 +781,19 @@ describe('XSS Demo Mocks', () => {
       }
     }
 
-    function expectCookieRowValues(row: HTMLElement, cookie: Cookie) {
-      const domainField = queryAndExpectOne(row, 'td.domain input[type=text]') as HTMLInputElement;
-      const pathField = queryAndExpectOne(row, 'td.path input[type=text]') as HTMLInputElement;
-      const nameField = queryAndExpectOne(row, 'td.name input[type=text]') as HTMLInputElement;
-      const valueField = queryAndExpectOne(row, 'td.value input[type=text]') as HTMLInputElement;
-      const secureCheckbox = queryAndExpectOne(row, 'td.secure input[type=checkbox]') as HTMLInputElement;
-      const httpOnlyCheckbox = queryAndExpectOne(row, 'td.httpOnly input[type=checkbox]') as HTMLInputElement;
-      const sameSiteSelect = queryAndExpectOne(row, 'td.sameSite select') as HTMLSelectElement;
-      const expiresField = queryAndExpectOne(row, 'td.expires input[type=text]') as HTMLInputElement;
+    function expectCookieRowValues(cookieRow: HTMLElement, cookie: Cookie) {
+      const domainField = queryAndExpectOne(cookieRow, 'td.domain input[type=text]') as HTMLInputElement;
+      const pathField = queryAndExpectOne(cookieRow, 'td.path input[type=text]') as HTMLInputElement;
+      const nameField = queryAndExpectOne(cookieRow, 'td.name input[type=text]') as HTMLInputElement;
+      const valueField = queryAndExpectOne(cookieRow, 'td.value input[type=text]') as HTMLInputElement;
+      const secureCheckbox = queryAndExpectOne(cookieRow, 'td.secure input[type=checkbox]') as HTMLInputElement;
+      const httpOnlyCheckbox = queryAndExpectOne(cookieRow, 'td.httpOnly input[type=checkbox]') as HTMLInputElement;
+      const sameSiteSelect = queryAndExpectOne(cookieRow, 'td.sameSite select') as HTMLSelectElement;
+      const expiresField = queryAndExpectOne(cookieRow, 'td.expires input[type=text]') as HTMLInputElement;
+      const editButton = queryAndExpectOne(cookieRow, 'td.actions button[name=edit]') as HTMLButtonElement;
+      const deleteButton = queryAndExpectOne(cookieRow, 'td.actions button[name=delete]') as HTMLButtonElement;
+      const saveButton = queryAndExpectOne(cookieRow, 'td.actions button[name=save]') as HTMLButtonElement;
+      const cancelButton = queryAndExpectOne(cookieRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
 
       if (cookie.domain === document.location.hostname) {
         expect(domainField.value).toEqual(anyOf([cookie.domain, '']));
@@ -789,9 +807,13 @@ describe('XSS Demo Mocks', () => {
       expect(httpOnlyCheckbox.checked).toBe(false);
       expect(sameSiteSelect.value).toBe(typeof cookie.sameSite === 'string' ? cookie.sameSite : 'strict');
       expect(expiresField.value).toBe(cookie.expires != null ? cookie.expires.toString() : 'session');
+      expect(editButton.disabled).toBe(false);
+      expect(deleteButton.disabled).toBe(false);
+      expect(saveButton.disabled).toBe(true);
+      expect(cancelButton.disabled).toBe(true);
     }
 
-    function expectCookiesTable(cookies: Cookie[]) {
+    function expectCookiesTable(cookies: Cookie[], expectError=false) {
       const cookiesTable = queryCookiesTable();
 
       sortCookies(cookies);
@@ -804,10 +826,16 @@ describe('XSS Demo Mocks', () => {
         expect(cookiesTable.classList).withContext('cookies table classes').not.toContain('empty');
       }
 
+      const newCookieButton = queryAndExpectOne(cookiesTable, 'tr.actions button[name=new]') as HTMLButtonElement;
+      expect(newCookieButton.disabled).withContext('"create new cookie" button disabled').toBe(false);
+
       const cookieRows = queryAndExpectCount(cookiesTable, 'tr', rowCount);
       expect(cookieRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
       expect(cookieRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
       expect(cookieRows[rowCount-1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
+
+      const messageCell = queryAndExpectOne(queryCookiesTable(), 'tr.actions td.message.error');
+      expect(messageCell.textContent.trim()).toEqual(expectError ? jasmine.stringContaining('Error') : '');
 
       let index = 2;
       for (const cookie of cookies) {
