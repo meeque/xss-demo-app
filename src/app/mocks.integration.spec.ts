@@ -338,10 +338,10 @@ describe('XSS Demo Mocks', () => {
       describe('should manage cookies', async () => {
 
         for (const testDomain of getDomainsHierarchy()) {
-
           for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
 
             it('with domain "' + testDomain + '" and path "' + testPath + '"', async () => {
+
               const testCookies = [] as Cookie[];
 
               // check no cookies
@@ -513,109 +513,135 @@ describe('XSS Demo Mocks', () => {
               // wait a bit for async failures
               await timeout(200);
             });
+
           }
         }
+
       });
 
-      it('should reflect external storage changes in its web UI', async () => {
+      describe('should reflect external cookie changes', async () => {
 
-        const testCookies = [] as Cookie[];
+        for (const testDomain of getDomainsHierarchy()) {
+          for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
 
-        // check no cookies
-        await expectCookies(testCookies);
-        expectCookiesTable(testCookies);
+            it('with domain "' + testDomain + '" and path "' + testPath + '"', async () => {
 
-        {
-          // add "FOO"
-          const testCookie = {
-            name: 'FOO',
-            value: 'cookie with name "FOO"'
-          };
-          addCookie(testCookies, testCookie);
-          await cookieStore.set(testCookie);
-          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
-          expectCookiesTable(testCookies);
+              const testCookies = [] as Cookie[];
+
+              // check no cookies
+              await expectCookies(testCookies);
+              expectCookiesTable(testCookies);
+      
+              {
+                // add "FOO"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'FOO',
+                  value: 'cookie with name "FOO"'
+                };
+                addCookie(testCookies, testCookie);
+                await cookieStore.set(testCookie);
+                await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
+                expectCookiesTable(testCookies);
+              }
+      
+              {
+                // add "BAR"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'BAR',
+                  value: 'cookie with name "BAR"'
+                };
+                addCookie(testCookies, testCookie);
+                await cookieStore.set(testCookie);
+                await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
+                expectCookiesTable(testCookies);
+              }
+      
+              {
+                // delete "FOO"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'FOO'
+                };
+                removeCookie(testCookies, testCookie);
+                await cookieStore.delete(testCookie);
+                await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) === null && queryCookiesTableCookie(testCookies[0]) !== null);
+                expectCookiesTable(testCookies);
+              }
+      
+              {
+                // add ""
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: '',
+                  value: 'cookie with empty name'
+                };
+                addCookie(testCookies, testCookie);
+                await cookieStore.set(testCookie);
+                await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
+                expectCookiesTable(testCookies);
+              }
+      
+              {
+                // change "BAR"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'BAR',
+                  value: 'adjusted cookie with name "BAR"'
+                };
+                addCookie(testCookies, testCookie);
+                await cookieStore.set(testCookie);
+                await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie, testCookie.value) !== null);
+                expectCookiesTable(testCookies);
+              }
+      
+              {
+                // re-add "FOO"
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: 'FOO',
+                  value: 'another cookie with key "FOO"'
+                };
+                addCookie(testCookies, testCookie);
+                await cookieStore.set(testCookie);
+                await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
+                expectCookiesTable(testCookies);
+              }
+      
+              {
+                // add item with funky key
+                const testCookie = {
+                  domain: testDomain,
+                  path: testPath,
+                  name: encodeURIComponent('<img src="." onerror="parent.fail(\'a storage item has triggered xss!\')">'),
+                  value: 'the name of this cookie contains xss payload (when url-decoded)'
+                };
+                addCookie(testCookies, testCookie);
+                await cookieStore.set(testCookie);
+                await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
+                expectCookiesTable(testCookies);
+      
+                // delete item with funky key
+                removeCookie(testCookies, testCookie);
+                await cookieStore.delete(testCookie);
+                await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) === null && queryCookiesTableCookie(testCookies[0]) !== null);
+                expectCookiesTable(testCookies);
+              }
+      
+              // wait a bit for async failures
+              await timeout(500);
+            });
+
+          }
         }
 
-        {
-          // add "BAR"
-          const testCookie = {
-            name: 'BAR',
-            value: 'cookie with name "BAR"'
-          };
-          addCookie(testCookies, testCookie);
-          await cookieStore.set(testCookie);
-          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // delete "FOO"
-          const testCookie = {
-            name: 'FOO'
-          };
-          removeCookie(testCookies, testCookie);
-          await cookieStore.delete(testCookie);
-          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) === null && queryCookiesTableCookie(testCookies[0]) !== null);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // add ""
-          const testCookie = {
-            name: '',
-            value: 'cookie with empty name'
-          };
-          addCookie(testCookies, testCookie);
-          await cookieStore.set(testCookie);
-          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // change "BAR"
-          const testCookie = {
-            name: 'BAR',
-            value: 'adjusted cookie with name "BAR"'
-          };
-          addCookie(testCookies, testCookie);
-          await cookieStore.set(testCookie);
-          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie, testCookie.value) !== null);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // re-add "FOO"
-          const testCookie = {
-            name: 'FOO',
-            value: 'another cookie with key "FOO"'
-          };
-          addCookie(testCookies, testCookie);
-          await cookieStore.set(testCookie);
-          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
-          expectCookiesTable(testCookies);
-        }
-
-        {
-          // add item with funky key
-          const testCookie = {
-            name: encodeURIComponent('<img src="." onerror="parent.fail(\'a storage item has triggered xss!\')">'),
-            value: 'the name of this cookie contains xss payload (when url-decoded)'
-          };
-          addCookie(testCookies, testCookie);
-          await cookieStore.set(testCookie);
-          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
-          expectCookiesTable(testCookies);
-
-          // delete item with funky key
-          removeCookie(testCookies, testCookie);
-          await cookieStore.delete(testCookie);
-          await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) === null && queryCookiesTableCookie(testCookies[0]) !== null);
-          expectCookiesTable(testCookies);
-        }
-
-        // wait a bit for async failures
-        await timeout(500);
       });
 
     }
