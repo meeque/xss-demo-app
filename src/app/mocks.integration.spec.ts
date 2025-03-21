@@ -329,6 +329,158 @@ describe('XSS Demo Mocks', () => {
       expect(mockPageDoc).toEqual(jasmine.anything());
     });
 
+    describe('sortCookies() function', () => {
+
+      it('should pass through empty cookies array', async () => {
+        return expectSortedCookies([], []);
+      });
+
+      it('should sort cookies without domain and path by name', async () => {
+        return expectSortedCookies(
+          [
+            {name: 'foo'  },
+            {name: 'BAR'  },
+            {name: 'baR'  },
+            {name: ''     },
+            {name: 'Foo'  },
+            {name: '42'   },
+            {name: 'baaar'},
+            {name: 'bar'  },
+            {name: 'fooo' },
+            {name: '!'    },
+            {name: 'fOo'  }
+          ],
+          [
+            {name: ''     },
+            {name: '!'    },
+            {name: '42'   },
+            {name: 'BAR'  },
+            {name: 'Foo'  },
+            {name: 'baR'  },
+            {name: 'baaar'},
+            {name: 'bar'  },
+            {name: 'fOo'  },
+            {name: 'foo'  },
+            {name: 'fooo' }
+          ]
+        );
+      });
+
+      it('should sort cookies without domain by path and by name', async () => {
+        return expectSortedCookies(
+          [
+            {path: '',           name: 'foo'},
+            {path: '/test',      name: 'BAR'},
+            {path: '',           name: '23' },
+            {path: '/test',      name: 'BAR'},
+            {path: '/',          name: '42' },
+            {path: '',           name: 'bar'},
+            {path: '/test',      name: 'BAR'},
+            {path: '/path/',     name: 'foo'},
+            {path: '',           name: '!'  },
+            {path: '/',          name: 'BAR'},
+            {path: '/test/path', name: 'foo'},
+            {path: '/test',      name: 'BAR'},
+            {path: '',           name: ''   },
+            {path: '/test',      name: 'foo'},
+            {path: '/path/',     name: '42' },
+            {path: '/test',      name: 'BAR'},
+            {path: '/test',      name: 'bar'},
+            {path: '/path/',     name: 'bar'},
+            {path: '/test',      name: 'BAR'},
+            {path: '/',          name: 'foo'},
+            {path: '/test/path', name: 'foo'},
+            {path: '',           name: 'BAR'},
+          ],
+          [
+            {path: '',           name: ''   },
+            {path: '',           name: '!'  },
+            {path: '',           name: '23' },
+            {path: '',           name: 'BAR'},
+            {path: '',           name: 'bar'},
+            {path: '',           name: 'foo'},
+            {path: '/',          name: '42' },
+            {path: '/',          name: 'BAR'},
+            {path: '/',          name: 'foo'},
+            {path: '/path/',     name: '42' },
+            {path: '/path/',     name: 'bar'},
+            {path: '/path/',     name: 'foo'},
+            {path: '/test',      name: 'BAR'},
+            {path: '/test',      name: 'BAR'},
+            {path: '/test',      name: 'BAR'},
+            {path: '/test',      name: 'BAR'},
+            {path: '/test',      name: 'BAR'},
+            {path: '/test',      name: 'BAR'},
+            {path: '/test',      name: 'bar'},
+            {path: '/test',      name: 'foo'},
+            {path: '/test/path', name: 'foo'},
+            {path: '/test/path', name: 'foo'}
+          ]
+        );
+      });
+
+      it('should sort cookies by domain and path and name', async () => {
+        return expectSortedCookies(
+          [
+            {domain: '',            path: '/test/', name: 'foo'},
+            {domain: 'xss.example', path: '/test/', name: 'BAR'},
+            {domain: '',            path: '/',      name: '23' },
+            {domain: 'xss.example', path: '/',      name: 'foo'},
+            {domain: 'yss.example', path: '/path/', name: '42' },
+            {domain: '',            path: '/',      name: 'bar'},
+            {domain: 'xss.example', path: '/test/', name: ''   },
+            {domain: '',            path: '/path/', name: 'foo'},
+            {domain: '',            path: '/',      name: '!'  },
+            {domain: 'yss.example', path: '/path/', name: 'BAR'},
+            {domain: 'xss',         path: '/',      name: 'foo'},
+            {domain: 'xss.example', path: '/path/', name: 'BAR'},
+            {domain: '',            path: '/',      name: ''   },
+            {domain: 'xss.example', path: '/test/', name: 'foo'},
+            {domain: '',            path: '/path/', name: '42' },
+            {domain: 'xss.example', path: '/',      name: 'BAR'},
+            {domain: 'xss.example', path: '/path/', name: 'bar'},
+            {domain: '',            path: '/path/', name: 'bar'},
+            {domain: 'xss.example', path: '/test/', name: '42'},
+            {domain: 'yss.example', path: '/',      name: 'foo'},
+            {domain: 'xss',         path: '/path/', name: 'bar'},
+            {domain: '',            path: '/',      name: 'foo'}
+          ],
+          [
+            {domain: '',            path: '/',      name: ''   },
+            {domain: '',            path: '/',      name: '!'  },
+            {domain: '',            path: '/',      name: '23' },
+            {domain: '',            path: '/',      name: 'bar'},
+            {domain: '',            path: '/',      name: 'foo'},
+            {domain: '',            path: '/path/', name: '42' },
+            {domain: '',            path: '/path/', name: 'bar'},
+            {domain: '',            path: '/path/', name: 'foo'},
+            {domain: '',            path: '/test/', name: 'foo'},
+            {domain: 'xss',         path: '/',      name: 'foo'},
+            {domain: 'xss',         path: '/path/', name: 'bar'},
+            {domain: 'xss.example', path: '/',      name: 'BAR'},
+            {domain: 'xss.example', path: '/',      name: 'foo'},
+            {domain: 'xss.example', path: '/path/', name: 'BAR'},
+            {domain: 'xss.example', path: '/path/', name: 'bar'},
+            {domain: 'xss.example', path: '/test/', name: ''   },
+            {domain: 'xss.example', path: '/test/', name: '42' },
+            {domain: 'xss.example', path: '/test/', name: 'BAR'},
+            {domain: 'xss.example', path: '/test/', name: 'foo'},
+            {domain: 'yss.example', path: '/',      name: 'foo'},
+            {domain: 'yss.example', path: '/path/', name: '42' },
+            {domain: 'yss.example', path: '/path/', name: 'BAR'},
+          ]
+        );
+      });
+
+      async function expectSortedCookies(testCookies: CookieId[], expectedSortedCookies: CookieId[]): Promise<CookieId[]> {
+        const sortedCookies = await runInPageFixture(
+          'return sortCookies(' + JSON.stringify(testCookies) +');'
+        ) as CookieId[];
+        expect(sortedCookies).toEqual(expectedSortedCookies);
+        return sortedCookies;
+      }
+    });
+
     if (cookieStore === undefined) {
 
       xit('cannot be tested in this browser, because it does not support the CookieStore API');
