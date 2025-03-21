@@ -482,55 +482,50 @@ describe('XSS Demo Mocks', () => {
     describe('getCookieDomainsHierarchy() function', () => {
 
       it('should pass through simple host names', async () => {
-        expect(getCookieDomainsHierarchy('localhost')).toEqual(['localhost']);
-        expect(getCookieDomainsHierarchy('container-js-dev')).toEqual(['container-js-dev']);
-        expect(getCookieDomainsHierarchy('xss')).toEqual(['xss']);
-        expect(getCookieDomainsHierarchy('local.')).toEqual(['local.']);
+        await expectCookieDomainsHierarchy('localhost', ['localhost']);
+        await expectCookieDomainsHierarchy('container-js-dev', ['container-js-dev']);
+        await expectCookieDomainsHierarchy('xss', ['xss']);
+        await expectCookieDomainsHierarchy('local.',['local.']);
       });
 
       it('should pass through IPv4 addresses', async () => {
-        expect(getCookieDomainsHierarchy('127.0.0.1')).toEqual(['127.0.0.1']);
-        expect(getCookieDomainsHierarchy('192.168.42.23')).toEqual(['192.168.42.23']);
-        expect(getCookieDomainsHierarchy('0.0.0.0')).toEqual(['0.0.0.0']);
-        expect(getCookieDomainsHierarchy('1.1.1.1.')).toEqual(['1.1.1.1.']);
+        await expectCookieDomainsHierarchy('127.0.0.1', ['127.0.0.1']);
+        await expectCookieDomainsHierarchy('192.168.42.23', ['192.168.42.23']);
+        await expectCookieDomainsHierarchy('0.0.0.0', ['0.0.0.0']);
+        await expectCookieDomainsHierarchy('1.1.1.1.', ['1.1.1.1.']);
       });
 
       it('should pass through IPv6 addresses', async () => {
-        expect(getCookieDomainsHierarchy('[::1]')).toEqual(['[::1]']);
-        expect(getCookieDomainsHierarchy('[::]')).toEqual(['[::]']);
-        expect(getCookieDomainsHierarchy('[FF:AA::23::42]')).toEqual(['[FF:AA::23::42]']);
-        expect(getCookieDomainsHierarchy('[23:42::ab:cd:0e:f0]')).toEqual(['[23:42::ab:cd:0e:f0]']);
+        await expectCookieDomainsHierarchy('[::1]', ['[::1]']);
+        await expectCookieDomainsHierarchy('[::]', ['[::]']);
+        await expectCookieDomainsHierarchy('[FF:AA::23::42]', ['[FF:AA::23::42]']);
+        await expectCookieDomainsHierarchy('[23:42::ab:cd:0e:f0]', ['[23:42::ab:cd:0e:f0]']);
       });
 
       it('should pass through IP addresses-like invalid DNS names', async () => {
-        expect(getCookieDomainsHierarchy('foo.bar.23')).toEqual(['foo.bar.23']);
-        expect(getCookieDomainsHierarchy('last.domain.label.must.not.be.numeric.42')).toEqual(['last.domain.label.must.not.be.numeric.42']);
-        expect(getCookieDomainsHierarchy('sub.42.')).toEqual(['sub.42.']);
+        await expectCookieDomainsHierarchy('foo.bar.23', ['foo.bar.23']);
+        await expectCookieDomainsHierarchy('last.domain.label.must.not.be.numeric.42', ['last.domain.label.must.not.be.numeric.42']);
+        await expectCookieDomainsHierarchy('sub.42.', ['sub.42.']);
       });
 
       it('should return the domain itself and all parent domains except for the top-level domain', async () => {
-        expect(
-          getCookieDomainsHierarchy('xss.dev.meeque.local')
-        ).toEqual(
+        await expectCookieDomainsHierarchy(
+          'xss.dev.meeque.local',
           [
             'xss.dev.meeque.local',
             'dev.meeque.local',
             'meeque.local',
           ]
         );
-
-        expect(
-          getCookieDomainsHierarchy('yss.meeque.de')
-        ).toEqual(
+        await expectCookieDomainsHierarchy(
+          'yss.meeque.de',
           [
             'yss.meeque.de',
             'meeque.de'
           ]
         );
-
-        expect(
-          getCookieDomainsHierarchy('do.not.treat.public.suffixes.specially.for.now.co.uk')
-        ).toEqual(
+        await expectCookieDomainsHierarchy(
+          'do.not.treat.public.suffixes.specially.for.now.co.uk',
           [
             'do.not.treat.public.suffixes.specially.for.now.co.uk',
             'not.treat.public.suffixes.specially.for.now.co.uk',
@@ -545,6 +540,11 @@ describe('XSS Demo Mocks', () => {
         );
       });
 
+      async function expectCookieDomainsHierarchy(testDomain: string, expectedHierarchy: string[]) {
+        // test both the getCookieDomainsHierarchy function in the cookies mock page and a local copy
+        expect(await getCookieDomainsHierarchy(testDomain)).toEqual(expectedHierarchy);
+        expect(getCookieDomainsHierarchySyncCopy(testDomain)).toEqual(expectedHierarchy);
+      }
     });
 
     if (cookieStore === undefined) {
@@ -553,9 +553,9 @@ describe('XSS Demo Mocks', () => {
 
     } else {
 
-      describe('should manage cookies', async () => {
+      describe('should manage cookies', () => {
 
-        for (const testDomain of getCookieDomainsHierarchy(document.location.hostname)) {
+        for (const testDomain of getCookieDomainsHierarchySyncCopy(document.location.hostname)) {
           for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
 
             it('with domain "' + testDomain + '" and path "' + testPath + '"', async () => {
@@ -795,9 +795,9 @@ describe('XSS Demo Mocks', () => {
 
       });
 
-      describe('should reflect external cookie changes', async () => {
+      describe('should reflect external cookie changes', () => {
 
-        for (const testDomain of getCookieDomainsHierarchy(document.location.hostname)) {
+        for (const testDomain of getCookieDomainsHierarchySyncCopy(document.location.hostname)) {
           for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
 
             it('with domain "' + testDomain + '" and path "' + testPath + '"', async () => {
@@ -1247,6 +1247,35 @@ describe('XSS Demo Mocks', () => {
         'return Promise.all(cookieDeletePromises);'
       );
     }
+
+    function getCookieDomainsHierarchy(domain: string): Promise<string[]> {
+      return runInPageFixture(
+        'return getCookieDomainsHierarchy(' + JSON.stringify(domain) +');'
+      ) as Promise<string[]>;
+    }
+
+    // this is a copy of getCookieDomainsHierarchy()
+    // this copy is necessary, because the async original cannot be used during test generation
+    // this test suite has tests that assert that both flawors work in an equal manner
+    function getCookieDomainsHierarchySyncCopy(domain: string): string[] {
+      const domainLabels = domain.split('.').filter((label) => label !== '');
+
+      if (domainLabels.length === 1) {
+        return [domain];
+      }
+
+      if (/^[0-9]+$/.test(domainLabels.at(-1))) {
+        return [domain];
+      }
+
+      const domains = [] as string[];
+      for (let i = 0; i < domainLabels.length; i++)
+      {
+        domains.push(domainLabels.slice(i, domainLabels.length).join('.'));
+      }
+      domains.pop();
+      return domains;
+    }
   });
 
   async function setUpPageFixture(url: string): Promise<void> {
@@ -1322,28 +1351,5 @@ describe('XSS Demo Mocks', () => {
     const result = context.querySelectorAll(selector);
     expect(result.length).withContext('number of elements matching query "' + selector + '"').toBe(count);
     return Array.from(result) as HTMLElement[];
-  }
-
-  function getCookieDomainsHierarchy(domain: string) {
-    const domainLabels = domain.split('.').filter((label) => label !== '');
-
-    // unqualified host name or IPv6 address
-    if (domainLabels.length === 1) {
-      return [domain];
-    }
-
-    // IPv4 address
-    if (/^[0-9]+$/.test(domainLabels.at(-1))) {
-      return [domain];
-    }
-
-    // qualified domain name
-    const domains = [] as string[];
-    for (let i = 0; i < domainLabels.length; i++)
-    {
-      domains.push(domainLabels.slice(i, domainLabels.length).join('.'));
-    }
-    domains.pop();
-    return domains;
   }
 });

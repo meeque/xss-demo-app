@@ -62,13 +62,27 @@ function hasNativeCookieStore() {
     return Object.getPrototypeOf(window.cookieStore) == '[object CookieStore]';
 }
 
-function suggestCookieDomains() {
-    const domains = [];
-    const currentDomainLabels = location.hostname.split('.').filter((label) => label !== '');
-    for (i = 0; i < currentDomainLabels.length; i++)
-    {
-        domains.push(currentDomainLabels.slice(i, currentDomainLabels.length).join('.'));
+function getCookieDomainsHierarchy(domain) {
+
+    const domainLabels = domain.split('.').filter((label) => label !== '');
+
+    // unqualified host name or IPv6 address
+    if (domainLabels.length === 1) {
+        return [domain];
     }
+
+    // IPv4 address
+    if (/^[0-9]+$/.test(domainLabels.at(-1))) {
+        return [domain];
+    }
+
+    // qualified domain name
+    const domains = [];
+    for (let i = 0; i < domainLabels.length; i++)
+    {
+        domains.push(domainLabels.slice(i, domainLabels.length).join('.'));
+    }
+    domains.pop();
     return domains;
 }
 
@@ -109,7 +123,7 @@ function $cookiesPage() {
         + 'Enter anything else (e.g. leave this file empty) to create a cookie that does not expire, a.k.a. a session cookie.';
 
     $dataListCookieDomains.innerText = '';
-    for (const domain of suggestCookieDomains()) {
+    for (const domain of getCookieDomainsHierarchy(document.location.hostname)) {
         const $domainOption = document.createElement('option');
         $domainOption.value = domain;
         $dataListCookieDomains.insertAdjacentElement('beforeend', $domainOption);
