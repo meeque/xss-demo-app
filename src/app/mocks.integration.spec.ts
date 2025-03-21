@@ -473,10 +473,8 @@ describe('XSS Demo Mocks', () => {
       });
 
       async function expectSortedCookies(testCookies: CookieId[], expectedSortedCookies: CookieId[]): Promise<CookieId[]> {
-        const sortedCookies = await runInPageFixture(
-          'return sortCookies(' + JSON.stringify(testCookies) +');'
-        ) as CookieId[];
-        expect(sortedCookies).toEqual(expectedSortedCookies);
+        const sortedCookies = await sortCookies(testCookies as Cookie[]);
+        expect(await sortCookies(testCookies as Cookie[])).toEqual(expectedSortedCookies as Cookie[]);
         return sortedCookies;
       }
     });
@@ -498,7 +496,7 @@ describe('XSS Demo Mocks', () => {
 
               // check no cookies
               await expectCookies(testCookies);
-              expectCookiesTable(testCookies);
+              await expectCookiesTable(testCookies);
 
               {
                 // add  "foo"
@@ -508,10 +506,10 @@ describe('XSS Demo Mocks', () => {
                   name: 'foo',
                   value: 'value of cookie with name "foo"'
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await fillNewCookieForm(testCookie);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               {
@@ -524,7 +522,7 @@ describe('XSS Demo Mocks', () => {
                 };
                 await fillNewCookieForm(testCookie, false);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               {
@@ -536,10 +534,10 @@ describe('XSS Demo Mocks', () => {
                   value: 'value of cookie with name "xxx"',
                   sameSite: SameSite.lax
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await fillNewCookieForm(testCookie);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               {
@@ -552,7 +550,7 @@ describe('XSS Demo Mocks', () => {
                 removeCookie(testCookies, testCookie);
                 await deleteCookieTableCookie(testCookie);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               {
@@ -565,10 +563,10 @@ describe('XSS Demo Mocks', () => {
                   sameSite: SameSite.none,
                   expires: Date.now() + (60 * 1000)
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await fillNewCookieForm(testCookie);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               {
@@ -580,10 +578,10 @@ describe('XSS Demo Mocks', () => {
                   value: 'value of another cookie with name "foo"',
                   sameSite: SameSite.none,
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await fillNewCookieForm(testCookie);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               {
@@ -596,10 +594,10 @@ describe('XSS Demo Mocks', () => {
                   sameSite: SameSite.strict,
                   expires: Date.now() + (60 * 1000)
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await editCookieTableCookie(testCookie);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               {
@@ -614,7 +612,7 @@ describe('XSS Demo Mocks', () => {
                 };
                 await editCookieTableCookie(testCookie, false);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               {
@@ -627,10 +625,10 @@ describe('XSS Demo Mocks', () => {
                   sameSite: SameSite.strict,
                   expires: Date.now() + (10 * 60 * 1000)
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await editCookieTableCookie(testCookie);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               {
@@ -643,7 +641,7 @@ describe('XSS Demo Mocks', () => {
                 removeCookie(testCookies, testCookie);
                 await deleteCookieTableCookie(testCookie);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               {
@@ -656,10 +654,10 @@ describe('XSS Demo Mocks', () => {
                   sameSite: SameSite.strict,
                   expires: null
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await editCookieTableCookie(testCookie);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               {
@@ -673,7 +671,7 @@ describe('XSS Demo Mocks', () => {
                 };
                 await fillNewCookieForm(testCookie, true, true);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies, true);
+                await expectCookiesTable(testCookies, true);
               }
 
               {
@@ -685,10 +683,10 @@ describe('XSS Demo Mocks', () => {
                   value: 'value of a cookie with an empty name',
                   sameSite: SameSite.none,
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await fillNewCookieForm(testCookie, true);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               {
@@ -702,7 +700,7 @@ describe('XSS Demo Mocks', () => {
                 };
                 await editCookieTableCookie(testCookie, true);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies, true);
+                await expectCookiesTable(testCookies, true);
               }
 
               {
@@ -717,7 +715,7 @@ describe('XSS Demo Mocks', () => {
                 };
                 await editCookieTableCookie(testCookie, false);
                 await expectCookies(testCookies);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
 
               // wait a bit for async failures
@@ -740,7 +738,7 @@ describe('XSS Demo Mocks', () => {
 
               // check no cookies
               await expectCookies(testCookies);
-              expectCookiesTable(testCookies);
+              await expectCookiesTable(testCookies);
       
               {
                 // add "FOO"
@@ -750,10 +748,10 @@ describe('XSS Demo Mocks', () => {
                   name: 'FOO',
                   value: 'cookie with name "FOO"'
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
       
               {
@@ -764,10 +762,10 @@ describe('XSS Demo Mocks', () => {
                   name: 'BAR',
                   value: 'cookie with name "BAR"'
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
       
               {
@@ -780,7 +778,7 @@ describe('XSS Demo Mocks', () => {
                 removeCookie(testCookies, testCookie);
                 await cookieStore.delete(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) === null && queryCookiesTableCookie(testCookies[0]) !== null);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
       
               {
@@ -791,10 +789,10 @@ describe('XSS Demo Mocks', () => {
                   name: '',
                   value: 'cookie with empty name'
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
       
               {
@@ -805,10 +803,10 @@ describe('XSS Demo Mocks', () => {
                   name: 'BAR',
                   value: 'adjusted cookie with name "BAR"'
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie, testCookie.value) !== null);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
       
               {
@@ -819,10 +817,10 @@ describe('XSS Demo Mocks', () => {
                   name: 'FOO',
                   value: 'another cookie with key "FOO"'
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
       
               {
@@ -833,16 +831,16 @@ describe('XSS Demo Mocks', () => {
                   name: encodeURIComponent('<img src="." onerror="parent.fail(\'a storage item has triggered xss!\')">'),
                   value: 'the name of this cookie contains xss payload (when url-decoded)'
                 };
-                addCookie(testCookies, testCookie);
+                await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
       
                 // delete item with funky key
                 removeCookie(testCookies, testCookie);
                 await cookieStore.delete(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) === null && queryCookiesTableCookie(testCookies[0]) !== null);
-                expectCookiesTable(testCookies);
+                await expectCookiesTable(testCookies);
               }
       
               // wait a bit for async failures
@@ -1051,10 +1049,10 @@ describe('XSS Demo Mocks', () => {
       expect(cancelButton.disabled).toBeTrue();
     }
 
-    function expectCookiesTable(cookies: Cookie[], expectError=false) {
+    async function expectCookiesTable(cookies: Cookie[], expectError=false) {
       const cookiesTable = queryCookiesTable();
 
-      sortCookies(cookies);
+      await sortCookies(cookies);
       const cookiesCount = cookies.length;
       const rowCount = cookiesCount + 3;
 
@@ -1128,12 +1126,11 @@ describe('XSS Demo Mocks', () => {
       };
     }
 
-    function sortCookies(cookies: Cookie[]): Cookie[] {
-      // this is just copied over from cookies.js
-      // integration tests do not care about correct order too much, but sorting makes comparisons easier
-      cookies.sort( (c1, c2) => c1.name == c2.name ? 0 : (c1.name < c2.name ? -1 : 1 ) );
-      cookies.sort( (c1, c2) => c1.path == c2.path ? 0 : (c1.path < c2.path ? -1 : 1 ) );
-      cookies.sort( (c1, c2) => c1.domain == c2.domain ? 0 : (c1.domain < c2.domain ? -1 : 1 ) );
+    async function sortCookies(cookies: Cookie[]): Promise<Cookie[]> {
+      const sortedCookies = await runInPageFixture(
+        'return sortCookies(' + JSON.stringify(cookies) +');'
+      ) as Cookie[];
+      cookies.splice(0, cookies.length, ... sortedCookies);
       return cookies;
     }
 
@@ -1147,7 +1144,7 @@ describe('XSS Demo Mocks', () => {
       return -1;
     }
 
-    function addCookie(cookies: Cookie[], cookie: Cookie): Cookie[] {
+    function addCookie(cookies: Cookie[], cookie: Cookie): Promise<Cookie[]> {
       const index = getCookieIndex(cookies, cookie);
       if (index >= 0) {
         cookies[index] = cookie;
