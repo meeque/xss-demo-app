@@ -479,6 +479,74 @@ describe('XSS Demo Mocks', () => {
       }
     });
 
+    describe('getCookieDomainsHierarchy() function', () => {
+
+      it('should pass through simple host names', async () => {
+        expect(getCookieDomainsHierarchy('localhost')).toEqual(['localhost']);
+        expect(getCookieDomainsHierarchy('container-js-dev')).toEqual(['container-js-dev']);
+        expect(getCookieDomainsHierarchy('xss')).toEqual(['xss']);
+        expect(getCookieDomainsHierarchy('local.')).toEqual(['local.']);
+      });
+
+      it('should pass through IPv4 addresses', async () => {
+        expect(getCookieDomainsHierarchy('127.0.0.1')).toEqual(['127.0.0.1']);
+        expect(getCookieDomainsHierarchy('192.168.42.23')).toEqual(['192.168.42.23']);
+        expect(getCookieDomainsHierarchy('0.0.0.0')).toEqual(['0.0.0.0']);
+        expect(getCookieDomainsHierarchy('1.1.1.1.')).toEqual(['1.1.1.1.']);
+      });
+
+      it('should pass through IPv6 addresses', async () => {
+        expect(getCookieDomainsHierarchy('[::1]')).toEqual(['[::1]']);
+        expect(getCookieDomainsHierarchy('[::]')).toEqual(['[::]']);
+        expect(getCookieDomainsHierarchy('[FF:AA::23::42]')).toEqual(['[FF:AA::23::42]']);
+        expect(getCookieDomainsHierarchy('[23:42::ab:cd:0e:f0]')).toEqual(['[23:42::ab:cd:0e:f0]']);
+      });
+
+      it('should pass through IP addresses-like invalid DNS names', async () => {
+        expect(getCookieDomainsHierarchy('foo.bar.23')).toEqual(['foo.bar.23']);
+        expect(getCookieDomainsHierarchy('last.domain.label.must.not.be.numeric.42')).toEqual(['last.domain.label.must.not.be.numeric.42']);
+        expect(getCookieDomainsHierarchy('sub.42.')).toEqual(['sub.42.']);
+      });
+
+      it('should return the domain itself and all parent domains except for the top-level domain', async () => {
+        expect(
+          getCookieDomainsHierarchy('xss.dev.meeque.local')
+        ).toEqual(
+          [
+            'xss.dev.meeque.local',
+            'dev.meeque.local',
+            'meeque.local',
+          ]
+        );
+
+        expect(
+          getCookieDomainsHierarchy('yss.meeque.de')
+        ).toEqual(
+          [
+            'yss.meeque.de',
+            'meeque.de'
+          ]
+        );
+
+        expect(
+          getCookieDomainsHierarchy('do.not.treat.public.suffixes.specially.for.now.co.uk')
+        ).toEqual(
+          [
+            'do.not.treat.public.suffixes.specially.for.now.co.uk',
+            'not.treat.public.suffixes.specially.for.now.co.uk',
+            'treat.public.suffixes.specially.for.now.co.uk',
+            'public.suffixes.specially.for.now.co.uk',
+            'suffixes.specially.for.now.co.uk',
+            'specially.for.now.co.uk',
+            'for.now.co.uk',
+            'now.co.uk',
+            'co.uk'
+          ]
+        );
+      });
+
+    });
+
     if (cookieStore === undefined) {
 
       xit('cannot be tested in this browser, because it does not support the CookieStore API');
@@ -487,7 +555,7 @@ describe('XSS Demo Mocks', () => {
 
       describe('should manage cookies', async () => {
 
-        for (const testDomain of getDomainsHierarchy()) {
+        for (const testDomain of getCookieDomainsHierarchy(document.location.hostname)) {
           for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
 
             it('with domain "' + testDomain + '" and path "' + testPath + '"', async () => {
@@ -729,7 +797,7 @@ describe('XSS Demo Mocks', () => {
 
       describe('should reflect external cookie changes', async () => {
 
-        for (const testDomain of getDomainsHierarchy()) {
+        for (const testDomain of getCookieDomainsHierarchy(document.location.hostname)) {
           for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
 
             it('with domain "' + testDomain + '" and path "' + testPath + '"', async () => {
@@ -1256,18 +1324,17 @@ describe('XSS Demo Mocks', () => {
     return Array.from(result) as HTMLElement[];
   }
 
-  function getDomainsHierarchy() {
-    const ownDomain = document.location.hostname;
-    const domainLabels = ownDomain.split('.').filter((label) => label !== '');
+  function getCookieDomainsHierarchy(domain: string) {
+    const domainLabels = domain.split('.').filter((label) => label !== '');
 
     // unqualified host name or IPv6 address
     if (domainLabels.length === 1) {
-      return [ownDomain];
+      return [domain];
     }
 
     // IPv4 address
-    if (/^[0-9]+$/.test(domainLabels[-1])) {
-      return [ownDomain];
+    if (/^[0-9]+$/.test(domainLabels.at(-1))) {
+      return [domain];
     }
 
     // qualified domain name
