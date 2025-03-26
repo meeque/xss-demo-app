@@ -96,11 +96,9 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
 
   public async doCleanup(): Promise<void> {
     if (this.cleanup) {
-      try {
-        return this.cleanup();
-      } catch(err) {
-        console.error('Ignoring error in custom cleanup function: ' + err);
-      }
+      return this
+        .cleanup()
+        .catch(err => console.error('Ignoring error in custom cleanup function: ' + err));
     }
   }
 
@@ -181,6 +179,34 @@ describe('Xss Demo App', async () => {
         timeout: 500
       });
     },
+    newWindow: (name: string) => {
+      let windowOpenSpy: jasmine.Spy;
+      return new DefaultPresetTestConfig({
+        presetName: name,
+        setup: async () => {
+          windowOpenSpy = spyOn(window, 'open').and.callThrough();
+        },
+        expectXss: false,
+        cleanup: async () => {
+          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
+          openedWindow?.close();
+        }
+      })
+    },
+    newWindowXss: (name: string) => {
+      let windowOpenSpy: jasmine.Spy;
+      return new DefaultPresetTestConfig({
+        presetName: name,
+        setup: async () => {
+          windowOpenSpy = spyOn(window, 'open').and.callThrough();
+        },
+        expectXss: true,
+        cleanup: async () => {
+          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
+          openedWindow?.close();
+        }
+      });
+    },
     deface: (name: string) => {
       return new DefaultPresetTestConfig({
         presetName: name,
@@ -198,32 +224,36 @@ describe('Xss Demo App', async () => {
         timeout: 1000
       });
     },
-    newWindow: (name: string) => {
-      let windowOpenSpy: jasmine.Spy;
+    defaceIframe: (name: string) => {
       return new DefaultPresetTestConfig({
         presetName: name,
         expectXss: false,
-        setup: async () => {
-          windowOpenSpy = spyOn(window, 'open').and.callThrough();
+        expect: async () => {
+          const iframe = queryOutput().querySelector('iframe');
+          expect(iframe.contentDocument.body.childElementCount).toBe(1);
+          expect(iframe.contentDocument.body.querySelector('div.xss-demo-defacement')).not.toBeNull();
         },
-        cleanup: async () => {
-          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
-          openedWindow?.close();
-        }
-      })
+        timeout: 1000
+      });
     },
-    newWindowXss: (name: string) => {
+    defaceNewWindow: (name: string) => {
       let windowOpenSpy: jasmine.Spy;
       return new DefaultPresetTestConfig({
         presetName: name,
-        expectXss: true,
         setup: async () => {
           windowOpenSpy = spyOn(window, 'open').and.callThrough();
+        },
+        expectXss: false,
+        expect: async () => {
+          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
+          expect(openedWindow.document.body.childElementCount).toBe(1);
+          expect(openedWindow.document.body.querySelector('div.xss-demo-defacement')).not.toBeNull();
         },
         cleanup: async () => {
           const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
           openedWindow?.close();
-        }
+        },
+        timeout: 1000
       });
     },
     skip: (name: string) => {
@@ -271,15 +301,15 @@ describe('Xss Demo App', async () => {
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.JavaScript.toString()] = {
-    'DqStringDomTrusted':        [                                                                                     'JS code breaking "string"'                                                                                                                                                                                                                                                                                                                                                                                                                                                            ],
-    'SqStringDomTrusted':        [                                                                                                                                'JS code breaking \'string\''                                                                                                                                                                                                                                                                                                                                                                                                               ],
-    'BlockDomTrusted':           ['pure JS code',               'pure JS code for parent and opener',                                                                                                                                                                   cf.newWindow('JS attack on a plain HTML page (window)'),                                                        cf.newWindow('JS attack on browser storage (window)'),                                                cf.newWindow('JS attack on cookies (window)'), 'JSFuck',               cf.deface('pure JS defacement attack')   ],
-    'BlockDomPlainMockIframe':   [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''),                                                          cf.skip('JS attack on a plain HTML page (window)'),                                                             cf.skip('JS attack on browser storage (window)'),                                                     cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.newWindow('pure JS defacement attack')],
-    'BlockDomPlainMockWindow':   [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''), cf.newWindow('JS attack on a plain HTML page (iframe)'), cf.skip('JS attack on a plain HTML page (window)'),      cf.newWindow('JS attack on browser storage (iframe)'), cf.skip('JS attack on browser storage (window)'),      cf.newWindow('JS attack on cookies (iframe)'), cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.newWindow('pure JS defacement attack')],
-    'BlockDomStorageMockIframe': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''),                                                          cf.skip('JS attack on a plain HTML page (window)'),                                                             cf.skip('JS attack on browser storage (window)'),                                                     cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.newWindow('pure JS defacement attack')],
-    'BlockDomStorageMockWindow': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''), cf.newWindow('JS attack on a plain HTML page (iframe)'), cf.skip('JS attack on a plain HTML page (window)'),      cf.newWindow('JS attack on browser storage (iframe)'), cf.skip('JS attack on browser storage (window)'),      cf.newWindow('JS attack on cookies (iframe)'), cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.newWindow('pure JS defacement attack')],
-    'BlockDomCookiesMockIframe': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''),                                                          cf.skip('JS attack on a plain HTML page (window)'),                                                             cf.skip('JS attack on browser storage (window)'),                                                     cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.newWindow('pure JS defacement attack')],
-    'BlockDomCookiesMockWindow': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''), cf.newWindow('JS attack on a plain HTML page (iframe)'), cf.skip('JS attack on a plain HTML page (window)'),      cf.newWindow('JS attack on browser storage (iframe)'), cf.skip('JS attack on browser storage (window)'),      cf.newWindow('JS attack on cookies (iframe)'), cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.newWindow('pure JS defacement attack')],
+    'DqStringDomTrusted':        [                                                                                     'JS code breaking "string"'                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ],
+    'SqStringDomTrusted':        [                                                                                                                                'JS code breaking \'string\''                                                                                                                                                                                                                                                                                                                                                                                                                     ],
+    'BlockDomTrusted':           ['pure JS code',               'pure JS code for parent and opener',                                                                                                                                                                   cf.newWindow('JS attack on a plain HTML page (window)'),                                                        cf.newWindow('JS attack on browser storage (window)'),                                                cf.newWindow('JS attack on cookies (window)'), 'JSFuck',               cf.deface('pure JS defacement attack')         ],
+    'BlockDomPlainMockIframe':   [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''),                                                          cf.skip('JS attack on a plain HTML page (window)'),                                                             cf.skip('JS attack on browser storage (window)'),                                                     cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.defaceIframe('pure JS defacement attack')   ],
+    'BlockDomPlainMockWindow':   [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''), cf.newWindow('JS attack on a plain HTML page (iframe)'), cf.skip('JS attack on a plain HTML page (window)'),      cf.newWindow('JS attack on browser storage (iframe)'), cf.skip('JS attack on browser storage (window)'),      cf.newWindow('JS attack on cookies (iframe)'), cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.defaceNewWindow('pure JS defacement attack')],
+    'BlockDomStorageMockIframe': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''),                                                          cf.skip('JS attack on a plain HTML page (window)'),                                                             cf.skip('JS attack on browser storage (window)'),                                                     cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.defaceIframe('pure JS defacement attack')   ],
+    'BlockDomStorageMockWindow': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''), cf.newWindow('JS attack on a plain HTML page (iframe)'), cf.skip('JS attack on a plain HTML page (window)'),      cf.newWindow('JS attack on browser storage (iframe)'), cf.skip('JS attack on browser storage (window)'),      cf.newWindow('JS attack on cookies (iframe)'), cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.defaceNewWindow('pure JS defacement attack')],
+    'BlockDomCookiesMockIframe': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''),                                                          cf.skip('JS attack on a plain HTML page (window)'),                                                             cf.skip('JS attack on browser storage (window)'),                                                     cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.defaceIframe('pure JS defacement attack')   ],
+    'BlockDomCookiesMockWindow': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''), cf.newWindow('JS attack on a plain HTML page (iframe)'), cf.skip('JS attack on a plain HTML page (window)'),      cf.newWindow('JS attack on browser storage (iframe)'), cf.skip('JS attack on browser storage (window)'),      cf.newWindow('JS attack on cookies (iframe)'), cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.defaceNewWindow('pure JS defacement attack')],
   };
 
 
