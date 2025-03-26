@@ -229,6 +229,36 @@ export class PayloadOutputService {
         iframe.contentDocument.body.insertAdjacentElement('beforeend', scriptBlock);
       });
       element.insertAdjacentElement('beforeend', iframe);
+    },
+
+    trustedScriptBlockStorageMockIframe(element, payload) {
+      let iframe = document.createElement('iframe');
+      iframe.src = '/assets/mocks/storage.html';
+      iframe.addEventListener('load', () => {
+        const scriptBlock = iframe.contentDocument.createElement('script');
+        scriptBlock.setAttribute('type', 'text/javascript');
+        scriptBlock.textContent
+          = '(async function() {\n'
+          + payload + '\n'
+          + '})();\n';
+        iframe.contentDocument.body.insertAdjacentElement('beforeend', scriptBlock);
+      });
+      element.insertAdjacentElement('beforeend', iframe);
+    },
+
+    trustedScriptBlockCookiesMockIframe(element, payload) {
+      let iframe = document.createElement('iframe');
+      iframe.src = '/assets/mocks/cookies.html';
+      iframe.addEventListener('load', () => {
+        const scriptBlock = iframe.contentDocument.createElement('script');
+        scriptBlock.setAttribute('type', 'text/javascript');
+        scriptBlock.textContent
+          = '(async function() {\n'
+          + payload + '\n'
+          + '})();\n';
+        iframe.contentDocument.body.insertAdjacentElement('beforeend', scriptBlock);
+      });
+      element.insertAdjacentElement('beforeend', iframe);
     }
   };
 
@@ -907,8 +937,24 @@ export class PayloadOutputService {
           id: 'BlockDomPlainMockIframe',
           quality: PayloadOutputQuality.Insecure,
           name: 'JavaScript in Plain Mock (Iframe)',
-          title: 'Payload JavaScript in the Plain Mock Page via iframe (Script Block with DOM .textContent)',
+          title: 'Payload JavaScript in plain mock page via iframe (Script Block with DOM .textContent)',
           domInjector: this._domInjectors.trustedScriptBlockPlainMockIframe
+        },
+
+        {
+          id: 'BlockDomStorageMockIframe',
+          quality: PayloadOutputQuality.Insecure,
+          name: 'JavaScript in Storage Mock (Iframe)',
+          title: 'Payload JavaScript in storage mock page via iframe (Script Block with DOM .textContent)',
+          domInjector: this._domInjectors.trustedScriptBlockStorageMockIframe
+        },
+
+        {
+          id: 'BlockDomCookiesMockIframe',
+          quality: PayloadOutputQuality.Insecure,
+          name: 'JavaScript in Cookies Mock (Iframe)',
+          title: 'Payload JavaScript in cookies mock page via iframe (Script Block with DOM .textContent)',
+          domInjector: this._domInjectors.trustedScriptBlockCookiesMockIframe
         }
       ]
     }
