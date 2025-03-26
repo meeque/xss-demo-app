@@ -231,6 +231,19 @@ export class PayloadOutputService {
       element.insertAdjacentElement('beforeend', iframe);
     },
 
+    trustedScriptBlockPlainMockWindow(element, payload) {
+      let newWindow = window.open('/assets/mocks/plain.html', '_blank');
+      newWindow.addEventListener('load', () => {
+        const scriptBlock = newWindow.document.createElement('script');
+        scriptBlock.setAttribute('type', 'text/javascript');
+        scriptBlock.textContent
+          = '(async function() {\n'
+          + payload + '\n'
+          + '})();\n';
+        newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
+      });
+    },
+
     trustedScriptBlockStorageMockIframe(element, payload) {
       let iframe = document.createElement('iframe');
       iframe.src = '/assets/mocks/storage.html';
@@ -246,6 +259,19 @@ export class PayloadOutputService {
       element.insertAdjacentElement('beforeend', iframe);
     },
 
+    trustedScriptBlockStorageMockWindow(element, payload) {
+      let newWindow = window.open('/assets/mocks/storage.html', '_blank');
+      newWindow.addEventListener('load', () => {
+        const scriptBlock = newWindow.document.createElement('script');
+        scriptBlock.setAttribute('type', 'text/javascript');
+        scriptBlock.textContent
+          = '(async function() {\n'
+          + payload + '\n'
+          + '})();\n';
+        newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
+      });
+    },
+
     trustedScriptBlockCookiesMockIframe(element, payload) {
       let iframe = document.createElement('iframe');
       iframe.src = '/assets/mocks/cookies.html';
@@ -259,6 +285,19 @@ export class PayloadOutputService {
         iframe.contentDocument.body.insertAdjacentElement('beforeend', scriptBlock);
       });
       element.insertAdjacentElement('beforeend', iframe);
+    },
+
+    trustedScriptBlockCookiesMockWindow(element, payload) {
+      let newWindow = window.open('/assets/mocks/cookies.html', '_blank');
+      newWindow.addEventListener('load', () => {
+        const scriptBlock = newWindow.document.createElement('script');
+        scriptBlock.setAttribute('type', 'text/javascript');
+        scriptBlock.textContent
+          = '(async function() {\n'
+          + payload + '\n'
+          + '})();\n';
+        newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
+      });
     }
   };
 
@@ -942,6 +981,14 @@ export class PayloadOutputService {
         },
 
         {
+          id: 'BlockDomPlainMockWindow',
+          quality: PayloadOutputQuality.Insecure,
+          name: 'JavaScript in Plain Mock (Window)',
+          title: 'Payload JavaScript in plain mock page via new window (Script Block with DOM .textContent)',
+          domInjector: this._domInjectors.trustedScriptBlockPlainMockWindow
+        },
+
+        {
           id: 'BlockDomStorageMockIframe',
           quality: PayloadOutputQuality.Insecure,
           name: 'JavaScript in Storage Mock (Iframe)',
@@ -950,11 +997,27 @@ export class PayloadOutputService {
         },
 
         {
+          id: 'BlockDomStorageMockWindow',
+          quality: PayloadOutputQuality.Insecure,
+          name: 'JavaScript in Storage Mock (Window)',
+          title: 'Payload JavaScript in storage mock page via new window (Script Block with DOM .textContent)',
+          domInjector: this._domInjectors.trustedScriptBlockStorageMockWindow
+        },
+
+        {
           id: 'BlockDomCookiesMockIframe',
           quality: PayloadOutputQuality.Insecure,
           name: 'JavaScript in Cookies Mock (Iframe)',
           title: 'Payload JavaScript in cookies mock page via iframe (Script Block with DOM .textContent)',
           domInjector: this._domInjectors.trustedScriptBlockCookiesMockIframe
+        },
+
+        {
+          id: 'BlockDomCookiesMockWindow',
+          quality: PayloadOutputQuality.Insecure,
+          name: 'JavaScript in Cookies Mock (Window)',
+          title: 'Payload JavaScript in cookies mock page via new window (Script Block with DOM .textContent)',
+          domInjector: this._domInjectors.trustedScriptBlockCookiesMockWindow
         }
       ]
     }
