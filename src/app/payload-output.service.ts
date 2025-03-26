@@ -214,6 +214,21 @@ export class PayloadOutputService {
       scriptBlock.setAttribute('type', 'text/javascript');
       scriptBlock.textContent = '\n' + payload + '\n';
       element.insertAdjacentElement('beforeend', scriptBlock);
+    },
+
+    trustedScriptBlockPlainMockIframe(element, payload) {
+      let iframe = document.createElement('iframe');
+      iframe.src = '/assets/mocks/plain.html';
+      iframe.addEventListener('load', () => {
+        const scriptBlock = iframe.contentDocument.createElement('script');
+        scriptBlock.setAttribute('type', 'text/javascript');
+        scriptBlock.textContent
+          = '(async function() {\n'
+          + payload + '\n'
+          + '})();\n';
+        iframe.contentDocument.body.insertAdjacentElement('beforeend', scriptBlock);
+      });
+      element.insertAdjacentElement('beforeend', iframe);
     }
   };
 
@@ -886,6 +901,14 @@ export class PayloadOutputService {
           name: 'Trusted JavaScript Block',
           title: 'Payload JavaScript Trusted (Script Block with DOM .textContent)',
           domInjector: this._domInjectors.trustedScriptBlock
+        },
+
+        {
+          id: 'BlockDomPlainMockIframe',
+          quality: PayloadOutputQuality.Insecure,
+          name: 'JavaScript in Plain Mock (Iframe)',
+          title: 'Payload JavaScript in the Plain Mock Page via iframe (Script Block with DOM .textContent)',
+          domInjector: this._domInjectors.trustedScriptBlockPlainMockIframe
         }
       ]
     }

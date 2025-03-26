@@ -10,6 +10,7 @@ import { XssDemoComponent } from './xss-demo.component';
 
 interface PresetTestConfig {
   readonly presetName: string;
+  readonly skip?: boolean;
   readonly before?: () => Promise<void>;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
@@ -19,12 +20,13 @@ interface PresetTestConfig {
 }
 
 interface EnhancedPresetTestConfig extends PresetTestConfig {
-  isExpectXss(): boolean;
-  getTimeout(): number;
+  isSkip(): boolean;
   doBefore(): Promise<void>;
   doTrigger(): Promise<void>;
+  isExpectXss(): boolean;
   doExpect(): Promise<void>;
   doCleanup(): Promise<void>;
+  getTimeout(): number;
 }
 
 class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
@@ -32,6 +34,7 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
   private static defaultTimeout = 200;
 
   readonly presetName: string;
+  readonly skip?: boolean;
   readonly before?: () => Promise<void>;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
@@ -65,12 +68,8 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
     }
   }
 
-  public isExpectXss(): boolean {
-    return this.expectXss !== false;
-  }
-
-  public getTimeout(): number {
-    return (this.timeout != null) ? this.timeout : DefaultPresetTestConfig.defaultTimeout;
+  public isSkip(): boolean {
+    return this.skip === true;
   }
 
   public async doBefore(): Promise<void> {
@@ -83,6 +82,10 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
     if (this.trigger) {
       return this.trigger();
     }
+  }
+
+  public isExpectXss(): boolean {
+    return this.expectXss !== false;
   }
 
   public async doExpect(): Promise<void> {
@@ -99,6 +102,10 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
         console.error('Ignoring error in custom cleanup function: ' + err);
       }
     }
+  }
+
+  public getTimeout(): number {
+    return (this.timeout != null) ? this.timeout : DefaultPresetTestConfig.defaultTimeout;
   }
 }
 
@@ -200,9 +207,29 @@ describe('Xss Demo App', async () => {
           windowOpenSpy = spyOn(window, 'open').and.callThrough();
         },
         after: async () => {
-          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent().returnValue;
-          openedWindow.close();
+          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
+          openedWindow?.close();
         }
+      })
+    },
+    newWindowXss: (name: string) => {
+      let windowOpenSpy: jasmine.Spy;
+      return new DefaultPresetTestConfig({
+        presetName: name,
+        expectXss: true,
+        before: async () => {
+          windowOpenSpy = spyOn(window, 'open').and.callThrough();
+        },
+        after: async () => {
+          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
+          openedWindow?.close();
+        }
+      });
+    },
+    skip: (name: string) => {
+      return new DefaultPresetTestConfig({
+        presetName: name,
+        skip: true
       });
     }
   }
@@ -212,7 +239,7 @@ describe('Xss Demo App', async () => {
   presetsTestConfigsByContextAndOutput[XssContext.HtmlContent.toString()] = {
     'HtmlContent':          [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
     'DomInnerHtml':         [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'DomInnerHtmlNoOutput': [                                              'Image onerror', 'Image onerror (legacy flavors)',                                                                                                                                              'Mixed HTML Content'],
+    'DomInnerHtmlNoOutput': [                                              'Image onerror', 'Image onerror (legacy flavors)',                                                                                                                                                 'Mixed HTML Content'],
     'JQueryHtml':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
     'JQueryConstructor':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
     'JQueryPrepend':        ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
@@ -244,9 +271,10 @@ describe('Xss Demo App', async () => {
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.JavaScript.toString()] = {
-    'DqStringDomTrusted': ['JS code breaking "string"'                                                                                                                                                                                                                                                                ],
-    'SqStringDomTrusted': [                             'JS code breaking \'string\''                                                                                                                                                                                                                                 ],
-    'BlockDomTrusted':    [                                                            'pure JS code', cf.deface('pure JS defacement attack'), cf.newWindow('JS attack on a plain HTML page (window)'), cf.newWindow('JS attack on browser storage (window)'), cf.newWindow('JS attack on cookies (window)'), 'JSFuck'],
+    'DqStringDomTrusted':      ['JS code breaking "string"'                                                                                                                                                                                                                                                                                                                                                                                  ],
+    'SqStringDomTrusted':      [                                           'JS code breaking \'string\''                                                                                                                                                                                                                                                                                                                                     ],
+    'BlockDomTrusted':         [                                                                                        'pure JS code',               cf.deface('pure JS defacement attack'),    cf.newWindow('JS attack on a plain HTML page (window)'), cf.newWindow('JS attack on browser storage (window)'), cf.newWindow('JS attack on cookies (window)'), 'JSFuck',               'pure JS code for parent and opener'                 ],
+    'BlockDomPlainMockIframe': [cf.newWindow('JS code breaking "string"'), cf.newWindow('JS code breaking \'string\''), cf.newWindow('pure JS code'), cf.newWindow('pure JS defacement attack'), cf.skip('JS attack on a plain HTML page (window)'),      cf.skip('JS attack on browser storage (window)'),      cf.skip('JS attack on cookies (window)'),      cf.newWindow('JSFuck'), cf.newWindowXss('pure JS code for parent and opener')],
   };
 
 
@@ -309,6 +337,9 @@ describe('Xss Demo App', async () => {
           for (const presetDescriptor of presetContextDescriptor.items) {
 
             const presetTestConfig = DefaultPresetTestConfig.getByNameOrDefault(presetTestConfigs, presetDescriptor.name);
+            if (presetTestConfig.isSkip()) {
+              continue;
+            }
             const expectXss = presetTestConfig.isExpectXss();
 
             it(

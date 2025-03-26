@@ -1,0 +1,8 @@
+try {
+    window.parent.xss();
+} catch (err) {
+}
+try {
+    window.opener.xss();
+} catch (err) {
+}

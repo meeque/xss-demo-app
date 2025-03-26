@@ -169,8 +169,8 @@ export class PayloadPresetService {
           url: 'assets/presets/js/pure.txt'
         },
         {
-          name: 'pure JS defacement attack',
-          url: 'assets/presets/js/defacement.txt'
+          name: 'pure JS code for parent and opener',
+          url: 'assets/presets/js/js-for-parent-and-opener.txt'
         },
         {
           name: 'JS code breaking "string"',
@@ -208,6 +208,10 @@ export class PayloadPresetService {
           name: 'JSFuck',
           url: 'assets/presets/js/jsfuck.txt'
         },
+        {
+          name: 'pure JS defacement attack',
+          url: 'assets/presets/js/defacement.txt'
+        }
       ]
     }
   ]
