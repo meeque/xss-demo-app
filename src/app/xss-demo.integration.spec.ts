@@ -11,17 +11,17 @@ import { XssDemoComponent } from './xss-demo.component';
 interface PresetTestConfig {
   readonly presetName: string;
   readonly skip?: boolean;
-  readonly before?: () => Promise<void>;
+  readonly setup?: () => Promise<void>;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
   readonly expect?: () => Promise<void>;
-  readonly after?: () => Promise<void>;
+  readonly cleanup?: () => Promise<void>;
   readonly timeout?: number;
 }
 
 interface EnhancedPresetTestConfig extends PresetTestConfig {
   isSkip(): boolean;
-  doBefore(): Promise<void>;
+  doSetup(): Promise<void>;
   doTrigger(): Promise<void>;
   isExpectXss(): boolean;
   doExpect(): Promise<void>;
@@ -35,11 +35,11 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
 
   readonly presetName: string;
   readonly skip?: boolean;
-  readonly before?: () => Promise<void>;
+  readonly setup?: () => Promise<void>;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
   readonly expect?: () => Promise<void>;
-  readonly after?: () => Promise<void>;
+  readonly cleanup?: () => Promise<void>;
   readonly timeout?: number;
 
   static fromRaw(configs: (string | PresetTestConfig)[]): EnhancedPresetTestConfig[] {
@@ -72,9 +72,9 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
     return this.skip === true;
   }
 
-  public async doBefore(): Promise<void> {
-    if (this.before) {
-      return this.before();
+  public async doSetup(): Promise<void> {
+    if (this.setup) {
+      return this.setup();
     }
   }
 
@@ -95,9 +95,9 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
   }
 
   public async doCleanup(): Promise<void> {
-    if (this.after) {
+    if (this.cleanup) {
       try {
-        return this.after();
+        return this.cleanup();
       } catch(err) {
         console.error('Ignoring error in custom cleanup function: ' + err);
       }
@@ -155,7 +155,7 @@ describe('Xss Demo App', async () => {
           }
           link.click();
         },
-        after: async () => {
+        cleanup: async () => {
           window.open('javascript:window.close();', mockLinkTarget);
         },
         timeout: 2000
@@ -190,7 +190,7 @@ describe('Xss Demo App', async () => {
           expect(element.childElementCount).toBe(1);
           expect(element.querySelector('div.xss-demo-defacement')).not.toBeNull();
         },
-        after: async () => {
+        cleanup: async () => {
           const element = document.querySelector('div.xss-demo-defacement');
           element.parentNode.removeChild(element);
           document.body.style.background = null;
@@ -203,10 +203,10 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         expectXss: false,
-        before: async () => {
+        setup: async () => {
           windowOpenSpy = spyOn(window, 'open').and.callThrough();
         },
-        after: async () => {
+        cleanup: async () => {
           const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
           openedWindow?.close();
         }
@@ -217,10 +217,10 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         expectXss: true,
-        before: async () => {
+        setup: async () => {
           windowOpenSpy = spyOn(window, 'open').and.callThrough();
         },
-        after: async () => {
+        cleanup: async () => {
           const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
           openedWindow?.close();
         }
@@ -349,7 +349,7 @@ describe('Xss Demo App', async () => {
                 + (presetTestConfig.trigger ? ' with custom trigger' : '')
                 + (presetTestConfig.expect ? ' with custom expectation' : ''),
               async () => {
-                await presetTestConfig.doBefore();
+                await presetTestConfig.doSetup();
                 const xssPromise = nextXssPromise();
                 await selectInputOutput(context.name, presetTestConfig.presetName, outputDescriptor.name);
                 const triggerPromise = presetTestConfig.doTrigger();
