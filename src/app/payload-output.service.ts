@@ -2,11 +2,7 @@ import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { XssContext, XssContextCollection } from './xss-demo.common';
-
-
-
-declare var DOMPurify: any;
-declare var $: any;
+import { PayloadProcessors, HtmlSourceProviders, DomInjectors, JQueryInjectors } from './payload-output.code';
 
 
 
@@ -49,981 +45,672 @@ export interface PayloadOutputDescriptor {
 @Injectable()
 export class PayloadOutputService {
 
-  private readonly _processors: { [prop: string]: PayloadProcessor } =
-  {
-    ngTrustedHtml: (payload) => {
-      return this.sanitizer.bypassSecurityTrustHtml(payload);
-    },
+  private readonly _processors: { [prop: string]: PayloadProcessor };
 
-    ngTrustedUrl: (payload) => {
-      return this.sanitizer.bypassSecurityTrustUrl(payload);
-    },
+  private readonly _providers: { [prop: string]: HtmlSourceProvider };
 
-    ngTrustedResourceUrl: (payload) => {
-      return this.sanitizer.bypassSecurityTrustResourceUrl(payload);
-    },
+  private readonly _domInjectors: { [prop: string]: DomInjector };
 
-    ngTrustedStyle: (payload) => {
-      return this.sanitizer.bypassSecurityTrustStyle(payload);
-    },
+  private readonly _jQueryInjectors: { [prop: string]: JQueryInjector };
 
-    domTextNode: (payload) => {
-      return document.createTextNode(payload);
-    },
+  readonly descriptors: XssContextCollection<PayloadOutputDescriptor>[];
 
-    htmlEncoding(payload) {
-      return payload
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#x27;');
-    },
+  constructor(sanitizer: DomSanitizer) {
+    this._processors = new PayloadProcessors(sanitizer);
+    this._providers = new HtmlSourceProviders();
+    this._domInjectors = new DomInjectors();
+    this._jQueryInjectors = new JQueryInjectors();
 
-    htmlSanitizingDomPurify(payload) {
-      return DOMPurify.sanitize(payload);
-    },
+    this.descriptors = [
 
-    htmlSanitizingDomPurifyMinimalInline(payload) {
-      return DOMPurify.sanitize(
-        payload,
-        {
-          ALLOWED_TAGS: ['span', 'em', 'strong'],
-          ALLOWED_ATTR: ['class']
-        });
-    },
-
-    htmlSanitizingDomPurifyInlineBlockLinks(payload) {
-      return DOMPurify.sanitize(
-        payload,
-        {
-          ALLOWED_TAGS: ['span', 'em', 'strong', 'div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a'],
-          ALLOWED_ATTR: ['class', 'href', 'target']
-        });
-    },
-
-    urlValidation(payload) {
-      try {
-        var url = new URL(payload, document.baseURI);
-      } catch(e) {
-        return '';
+      {
+        id: XssContext.HtmlContent,
+        name: 'HTML Content',
+        items: [
+  
+          {
+            id: 'HtmlEncodedContent',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'Encoded HTML',
+            title: 'Payload as Manually Encoded HTML',
+            payloadProcessor: this._processors.htmlEncoding,
+            htmlSourceProvider: this._providers.raw
+          },
+  
+          {
+            id: 'HtmlSanitizedContent',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'Sanitized HTML (DOMPurify)',
+            title: 'Payload as Sanitized HTML (DOMPurify default policy)',
+            payloadProcessor: this._processors.htmlSanitizingDomPurify,
+            htmlSourceProvider: this._providers.raw
+          },
+  
+          {
+            id: 'HtmlSanitizedContentMinimalInline',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'Sanitized HTML (DOMPurify minimal inline)',
+            title: 'Payload as Sanitized HTML (DOMPurify minimal policy for inline markup)',
+            payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
+            htmlSourceProvider: this._providers.raw
+          },
+  
+          {
+            id: 'HtmlSanitizedContentInlineBlockLinks',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'Sanitized HTML (DOMPurify some inline, block, links)',
+            title: 'Payload as Sanitized HTML (DOMPurify policy for some inline, block, and link markup)',
+            payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
+            htmlSourceProvider: this._providers.raw
+          },
+  
+          {
+            id: 'HtmlContent',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'Raw HTML',
+            title: 'Payload as Raw HTML',
+            htmlSourceProvider: this._providers.raw
+          },
+  
+  
+  
+          {
+            id: 'DomTextContent',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'DOM .textContent',
+            title: 'Payload as HTML Text Content (DOM .textContent)',
+            domInjector: this._domInjectors.textContent
+          },
+  
+          {
+            id: 'DomInnerText',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'DOM .innerText',
+            title: 'Payload as HTML Inner Text (DOM .innerText)',
+            domInjector: this._domInjectors.innerText
+          },
+  
+          {
+            id: 'DomEncodedInnerHtml',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'Encoded DOM .innerHtml',
+            title: 'Payload HTML Manually Encoded (DOM .innerHTML)',
+            payloadProcessor: this._processors.htmlEncoding,
+            domInjector: this._domInjectors.innerHtml
+          },
+  
+          {
+            id: 'DomSanitizedInnerHtml',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'Sanitized DOM .innerHtml (DOMPurify)',
+            title: 'Payload HTML Sanitized (DOMPurify default policy & DOM .innerHTML)',
+            payloadProcessor: this._processors.htmlSanitizingDomPurify,
+            domInjector: this._domInjectors.innerHtml
+          },
+  
+          {
+            id: 'DomSanitizedInnerHtmlMinimalInline',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'Sanitized DOM .innerHtml (DOMPurify minimal inline)',
+            title: 'Payload HTML Sanitized (DOMPurify minimal policy for inline markup & DOM .innerHTML)',
+            payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
+            domInjector: this._domInjectors.innerHtml
+          },
+  
+          {
+            id: 'DomSanitizedContentInlineBlockLinks',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'Sanitized DOM .innerHtml (DOMPurify some inline, block, links)',
+            title: 'Payload HTML Sanitized (DOMPurify policy for some inline, block, and link markup & DOM .innerHTML)',
+            payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
+            domInjector: this._domInjectors.innerHtml
+          },
+  
+          {
+            id: 'DomInnerHtml',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'DOM .innerHTML',
+            title: 'Payload HTML Raw (DOM .innerHTML)',
+            domInjector: this._domInjectors.innerHtml
+          },
+  
+          {
+            id: 'DomInnerHtmlNoOutput',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'DOM .innerHTML (no output)',
+            title: 'Payload HTML Unencoded (DOM .innerHTML, without modifying the document)',
+            domInjector: this._domInjectors.innerHtmlNoOutput
+          },
+  
+  
+  
+          {
+            id: 'JQueryText',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'jQuery.text(string)',
+            title: 'Payload as text ($.text())',
+            jQueryInjector: this._jQueryInjectors.text
+          },
+  
+          {
+            id: 'JQueryHtmlSanitized',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'jQuery.html(DOMPurify default)',
+            title: 'Payload as sanitized HTML (DOMPurify default policy & $.html())',
+            payloadProcessor: this._processors.htmlSanitizingDomPurify,
+            jQueryInjector: this._jQueryInjectors.html
+          },
+  
+          {
+            id: 'JQueryHtmlSanitizedMinimalInline',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'jQuery.html(DOMPurify minimal inline)',
+            title: 'Payload as sanitized HTML (DOMPurify minimal policy for inline markup & $.html())',
+            payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
+            jQueryInjector: this._jQueryInjectors.html
+          },
+  
+          {
+            id: 'JQueryHtmlSanitizedInlineBlockLinks',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'jQuery.html(DOMPurify some inline, block, links)',
+            title: 'Payload as sanitized HTML (DOMPurify policy for some inline, block, and link markup & $.html())',
+            payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
+            jQueryInjector: this._jQueryInjectors.html
+          },
+  
+          {
+            id: 'JQueryHtmlEncoded',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'jQuery.html(encodedString)',
+            title: 'Payload as manually encoded HTML ($.html())',
+            payloadProcessor: this._processors.htmlEncoding,
+            jQueryInjector: this._jQueryInjectors.html
+          },
+  
+          {
+            id: 'JQueryConstructorEncoded',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'jQuery(encodedString)',
+            title: 'Payload as manually encoded HTML, through constructor ($())',
+            payloadProcessor: this._processors.htmlEncoding,
+            jQueryInjector: this._jQueryInjectors.jQueryConstructor
+          },
+  
+          {
+            id: 'JQueryHtmlTextNode',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'jQuery.html(Text)',
+            title: 'Payload as HTML Text node ($.html())',
+            payloadProcessor: this._processors.domTextNode,
+            jQueryInjector: this._jQueryInjectors.html
+          },
+  
+          {
+            id: 'JQueryConstructorTextNode',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'jQuery(Text)',
+            title: 'Payload as HTML Text node, through constructor ($())',
+            payloadProcessor: this._processors.domTextNode,
+            jQueryInjector: this._jQueryInjectors.jQueryConstructor
+          },
+  
+          {
+            id: 'JQueryHtml',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'jQuery.html(string)',
+            title: 'Payload as HTML ($.html())',
+            jQueryInjector: this._jQueryInjectors.html
+          },
+  
+          {
+            id: 'JQueryConstructor',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'jQuery(string)',
+            title: 'Payload as HTML, through constructor ($())',
+            jQueryInjector: this._jQueryInjectors.jQueryConstructor
+          },
+  
+          {
+            id: 'JQueryPrepend',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'jQuery.prepend(string)',
+            title: 'Payload prepended as HTML ($.prepend())',
+            jQueryInjector: this._jQueryInjectors.prepend
+          },
+  
+          {
+            id: 'JQueryAppend',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'jQuery.append(string)',
+            title: 'Payload appended as HTML ($.append())',
+            jQueryInjector: this._jQueryInjectors.append
+          },
+  
+          {
+            id: 'JQueryBefore',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'jQuery.before(string)',
+            title: 'Payload as HTML before ($.before())',
+            jQueryInjector: this._jQueryInjectors.before
+          },
+  
+          {
+            id: 'JQueryAfter',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'jQuery.after(string)',
+            title: 'Payload as HTML after ($.after())',
+            jQueryInjector: this._jQueryInjectors.after
+          },
+  
+          {
+            id: 'JQueryWrapInner',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'jQuery.wrapInner(string)',
+            title: 'Payload as inner HTML wrap ($.wrapInner())',
+            jQueryInjector: this._jQueryInjectors.wrapInner
+          },
+  
+          {
+            id: 'JQueryWrap',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'jQuery.wrap(string)',
+            title: 'Payload as HTML wrap ($.wrap())',
+            jQueryInjector: this._jQueryInjectors.wrap
+          },
+  
+          {
+            id: 'JQueryReplaceWith',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'jQuery.replaceWith(string)',
+            title: 'Payload as HTML replacement ($.replaceWith())',
+            jQueryInjector: this._jQueryInjectors.replaceWith
+          },
+  
+  
+  
+          {
+            id: 'NgEncodedTemplate',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'ng {{ template }}',
+            title: 'Payload HTML Encoded (Angular {{ template }})',
+            templateCode: '{{ payload }}'
+          },
+  
+          {
+            id: 'NgEncodedTextContent',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'ng [textContent]',
+            title: 'Payload as HTML Text Content (Angular [textContent])',
+            templateCode: '<div [textContent]="payload"></div>'
+          },
+  
+          {
+            id: 'NgEncodedInnerText',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'ng [innerText]',
+            title: 'Payload as HTML Inner Text (Angular [innerText])',
+            templateCode: '<div [innerText]="payload"></div>'
+          },
+  
+          {
+            id: 'NgSanitized',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'Sanitized ng [innerHTML]',
+            title: 'Payload HTML Sanitized (Angular [innerHTML])',
+            templateCode: '<div [innerHTML]="payload"></div>'
+          },
+  
+          {
+            id: 'NgTrusted',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'Trusted ng [innerHTML]',
+            title: 'Payload HTML Trusted (Angular [innerHTML] and DomSanitizer.bypassSecurityTrustHtml())',
+            payloadProcessor: this._processors.ngTrustedHtml,
+            templateCode: '<div [innerHTML]="payload"></div>'
+          }
+        ]
+      },
+  
+      {
+        id: XssContext.HtmlAttribute,
+        name: 'HTML Attributes',
+        items: [
+  
+          {
+            id: 'HtmlEncodedAttribute',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'HTML paragraph title encoded',
+            title: 'Payload as Manually Encoded HTML Attribute (<p title="">)',
+            payloadProcessor: this._processors.htmlEncoding,
+            htmlSourceProvider: this._providers.paragraphTitle
+          },
+  
+          {
+            id: 'HtmlAttribute',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'HTML paragraph title',
+            title: 'Payload as HTML Attribute (<p title="">)',
+            htmlSourceProvider: this._providers.paragraphTitle
+          },
+  
+          {
+            id: 'HtmlEncodedUnquotedAttribute',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'HTML paragraph title encoded, unquoted',
+            title: 'Payload as Manually Encoded, Unquoted HTML Attribute (<p title=>)',
+            payloadProcessor: this._processors.htmlEncoding,
+            htmlSourceProvider: this._providers.unquotedParagraphTitle
+          },
+  
+          {
+            id: 'HtmlUnquotedAttribute',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'HTML paragraph title unquoted',
+            title: 'Payload as Unquoted HTML Attribute (<p title=>)',
+            htmlSourceProvider: this._providers.unquotedParagraphTitle
+          },
+  
+          {
+            id: 'DomAttributeValue',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'DOM paragraph title',
+            title: 'Payload as HTML Attribute (DOM p[title])',
+            domInjector: this._domInjectors.titleAttribute
+          },
+  
+          {
+            id: 'JQueryAttributeValue',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'jQuery paragraph title',
+            title: 'Paylaod as HTML Attribute ($(\'<p>\').attr(\'title\', ...))',
+            jQueryInjector: this._jQueryInjectors.titleAttribute
+          },
+  
+          {
+            id: 'NgEncodedAttributeValue',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'ng p [title]',
+            title: 'Payload as HTML Attribute (Angular Paragraph [title])',
+            templateCode: '<p [title]="payload">This paragraph has a title.</p>'
+          },
+  
+          {
+            id: 'NgTrustedAttributeValue',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'Trusted ng p [title]',
+            title: 'Payload as HTML Attribute (Angular Paragraph [title])',
+            payloadProcessor: this._processors.ngTrustedHtml,
+            templateCode: '<p [title]="payload">This paragraph has a title.</p>'
+          }
+        ]
+      },
+  
+      {
+        id: XssContext.Url,
+        name: 'URLs',
+        items: [
+  
+          {
+            id: 'LinkDomValidated',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'URL-validated DOM <a href>',
+            title: 'Payload URL Validated (DOM a.href)',
+            payloadProcessor: this._processors.urlValidation,
+            domInjector: this._domInjectors.linkHref
+          },
+  
+          {
+            id: 'LinkDomTrusted',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'DOM <a href>',
+            title: 'Payload URL Raw (DOM a.href)',
+            domInjector: this._domInjectors.linkHref
+          },
+  
+          {
+            id: 'LinkJQueryValidated',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'URL-validated jQuery <a href>',
+            title: 'Payload URL Validated ($.attr(\'href\', ...))',
+            payloadProcessor: this._processors.urlValidation,
+            jQueryInjector: this._jQueryInjectors.linkHref
+          },
+  
+          {
+            id: 'LinkJQueryTrusted',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'jQuery <a href>',
+            title: 'Payload URL Raw ($.attr(\'href\', ...))',
+            jQueryInjector: this._jQueryInjectors.linkHref
+          },
+  
+          {
+            id: 'LinkNgSanitized',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'Sanitized ng <a href>',
+            title: 'Payload URL Sanitized (Angular a [href])',
+            templateCode: '<a [href]="payload">Click here to test your payload as a URL!</a>'
+          },
+  
+          {
+            id: 'LinkNgTrusted',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'Trusted ng <a href>',
+            title: 'Payload URL Trusted!!! (Angular a [href] and DomSanitizer.bypassSecurityTrustUrl())',
+            payloadProcessor: this._processors.ngTrustedUrl,
+            templateCode: '<a [href]="payload">Click here to test your payload as a URL!</a>'
+          },
+  
+          {
+            id: 'IframeDomValidated',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'URL-validated DOM <iframe src>',
+            title: 'Payload URL Validated (DOM iframe.src)',
+            payloadProcessor: this._processors.urlValidation,
+            domInjector: this._domInjectors.iframeSrc
+          },
+  
+          {
+            id: 'IframeDomTrusted',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'DOM <iframe src>',
+            title: 'Payload URL Raw (DOM iframe.src)',
+            domInjector: this._domInjectors.iframeSrc
+          },
+  
+          {
+            id: 'IframeJQueryValidated',
+            quality: PayloadOutputQuality.Recommended,
+            name: 'URL-validated jQuery <iframe src>',
+            title: 'Payload URL Validated ($.attr(\'src\', ...))',
+            payloadProcessor: this._processors.urlValidation,
+            jQueryInjector: this._jQueryInjectors.iframeSrc
+          },
+  
+          {
+            id: 'IframeJQueryTrusted',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'jQuery <iframe src>',
+            title: 'Payload URL Raw ($.attr(\'src\', ...))',
+            jQueryInjector: this._jQueryInjectors.iframeSrc
+          },
+  
+          {
+            id: 'IframeNgSanitized',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'Sanitized ng <iframe src>',
+            title: 'Payload URL Sanitized (Angular iframe [src])',
+            templateCode: '<iframe [src]="payload"></iframe>'
+          },
+  
+          {
+            id: 'IframeNgTrusted',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'Trusted ng <iframe src>',
+            title: 'Payload URL Trusted! (Angular iframe [src] and DomSanitizer.bypassSecurityTrustResourceUrl())',
+            payloadProcessor: this._processors.ngTrustedResourceUrl,
+            templateCode: '<iframe [src]="payload"></iframe>'
+          }
+        ]
+      },
+  
+      {
+        id: XssContext.Css,
+        name: 'CSS Styles',
+        items: [
+  
+          {
+            id: 'BlockDomTrusted',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'Style Block DOM .textContent',
+            title: 'Payload CSS Raw (Style Block with DOM .textContent)',
+            domInjector: this._domInjectors.trustedStyleBlock,
+          },
+  
+          {
+            id: 'AttributeDomTrusted',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'Style Attribute DOM .style',
+            title: 'Payload CSS Raw (Style Attribute with DOM .style)',
+            domInjector: this._domInjectors.trustedStyleAttribute,
+          },
+  
+          {
+            id: 'BlockNgSanitized',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'Sanitized Style Block ng [innerHTML]',
+            title: 'Payload CSS Sanitized (Style block with Angular [innerHTML])',
+            templateCode: '<style type="text/css" [innerHTML]="payload"></style>'
+          },
+  
+          {
+            id: 'BlockNgTrusted',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'Trusted Style Block ng [innerHTML]',
+            title: 'Payload CSS Trusted (Style block with Angular [innerHTML] and DomSanitizer.bypassSecurityTrustCss())',
+            payloadProcessor: this._processors.ngTrustedStyle,
+            templateCode: '<style type="text/css" [innerHTML]="payload"></style>'
+          },
+  
+          {
+            id: 'AttributeNgSanitized',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'Sanitized Style Attribute ng [style]',
+            title: 'Payload CSS Sanitized (Style attribute with Angular [style])',
+            templateCode: '<div [style]="payload">Element with custom style</div>'
+          },
+  
+          {
+            id: 'AttributeNgTrusted',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'Trusted Style Attribute ng [style]',
+            title: 'Payload CSS Trusted (Style attribute with Angular [style] and DomSanitizer.bypassSecurityTrustStyle()',
+            payloadProcessor: this._processors.ngTrustedStyle,
+            templateCode: '<div [style]="payload">Element with custom style</div>'
+          },
+  
+          {
+            id: 'AttributeNgStructured',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'Structured Style Attribute ng [ngStyle]',
+            title: 'Payload CSS Sanitized (Style attribute with Angular [ngStyle] and JSON data)',
+            payloadProcessor: this._processors.jsonParsing,
+            templateCode: '<div [ngStyle]="payload">Element with custom style</div>'
+          }
+        ]
+      },
+  
+      {
+        id: XssContext.JavaScript,
+        name: 'JavaScript',
+        items: [
+  
+          {
+            id: 'ValueDomEncoded',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'Encoded JS value',
+            title: 'Payload JavaScript Encoded (JSON encoding and DOM .textContent)',
+            payloadProcessor: this._processors.jsEncoding,
+            domInjector: this._domInjectors.trustedScriptBlock
+          },
+  
+          {
+            id: 'DqStringDomTrusted',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'Trusted JS "string"',
+            title: 'Payload JavaScript Trusted (JS "string" and DOM .textContent)',
+            payloadProcessor: this._processors.jsDoubleQuoting,
+            domInjector: this._domInjectors.trustedScriptBlock
+          },
+  
+          {
+            id: 'SqStringDomTrusted',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'Trusted JS \'string\'',
+            title: 'Payload JavaScript Trusted (JS \'string\' and DOM .textContent)',
+            payloadProcessor: this._processors.jsSingleQuoting,
+            domInjector: this._domInjectors.trustedScriptBlock
+          },
+  
+          {
+            id: 'BlockDomTrusted',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'Trusted JavaScript Block',
+            title: 'Payload JavaScript Trusted (Script Block with DOM .textContent)',
+            domInjector: this._domInjectors.trustedScriptBlock
+          },
+  
+          {
+            id: 'BlockDomPlainMockIframe',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'JavaScript in Plain Mock (Iframe)',
+            title: 'Payload JavaScript in plain mock page via iframe (Script Block with DOM .textContent)',
+            domInjector: this._domInjectors.trustedScriptBlockPlainMockIframe
+          },
+  
+          {
+            id: 'BlockDomPlainMockWindow',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'JavaScript in Plain Mock (Window)',
+            title: 'Payload JavaScript in plain mock page via new window (Script Block with DOM .textContent)',
+            domInjector: this._domInjectors.trustedScriptBlockPlainMockWindow
+          },
+  
+          {
+            id: 'BlockDomStorageMockIframe',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'JavaScript in Storage Mock (Iframe)',
+            title: 'Payload JavaScript in storage mock page via iframe (Script Block with DOM .textContent)',
+            domInjector: this._domInjectors.trustedScriptBlockStorageMockIframe
+          },
+  
+          {
+            id: 'BlockDomStorageMockWindow',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'JavaScript in Storage Mock (Window)',
+            title: 'Payload JavaScript in storage mock page via new window (Script Block with DOM .textContent)',
+            domInjector: this._domInjectors.trustedScriptBlockStorageMockWindow
+          },
+  
+          {
+            id: 'BlockDomCookiesMockIframe',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'JavaScript in Cookies Mock (Iframe)',
+            title: 'Payload JavaScript in cookies mock page via iframe (Script Block with DOM .textContent)',
+            domInjector: this._domInjectors.trustedScriptBlockCookiesMockIframe
+          },
+  
+          {
+            id: 'BlockDomCookiesMockWindow',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'JavaScript in Cookies Mock (Window)',
+            title: 'Payload JavaScript in cookies mock page via new window (Script Block with DOM .textContent)',
+            domInjector: this._domInjectors.trustedScriptBlockCookiesMockWindow
+          }
+        ]
       }
-      if (!["http:", "https:"].includes(url.protocol)) {
-        return '';
-      }
-      return payload;
-    },
-
-    jsonParsing(payload) {
-      try {
-        return JSON.parse(payload);
-      } catch (e) {
-        console.warn('Expected JSON as payload, but failed to parse it!')
-        return {};
-      }
-    },
-
-    jsEncoding(payload) {
-      return 'var outputElement = document.createElement(\'div\');\n'
-          + 'outputElement.textContent = ' + JSON.stringify(payload) + ';\n'
-          + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
-    },
-
-    jsDoubleQuoting(payload) {
-      return 'var outputElement = document.createElement(\'div\');\n'
-          + 'outputElement.textContent = "' + payload + '";\n'
-          + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
-    },
-
-    jsSingleQuoting(payload) {
-      return 'var outputElement = document.createElement(\'div\');\n'
-          + 'outputElement.textContent = \'' + payload + '\';\n'
-          + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
-    }
-  };
-
-  private readonly _providers: { [prop: string]: HtmlSourceProvider } =
-  {
-    raw(payload) {
-      return payload;
-    },
-
-    paragraphTitle(payload) {
-      return '<p title="' + payload + '">This paragraph has a title.</p>';
-    },
-
-    unquotedParagraphTitle(payload) {
-      return '<p title=' + payload + '>This paragraph has a title.</p>';
-    }
-  };
-
-  private readonly _domInjectors: { [prop: string]: DomInjector } =
-  {
-    textContent(element, payload) {
-      element.textContent = payload;
-    },
-
-    innerText(element, payload) {
-      element.innerText = payload;
-    },
-
-    innerHtml(element, payload) {
-      element.innerHTML = payload;
-    },
-
-    innerHtmlNoOutput(element, payload) {
-      document.createElement('div').innerHTML = payload;
-    },
-
-    titleAttribute(element, payload) {
-      let paragraph = document.createElement('p');
-      paragraph.textContent = 'This paragraph has a title.'
-      paragraph.title = payload;
-      element.insertAdjacentElement('beforeend', paragraph);
-    },
-
-    linkHref(element, payload) {
-      let link = document.createElement('a');
-      link.textContent = 'Click here to test your payload as a URL!'
-      link.href = payload;
-      element.insertAdjacentElement('beforeend', link);
-    },
-
-    iframeSrc(element, payload) {
-      let iframe = document.createElement('iframe');
-      iframe.src = payload;
-      element.insertAdjacentElement('beforeend', iframe);
-    },
-
-    trustedStyleBlock(element, payload) {
-      let styleBlock = document.createElement('style');
-      styleBlock.setAttribute('type', 'text/css');
-      styleBlock.textContent = payload;
-      element.insertAdjacentElement('beforeend', styleBlock);
-    },
-
-    trustedStyleAttribute(element, payload) {
-      let styledElement = document.createElement('div');
-      styledElement.textContent = 'Element with custom style';
-      styledElement.setAttribute('style', payload);
-      element.insertAdjacentElement('beforeend', styledElement);
-    },
-
-    trustedScriptBlock(element, payload) {
-      let scriptBlock = document.createElement('script');
-      scriptBlock.setAttribute('type', 'text/javascript');
-      scriptBlock.textContent = '\n' + payload + '\n';
-      element.insertAdjacentElement('beforeend', scriptBlock);
-    },
-
-    trustedScriptBlockPlainMockIframe(element, payload) {
-      let iframe = document.createElement('iframe');
-      iframe.src = '/assets/mocks/plain.html';
-      iframe.addEventListener('load', () => {
-        const scriptBlock = iframe.contentDocument.createElement('script');
-        scriptBlock.setAttribute('type', 'text/javascript');
-        scriptBlock.textContent
-          = '(async function() {\n'
-          + payload + '\n'
-          + '})();\n';
-        iframe.contentDocument.body.insertAdjacentElement('beforeend', scriptBlock);
-      });
-      element.insertAdjacentElement('beforeend', iframe);
-    },
-
-    trustedScriptBlockPlainMockWindow(element, payload) {
-      let newWindow = window.open('/assets/mocks/plain.html', '_blank');
-      newWindow.addEventListener('load', () => {
-        const scriptBlock = newWindow.document.createElement('script');
-        scriptBlock.setAttribute('type', 'text/javascript');
-        scriptBlock.textContent
-          = '(async function() {\n'
-          + payload + '\n'
-          + '})();\n';
-        newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
-      });
-    },
-
-    trustedScriptBlockStorageMockIframe(element, payload) {
-      let iframe = document.createElement('iframe');
-      iframe.src = '/assets/mocks/storage.html';
-      iframe.addEventListener('load', () => {
-        const scriptBlock = iframe.contentDocument.createElement('script');
-        scriptBlock.setAttribute('type', 'text/javascript');
-        scriptBlock.textContent
-          = '(async function() {\n'
-          + payload + '\n'
-          + '})();\n';
-        iframe.contentDocument.body.insertAdjacentElement('beforeend', scriptBlock);
-      });
-      element.insertAdjacentElement('beforeend', iframe);
-    },
-
-    trustedScriptBlockStorageMockWindow(element, payload) {
-      let newWindow = window.open('/assets/mocks/storage.html', '_blank');
-      newWindow.addEventListener('load', () => {
-        const scriptBlock = newWindow.document.createElement('script');
-        scriptBlock.setAttribute('type', 'text/javascript');
-        scriptBlock.textContent
-          = '(async function() {\n'
-          + payload + '\n'
-          + '})();\n';
-        newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
-      });
-    },
-
-    trustedScriptBlockCookiesMockIframe(element, payload) {
-      let iframe = document.createElement('iframe');
-      iframe.src = '/assets/mocks/cookies.html';
-      iframe.addEventListener('load', () => {
-        const scriptBlock = iframe.contentDocument.createElement('script');
-        scriptBlock.setAttribute('type', 'text/javascript');
-        scriptBlock.textContent
-          = '(async function() {\n'
-          + payload + '\n'
-          + '})();\n';
-        iframe.contentDocument.body.insertAdjacentElement('beforeend', scriptBlock);
-      });
-      element.insertAdjacentElement('beforeend', iframe);
-    },
-
-    trustedScriptBlockCookiesMockWindow(element, payload) {
-      let newWindow = window.open('/assets/mocks/cookies.html', '_blank');
-      newWindow.addEventListener('load', () => {
-        const scriptBlock = newWindow.document.createElement('script');
-        scriptBlock.setAttribute('type', 'text/javascript');
-        scriptBlock.textContent
-          = '(async function() {\n'
-          + payload + '\n'
-          + '})();\n';
-        newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
-      });
-    }
-  };
-
-  private readonly _jQueryInjectors: { [prop: string]: JQueryInjector } =
-  {
-    text(element, payload) {
-      $(element).text(payload);
-    },
-    html(element, payload) {
-      $(element).html(payload);
-    },
-    jQueryConstructor(element, payload) {
-      $(payload).appendTo(element);
-    },
-    prepend(element, payload) {
-      $(element)
-        .html($('<p>').text('This is a static paragraph. Prepending to its parent element...'))
-        .prepend(payload);
-    },
-    append(element, payload) {
-      $(element)
-        .html($('<p>').text('This is a static paragraph. Appending to its parent element...'))
-        .append(payload);
-    },
-    before(element, payload) {
-      $('<p>').text('This is a static paragraph. Inserting before it...')
-        .prependTo(element)
-        .before(payload);
-    },
-    after(element, payload) {
-      $('<p>').text('This is a static paragraph. Inserting after it...')
-        .appendTo(element)
-        .after(payload);
-    },
-    wrapInner(element, payload) {
-      $(element)
-        .html(
-          $('<p>').text('This is a static paragraph. Wrapping around its contents...').wrapInner(payload)
-        );
-    },
-    wrap(element, payload) {
-      $('<p>').text('This is a static paragraph. Wrapping around all its parent\'s contents...')
-        .appendTo(element)
-        .wrap(payload);
-    },
-    replaceWith(element, payload) {
-      $('<p>').text('This is a static paragraph. Replacing it...')
-        .appendTo(element)
-        .replaceWith(payload);
-    },
-
-    titleAttribute(element, payload) {
-      $(element)
-        .html(
-          $('<p>').text('This paragraph has a title.').attr('title', payload)
-        );
-    },
-
-    linkHref(element, payload) {
-      $(element)
-        .html(
-          $('<a>').text('Click here to test your payload as a URL!').attr('href', payload)
-        );
-    },
-
-    iframeSrc(element, payload) {
-      $(element)
-        .html(
-          $('<iframe>').attr('src', payload)
-        );
-    },
-  };
-
-  readonly descriptors: XssContextCollection<PayloadOutputDescriptor>[] =
-  [
-
-    {
-      id: XssContext.HtmlContent,
-      name: 'HTML Content',
-      items: [
-
-        {
-          id: 'HtmlEncodedContent',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'Encoded HTML',
-          title: 'Payload as Manually Encoded HTML',
-          payloadProcessor: this._processors.htmlEncoding,
-          htmlSourceProvider: this._providers.raw
-        },
-
-        {
-          id: 'HtmlSanitizedContent',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'Sanitized HTML (DOMPurify)',
-          title: 'Payload as Sanitized HTML (DOMPurify default policy)',
-          payloadProcessor: this._processors.htmlSanitizingDomPurify,
-          htmlSourceProvider: this._providers.raw
-        },
-
-        {
-          id: 'HtmlSanitizedContentMinimalInline',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'Sanitized HTML (DOMPurify minimal inline)',
-          title: 'Payload as Sanitized HTML (DOMPurify minimal policy for inline markup)',
-          payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
-          htmlSourceProvider: this._providers.raw
-        },
-
-        {
-          id: 'HtmlSanitizedContentInlineBlockLinks',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'Sanitized HTML (DOMPurify some inline, block, links)',
-          title: 'Payload as Sanitized HTML (DOMPurify policy for some inline, block, and link markup)',
-          payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
-          htmlSourceProvider: this._providers.raw
-        },
-
-        {
-          id: 'HtmlContent',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'Raw HTML',
-          title: 'Payload as Raw HTML',
-          htmlSourceProvider: this._providers.raw
-        },
-
-
-
-        {
-          id: 'DomTextContent',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'DOM .textContent',
-          title: 'Payload as HTML Text Content (DOM .textContent)',
-          domInjector: this._domInjectors.textContent
-        },
-
-        {
-          id: 'DomInnerText',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'DOM .innerText',
-          title: 'Payload as HTML Inner Text (DOM .innerText)',
-          domInjector: this._domInjectors.innerText
-        },
-
-        {
-          id: 'DomEncodedInnerHtml',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'Encoded DOM .innerHtml',
-          title: 'Payload HTML Manually Encoded (DOM .innerHTML)',
-          payloadProcessor: this._processors.htmlEncoding,
-          domInjector: this._domInjectors.innerHtml
-        },
-
-        {
-          id: 'DomSanitizedInnerHtml',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'Sanitized DOM .innerHtml (DOMPurify)',
-          title: 'Payload HTML Sanitized (DOMPurify default policy & DOM .innerHTML)',
-          payloadProcessor: this._processors.htmlSanitizingDomPurify,
-          domInjector: this._domInjectors.innerHtml
-        },
-
-        {
-          id: 'DomSanitizedInnerHtmlMinimalInline',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'Sanitized DOM .innerHtml (DOMPurify minimal inline)',
-          title: 'Payload HTML Sanitized (DOMPurify minimal policy for inline markup & DOM .innerHTML)',
-          payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
-          domInjector: this._domInjectors.innerHtml
-        },
-
-        {
-          id: 'DomSanitizedContentInlineBlockLinks',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'Sanitized DOM .innerHtml (DOMPurify some inline, block, links)',
-          title: 'Payload HTML Sanitized (DOMPurify policy for some inline, block, and link markup & DOM .innerHTML)',
-          payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
-          domInjector: this._domInjectors.innerHtml
-        },
-
-        {
-          id: 'DomInnerHtml',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'DOM .innerHTML',
-          title: 'Payload HTML Raw (DOM .innerHTML)',
-          domInjector: this._domInjectors.innerHtml
-        },
-
-        {
-          id: 'DomInnerHtmlNoOutput',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'DOM .innerHTML (no output)',
-          title: 'Payload HTML Unencoded (DOM .innerHTML, without modifying the document)',
-          domInjector: this._domInjectors.innerHtmlNoOutput
-        },
-
-
-
-        {
-          id: 'JQueryText',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'jQuery.text(string)',
-          title: 'Payload as text ($.text())',
-          jQueryInjector: this._jQueryInjectors.text
-        },
-
-        {
-          id: 'JQueryHtmlSanitized',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'jQuery.html(DOMPurify default)',
-          title: 'Payload as sanitized HTML (DOMPurify default policy & $.html())',
-          payloadProcessor: this._processors.htmlSanitizingDomPurify,
-          jQueryInjector: this._jQueryInjectors.html
-        },
-
-        {
-          id: 'JQueryHtmlSanitizedMinimalInline',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'jQuery.html(DOMPurify minimal inline)',
-          title: 'Payload as sanitized HTML (DOMPurify minimal policy for inline markup & $.html())',
-          payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
-          jQueryInjector: this._jQueryInjectors.html
-        },
-
-        {
-          id: 'JQueryHtmlSanitizedInlineBlockLinks',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'jQuery.html(DOMPurify some inline, block, links)',
-          title: 'Payload as sanitized HTML (DOMPurify policy for some inline, block, and link markup & $.html())',
-          payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
-          jQueryInjector: this._jQueryInjectors.html
-        },
-
-        {
-          id: 'JQueryHtmlEncoded',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'jQuery.html(encodedString)',
-          title: 'Payload as manually encoded HTML ($.html())',
-          payloadProcessor: this._processors.htmlEncoding,
-          jQueryInjector: this._jQueryInjectors.html
-        },
-
-        {
-          id: 'JQueryConstructorEncoded',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'jQuery(encodedString)',
-          title: 'Payload as manually encoded HTML, through constructor ($())',
-          payloadProcessor: this._processors.htmlEncoding,
-          jQueryInjector: this._jQueryInjectors.jQueryConstructor
-        },
-
-        {
-          id: 'JQueryHtmlTextNode',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'jQuery.html(Text)',
-          title: 'Payload as HTML Text node ($.html())',
-          payloadProcessor: this._processors.domTextNode,
-          jQueryInjector: this._jQueryInjectors.html
-        },
-
-        {
-          id: 'JQueryConstructorTextNode',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'jQuery(Text)',
-          title: 'Payload as HTML Text node, through constructor ($())',
-          payloadProcessor: this._processors.domTextNode,
-          jQueryInjector: this._jQueryInjectors.jQueryConstructor
-        },
-
-        {
-          id: 'JQueryHtml',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'jQuery.html(string)',
-          title: 'Payload as HTML ($.html())',
-          jQueryInjector: this._jQueryInjectors.html
-        },
-
-        {
-          id: 'JQueryConstructor',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'jQuery(string)',
-          title: 'Payload as HTML, through constructor ($())',
-          jQueryInjector: this._jQueryInjectors.jQueryConstructor
-        },
-
-        {
-          id: 'JQueryPrepend',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'jQuery.prepend(string)',
-          title: 'Payload prepended as HTML ($.prepend())',
-          jQueryInjector: this._jQueryInjectors.prepend
-        },
-
-        {
-          id: 'JQueryAppend',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'jQuery.append(string)',
-          title: 'Payload appended as HTML ($.append())',
-          jQueryInjector: this._jQueryInjectors.append
-        },
-
-        {
-          id: 'JQueryBefore',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'jQuery.before(string)',
-          title: 'Payload as HTML before ($.before())',
-          jQueryInjector: this._jQueryInjectors.before
-        },
-
-        {
-          id: 'JQueryAfter',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'jQuery.after(string)',
-          title: 'Payload as HTML after ($.after())',
-          jQueryInjector: this._jQueryInjectors.after
-        },
-
-        {
-          id: 'JQueryWrapInner',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'jQuery.wrapInner(string)',
-          title: 'Payload as inner HTML wrap ($.wrapInner())',
-          jQueryInjector: this._jQueryInjectors.wrapInner
-        },
-
-        {
-          id: 'JQueryWrap',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'jQuery.wrap(string)',
-          title: 'Payload as HTML wrap ($.wrap())',
-          jQueryInjector: this._jQueryInjectors.wrap
-        },
-
-        {
-          id: 'JQueryReplaceWith',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'jQuery.replaceWith(string)',
-          title: 'Payload as HTML replacement ($.replaceWith())',
-          jQueryInjector: this._jQueryInjectors.replaceWith
-        },
-
-
-
-        {
-          id: 'NgEncodedTemplate',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'ng {{ template }}',
-          title: 'Payload HTML Encoded (Angular {{ template }})',
-          templateCode: '{{ payload }}'
-        },
-
-        {
-          id: 'NgEncodedTextContent',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'ng [textContent]',
-          title: 'Payload as HTML Text Content (Angular [textContent])',
-          templateCode: '<div [textContent]="payload"></div>'
-        },
-
-        {
-          id: 'NgEncodedInnerText',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'ng [innerText]',
-          title: 'Payload as HTML Inner Text (Angular [innerText])',
-          templateCode: '<div [innerText]="payload"></div>'
-        },
-
-        {
-          id: 'NgSanitized',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'Sanitized ng [innerHTML]',
-          title: 'Payload HTML Sanitized (Angular [innerHTML])',
-          templateCode: '<div [innerHTML]="payload"></div>'
-        },
-
-        {
-          id: 'NgTrusted',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'Trusted ng [innerHTML]',
-          title: 'Payload HTML Trusted (Angular [innerHTML] and DomSanitizer.bypassSecurityTrustHtml())',
-          payloadProcessor: this._processors.ngTrustedHtml,
-          templateCode: '<div [innerHTML]="payload"></div>'
-        }
-      ]
-    },
-
-    {
-      id: XssContext.HtmlAttribute,
-      name: 'HTML Attributes',
-      items: [
-
-        {
-          id: 'HtmlEncodedAttribute',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'HTML paragraph title encoded',
-          title: 'Payload as Manually Encoded HTML Attribute (<p title="">)',
-          payloadProcessor: this._processors.htmlEncoding,
-          htmlSourceProvider: this._providers.paragraphTitle
-        },
-
-        {
-          id: 'HtmlAttribute',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'HTML paragraph title',
-          title: 'Payload as HTML Attribute (<p title="">)',
-          htmlSourceProvider: this._providers.paragraphTitle
-        },
-
-        {
-          id: 'HtmlEncodedUnquotedAttribute',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'HTML paragraph title encoded, unquoted',
-          title: 'Payload as Manually Encoded, Unquoted HTML Attribute (<p title=>)',
-          payloadProcessor: this._processors.htmlEncoding,
-          htmlSourceProvider: this._providers.unquotedParagraphTitle
-        },
-
-        {
-          id: 'HtmlUnquotedAttribute',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'HTML paragraph title unquoted',
-          title: 'Payload as Unquoted HTML Attribute (<p title=>)',
-          htmlSourceProvider: this._providers.unquotedParagraphTitle
-        },
-
-        {
-          id: 'DomAttributeValue',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'DOM paragraph title',
-          title: 'Payload as HTML Attribute (DOM p[title])',
-          domInjector: this._domInjectors.titleAttribute
-        },
-
-        {
-          id: 'JQueryAttributeValue',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'jQuery paragraph title',
-          title: 'Paylaod as HTML Attribute ($(\'<p>\').attr(\'title\', ...))',
-          jQueryInjector: this._jQueryInjectors.titleAttribute
-        },
-
-        {
-          id: 'NgEncodedAttributeValue',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'ng p [title]',
-          title: 'Payload as HTML Attribute (Angular Paragraph [title])',
-          templateCode: '<p [title]="payload">This paragraph has a title.</p>'
-        },
-
-        {
-          id: 'NgTrustedAttributeValue',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'Trusted ng p [title]',
-          title: 'Payload as HTML Attribute (Angular Paragraph [title])',
-          payloadProcessor: this._processors.ngTrustedHtml,
-          templateCode: '<p [title]="payload">This paragraph has a title.</p>'
-        }
-      ]
-    },
-
-    {
-      id: XssContext.Url,
-      name: 'URLs',
-      items: [
-
-        {
-          id: 'LinkDomValidated',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'URL-validated DOM <a href>',
-          title: 'Payload URL Validated (DOM a.href)',
-          payloadProcessor: this._processors.urlValidation,
-          domInjector: this._domInjectors.linkHref
-        },
-
-        {
-          id: 'LinkDomTrusted',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'DOM <a href>',
-          title: 'Payload URL Raw (DOM a.href)',
-          domInjector: this._domInjectors.linkHref
-        },
-
-        {
-          id: 'LinkJQueryValidated',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'URL-validated jQuery <a href>',
-          title: 'Payload URL Validated ($.attr(\'href\', ...))',
-          payloadProcessor: this._processors.urlValidation,
-          jQueryInjector: this._jQueryInjectors.linkHref
-        },
-
-        {
-          id: 'LinkJQueryTrusted',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'jQuery <a href>',
-          title: 'Payload URL Raw ($.attr(\'href\', ...))',
-          jQueryInjector: this._jQueryInjectors.linkHref
-        },
-
-        {
-          id: 'LinkNgSanitized',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'Sanitized ng <a href>',
-          title: 'Payload URL Sanitized (Angular a [href])',
-          templateCode: '<a [href]="payload">Click here to test your payload as a URL!</a>'
-        },
-
-        {
-          id: 'LinkNgTrusted',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'Trusted ng <a href>',
-          title: 'Payload URL Trusted!!! (Angular a [href] and DomSanitizer.bypassSecurityTrustUrl())',
-          payloadProcessor: this._processors.ngTrustedUrl,
-          templateCode: '<a [href]="payload">Click here to test your payload as a URL!</a>'
-        },
-
-        {
-          id: 'IframeDomValidated',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'URL-validated DOM <iframe src>',
-          title: 'Payload URL Validated (DOM iframe.src)',
-          payloadProcessor: this._processors.urlValidation,
-          domInjector: this._domInjectors.iframeSrc
-        },
-
-        {
-          id: 'IframeDomTrusted',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'DOM <iframe src>',
-          title: 'Payload URL Raw (DOM iframe.src)',
-          domInjector: this._domInjectors.iframeSrc
-        },
-
-        {
-          id: 'IframeJQueryValidated',
-          quality: PayloadOutputQuality.Recommended,
-          name: 'URL-validated jQuery <iframe src>',
-          title: 'Payload URL Validated ($.attr(\'src\', ...))',
-          payloadProcessor: this._processors.urlValidation,
-          jQueryInjector: this._jQueryInjectors.iframeSrc
-        },
-
-        {
-          id: 'IframeJQueryTrusted',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'jQuery <iframe src>',
-          title: 'Payload URL Raw ($.attr(\'src\', ...))',
-          jQueryInjector: this._jQueryInjectors.iframeSrc
-        },
-
-        {
-          id: 'IframeNgSanitized',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'Sanitized ng <iframe src>',
-          title: 'Payload URL Sanitized (Angular iframe [src])',
-          templateCode: '<iframe [src]="payload"></iframe>'
-        },
-
-        {
-          id: 'IframeNgTrusted',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'Trusted ng <iframe src>',
-          title: 'Payload URL Trusted! (Angular iframe [src] and DomSanitizer.bypassSecurityTrustResourceUrl())',
-          payloadProcessor: this._processors.ngTrustedResourceUrl,
-          templateCode: '<iframe [src]="payload"></iframe>'
-        }
-      ]
-    },
-
-    {
-      id: XssContext.Css,
-      name: 'CSS Styles',
-      items: [
-
-        {
-          id: 'BlockDomTrusted',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'Style Block DOM .textContent',
-          title: 'Payload CSS Raw (Style Block with DOM .textContent)',
-          domInjector: this._domInjectors.trustedStyleBlock,
-        },
-
-        {
-          id: 'AttributeDomTrusted',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'Style Attribute DOM .style',
-          title: 'Payload CSS Raw (Style Attribute with DOM .style)',
-          domInjector: this._domInjectors.trustedStyleAttribute,
-        },
-
-        {
-          id: 'BlockNgSanitized',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'Sanitized Style Block ng [innerHTML]',
-          title: 'Payload CSS Sanitized (Style block with Angular [innerHTML])',
-          templateCode: '<style type="text/css" [innerHTML]="payload"></style>'
-        },
-
-        {
-          id: 'BlockNgTrusted',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'Trusted Style Block ng [innerHTML]',
-          title: 'Payload CSS Trusted (Style block with Angular [innerHTML] and DomSanitizer.bypassSecurityTrustCss())',
-          payloadProcessor: this._processors.ngTrustedStyle,
-          templateCode: '<style type="text/css" [innerHTML]="payload"></style>'
-        },
-
-        {
-          id: 'AttributeNgSanitized',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'Sanitized Style Attribute ng [style]',
-          title: 'Payload CSS Sanitized (Style attribute with Angular [style])',
-          templateCode: '<div [style]="payload">Element with custom style</div>'
-        },
-
-        {
-          id: 'AttributeNgTrusted',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'Trusted Style Attribute ng [style]',
-          title: 'Payload CSS Trusted (Style attribute with Angular [style] and DomSanitizer.bypassSecurityTrustStyle()',
-          payloadProcessor: this._processors.ngTrustedStyle,
-          templateCode: '<div [style]="payload">Element with custom style</div>'
-        },
-
-        {
-          id: 'AttributeNgStructured',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'Structured Style Attribute ng [ngStyle]',
-          title: 'Payload CSS Sanitized (Style attribute with Angular [ngStyle] and JSON data)',
-          payloadProcessor: this._processors.jsonParsing,
-          templateCode: '<div [ngStyle]="payload">Element with custom style</div>'
-        }
-      ]
-    },
-
-    {
-      id: XssContext.JavaScript,
-      name: 'JavaScript',
-      items: [
-
-        {
-          id: 'ValueDomEncoded',
-          quality: PayloadOutputQuality.Questionable,
-          name: 'Encoded JS value',
-          title: 'Payload JavaScript Encoded (JSON encoding and DOM .textContent)',
-          payloadProcessor: this._processors.jsEncoding,
-          domInjector: this._domInjectors.trustedScriptBlock
-        },
-
-        {
-          id: 'DqStringDomTrusted',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'Trusted JS "string"',
-          title: 'Payload JavaScript Trusted (JS "string" and DOM .textContent)',
-          payloadProcessor: this._processors.jsDoubleQuoting,
-          domInjector: this._domInjectors.trustedScriptBlock
-        },
-
-        {
-          id: 'SqStringDomTrusted',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'Trusted JS \'string\'',
-          title: 'Payload JavaScript Trusted (JS \'string\' and DOM .textContent)',
-          payloadProcessor: this._processors.jsSingleQuoting,
-          domInjector: this._domInjectors.trustedScriptBlock
-        },
-
-        {
-          id: 'BlockDomTrusted',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'Trusted JavaScript Block',
-          title: 'Payload JavaScript Trusted (Script Block with DOM .textContent)',
-          domInjector: this._domInjectors.trustedScriptBlock
-        },
-
-        {
-          id: 'BlockDomPlainMockIframe',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'JavaScript in Plain Mock (Iframe)',
-          title: 'Payload JavaScript in plain mock page via iframe (Script Block with DOM .textContent)',
-          domInjector: this._domInjectors.trustedScriptBlockPlainMockIframe
-        },
-
-        {
-          id: 'BlockDomPlainMockWindow',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'JavaScript in Plain Mock (Window)',
-          title: 'Payload JavaScript in plain mock page via new window (Script Block with DOM .textContent)',
-          domInjector: this._domInjectors.trustedScriptBlockPlainMockWindow
-        },
-
-        {
-          id: 'BlockDomStorageMockIframe',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'JavaScript in Storage Mock (Iframe)',
-          title: 'Payload JavaScript in storage mock page via iframe (Script Block with DOM .textContent)',
-          domInjector: this._domInjectors.trustedScriptBlockStorageMockIframe
-        },
-
-        {
-          id: 'BlockDomStorageMockWindow',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'JavaScript in Storage Mock (Window)',
-          title: 'Payload JavaScript in storage mock page via new window (Script Block with DOM .textContent)',
-          domInjector: this._domInjectors.trustedScriptBlockStorageMockWindow
-        },
-
-        {
-          id: 'BlockDomCookiesMockIframe',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'JavaScript in Cookies Mock (Iframe)',
-          title: 'Payload JavaScript in cookies mock page via iframe (Script Block with DOM .textContent)',
-          domInjector: this._domInjectors.trustedScriptBlockCookiesMockIframe
-        },
-
-        {
-          id: 'BlockDomCookiesMockWindow',
-          quality: PayloadOutputQuality.Insecure,
-          name: 'JavaScript in Cookies Mock (Window)',
-          title: 'Payload JavaScript in cookies mock page via new window (Script Block with DOM .textContent)',
-          domInjector: this._domInjectors.trustedScriptBlockCookiesMockWindow
-        }
-      ]
-    }
-  ];
-
-  constructor(private readonly sanitizer: DomSanitizer) {
+    ];
   }
 
   contextDescriptorById(contextId: XssContext): XssContextCollection<PayloadOutputDescriptor> {
