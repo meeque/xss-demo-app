@@ -1,0 +1,5 @@
+{
+  "backgroundImage": "url('/assets/img/team-jester-logo-black.png')",
+  "backgroundPosition": "center",
+  "height": "960px"
+}

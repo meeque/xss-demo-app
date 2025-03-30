@@ -157,6 +157,14 @@ export class PayloadPresetService {
         {
           name: 'declarations with javascript URL',
           url: 'assets/presets/css/background-js-declarations.txt'
+        },
+        {
+          name: 'declarations for Jester logo background',
+          url: 'assets/presets/css/background-jester-logo.txt'
+        },
+        {
+          name: 'declarations for Jester logo background (JSON-encoded Angular\'s ngStyle)',
+          url: 'assets/presets/css/background-jester-logo-json.txt'
         }
       ]
     },
