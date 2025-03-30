@@ -3,13 +3,14 @@ import { Component, ViewChild, ElementRef, Input, Output, EventEmitter } from '@
 import { FormsModule } from '@angular/forms';
 
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
+import { StripExtraIndentPipe } from './strip-extra-indent.pipe';
 
 @Component({
     selector: 'payload-output',
     templateUrl: './payload-output.component.html',
     styleUrls: ['./payload-output.component.css'],
     standalone: true,
-    imports: [NgIf, NgClass, FormsModule]
+    imports: [NgIf, NgClass, FormsModule, StripExtraIndentPipe]
 })
 export class PayloadOutputComponent<T> {
 

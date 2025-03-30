@@ -31,7 +31,7 @@
         class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-payload-processor-panel'"
         [attr.aria-hidden]="!showPayloadProcessor"
-        [innerText]="outputDescriptor.payloadProcessor">
+        [textContent]="outputDescriptor.payloadProcessor | stripextraindent">
     </div>
   </div>
 
@@ -52,7 +52,7 @@
         class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-html-source-provider-panel'"
         [attr.aria-hidden]="!showHtmlSourceProvider"
-        [innerText]="outputDescriptor.htmlSourceProvider">
+        [textContent]="outputDescriptor.htmlSourceProvider | stripextraindent">
     </div>
   </div>
 
@@ -73,7 +73,7 @@
         class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-dom-injector-panel'"
         [attr.aria-hidden]="!showDomInjector"
-        [innerText]="outputDescriptor.domInjector">
+        [textContent]="outputDescriptor.domInjector | stripextraindent">
     </div>
   </div>
 
@@ -94,7 +94,7 @@
         class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-jquery-injector-panel'"
         [attr.aria-hidden]="!showJQueryInjector"
-        [innerText]="outputDescriptor.jQueryInjector">
+        [textContent]="outputDescriptor.jQueryInjector | stripextraindent">
     </div>
   </div>
 
@@ -115,7 +115,7 @@
         class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-template-code-panel'"
         [attr.aria-hidden]="!showTemplateCode"
-        [innerText]="outputDescriptor.templateCode">
+        [textContent]="outputDescriptor.templateCode | stripextraindent">
     </div>
   </div>
 
@@ -155,6 +155,6 @@
         class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-live-code-panel'"
         [attr.aria-hidden]="!showLiveCode"
-        [innerText]="liveCode">
+        [textContent]="liveCode | stripextraindent">
     </div>
   </div>

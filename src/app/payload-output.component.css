@@ -41,6 +41,7 @@
 .jquery-injector .fd-layout-panel__body,
 .template-code .fd-layout-panel__body {
   font-family: monospace;
+  white-space-collapse: preserve;
 }
 
 .fd-layout-panel .fd-layout-panel__body[aria-hidden="true"] {
