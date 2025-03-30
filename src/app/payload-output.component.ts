@@ -2,15 +2,21 @@ import { NgIf, NgClass } from '@angular/common';
 import { Component, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { XssContext } from './xss-demo.common';
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { StripExtraIndentPipe } from './strip-extra-indent.pipe';
+import { Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute } from './template-outputs/angular-template-output.components';
 
 @Component({
     selector: 'payload-output',
     templateUrl: './payload-output.component.html',
     styleUrls: ['./payload-output.component.css'],
     standalone: true,
-    imports: [NgIf, NgClass, FormsModule, StripExtraIndentPipe]
+    imports: [
+      NgIf, NgClass, FormsModule,
+      StripExtraIndentPipe,
+      Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute
+    ]
 })
 export class PayloadOutputComponent<T> {
 
@@ -18,10 +24,15 @@ export class PayloadOutputComponent<T> {
 
   componentId : number = PayloadOutputComponent.nextComponentId++;
 
+  readonly XssContext = XssContext;
+
   readonly PayloadOutputQuality = PayloadOutputQuality;
 
   @ViewChild('output')
   outputContent : ElementRef;
+
+  @Input()
+  outputContext : XssContext;
 
   @Input()
   outputDescriptor : PayloadOutputDescriptor;
@@ -61,7 +72,7 @@ export class PayloadOutputComponent<T> {
     this._asyncChange.subscribe(
       () => {
         if (this.outputContent) {
-          let outputElement = this.outputContent.nativeElement;
+          let outputElement = this.outputContent.nativeElement.querySelector('*');
           if (this.outputDescriptor.htmlSourceProvider) {
             try {
               outputElement.innerHTML = this.outputDescriptor.htmlSourceProvider(this._outputPayload);
@@ -114,6 +125,10 @@ export class PayloadOutputComponent<T> {
 
   get payload() : any {
     return this._outputPayload;
+  }
+
+  isActiveOutput(context: XssContext, output: string) {
+    return (context == this.outputContext) && (output == this.outputDescriptor.id);
   }
 
   update() {

@@ -7,26 +7,19 @@ import { XssContext, XssContextCollection } from './xss-demo.common';
 import { PayloadPresetService, PayloadPresetDescriptor } from './payload-preset.service';
 import { PayloadOutputService, PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
-import { Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute } from './template-outputs/angular-template-output.components';
 
 @Component({
     selector: 'xss-demo-root',
     templateUrl: './xss-demo.component.html',
     styleUrls: ['./xss-demo.component.css'],
     standalone: true,
-    imports: [
-      NgIf, NgFor, FormsModule,
-      ComboboxInputComponent, PayloadOutputComponent,
-      Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute
-    ]
+    imports: [NgIf, NgFor, FormsModule, ComboboxInputComponent, PayloadOutputComponent]
 })
 export class XssDemoComponent implements OnInit, AfterViewInit {
 
   static nextComponentId: number = 0;
 
   componentId: number = XssDemoComponent.nextComponentId++;
-
-  readonly XssContext = XssContext;
 
   readonly PayloadOutputQuality = PayloadOutputQuality;
 
