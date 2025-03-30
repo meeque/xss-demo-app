@@ -1,4 +1,4 @@
-import { NgIf, NgFor, NgStyle } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -7,14 +7,18 @@ import { XssContext, XssContextCollection } from './xss-demo.common';
 import { PayloadPresetService, PayloadPresetDescriptor } from './payload-preset.service';
 import { PayloadOutputService, PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
-
+import { Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute } from './template-outputs/angular-template-output.components';
 
 @Component({
     selector: 'xss-demo-root',
     templateUrl: './xss-demo.component.html',
     styleUrls: ['./xss-demo.component.css'],
     standalone: true,
-    imports: [ComboboxInputComponent, FormsModule, NgIf, NgFor, PayloadOutputComponent, NgStyle]
+    imports: [
+      NgIf, NgFor, FormsModule,
+      ComboboxInputComponent, PayloadOutputComponent,
+      Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute
+    ]
 })
 export class XssDemoComponent implements OnInit, AfterViewInit {
 

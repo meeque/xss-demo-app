@@ -3,6 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 import { XssContext, XssContextCollection } from './xss-demo.common';
 import { PayloadProcessors, HtmlSourceProviders, DomInjectors, JQueryInjectors } from './payload-output.code';
+import { Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute } from './template-outputs/angular-template-output.components';
 
 
 
@@ -67,7 +68,7 @@ export class PayloadOutputService {
         id: XssContext.HtmlContent,
         name: 'HTML Content',
         items: [
-  
+
           {
             id: 'HtmlEncodedContent',
             quality: PayloadOutputQuality.Questionable,
@@ -76,7 +77,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlEncoding,
             htmlSourceProvider: this._providers.raw
           },
-  
+
           {
             id: 'HtmlSanitizedContent',
             quality: PayloadOutputQuality.Recommended,
@@ -85,7 +86,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlSanitizingDomPurify,
             htmlSourceProvider: this._providers.raw
           },
-  
+
           {
             id: 'HtmlSanitizedContentMinimalInline',
             quality: PayloadOutputQuality.Recommended,
@@ -94,7 +95,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
             htmlSourceProvider: this._providers.raw
           },
-  
+
           {
             id: 'HtmlSanitizedContentInlineBlockLinks',
             quality: PayloadOutputQuality.Recommended,
@@ -103,7 +104,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
             htmlSourceProvider: this._providers.raw
           },
-  
+
           {
             id: 'HtmlContent',
             quality: PayloadOutputQuality.Insecure,
@@ -111,9 +112,9 @@ export class PayloadOutputService {
             title: 'Payload as Raw HTML',
             htmlSourceProvider: this._providers.raw
           },
-  
-  
-  
+
+
+
           {
             id: 'DomTextContent',
             quality: PayloadOutputQuality.Recommended,
@@ -121,7 +122,7 @@ export class PayloadOutputService {
             title: 'Payload as HTML Text Content (DOM .textContent)',
             domInjector: this._domInjectors.textContent
           },
-  
+
           {
             id: 'DomInnerText',
             quality: PayloadOutputQuality.Recommended,
@@ -129,7 +130,7 @@ export class PayloadOutputService {
             title: 'Payload as HTML Inner Text (DOM .innerText)',
             domInjector: this._domInjectors.innerText
           },
-  
+
           {
             id: 'DomEncodedInnerHtml',
             quality: PayloadOutputQuality.Questionable,
@@ -138,7 +139,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlEncoding,
             domInjector: this._domInjectors.innerHtml
           },
-  
+
           {
             id: 'DomSanitizedInnerHtml',
             quality: PayloadOutputQuality.Recommended,
@@ -147,7 +148,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlSanitizingDomPurify,
             domInjector: this._domInjectors.innerHtml
           },
-  
+
           {
             id: 'DomSanitizedInnerHtmlMinimalInline',
             quality: PayloadOutputQuality.Recommended,
@@ -156,7 +157,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
             domInjector: this._domInjectors.innerHtml
           },
-  
+
           {
             id: 'DomSanitizedContentInlineBlockLinks',
             quality: PayloadOutputQuality.Recommended,
@@ -165,7 +166,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
             domInjector: this._domInjectors.innerHtml
           },
-  
+
           {
             id: 'DomInnerHtml',
             quality: PayloadOutputQuality.Insecure,
@@ -173,7 +174,7 @@ export class PayloadOutputService {
             title: 'Payload HTML Raw (DOM .innerHTML)',
             domInjector: this._domInjectors.innerHtml
           },
-  
+
           {
             id: 'DomInnerHtmlNoOutput',
             quality: PayloadOutputQuality.Insecure,
@@ -181,9 +182,9 @@ export class PayloadOutputService {
             title: 'Payload HTML Unencoded (DOM .innerHTML, without modifying the document)',
             domInjector: this._domInjectors.innerHtmlNoOutput
           },
-  
-  
-  
+
+
+
           {
             id: 'JQueryText',
             quality: PayloadOutputQuality.Recommended,
@@ -191,7 +192,7 @@ export class PayloadOutputService {
             title: 'Payload as text ($.text())',
             jQueryInjector: this._jQueryInjectors.text
           },
-  
+
           {
             id: 'JQueryHtmlSanitized',
             quality: PayloadOutputQuality.Recommended,
@@ -200,7 +201,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlSanitizingDomPurify,
             jQueryInjector: this._jQueryInjectors.html
           },
-  
+
           {
             id: 'JQueryHtmlSanitizedMinimalInline',
             quality: PayloadOutputQuality.Recommended,
@@ -209,7 +210,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
             jQueryInjector: this._jQueryInjectors.html
           },
-  
+
           {
             id: 'JQueryHtmlSanitizedInlineBlockLinks',
             quality: PayloadOutputQuality.Recommended,
@@ -218,7 +219,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
             jQueryInjector: this._jQueryInjectors.html
           },
-  
+
           {
             id: 'JQueryHtmlEncoded',
             quality: PayloadOutputQuality.Questionable,
@@ -227,7 +228,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlEncoding,
             jQueryInjector: this._jQueryInjectors.html
           },
-  
+
           {
             id: 'JQueryConstructorEncoded',
             quality: PayloadOutputQuality.Questionable,
@@ -236,7 +237,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlEncoding,
             jQueryInjector: this._jQueryInjectors.jQueryConstructor
           },
-  
+
           {
             id: 'JQueryHtmlTextNode',
             quality: PayloadOutputQuality.Questionable,
@@ -245,7 +246,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.domTextNode,
             jQueryInjector: this._jQueryInjectors.html
           },
-  
+
           {
             id: 'JQueryConstructorTextNode',
             quality: PayloadOutputQuality.Questionable,
@@ -254,7 +255,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.domTextNode,
             jQueryInjector: this._jQueryInjectors.jQueryConstructor
           },
-  
+
           {
             id: 'JQueryHtml',
             quality: PayloadOutputQuality.Insecure,
@@ -262,7 +263,7 @@ export class PayloadOutputService {
             title: 'Payload as HTML ($.html())',
             jQueryInjector: this._jQueryInjectors.html
           },
-  
+
           {
             id: 'JQueryConstructor',
             quality: PayloadOutputQuality.Insecure,
@@ -270,7 +271,7 @@ export class PayloadOutputService {
             title: 'Payload as HTML, through constructor ($())',
             jQueryInjector: this._jQueryInjectors.jQueryConstructor
           },
-  
+
           {
             id: 'JQueryPrepend',
             quality: PayloadOutputQuality.Insecure,
@@ -278,7 +279,7 @@ export class PayloadOutputService {
             title: 'Payload prepended as HTML ($.prepend())',
             jQueryInjector: this._jQueryInjectors.prepend
           },
-  
+
           {
             id: 'JQueryAppend',
             quality: PayloadOutputQuality.Insecure,
@@ -286,7 +287,7 @@ export class PayloadOutputService {
             title: 'Payload appended as HTML ($.append())',
             jQueryInjector: this._jQueryInjectors.append
           },
-  
+
           {
             id: 'JQueryBefore',
             quality: PayloadOutputQuality.Insecure,
@@ -294,7 +295,7 @@ export class PayloadOutputService {
             title: 'Payload as HTML before ($.before())',
             jQueryInjector: this._jQueryInjectors.before
           },
-  
+
           {
             id: 'JQueryAfter',
             quality: PayloadOutputQuality.Insecure,
@@ -302,7 +303,7 @@ export class PayloadOutputService {
             title: 'Payload as HTML after ($.after())',
             jQueryInjector: this._jQueryInjectors.after
           },
-  
+
           {
             id: 'JQueryWrapInner',
             quality: PayloadOutputQuality.Insecure,
@@ -310,7 +311,7 @@ export class PayloadOutputService {
             title: 'Payload as inner HTML wrap ($.wrapInner())',
             jQueryInjector: this._jQueryInjectors.wrapInner
           },
-  
+
           {
             id: 'JQueryWrap',
             quality: PayloadOutputQuality.Insecure,
@@ -318,7 +319,7 @@ export class PayloadOutputService {
             title: 'Payload as HTML wrap ($.wrap())',
             jQueryInjector: this._jQueryInjectors.wrap
           },
-  
+
           {
             id: 'JQueryReplaceWith',
             quality: PayloadOutputQuality.Insecure,
@@ -326,57 +327,57 @@ export class PayloadOutputService {
             title: 'Payload as HTML replacement ($.replaceWith())',
             jQueryInjector: this._jQueryInjectors.replaceWith
           },
-  
-  
-  
+
+
+
           {
             id: 'NgEncodedTemplate',
             quality: PayloadOutputQuality.Recommended,
             name: 'ng {{ template }}',
             title: 'Payload HTML Encoded (Angular {{ template }})',
-            templateCode: '{{ payload }}'
+            templateCode: Encoded.templateCode
           },
-  
+
           {
             id: 'NgEncodedTextContent',
             quality: PayloadOutputQuality.Recommended,
             name: 'ng [textContent]',
             title: 'Payload as HTML Text Content (Angular [textContent])',
-            templateCode: '<div [textContent]="payload"></div>'
+            templateCode: TextContent.templateCode
           },
-  
+
           {
             id: 'NgEncodedInnerText',
             quality: PayloadOutputQuality.Recommended,
             name: 'ng [innerText]',
             title: 'Payload as HTML Inner Text (Angular [innerText])',
-            templateCode: '<div [innerText]="payload"></div>'
+            templateCode: InnerText.templateCode
           },
-  
+
           {
             id: 'NgSanitized',
             quality: PayloadOutputQuality.Recommended,
             name: 'Sanitized ng [innerHTML]',
             title: 'Payload HTML Sanitized (Angular [innerHTML])',
-            templateCode: '<div [innerHTML]="payload"></div>'
+            templateCode: InnerHtml.templateCode
           },
-  
+
           {
             id: 'NgTrusted',
             quality: PayloadOutputQuality.Insecure,
             name: 'Trusted ng [innerHTML]',
             title: 'Payload HTML Trusted (Angular [innerHTML] and DomSanitizer.bypassSecurityTrustHtml())',
             payloadProcessor: this._processors.ngTrustedHtml,
-            templateCode: '<div [innerHTML]="payload"></div>'
+            templateCode: InnerHtml.templateCode
           }
         ]
       },
-  
+
       {
         id: XssContext.HtmlAttribute,
         name: 'HTML Attributes',
         items: [
-  
+
           {
             id: 'HtmlEncodedAttribute',
             quality: PayloadOutputQuality.Questionable,
@@ -385,7 +386,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlEncoding,
             htmlSourceProvider: this._providers.paragraphTitle
           },
-  
+
           {
             id: 'HtmlAttribute',
             quality: PayloadOutputQuality.Insecure,
@@ -393,7 +394,7 @@ export class PayloadOutputService {
             title: 'Payload as HTML Attribute (<p title="">)',
             htmlSourceProvider: this._providers.paragraphTitle
           },
-  
+
           {
             id: 'HtmlEncodedUnquotedAttribute',
             quality: PayloadOutputQuality.Insecure,
@@ -402,7 +403,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.htmlEncoding,
             htmlSourceProvider: this._providers.unquotedParagraphTitle
           },
-  
+
           {
             id: 'HtmlUnquotedAttribute',
             quality: PayloadOutputQuality.Insecure,
@@ -410,7 +411,7 @@ export class PayloadOutputService {
             title: 'Payload as Unquoted HTML Attribute (<p title=>)',
             htmlSourceProvider: this._providers.unquotedParagraphTitle
           },
-  
+
           {
             id: 'DomAttributeValue',
             quality: PayloadOutputQuality.Recommended,
@@ -418,7 +419,7 @@ export class PayloadOutputService {
             title: 'Payload as HTML Attribute (DOM p[title])',
             domInjector: this._domInjectors.titleAttribute
           },
-  
+
           {
             id: 'JQueryAttributeValue',
             quality: PayloadOutputQuality.Recommended,
@@ -426,31 +427,31 @@ export class PayloadOutputService {
             title: 'Paylaod as HTML Attribute ($(\'<p>\').attr(\'title\', ...))',
             jQueryInjector: this._jQueryInjectors.titleAttribute
           },
-  
+
           {
             id: 'NgEncodedAttributeValue',
             quality: PayloadOutputQuality.Recommended,
             name: 'ng p [title]',
             title: 'Payload as HTML Attribute (Angular Paragraph [title])',
-            templateCode: '<p [title]="payload">This paragraph has a title.</p>'
+            templateCode: ParagraphTitle.templateCode
           },
-  
+
           {
             id: 'NgTrustedAttributeValue',
             quality: PayloadOutputQuality.Questionable,
             name: 'Trusted ng p [title]',
             title: 'Payload as HTML Attribute (Angular Paragraph [title])',
             payloadProcessor: this._processors.ngTrustedHtml,
-            templateCode: '<p [title]="payload">This paragraph has a title.</p>'
+            templateCode: ParagraphTitle.templateCode
           }
         ]
       },
-  
+
       {
         id: XssContext.Url,
         name: 'URLs',
         items: [
-  
+
           {
             id: 'LinkDomValidated',
             quality: PayloadOutputQuality.Recommended,
@@ -459,7 +460,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.urlValidation,
             domInjector: this._domInjectors.linkHref
           },
-  
+
           {
             id: 'LinkDomTrusted',
             quality: PayloadOutputQuality.Insecure,
@@ -467,7 +468,7 @@ export class PayloadOutputService {
             title: 'Payload URL Raw (DOM a.href)',
             domInjector: this._domInjectors.linkHref
           },
-  
+
           {
             id: 'LinkJQueryValidated',
             quality: PayloadOutputQuality.Recommended,
@@ -476,7 +477,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.urlValidation,
             jQueryInjector: this._jQueryInjectors.linkHref
           },
-  
+
           {
             id: 'LinkJQueryTrusted',
             quality: PayloadOutputQuality.Insecure,
@@ -484,24 +485,24 @@ export class PayloadOutputService {
             title: 'Payload URL Raw ($.attr(\'href\', ...))',
             jQueryInjector: this._jQueryInjectors.linkHref
           },
-  
+
           {
             id: 'LinkNgSanitized',
             quality: PayloadOutputQuality.Recommended,
             name: 'Sanitized ng <a href>',
             title: 'Payload URL Sanitized (Angular a [href])',
-            templateCode: '<a [href]="payload">Click here to test your payload as a URL!</a>'
+            templateCode: LinkUrl.templateCode
           },
-  
+
           {
             id: 'LinkNgTrusted',
             quality: PayloadOutputQuality.Insecure,
             name: 'Trusted ng <a href>',
             title: 'Payload URL Trusted!!! (Angular a [href] and DomSanitizer.bypassSecurityTrustUrl())',
             payloadProcessor: this._processors.ngTrustedUrl,
-            templateCode: '<a [href]="payload">Click here to test your payload as a URL!</a>'
+            templateCode: LinkUrl.templateCode
           },
-  
+
           {
             id: 'IframeDomValidated',
             quality: PayloadOutputQuality.Recommended,
@@ -510,7 +511,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.urlValidation,
             domInjector: this._domInjectors.iframeSrc
           },
-  
+
           {
             id: 'IframeDomTrusted',
             quality: PayloadOutputQuality.Insecure,
@@ -518,7 +519,7 @@ export class PayloadOutputService {
             title: 'Payload URL Raw (DOM iframe.src)',
             domInjector: this._domInjectors.iframeSrc
           },
-  
+
           {
             id: 'IframeJQueryValidated',
             quality: PayloadOutputQuality.Recommended,
@@ -527,7 +528,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.urlValidation,
             jQueryInjector: this._jQueryInjectors.iframeSrc
           },
-  
+
           {
             id: 'IframeJQueryTrusted',
             quality: PayloadOutputQuality.Insecure,
@@ -535,31 +536,31 @@ export class PayloadOutputService {
             title: 'Payload URL Raw ($.attr(\'src\', ...))',
             jQueryInjector: this._jQueryInjectors.iframeSrc
           },
-  
+
           {
             id: 'IframeNgSanitized',
             quality: PayloadOutputQuality.Questionable,
             name: 'Sanitized ng <iframe src>',
             title: 'Payload URL Sanitized (Angular iframe [src])',
-            templateCode: '<iframe [src]="payload"></iframe>'
+            templateCode: IframeUrl.templateCode
           },
-  
+
           {
             id: 'IframeNgTrusted',
             quality: PayloadOutputQuality.Insecure,
             name: 'Trusted ng <iframe src>',
             title: 'Payload URL Trusted! (Angular iframe [src] and DomSanitizer.bypassSecurityTrustResourceUrl())',
             payloadProcessor: this._processors.ngTrustedResourceUrl,
-            templateCode: '<iframe [src]="payload"></iframe>'
+            templateCode: IframeUrl.templateCode
           }
         ]
       },
-  
+
       {
         id: XssContext.Css,
         name: 'CSS Styles',
         items: [
-  
+
           {
             id: 'BlockDomTrusted',
             quality: PayloadOutputQuality.Questionable,
@@ -567,7 +568,7 @@ export class PayloadOutputService {
             title: 'Payload CSS Raw (Style Block with DOM .textContent)',
             domInjector: this._domInjectors.trustedStyleBlock,
           },
-  
+
           {
             id: 'AttributeDomTrusted',
             quality: PayloadOutputQuality.Questionable,
@@ -575,57 +576,57 @@ export class PayloadOutputService {
             title: 'Payload CSS Raw (Style Attribute with DOM .style)',
             domInjector: this._domInjectors.trustedStyleAttribute,
           },
-  
+
           {
             id: 'BlockNgSanitized',
             quality: PayloadOutputQuality.Questionable,
             name: 'Sanitized Style Block ng [innerHTML]',
             title: 'Payload CSS Sanitized (Style block with Angular [innerHTML])',
-            templateCode: '<style type="text/css" [innerHTML]="payload"></style>'
+            templateCode: StyleBlock.templateCode
           },
-  
+
           {
             id: 'BlockNgTrusted',
             quality: PayloadOutputQuality.Questionable,
             name: 'Trusted Style Block ng [innerHTML]',
             title: 'Payload CSS Trusted (Style block with Angular [innerHTML] and DomSanitizer.bypassSecurityTrustCss())',
             payloadProcessor: this._processors.ngTrustedStyle,
-            templateCode: '<style type="text/css" [innerHTML]="payload"></style>'
+            templateCode: StyleBlock.templateCode
           },
-  
+
           {
             id: 'AttributeNgSanitized',
             quality: PayloadOutputQuality.Questionable,
             name: 'Sanitized Style Attribute ng [style]',
             title: 'Payload CSS Sanitized (Style attribute with Angular [style])',
-            templateCode: '<div [style]="payload">Element with custom style</div>'
+            templateCode: StyleAttribute.templateCode
           },
-  
+
           {
             id: 'AttributeNgTrusted',
             quality: PayloadOutputQuality.Questionable,
             name: 'Trusted Style Attribute ng [style]',
             title: 'Payload CSS Trusted (Style attribute with Angular [style] and DomSanitizer.bypassSecurityTrustStyle()',
             payloadProcessor: this._processors.ngTrustedStyle,
-            templateCode: '<div [style]="payload">Element with custom style</div>'
+            templateCode: StyleAttribute.templateCode
           },
-  
+
           {
             id: 'AttributeNgStructured',
             quality: PayloadOutputQuality.Questionable,
             name: 'Structured Style Attribute ng [ngStyle]',
             title: 'Payload CSS Sanitized (Style attribute with Angular [ngStyle] and JSON data)',
             payloadProcessor: this._processors.jsonParsing,
-            templateCode: '<div [ngStyle]="payload">Element with custom style</div>'
+            templateCode: StructuredStyleAttribute.templateCode
           }
         ]
       },
-  
+
       {
         id: XssContext.JavaScript,
         name: 'JavaScript',
         items: [
-  
+
           {
             id: 'ValueDomEncoded',
             quality: PayloadOutputQuality.Questionable,
@@ -634,7 +635,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.jsEncoding,
             domInjector: this._domInjectors.trustedScriptBlock
           },
-  
+
           {
             id: 'DqStringDomTrusted',
             quality: PayloadOutputQuality.Insecure,
@@ -643,7 +644,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.jsDoubleQuoting,
             domInjector: this._domInjectors.trustedScriptBlock
           },
-  
+
           {
             id: 'SqStringDomTrusted',
             quality: PayloadOutputQuality.Insecure,
@@ -652,7 +653,7 @@ export class PayloadOutputService {
             payloadProcessor: this._processors.jsSingleQuoting,
             domInjector: this._domInjectors.trustedScriptBlock
           },
-  
+
           {
             id: 'BlockDomTrusted',
             quality: PayloadOutputQuality.Insecure,
@@ -660,7 +661,7 @@ export class PayloadOutputService {
             title: 'Payload JavaScript Trusted (Script Block with DOM .textContent)',
             domInjector: this._domInjectors.trustedScriptBlock
           },
-  
+
           {
             id: 'BlockDomPlainMockIframe',
             quality: PayloadOutputQuality.Insecure,
@@ -668,7 +669,7 @@ export class PayloadOutputService {
             title: 'Payload JavaScript in plain mock page via iframe (Script Block with DOM .textContent)',
             domInjector: this._domInjectors.trustedScriptBlockPlainMockIframe
           },
-  
+
           {
             id: 'BlockDomPlainMockWindow',
             quality: PayloadOutputQuality.Insecure,
@@ -676,7 +677,7 @@ export class PayloadOutputService {
             title: 'Payload JavaScript in plain mock page via new window (Script Block with DOM .textContent)',
             domInjector: this._domInjectors.trustedScriptBlockPlainMockWindow
           },
-  
+
           {
             id: 'BlockDomStorageMockIframe',
             quality: PayloadOutputQuality.Insecure,
@@ -684,7 +685,7 @@ export class PayloadOutputService {
             title: 'Payload JavaScript in storage mock page via iframe (Script Block with DOM .textContent)',
             domInjector: this._domInjectors.trustedScriptBlockStorageMockIframe
           },
-  
+
           {
             id: 'BlockDomStorageMockWindow',
             quality: PayloadOutputQuality.Insecure,
@@ -692,7 +693,7 @@ export class PayloadOutputService {
             title: 'Payload JavaScript in storage mock page via new window (Script Block with DOM .textContent)',
             domInjector: this._domInjectors.trustedScriptBlockStorageMockWindow
           },
-  
+
           {
             id: 'BlockDomCookiesMockIframe',
             quality: PayloadOutputQuality.Insecure,
@@ -700,7 +701,7 @@ export class PayloadOutputService {
             title: 'Payload JavaScript in cookies mock page via iframe (Script Block with DOM .textContent)',
             domInjector: this._domInjectors.trustedScriptBlockCookiesMockIframe
           },
-  
+
           {
             id: 'BlockDomCookiesMockWindow',
             quality: PayloadOutputQuality.Insecure,
