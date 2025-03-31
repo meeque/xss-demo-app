@@ -67,8 +67,8 @@
                     </button>
                     <button
                         class="fd-button"
-                        (click)="togglePayloadOutputTechnologyFilter('templateCode')"
-                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateCode')">
+                        (click)="togglePayloadOutputTechnologyFilter('templateComponentType')"
+                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateComponentType')">
                       <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
                       <span> Angular </span>
                     </button>
@@ -115,7 +115,7 @@
                       <img *ngIf="item.value.htmlSourceProvider" class="technology-icon" src="assets/img/html-src-logo-black.svg">
                       <img *ngIf="item.value.domInjector" class="technology-icon" src="assets/img/dom-logo-black.svg">
                       <img *ngIf="item.value.jQueryInjector" class="technology-icon" src="assets/img/jquery-logo-black.svg">
-                      <img *ngIf="item.value.templateCode" class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
+                      <img *ngIf="item.value.templateComponentType" class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
                       {{ item.name }}
                       <span *ngIf="item.value.quality == PayloadOutputQuality.Recommended" class="sap-icon--accept"></span>
                       <span *ngIf="item.value.quality == PayloadOutputQuality.Questionable" class="sap-icon--question-mark"></span>

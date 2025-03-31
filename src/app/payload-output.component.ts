@@ -1,24 +1,20 @@
 import { NgIf, NgClass } from '@angular/common';
-import { Component, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ViewContainerRef, Input, Output, EventEmitter, EnvironmentInjector, ComponentRef, afterRender } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { XssContext } from './xss-demo.common';
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { StripExtraIndentPipe } from './strip-extra-indent.pipe';
-import { Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute } from './template-outputs/angular-template-output.components';
+import { AngularTemplateOutput, AngularTemplateOutputType, NonAngular } from './template-outputs/angular-template-output.components';
 
 @Component({
     selector: 'payload-output',
     templateUrl: './payload-output.component.html',
     styleUrls: ['./payload-output.component.css'],
     standalone: true,
-    imports: [
-      NgIf, NgClass, FormsModule,
-      StripExtraIndentPipe,
-      Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute
-    ]
+    imports: [NgIf, NgClass, FormsModule, StripExtraIndentPipe]
 })
-export class PayloadOutputComponent<T> {
+export class PayloadOutputComponent implements AfterViewInit {
 
   static nextComponentId : number = 0;
 
@@ -28,8 +24,11 @@ export class PayloadOutputComponent<T> {
 
   readonly PayloadOutputQuality = PayloadOutputQuality;
 
-  @ViewChild('output')
-  outputContent : ElementRef;
+  @ViewChild('outputView', {read: ViewContainerRef})
+  outputViewContainer : ViewContainerRef;
+
+  @ViewChild('outputSource', {read: ViewContainerRef})
+  outputSourceContainer : ViewContainerRef;
 
   @Input()
   outputContext : XssContext;
@@ -62,43 +61,31 @@ export class PayloadOutputComponent<T> {
 
   private _asyncChange = new EventEmitter(true);
 
+  private _outputComponent : ComponentRef<AngularTemplateOutput> = null;
+
   private _autoUpdate : boolean = true;
 
   private _inputPayload : any = '';
 
   private _outputPayload : any = null;
 
-  constructor() {
+  constructor(private readonly _environmentInjector : EnvironmentInjector) {
     this._asyncChange.subscribe(
       () => {
-        if (this.outputContent) {
-          let outputElement = this.outputContent.nativeElement.querySelector('*');
-          if (this.outputDescriptor.htmlSourceProvider) {
-            try {
-              outputElement.innerHTML = this.outputDescriptor.htmlSourceProvider(this._outputPayload);
-            } catch (err) {
-              console.error(err);
-            }
-          }
-          else if (this.outputDescriptor.domInjector) {
-            outputElement.textContent = '';
-            try {
-              this.outputDescriptor.domInjector(outputElement, this._outputPayload);
-            } catch (err) {
-              console.error(err);
-            }
-          }
-          else if (this.outputDescriptor.jQueryInjector) {
-            outputElement.textContent = '';
-            try {
-              this.outputDescriptor.jQueryInjector(outputElement, this._outputPayload);
-            } catch (err) {
-              console.error(err);
-            }
-          }
-          this.liveCode = outputElement.innerHTML;
-        }
+        this._outputComponent?.setInput('payload', this.payload);
       });
+  }
+
+  ngAfterViewInit() {
+    const outputComponentType: AngularTemplateOutputType = this.outputDescriptor.templateComponentType || NonAngular;
+    this._outputComponent = this.outputViewContainer.createComponent(
+      outputComponentType,
+      { environmentInjector: this._environmentInjector }
+    );
+    this._outputComponent.setInput('outputDescriptor', this.outputDescriptor);
+    this._outputComponent.instance.change.subscribe((source) => {
+      this.liveCode = source;
+    });
   }
 
   @Input()
@@ -125,10 +112,6 @@ export class PayloadOutputComponent<T> {
 
   get payload() : any {
     return this._outputPayload;
-  }
-
-  isActiveOutput(context: XssContext, output: string) {
-    return (context == this.outputContext) && (output == this.outputDescriptor.id);
   }
 
   update() {

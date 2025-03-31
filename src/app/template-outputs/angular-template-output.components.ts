@@ -1,187 +1,172 @@
-import { Component, Input } from "@angular/core";
+import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, Type } from "@angular/core";
 import { NgStyle } from '@angular/common';
+import { PayloadOutputDescriptor } from "../payload-output.service";
 
 
 export interface AngularTemplateOutput {
   payload: any;
+  outputDescriptor: PayloadOutputDescriptor;
+  readonly change: EventEmitter<string>;
+}
+
+export interface AngularTemplateOutputType extends Type<AngularTemplateOutput> {
+  readonly templateCode: string;
 }
 
 
 
-const TEMPLATE_CODE_ENCODED = '{{ payload }}';
+@Component({
+  template: ''
+})
+abstract class AngularTemplateOutputBase implements AngularTemplateOutput, OnChanges {
+  @Input()
+  payload: any;
+
+  @Input()
+  outputDescriptor: any;
+
+  @Output()
+  readonly change = new EventEmitter<string>(true);
+
+  constructor(protected readonly _elementRef: ElementRef) {
+  }
+
+  ngOnChanges(): void {
+    this.change.emit(this._elementRef.nativeElement.innerHTML);
+  }
+}
+
+
+
+@Component({
+    selector: 'template-output-non-angular',
+    template: NonAngular.templateCode,
+    standalone: true
+})
+export class NonAngular extends AngularTemplateOutputBase implements OnChanges {
+
+  static readonly templateCode = '';
+
+  override ngOnChanges(): void {
+    let outputElement = this._elementRef.nativeElement;
+    if (this.payload !== undefined) {
+      if (this.outputDescriptor.htmlSourceProvider) {
+        try {
+          outputElement.innerHTML = this.outputDescriptor.htmlSourceProvider(this.payload);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      else if (this.outputDescriptor.domInjector) {
+        outputElement.textContent = '';
+        try {
+          this.outputDescriptor.domInjector(outputElement, this.payload);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      else if (this.outputDescriptor.jQueryInjector) {
+        outputElement.textContent = '';
+        try {
+          this.outputDescriptor.jQueryInjector(outputElement, this.payload);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    }
+    super.ngOnChanges();
+  }
+}
+
+
 
 @Component({
     selector: 'template-output-encoded',
-    template: TEMPLATE_CODE_ENCODED,
-    standalone: true,
-    imports: []
+    template: Encoded.templateCode,
+    standalone: true
 })
-export class Encoded implements AngularTemplateOutput {
-
-  static readonly templateCode = TEMPLATE_CODE_ENCODED;
-
-  @Input()
-  payload: any;
+export class Encoded extends AngularTemplateOutputBase {
+  static readonly templateCode = '{{ payload }}';
 }
-
-
-
-const TEMPLATE_CODE_TEXT_CONTENT = '<div [textContent]="payload"></div>';
 
 @Component({
   selector: 'template-output-text-content',
-  template: TEMPLATE_CODE_TEXT_CONTENT,
-  standalone: true,
-  imports: []
+  template: TextContent.templateCode,
+  standalone: true
 })
-export class TextContent implements AngularTemplateOutput {
-
-  static readonly templateCode = TEMPLATE_CODE_TEXT_CONTENT;
-
-  @Input()
-  payload: any;
+export class TextContent extends AngularTemplateOutputBase {
+  static readonly templateCode = '<div [textContent]="payload"></div>';
 }
-
-
-
-const TEMPLATE_CODE_INNER_TEXT = '<div [innerText]="payload"></div>';
 
 @Component({
   selector: 'template-output-inner-text',
-  template: TEMPLATE_CODE_INNER_TEXT,
-  standalone: true,
-  imports: []
+  template: InnerText.templateCode,
+  standalone: true
 })
-export class InnerText implements AngularTemplateOutput {
-
-  static readonly templateCode = TEMPLATE_CODE_INNER_TEXT;
-
-  @Input()
-  payload: any;
+export class InnerText extends AngularTemplateOutputBase {
+  static readonly templateCode = '<div [innerText]="payload"></div>';
 }
-
-
-
-const TEMPLATE_CODE_INNER_HTML = '<div [innerHTML]="payload"></div>';
 
 @Component({
   selector: 'template-output-inner-html',
-  template: TEMPLATE_CODE_INNER_HTML,
-  standalone: true,
-  imports: []
+  template: InnerHtml.templateCode,
+  standalone: true
 })
-export class InnerHtml implements AngularTemplateOutput {
-
-  static readonly templateCode = TEMPLATE_CODE_INNER_HTML;
-
-  @Input()
-  payload: any;
+export class InnerHtml extends AngularTemplateOutputBase {
+  static readonly templateCode = '<div [innerHTML]="payload"></div>';
 }
-
-
-
-const TEMPLATE_CODE_PARAGRAPH_TITLE = '<p [title]="payload">This paragraph has a title.</p>';
 
 @Component({
   selector: 'template-output-paragraph-title',
-  template: TEMPLATE_CODE_PARAGRAPH_TITLE,
-  standalone: true,
-  imports: []
+  template: ParagraphTitle.templateCode,
+  standalone: true
 })
-export class ParagraphTitle implements AngularTemplateOutput {
-
-  static readonly templateCode = TEMPLATE_CODE_PARAGRAPH_TITLE;
-
-  @Input()
-  payload: any;
+export class ParagraphTitle extends AngularTemplateOutputBase {
+  static readonly templateCode = '<p [title]="payload">This paragraph has a title.</p>';
 }
-
-
-
-const TEMPLATE_CODE_LINk_URL = '<a [href]="payload">Click here to test your payload as a URL!</a>';
 
 @Component({
   selector: 'template-output-link-url',
-  template: TEMPLATE_CODE_LINk_URL,
-  standalone: true,
-  imports: []
+  template: LinkUrl.templateCode,
+  standalone: true
 })
-export class LinkUrl implements AngularTemplateOutput {
-
-  static readonly templateCode = TEMPLATE_CODE_LINk_URL;
-
-  @Input()
-  payload: any;
+export class LinkUrl extends AngularTemplateOutputBase {
+  static readonly templateCode = '<a [href]="payload">Click here to test your payload as a URL!</a>';
 }
-
-
-
-const TEMPLATE_CODE_IFRAME_URL = '<iframe [src]="payload"></iframe>';
 
 @Component({
   selector: 'template-output-iframe-url',
-  template: TEMPLATE_CODE_IFRAME_URL,
-  standalone: true,
-  imports: []
+  template: IframeUrl.templateCode,
+  standalone: true
 })
-export class IframeUrl implements AngularTemplateOutput {
-
-  static readonly templateCode = TEMPLATE_CODE_IFRAME_URL;
-
-  @Input()
-  payload: any;
+export class IframeUrl extends AngularTemplateOutputBase {
+  static readonly templateCode = '<iframe [src]="payload"></iframe>';
 }
-
-
-
-const TEMPLATE_CODE_STYLE_BLOCK = '<style type="text/css" [innerHTML]="payload"></style>';
 
 @Component({
   selector: 'template-output-style-block',
-  template: TEMPLATE_CODE_STYLE_BLOCK,
-  standalone: true,
-  imports: []
+  template: StyleBlock.templateCode,
+  standalone: true
 })
-export class StyleBlock implements AngularTemplateOutput {
-
-  static readonly templateCode = TEMPLATE_CODE_STYLE_BLOCK;
-
-  @Input()
-  payload: any;
+export class StyleBlock extends AngularTemplateOutputBase {
+  static readonly templateCode = '<style type="text/css" [innerHTML]="payload"></style>';
 }
-
-
-
-const TEMPLATE_CODE_STYLE_ATTRIBUTE = '<div [style]="payload">Element with custom style</div>';
 
 @Component({
   selector: 'template-output-style-attribute',
-  template: TEMPLATE_CODE_STYLE_ATTRIBUTE,
-  standalone: true,
-  imports: []
+  template: StyleAttribute.templateCode,
+  standalone: true
 })
-export class StyleAttribute implements AngularTemplateOutput {
-
-  static readonly templateCode = TEMPLATE_CODE_STYLE_ATTRIBUTE;
-
-  @Input()
-  payload: any;
+export class StyleAttribute extends AngularTemplateOutputBase {
+  static readonly templateCode = '<div [style]="payload">Element with custom style</div>';
 }
-
-
-
-const TEMPLATE_CODE_STRUCTURED_STYLE_ATTRIBUTE = '<div [ngStyle]="payload">Element with custom style</div>';
 
 @Component({
   selector: 'template-output-structured-style-attribute',
-  template: TEMPLATE_CODE_STRUCTURED_STYLE_ATTRIBUTE,
+  template: StructuredStyleAttribute.templateCode,
   standalone: true,
   imports: [NgStyle]
 })
-export class StructuredStyleAttribute implements AngularTemplateOutput {
-
-  static readonly templateCode = TEMPLATE_CODE_STRUCTURED_STYLE_ATTRIBUTE;
-
-  @Input()
-  payload: any;
+export class StructuredStyleAttribute extends AngularTemplateOutputBase {
+  static readonly templateCode = '<div [ngStyle]="payload">Element with custom style</div>';
 }

@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Type } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { XssContext, XssContextCollection } from './xss-demo.common';
 import { PayloadProcessors, HtmlSourceProviders, DomInjectors, JQueryInjectors } from './payload-output.code';
-import { Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute } from './template-outputs/angular-template-output.components';
+import { AngularTemplateOutputType, Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute } from './template-outputs/angular-template-output.components';
 
 
 
@@ -38,7 +38,7 @@ export interface PayloadOutputDescriptor {
   readonly htmlSourceProvider?: HtmlSourceProvider;
   readonly domInjector?: DomInjector;
   readonly jQueryInjector?: JQueryInjector;
-  readonly templateCode?: string;
+  readonly templateComponentType?: AngularTemplateOutputType;
 }
 
 
@@ -335,7 +335,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'ng {{ template }}',
             title: 'Payload HTML Encoded (Angular {{ template }})',
-            templateCode: Encoded.templateCode
+            templateComponentType: Encoded
           },
 
           {
@@ -343,7 +343,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'ng [textContent]',
             title: 'Payload as HTML Text Content (Angular [textContent])',
-            templateCode: TextContent.templateCode
+            templateComponentType: TextContent
           },
 
           {
@@ -351,7 +351,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'ng [innerText]',
             title: 'Payload as HTML Inner Text (Angular [innerText])',
-            templateCode: InnerText.templateCode
+            templateComponentType: InnerText
           },
 
           {
@@ -359,7 +359,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'Sanitized ng [innerHTML]',
             title: 'Payload HTML Sanitized (Angular [innerHTML])',
-            templateCode: InnerHtml.templateCode
+            templateComponentType: InnerHtml
           },
 
           {
@@ -368,7 +368,7 @@ export class PayloadOutputService {
             name: 'Trusted ng [innerHTML]',
             title: 'Payload HTML Trusted (Angular [innerHTML] and DomSanitizer.bypassSecurityTrustHtml())',
             payloadProcessor: this._processors.ngTrustedHtml,
-            templateCode: InnerHtml.templateCode
+            templateComponentType: InnerHtml
           }
         ]
       },
@@ -433,7 +433,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'ng p [title]',
             title: 'Payload as HTML Attribute (Angular Paragraph [title])',
-            templateCode: ParagraphTitle.templateCode
+            templateComponentType: ParagraphTitle
           },
 
           {
@@ -442,7 +442,7 @@ export class PayloadOutputService {
             name: 'Trusted ng p [title]',
             title: 'Payload as HTML Attribute (Angular Paragraph [title])',
             payloadProcessor: this._processors.ngTrustedHtml,
-            templateCode: ParagraphTitle.templateCode
+            templateComponentType: ParagraphTitle
           }
         ]
       },
@@ -491,7 +491,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'Sanitized ng <a href>',
             title: 'Payload URL Sanitized (Angular a [href])',
-            templateCode: LinkUrl.templateCode
+            templateComponentType: LinkUrl
           },
 
           {
@@ -500,7 +500,7 @@ export class PayloadOutputService {
             name: 'Trusted ng <a href>',
             title: 'Payload URL Trusted!!! (Angular a [href] and DomSanitizer.bypassSecurityTrustUrl())',
             payloadProcessor: this._processors.ngTrustedUrl,
-            templateCode: LinkUrl.templateCode
+            templateComponentType: LinkUrl
           },
 
           {
@@ -542,7 +542,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'Sanitized ng <iframe src>',
             title: 'Payload URL Sanitized (Angular iframe [src])',
-            templateCode: IframeUrl.templateCode
+            templateComponentType: IframeUrl
           },
 
           {
@@ -551,7 +551,7 @@ export class PayloadOutputService {
             name: 'Trusted ng <iframe src>',
             title: 'Payload URL Trusted! (Angular iframe [src] and DomSanitizer.bypassSecurityTrustResourceUrl())',
             payloadProcessor: this._processors.ngTrustedResourceUrl,
-            templateCode: IframeUrl.templateCode
+            templateComponentType: IframeUrl
           }
         ]
       },
@@ -582,7 +582,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'Sanitized Style Block ng [innerHTML]',
             title: 'Payload CSS Sanitized (Style block with Angular [innerHTML])',
-            templateCode: StyleBlock.templateCode
+            templateComponentType: StyleBlock
           },
 
           {
@@ -591,7 +591,7 @@ export class PayloadOutputService {
             name: 'Trusted Style Block ng [innerHTML]',
             title: 'Payload CSS Trusted (Style block with Angular [innerHTML] and DomSanitizer.bypassSecurityTrustCss())',
             payloadProcessor: this._processors.ngTrustedStyle,
-            templateCode: StyleBlock.templateCode
+            templateComponentType: StyleBlock
           },
 
           {
@@ -599,7 +599,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'Sanitized Style Attribute ng [style]',
             title: 'Payload CSS Sanitized (Style attribute with Angular [style])',
-            templateCode: StyleAttribute.templateCode
+            templateComponentType: StyleAttribute
           },
 
           {
@@ -608,7 +608,7 @@ export class PayloadOutputService {
             name: 'Trusted Style Attribute ng [style]',
             title: 'Payload CSS Trusted (Style attribute with Angular [style] and DomSanitizer.bypassSecurityTrustStyle()',
             payloadProcessor: this._processors.ngTrustedStyle,
-            templateCode: StyleAttribute.templateCode
+            templateComponentType: StyleAttribute
           },
 
           {
@@ -617,7 +617,7 @@ export class PayloadOutputService {
             name: 'Structured Style Attribute ng [ngStyle]',
             title: 'Payload CSS Sanitized (Style attribute with Angular [ngStyle] and JSON data)',
             payloadProcessor: this._processors.jsonParsing,
-            templateCode: StructuredStyleAttribute.templateCode
+            templateComponentType: StructuredStyleAttribute
           }
         ]
       },

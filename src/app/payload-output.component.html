@@ -5,7 +5,7 @@
         <img *ngIf="outputDescriptor.htmlSourceProvider" class="technology-icon" src="assets/img/html-src-logo-black.svg">
         <img *ngIf="outputDescriptor.domInjector" class="technology-icon" src="assets/img/dom-logo-black.svg">
         <img *ngIf="outputDescriptor.jQueryInjector" class="technology-icon" src="assets/img/jquery-logo-black.svg">
-        <img *ngIf="outputDescriptor.templateCode" class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
+        <img *ngIf="outputDescriptor.templateComponentType" class="technology-icon" src="assets/img/angular-logo-solid-black.svg">
         <span> {{ outputDescriptor.title }} </span>
         <span *ngIf="outputDescriptor.quality == PayloadOutputQuality.Recommended" class="sap-icon--accept"></span>
         <span *ngIf="outputDescriptor.quality == PayloadOutputQuality.Questionable" class="sap-icon--question-mark"></span>
@@ -98,7 +98,7 @@
     </div>
   </div>
 
-  <div *ngIf="outputDescriptor.templateCode" class="template-code fd-layout-panel fd-margin-top-bottom--sm">
+  <div *ngIf="outputDescriptor.templateComponentType" class="template-code fd-layout-panel fd-margin-top-bottom--sm">
     <div class="fd-layout-panel__header">
       <div class="fd-layout-panel__expand">
         <button
@@ -115,7 +115,7 @@
         class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-template-code-panel'"
         [attr.aria-hidden]="!showTemplateCode"
-        [textContent]="outputDescriptor.templateCode | stripextraindent">
+        [textContent]="outputDescriptor.templateComponentType.templateCode | stripextraindent">
     </div>
   </div>
 
@@ -133,100 +133,8 @@
         </label>
       </div>
     </div>
-    <div #output role="region" class="fd-layout-panel__body">
-
-      <!-- Outputs without an Angular template -->
-
-      <div *ngIf="!outputDescriptor.templateCode"></div>
-
-      <!-- Outputs with Angular template code: HTML Content -->
-
-      <template-output-encoded
-          *ngIf="isActiveOutput(XssContext.HtmlContent, 'NgEncodedTemplate')"
-          [payload]="payload">
-      </template-output-encoded>
-
-      <template-output-text-content
-          *ngIf="isActiveOutput(XssContext.HtmlContent, 'NgEncodedTextContent')"
-          [payload]="payload">
-      </template-output-text-content>
-
-      <template-output-inner-text
-          *ngIf="isActiveOutput(XssContext.HtmlContent, 'NgEncodedInnerText')"
-          [payload]="payload">
-      </template-output-inner-text>
-
-      <template-output-inner-html
-          *ngIf="isActiveOutput(XssContext.HtmlContent, 'NgSanitized')"
-          [payload]="payload">
-      </template-output-inner-html>
-
-      <template-output-inner-html
-          *ngIf="isActiveOutput(XssContext.HtmlContent, 'NgTrusted')"
-          [payload]="payload">
-      </template-output-inner-html>
-
-      <!-- Outputs with Angular template code: HTML Attributes -->
-
-      <template-output-paragraph-title
-          *ngIf="isActiveOutput(XssContext.HtmlAttribute, 'NgEncodedAttributeValue')"
-          [payload]="payload">
-      </template-output-paragraph-title>
-
-      <template-output-paragraph-title
-          *ngIf="isActiveOutput(XssContext.HtmlAttribute, 'NgTrustedAttributeValue')"
-          [payload]="payload">
-      </template-output-paragraph-title>
-
-      <!-- Outputs with Angular template code: URLs -->
-
-      <template-output-link-url
-          *ngIf="isActiveOutput(XssContext.Url, 'LinkNgSanitized')"
-          [payload]="payload">
-      </template-output-link-url>
-
-      <template-output-link-url
-          *ngIf="isActiveOutput(XssContext.Url, 'LinkNgTrusted')"
-          [payload]="payload">
-      </template-output-link-url>
-
-      <template-output-iframe-url
-          *ngIf="isActiveOutput(XssContext.Url, 'IframeNgSanitized')"
-          [payload]="payload">
-      </template-output-iframe-url>
-
-      <template-output-iframe-url
-          *ngIf="isActiveOutput(XssContext.Url, 'IframeNgTrusted')"
-          [payload]="payload">
-      </template-output-iframe-url>
-
-      <!-- Outputs with Angular template code: CSS -->
-
-      <template-output-style-block
-          *ngIf="isActiveOutput(XssContext.Css, 'BlockNgSanitized')"
-          [payload]="payload">
-      </template-output-style-block>
-
-      <template-output-style-block
-          *ngIf="isActiveOutput(XssContext.Css, 'BlockNgTrusted')"
-          [payload]="payload">
-      </template-output-style-block>
-
-      <template-output-style-attribute
-          *ngIf="isActiveOutput(XssContext.Css, 'AttributeNgSanitized')"
-          [payload]="payload">
-      </template-output-style-attribute>
-
-      <template-output-style-attribute
-          *ngIf="isActiveOutput(XssContext.Css, 'AttributeNgTrusted')"
-          [payload]="payload">
-      </template-output-style-attribute>
-
-      <template-output-structured-style-attribute
-          *ngIf="isActiveOutput(XssContext.Css, 'AttributeNgStructured')"
-          [payload]="payload">
-      </template-output-structured-style-attribute>
-
+    <div role="region" class="fd-layout-panel__body">
+      <ng-template #outputView></ng-template>
     </div>
   </div>
 
