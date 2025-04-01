@@ -107,8 +107,9 @@ export class PayloadOutputComponent implements AfterViewInit {
         templateComponentType,
         { environmentInjector: this._environmentInjector }
       );
-      this._templateOutputComponent.setInput('payloadSignal', this._outputPayload.asReadonly());
-      this._templateOutputComponent.setInput('outputDescriptor', this.outputDescriptor);
+      const templateOutputComponent = this._templateOutputComponent.instance;
+      templateOutputComponent.payload = this._outputPayload.asReadonly();
+      templateOutputComponent.outputDescriptor = this.outputDescriptor;
     }
   }
 

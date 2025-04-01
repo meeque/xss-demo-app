@@ -1,11 +1,12 @@
-import { Component, Input, Type, signal } from "@angular/core";
+import { Component, Input, Type, Signal, signal, isSignal } from "@angular/core";
 import { NgStyle } from '@angular/common';
+
 import { PayloadOutputDescriptor } from "../payload-output.service";
 
 
 export interface AngularTemplateOutput {
-  readonly payload: any;
-  readonly outputDescriptor: PayloadOutputDescriptor;
+  payload: Signal<any>;
+  outputDescriptor: PayloadOutputDescriptor;
 }
 
 export interface AngularTemplateOutputType extends Type<AngularTemplateOutput> {
@@ -19,14 +20,23 @@ export interface AngularTemplateOutputType extends Type<AngularTemplateOutput> {
 })
 abstract class AngularTemplateOutputBase implements AngularTemplateOutput {
 
-  @Input()
-  payloadSignal = signal(null);
+  private _payload = signal(null) as Signal<any>;
 
   @Input()
   outputDescriptor = null;
 
   get payload() {
-    return this.payloadSignal();
+    return this._payload();
+  }
+
+  @Input()
+  set payload(payload: any | Signal<any>) {
+    if (isSignal(payload)) {
+      this._payload = payload;
+    }
+    else {
+      this._payload = signal(payload);
+    }
   }
 }
 
