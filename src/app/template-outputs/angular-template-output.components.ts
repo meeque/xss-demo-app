@@ -1,12 +1,11 @@
-import { Component, ElementRef, EventEmitter, Input, OnChanges, Output, Type } from "@angular/core";
+import { Component, Input, Type, signal } from "@angular/core";
 import { NgStyle } from '@angular/common';
 import { PayloadOutputDescriptor } from "../payload-output.service";
 
 
 export interface AngularTemplateOutput {
-  payload: any;
-  outputDescriptor: PayloadOutputDescriptor;
-  readonly change: EventEmitter<string>;
+  readonly payload: any;
+  readonly outputDescriptor: PayloadOutputDescriptor;
 }
 
 export interface AngularTemplateOutputType extends Type<AngularTemplateOutput> {
@@ -18,63 +17,16 @@ export interface AngularTemplateOutputType extends Type<AngularTemplateOutput> {
 @Component({
   template: ''
 })
-abstract class AngularTemplateOutputBase implements AngularTemplateOutput, OnChanges {
-  @Input()
-  payload: any;
+abstract class AngularTemplateOutputBase implements AngularTemplateOutput {
 
   @Input()
-  outputDescriptor: any;
+  payloadSignal = signal(null);
 
-  @Output()
-  readonly change = new EventEmitter<string>(true);
+  @Input()
+  outputDescriptor = null;
 
-  constructor(protected readonly _elementRef: ElementRef) {
-  }
-
-  ngOnChanges(): void {
-    this.change.emit(this._elementRef.nativeElement.innerHTML);
-  }
-}
-
-
-
-@Component({
-    selector: 'template-output-non-angular',
-    template: NonAngular.templateCode,
-    standalone: true
-})
-export class NonAngular extends AngularTemplateOutputBase implements OnChanges {
-
-  static readonly templateCode = '';
-
-  override ngOnChanges(): void {
-    let outputElement = this._elementRef.nativeElement;
-    if (this.payload !== undefined) {
-      if (this.outputDescriptor.htmlSourceProvider) {
-        try {
-          outputElement.innerHTML = this.outputDescriptor.htmlSourceProvider(this.payload);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      else if (this.outputDescriptor.domInjector) {
-        outputElement.textContent = '';
-        try {
-          this.outputDescriptor.domInjector(outputElement, this.payload);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      else if (this.outputDescriptor.jQueryInjector) {
-        outputElement.textContent = '';
-        try {
-          this.outputDescriptor.jQueryInjector(outputElement, this.payload);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    }
-    super.ngOnChanges();
+  get payload() {
+    return this.payloadSignal();
   }
 }
 
