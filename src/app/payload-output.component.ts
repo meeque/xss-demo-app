@@ -1,11 +1,11 @@
 import { NgIf, NgClass } from '@angular/common';
-import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Input, Output, EventEmitter, EnvironmentInjector, ComponentRef, signal, Signal } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Input, Output, EventEmitter, EnvironmentInjector, ComponentRef, signal, Signal, model, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { XssContext } from './xss-demo.common';
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { StripExtraIndentPipe } from './strip-extra-indent.pipe';
-import { AngularTemplateOutput, AngularTemplateOutputType } from './template-outputs/angular-template-output.components';
+import { AngularTemplateOutput, AngularTemplateOutputType, NonAngular } from './template-outputs/angular-template-output.components';
 
 @Component({
     selector: 'payload-output',
@@ -67,50 +67,30 @@ export class PayloadOutputComponent implements AfterViewInit {
 
   private _inputPayload : any = '';
 
-  private readonly _outputPayload = signal(null);
+  private readonly outputPayload = signal<any>(null);
 
   constructor(private readonly _environmentInjector : EnvironmentInjector) {
     this._asyncChange.subscribe(
       () => {
-        let outputElement = this.outputContainer.nativeElement;
-        if (this.outputDescriptor.htmlSourceProvider) {
-          try {
-            outputElement.innerHTML = this.outputDescriptor.htmlSourceProvider(this._outputPayload());
-          } catch (err) {
-            console.error(err);
-          }
-        }
-        else if (this.outputDescriptor.domInjector) {
-          outputElement.textContent = '';
-          try {
-            this.outputDescriptor.domInjector(outputElement, this._outputPayload());
-          } catch (err) {
-            console.error(err);
-          }
-        }
-        else if (this.outputDescriptor.jQueryInjector) {
-          outputElement.textContent = '';
-          try {
-            this.outputDescriptor.jQueryInjector(outputElement, this._outputPayload());
-          } catch (err) {
-            console.error(err);
-          }
-        }
-        this.liveCode = outputElement.innerHTML;
+        this.liveCode = this.outputContainer.nativeElement.innerHTML;
       });
+
+    effect(() => {
+      const outputPayload = this.outputPayload();
+      if (this._templateOutputComponent) {
+        this._templateOutputComponent.setInput('payload', outputPayload);
+      }
+    });
   }
 
   ngAfterViewInit() {
-    const templateComponentType = this.outputDescriptor.templateComponentType;
-    if (templateComponentType) {
-      this._templateOutputComponent = this.templateOutputContainer.createComponent(
-        templateComponentType,
-        { environmentInjector: this._environmentInjector }
-      );
-      const templateOutputComponent = this._templateOutputComponent.instance;
-      templateOutputComponent.payload = this._outputPayload.asReadonly();
-      templateOutputComponent.outputDescriptor = this.outputDescriptor;
-    }
+    const templateComponentType = this.outputDescriptor.templateComponentType || NonAngular;
+    this._templateOutputComponent = this.templateOutputContainer.createComponent(
+      templateComponentType,
+      { environmentInjector: this._environmentInjector }
+    );
+    this._templateOutputComponent.setInput('payload', this.outputPayload());
+    this._templateOutputComponent.setInput('outputDescriptor', this.outputDescriptor);
   }
 
   @Input()
@@ -135,15 +115,15 @@ export class PayloadOutputComponent implements AfterViewInit {
     }
   }
 
-  get payload() : Signal<any> {
-    return this._outputPayload();
+  get payload() : any {
+    return this._inputPayload();
   }
 
   update() {
     if (this.outputDescriptor?.payloadProcessor) {
-      this._outputPayload.set(this.outputDescriptor.payloadProcessor(this._inputPayload));
+      this.outputPayload.set(this.outputDescriptor.payloadProcessor(this._inputPayload));
     } else {
-      this._outputPayload.set(this._inputPayload);
+      this.outputPayload.set(this._inputPayload);
     }
     this.change.emit();
     this._asyncChange.emit();
