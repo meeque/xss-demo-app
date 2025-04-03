@@ -1,4 +1,4 @@
-import { Component, Input, Type, Signal, signal, isSignal, effect, ElementRef, InputSignal, input } from "@angular/core";
+import { Component, Type, ElementRef, InputSignal, input, effect } from "@angular/core";
 import { NgStyle } from '@angular/common';
 
 import { PayloadOutputDescriptor } from "../payload-output.service";
