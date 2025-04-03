@@ -34,12 +34,12 @@
   content: "\02C3";
 }
 
-.live-code .fd-layout-panel__body,
 .payload-processor .fd-layout-panel__body,
 .html-source-provider .fd-layout-panel__body,
 .dom-injector .fd-layout-panel__body,
 .jquery-injector .fd-layout-panel__body,
-.template-code .fd-layout-panel__body {
+.template-code .fd-layout-panel__body,
+.live-source-code .fd-layout-panel__body {
   font-family: monospace;
   white-space-collapse: preserve;
 }

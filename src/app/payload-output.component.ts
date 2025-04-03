@@ -36,25 +36,14 @@ export class PayloadOutputComponent implements AfterViewInit {
   @Input()
   outputDescriptor : PayloadOutputDescriptor;
 
-  liveCode : string = '';
+  liveSourceCode : string = '';
 
-  @Input()
   showPayloadProcessor : boolean = true;
-
-  @Input()
   showHtmlSourceProvider : boolean = true;
-
-  @Input()
   showDomInjector : boolean = true;
-
-  @Input()
   showJQueryInjector : boolean = true;
-
-  @Input()
   showTemplateCode : boolean = true;
-
-  @Input()
-  showLiveCode : boolean = true;
+  showLiveSourceCode : boolean = true;
 
   @Output()
   change : EventEmitter<void> = new EventEmitter();
@@ -72,7 +61,7 @@ export class PayloadOutputComponent implements AfterViewInit {
   constructor(private readonly _environmentInjector : EnvironmentInjector) {
     this._asyncChange.subscribe(
       () => {
-        this.liveCode = this.outputContainer.nativeElement.innerHTML;
+        this.liveSourceCode = this.outputContainer.nativeElement.innerHTML;
       });
 
     effect(() => {

@@ -138,14 +138,14 @@
     </div>
   </div>
 
-  <div class="fd-layout-panel live-code fd-margin-top-bottom--sm">
+  <div class="fd-layout-panel live-source-code fd-margin-top-bottom--sm">
     <div class="fd-layout-panel__header">
       <div class="fd-layout-panel__expand">
         <button
             class="fd-button fd-button--transparent fd-layout-panel__button"
-            (click)="showLiveCode = !showLiveCode"
+            (click)="showLiveSourceCode = !showLiveSourceCode"
             aria-controls="'paylaod-output-component-' + componentId + '-payload-processor-panel'">
-                <i [ngClass]="showLiveCode ? 'sap-icon--slim-arrow-down' : 'sap-icon--slim-arrow-right'" class=""></i>
+                <i [ngClass]="showLiveSourceCode ? 'sap-icon--slim-arrow-down' : 'sap-icon--slim-arrow-right'" class=""></i>
         </button>
       </div>
       <h4 class="fd-layout-panel__title">Live HTML Source Code</h4>
@@ -153,8 +153,8 @@
     <div
         role="region"
         class="fd-layout-panel__body"
-        [id]="'paylaod-output-component-' + componentId + '-live-code-panel'"
-        [attr.aria-hidden]="!showLiveCode"
-        [textContent]="liveCode | stripextraindent">
+        [id]="'paylaod-output-component-' + componentId + '-live-source-code-panel'"
+        [attr.aria-hidden]="!showLiveSourceCode"
+        [textContent]="liveSourceCode | stripextraindent">
     </div>
   </div>
