@@ -442,7 +442,7 @@ describe('Xss Demo App', async () => {
   }
 
   function queryOutput(): HTMLElement {
-    return queryPayloadOutputComponent().querySelector('.output.fd-layout-panel .fd-layout-panel__body');
+    return queryPayloadOutputComponent().querySelector('.live-output.fd-layout-panel .fd-layout-panel__body');
   }
 
   async function whenStableDetectChanges(): Promise<void> {

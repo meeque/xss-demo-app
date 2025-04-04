@@ -17,7 +17,6 @@ import { AngularTemplateOutput, NonAngular } from './template-outputs/angular-te
 export class PayloadOutputComponent implements AfterViewInit {
 
   static nextComponentId : number = 0;
-
   componentId : number = PayloadOutputComponent.nextComponentId++;
 
   readonly XssContext = XssContext;
@@ -42,11 +41,11 @@ export class PayloadOutputComponent implements AfterViewInit {
   @Output()
   change = new EventEmitter<void>(true);
 
-  @ViewChild('output')
-  outputContainer : ElementRef;
+  @ViewChild('liveOutputElement')
+  private _liveOutputElement : ElementRef;
 
-  @ViewChild('templateOutput', {read: ViewContainerRef})
-  templateOutputContainer : ViewContainerRef;
+  @ViewChild('liveOutputViewContainer', {read: ViewContainerRef})
+  private _liveOutputViewContainer : ViewContainerRef;
 
   private _templateOutputComponent : ComponentRef<AngularTemplateOutput> = null;
 
@@ -78,16 +77,21 @@ export class PayloadOutputComponent implements AfterViewInit {
 
     this.change.subscribe(
       () => {
-        this.liveSourceCode.set(this.outputContainer.nativeElement.innerHTML);
+        this.liveSourceCode.set(
+          this._liveOutputElement.nativeElement.querySelector('*').innerHTML
+        );
       }
     );
   }
 
   ngAfterViewInit(): void {
     const templateComponentType = this.outputDescriptor().templateComponentType || NonAngular;
-    this._templateOutputComponent = this.templateOutputContainer.createComponent(
+    this._templateOutputComponent = this._liveOutputViewContainer.createComponent(
       templateComponentType,
-      { environmentInjector: this._environmentInjector }
+      {
+        index: 0,
+        environmentInjector: this._environmentInjector,
+      }
     );
     this._templateOutputComponent.setInput('outputPayload', this.outputPayload());
     this._templateOutputComponent.setInput('outputDescriptor', this.outputDescriptor());

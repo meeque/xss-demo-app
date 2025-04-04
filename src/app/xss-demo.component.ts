@@ -18,7 +18,6 @@ import { PayloadOutputComponent } from './payload-output.component';
 export class XssDemoComponent implements OnInit, AfterViewInit {
 
   static nextComponentId: number = 0;
-
   componentId: number = XssDemoComponent.nextComponentId++;
 
   readonly PayloadOutputQuality = PayloadOutputQuality;
@@ -54,21 +53,21 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   presetGroups: MenuGroup<XssContextCollection<PayloadPresetDescriptor>, PayloadPresetDescriptor>[];
 
-  payload: string = '';
+  payload = '';
 
   payloadOutputFilters: MenuItem<any>[] = [];
 
   payloadOutputGroups: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor>[] = [];
 
-  xssTriggered: number = 0;
+  xssTriggered = 0;
 
   payloadOutputTechnologyFilters: string[] = [];
 
   payloadOutputQualityFilters: PayloadOutputQuality[] = [];
 
-  private _activeContext: XssContext = XssContext.HtmlContent;
+  private _activeContext = XssContext.HtmlContent;
 
-  private _activeOutput: string = 'HtmlEncodedContent';
+  private _activeOutput = 'HtmlEncodedContent';
 
   constructor(
     private readonly _payloadPresetService: PayloadPresetService,
