@@ -1,5 +1,5 @@
 import { NgIf, NgClass } from '@angular/common';
-import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, ComponentRef, input, model, computed, effect, Signal } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, ComponentRef, Signal, signal, input, model, computed, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { XssContext } from './xss-demo.common';
@@ -27,12 +27,10 @@ export class PayloadOutputComponent implements AfterViewInit {
   outputDescriptor = input<PayloadOutputDescriptor>();
   payload = input<any>('');
 
-  liveSourceCode = '';
   autoUpdate = model(true);
-
   private lastOutputPayload = '';
-
   private readonly outputPayload: Signal<any>;
+  liveSourceCode = signal('');
 
   showPayloadProcessor = true;
   showHtmlSourceProvider = true;
@@ -42,15 +40,13 @@ export class PayloadOutputComponent implements AfterViewInit {
   showLiveSourceCode = true;
 
   @Output()
-  change = new EventEmitter<void>();
+  change = new EventEmitter<void>(true);
 
   @ViewChild('output')
   outputContainer : ElementRef;
 
   @ViewChild('templateOutput', {read: ViewContainerRef})
   templateOutputContainer : ViewContainerRef;
-
-  private _asyncChange = new EventEmitter(true);
 
   private _templateOutputComponent : ComponentRef<AngularTemplateOutput> = null;
 
@@ -66,7 +62,6 @@ export class PayloadOutputComponent implements AfterViewInit {
             this.lastOutputPayload = this.payload();
           }
           this.change.emit();
-          this._asyncChange.emit();
         }
         return this.lastOutputPayload;
       }
@@ -76,14 +71,14 @@ export class PayloadOutputComponent implements AfterViewInit {
       () => {
         const outputPayload = this.outputPayload();
         if (this._templateOutputComponent) {
-          this._templateOutputComponent.setInput('payload', outputPayload);
+          this._templateOutputComponent.setInput('outputPayload', outputPayload);
         }
       }
     );
 
-    this._asyncChange.subscribe(
+    this.change.subscribe(
       () => {
-        this.liveSourceCode = this.outputContainer.nativeElement.innerHTML;
+        this.liveSourceCode.set(this.outputContainer.nativeElement.innerHTML);
       }
     );
   }
@@ -94,7 +89,7 @@ export class PayloadOutputComponent implements AfterViewInit {
       templateComponentType,
       { environmentInjector: this._environmentInjector }
     );
-    this._templateOutputComponent.setInput('payload', this.outputPayload());
+    this._templateOutputComponent.setInput('outputPayload', this.outputPayload());
     this._templateOutputComponent.setInput('outputDescriptor', this.outputDescriptor());
   }
 

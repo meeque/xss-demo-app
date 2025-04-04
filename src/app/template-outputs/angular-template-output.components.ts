@@ -5,8 +5,9 @@ import { PayloadOutputDescriptor } from "../payload-output.service";
 
 
 export interface AngularTemplateOutput {
-  payload: InputSignal<any>;
   outputDescriptor: InputSignal<PayloadOutputDescriptor>;
+  outputPayload: InputSignal<any>;
+  readonly payload: any ;
 }
 
 export interface AngularTemplateOutputType extends Type<AngularTemplateOutput> {
@@ -20,9 +21,11 @@ export interface AngularTemplateOutputType extends Type<AngularTemplateOutput> {
 })
 abstract class AngularTemplateOutputBase implements AngularTemplateOutput {
 
-  payload = input.required<any>();
+  outputPayload = input.required<any>();
   outputDescriptor = input.required<PayloadOutputDescriptor>();
-
+  get payload() {
+    return this.outputPayload();
+  }
 }
 
 
@@ -40,7 +43,7 @@ export class NonAngular extends AngularTemplateOutputBase {
 
     effect(() => {
       const outputElement = this._element.nativeElement;
-      const payloadString = '' + this.payload();
+      const payloadString = '' + this.outputPayload();
       const outputDescriptor = this.outputDescriptor();
       if (outputDescriptor?.htmlSourceProvider) {
         try {
@@ -77,7 +80,7 @@ export class NonAngular extends AngularTemplateOutputBase {
     standalone: true
 })
 export class Encoded extends AngularTemplateOutputBase {
-  static readonly templateCode = '{{ payload() }}';
+  static readonly templateCode = '{{ payload }}';
 }
 
 @Component({
@@ -86,7 +89,7 @@ export class Encoded extends AngularTemplateOutputBase {
   standalone: true
 })
 export class TextContent extends AngularTemplateOutputBase {
-  static readonly templateCode = '<div [textContent]="payload()"></div>';
+  static readonly templateCode = '<div [textContent]="payload"></div>';
 }
 
 @Component({
@@ -95,7 +98,7 @@ export class TextContent extends AngularTemplateOutputBase {
   standalone: true
 })
 export class InnerText extends AngularTemplateOutputBase {
-  static readonly templateCode = '<div [innerText]="payload()"></div>';
+  static readonly templateCode = '<div [innerText]="payload"></div>';
 }
 
 @Component({
@@ -104,7 +107,7 @@ export class InnerText extends AngularTemplateOutputBase {
   standalone: true
 })
 export class InnerHtml extends AngularTemplateOutputBase {
-  static readonly templateCode = '<div [innerHTML]="payload()"></div>';
+  static readonly templateCode = '<div [innerHTML]="payload"></div>';
 }
 
 @Component({
@@ -113,7 +116,7 @@ export class InnerHtml extends AngularTemplateOutputBase {
   standalone: true
 })
 export class ParagraphTitle extends AngularTemplateOutputBase {
-  static readonly templateCode = '<p [title]="payload()">This paragraph has a title.</p>';
+  static readonly templateCode = '<p [title]="payload">This paragraph has a title.</p>';
 }
 
 @Component({
@@ -122,7 +125,7 @@ export class ParagraphTitle extends AngularTemplateOutputBase {
   standalone: true
 })
 export class LinkUrl extends AngularTemplateOutputBase {
-  static readonly templateCode = '<a [href]="payload()">Click here to test your payload as a URL!</a>';
+  static readonly templateCode = '<a [href]="payload">Click here to test your payload as a URL!</a>';
 }
 
 @Component({
@@ -131,7 +134,7 @@ export class LinkUrl extends AngularTemplateOutputBase {
   standalone: true
 })
 export class IframeUrl extends AngularTemplateOutputBase {
-  static readonly templateCode = '<iframe [src]="payload()"></iframe>';
+  static readonly templateCode = '<iframe [src]="payload"></iframe>';
 }
 
 @Component({
@@ -140,7 +143,7 @@ export class IframeUrl extends AngularTemplateOutputBase {
   standalone: true
 })
 export class StyleBlock extends AngularTemplateOutputBase {
-  static readonly templateCode = '<style type="text/css" [innerHTML]="payload()"></style>';
+  static readonly templateCode = '<style type="text/css" [innerHTML]="payload"></style>';
 }
 
 @Component({
@@ -149,7 +152,7 @@ export class StyleBlock extends AngularTemplateOutputBase {
   standalone: true
 })
 export class StyleAttribute extends AngularTemplateOutputBase {
-  static readonly templateCode = '<div [style]="payload()">Element with custom style</div>';
+  static readonly templateCode = '<div [style]="payload">Element with custom style</div>';
 }
 
 @Component({
@@ -159,5 +162,5 @@ export class StyleAttribute extends AngularTemplateOutputBase {
   imports: [NgStyle]
 })
 export class StructuredStyleAttribute extends AngularTemplateOutputBase {
-  static readonly templateCode = '<div [ngStyle]="payload()">Element with custom style</div>';
+  static readonly templateCode = '<div [ngStyle]="payload">Element with custom style</div>';
 }

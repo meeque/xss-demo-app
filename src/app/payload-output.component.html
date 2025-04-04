@@ -155,6 +155,6 @@
         class="fd-layout-panel__body"
         [id]="'paylaod-output-component-' + componentId + '-live-source-code-panel'"
         [attr.aria-hidden]="!showLiveSourceCode"
-        [textContent]="liveSourceCode | stripextraindent">
+        [textContent]="liveSourceCode() | stripextraindent">
     </div>
   </div>
