@@ -1,5 +1,5 @@
 import { NgIf, NgFor } from '@angular/common';
-import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, TemplateRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, TemplateRef, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from './combobox-input.component';
@@ -53,7 +53,8 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   presetGroups: MenuGroup<XssContextCollection<PayloadPresetDescriptor>, PayloadPresetDescriptor>[];
 
-  payload = '';
+  payload = model<any>('');
+  activePayloadOutput = model<PayloadOutputDescriptor>();
 
   payloadOutputFilters: MenuItem<any>[] = [];
 
@@ -65,15 +66,12 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   payloadOutputQualityFilters: PayloadOutputQuality[] = [];
 
-  private _activeContext = XssContext.HtmlContent;
-
-  private _activeOutput = 'HtmlEncodedContent';
-
   constructor(
     private readonly _payloadPresetService: PayloadPresetService,
     private readonly _payloadOutputService: PayloadOutputService,
     private readonly _changeDetector: ChangeDetectorRef
   ) {
+    this.activateOutput(XssContext.HtmlContent, 'HtmlEncodedContent');
   }
 
   ngOnInit() {
@@ -151,16 +149,15 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   }
 
   async loadPresetPayload(presetUrl: string) {
-    this.payload = await this._payloadPresetService.loadPresetPayload(presetUrl);
-  }
-
-  isActiveOutput(context: XssContext, output: string) {
-    return (context == this._activeContext) && (output == this._activeOutput);
+    this.payload.set(
+      await this._payloadPresetService.loadPresetPayload(presetUrl)
+    );
   }
 
   activateOutput(context: XssContext, output: string) {
-    this._activeContext = context;
-    this._activeOutput = output;
+    this.activePayloadOutput.set(
+      this._payloadOutputService.outputDescriptorById(context, output)
+    );
     return false;
   }
 

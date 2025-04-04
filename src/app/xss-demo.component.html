@@ -126,17 +126,11 @@
               </ng-template>
 
               <div>
-                <ng-container *ngFor="let context of payloadOutputService.descriptors">
-                  <ng-container *ngFor="let output of context.items">
-                    <payload-output
-                        *ngIf="isActiveOutput(context.id, output.id)"
-                        [outputContext]="context.id"
-                        [outputDescriptor]="output"
-                        [payload]="payload"
-                        (change)="resetXss()">
-                    </payload-output>
-                  </ng-container>
-                </ng-container>
+                <payload-output
+                  [outputDescriptor]="activePayloadOutput()"
+                  [payload]="payload()"
+                  (change)="resetXss()">
+                </payload-output>
               </div>
             </div>
           </section>

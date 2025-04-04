@@ -1,5 +1,5 @@
 import { NgIf, NgClass } from '@angular/common';
-import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, ComponentRef, Signal, signal, input, model, computed, effect } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, ComponentRef, Signal, signal, input, model, computed, effect, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { XssContext } from './xss-demo.common';
@@ -22,7 +22,6 @@ export class PayloadOutputComponent implements AfterViewInit {
   readonly XssContext = XssContext;
   readonly PayloadOutputQuality = PayloadOutputQuality;
 
-  outputContext = input<XssContext>();
   outputDescriptor = input<PayloadOutputDescriptor>();
   payload = input<any>('');
 
@@ -50,6 +49,13 @@ export class PayloadOutputComponent implements AfterViewInit {
   private _templateOutputComponent : ComponentRef<AngularTemplateOutput> = null;
 
   constructor(private readonly _environmentInjector : EnvironmentInjector) {
+
+    effect(
+      () => {
+        const outputDescriptor = this.outputDescriptor();
+        untracked(() => this.changeTemplateOutput(outputDescriptor));
+      }
+    );
 
     this.outputPayload = computed<any>(
       () => {
@@ -85,16 +91,23 @@ export class PayloadOutputComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    const templateComponentType = this.outputDescriptor().templateComponentType || NonAngular;
-    this._templateOutputComponent = this._liveOutputViewContainer.createComponent(
-      templateComponentType,
-      {
-        index: 0,
-        environmentInjector: this._environmentInjector,
-      }
-    );
-    this._templateOutputComponent.setInput('outputPayload', this.outputPayload());
-    this._templateOutputComponent.setInput('outputDescriptor', this.outputDescriptor());
+    this.changeTemplateOutput(this.outputDescriptor());
+  }
+
+  changeTemplateOutput(outputDescriptor: PayloadOutputDescriptor): void {
+    if (this._liveOutputViewContainer) {
+      this._liveOutputViewContainer.clear();
+      const templateComponentType = outputDescriptor.templateComponentType || NonAngular;
+      this._templateOutputComponent = this._liveOutputViewContainer.createComponent(
+        templateComponentType,
+        {
+          index: 0,
+          environmentInjector: this._environmentInjector,
+        }
+      );
+      this._templateOutputComponent.setInput('outputPayload', this.outputPayload());
+      this._templateOutputComponent.setInput('outputDescriptor', this.outputDescriptor());
+    }
   }
 
   update(): boolean {
