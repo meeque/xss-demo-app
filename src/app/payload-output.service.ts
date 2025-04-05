@@ -3,7 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 import { XssContext, XssContextCollection } from './xss-demo.common';
 import { PayloadProcessors, HtmlSourceProviders, DomInjectors, JQueryInjectors } from './payload-output.code';
-import { AngularTemplateOutputType, Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute } from './template-outputs/angular-template-output.components';
+import { LiveOutputType, Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute } from './live-output.component';
 
 
 
@@ -38,7 +38,7 @@ export interface PayloadOutputDescriptor {
   readonly htmlSourceProvider?: HtmlSourceProvider;
   readonly domInjector?: DomInjector;
   readonly jQueryInjector?: JQueryInjector;
-  readonly templateComponentType?: AngularTemplateOutputType;
+  readonly templateComponentType?: LiveOutputType;
 }
 
 

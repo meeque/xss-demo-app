@@ -1,16 +1,16 @@
 import { Component, Type, ElementRef, InputSignal, input, effect } from "@angular/core";
 import { NgStyle } from '@angular/common';
 
-import { PayloadOutputDescriptor } from "../payload-output.service";
+import { PayloadOutputDescriptor } from "./payload-output.service";
 
 
-export interface AngularTemplateOutput {
+export interface LiveOutput {
   outputDescriptor: InputSignal<PayloadOutputDescriptor>;
   outputPayload: InputSignal<any>;
   readonly payload: any ;
 }
 
-export interface AngularTemplateOutputType extends Type<AngularTemplateOutput> {
+export interface LiveOutputType extends Type<LiveOutput> {
   readonly templateCode: string;
 }
 
@@ -19,10 +19,10 @@ export interface AngularTemplateOutputType extends Type<AngularTemplateOutput> {
 @Component({
   template: ''
 })
-abstract class AngularTemplateOutputBase implements AngularTemplateOutput {
+abstract class LiveOutputComponent implements LiveOutput {
 
-  outputPayload = input.required<any>();
   outputDescriptor = input.required<PayloadOutputDescriptor>();
+  outputPayload = input.required<any>();
   get payload() {
     return this.outputPayload();
   }
@@ -35,7 +35,7 @@ abstract class AngularTemplateOutputBase implements AngularTemplateOutput {
   template: NonAngular.templateCode,
   standalone: true
 })
-export class NonAngular extends AngularTemplateOutputBase {
+export class NonAngular extends LiveOutputComponent {
   static readonly templateCode = '';
 
   constructor(private readonly _element: ElementRef) {
@@ -79,7 +79,7 @@ export class NonAngular extends AngularTemplateOutputBase {
     template: Encoded.templateCode,
     standalone: true
 })
-export class Encoded extends AngularTemplateOutputBase {
+export class Encoded extends LiveOutputComponent {
   static readonly templateCode = '{{ payload }}';
 }
 
@@ -88,7 +88,7 @@ export class Encoded extends AngularTemplateOutputBase {
   template: TextContent.templateCode,
   standalone: true
 })
-export class TextContent extends AngularTemplateOutputBase {
+export class TextContent extends LiveOutputComponent {
   static readonly templateCode = '<div [textContent]="payload"></div>';
 }
 
@@ -97,7 +97,7 @@ export class TextContent extends AngularTemplateOutputBase {
   template: InnerText.templateCode,
   standalone: true
 })
-export class InnerText extends AngularTemplateOutputBase {
+export class InnerText extends LiveOutputComponent {
   static readonly templateCode = '<div [innerText]="payload"></div>';
 }
 
@@ -106,7 +106,7 @@ export class InnerText extends AngularTemplateOutputBase {
   template: InnerHtml.templateCode,
   standalone: true
 })
-export class InnerHtml extends AngularTemplateOutputBase {
+export class InnerHtml extends LiveOutputComponent {
   static readonly templateCode = '<div [innerHTML]="payload"></div>';
 }
 
@@ -115,7 +115,7 @@ export class InnerHtml extends AngularTemplateOutputBase {
   template: ParagraphTitle.templateCode,
   standalone: true
 })
-export class ParagraphTitle extends AngularTemplateOutputBase {
+export class ParagraphTitle extends LiveOutputComponent {
   static readonly templateCode = '<p [title]="payload">This paragraph has a title.</p>';
 }
 
@@ -124,7 +124,7 @@ export class ParagraphTitle extends AngularTemplateOutputBase {
   template: LinkUrl.templateCode,
   standalone: true
 })
-export class LinkUrl extends AngularTemplateOutputBase {
+export class LinkUrl extends LiveOutputComponent {
   static readonly templateCode = '<a [href]="payload">Click here to test your payload as a URL!</a>';
 }
 
@@ -133,7 +133,7 @@ export class LinkUrl extends AngularTemplateOutputBase {
   template: IframeUrl.templateCode,
   standalone: true
 })
-export class IframeUrl extends AngularTemplateOutputBase {
+export class IframeUrl extends LiveOutputComponent {
   static readonly templateCode = '<iframe [src]="payload"></iframe>';
 }
 
@@ -142,7 +142,7 @@ export class IframeUrl extends AngularTemplateOutputBase {
   template: StyleBlock.templateCode,
   standalone: true
 })
-export class StyleBlock extends AngularTemplateOutputBase {
+export class StyleBlock extends LiveOutputComponent {
   static readonly templateCode = '<style type="text/css" [innerHTML]="payload"></style>';
 }
 
@@ -151,7 +151,7 @@ export class StyleBlock extends AngularTemplateOutputBase {
   template: StyleAttribute.templateCode,
   standalone: true
 })
-export class StyleAttribute extends AngularTemplateOutputBase {
+export class StyleAttribute extends LiveOutputComponent {
   static readonly templateCode = '<div [style]="payload">Element with custom style</div>';
 }
 
@@ -161,6 +161,6 @@ export class StyleAttribute extends AngularTemplateOutputBase {
   standalone: true,
   imports: [NgStyle]
 })
-export class StructuredStyleAttribute extends AngularTemplateOutputBase {
+export class StructuredStyleAttribute extends LiveOutputComponent {
   static readonly templateCode = '<div [ngStyle]="payload">Element with custom style</div>';
 }

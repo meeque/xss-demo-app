@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
 import { XssContext } from './xss-demo.common';
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
-import { AngularTemplateOutput, NonAngular } from './template-outputs/angular-template-output.components';
+import { LiveOutput, NonAngular } from './live-output.component';
 
 @Component({
     selector: 'payload-output',
@@ -46,14 +46,14 @@ export class PayloadOutputComponent implements AfterViewInit {
   @ViewChild('liveOutputViewContainer', {read: ViewContainerRef})
   private _liveOutputViewContainer : ViewContainerRef;
 
-  private _templateOutputComponent : ComponentRef<AngularTemplateOutput> = null;
+  private _liveOutputComponent : ComponentRef<LiveOutput> = null;
 
   constructor(private readonly _environmentInjector : EnvironmentInjector) {
 
     effect(
       () => {
         const outputDescriptor = this.outputDescriptor();
-        untracked(() => this.changeTemplateOutput(outputDescriptor));
+        untracked(() => this.switchLiveOutput(outputDescriptor));
       }
     );
 
@@ -75,8 +75,8 @@ export class PayloadOutputComponent implements AfterViewInit {
     effect(
       () => {
         const outputPayload = this.outputPayload();
-        if (this._templateOutputComponent) {
-          this._templateOutputComponent.setInput('outputPayload', outputPayload);
+        if (this._liveOutputComponent) {
+          this._liveOutputComponent.setInput('outputPayload', outputPayload);
         }
       }
     );
@@ -91,22 +91,22 @@ export class PayloadOutputComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.changeTemplateOutput(this.outputDescriptor());
+    this.switchLiveOutput(this.outputDescriptor());
   }
 
-  changeTemplateOutput(outputDescriptor: PayloadOutputDescriptor): void {
+  switchLiveOutput(outputDescriptor: PayloadOutputDescriptor): void {
     if (this._liveOutputViewContainer) {
       this._liveOutputViewContainer.clear();
-      const templateComponentType = outputDescriptor.templateComponentType || NonAngular;
-      this._templateOutputComponent = this._liveOutputViewContainer.createComponent(
-        templateComponentType,
+      const liveOutputComponentType = outputDescriptor.templateComponentType || NonAngular;
+      this._liveOutputComponent = this._liveOutputViewContainer.createComponent(
+        liveOutputComponentType,
         {
           index: 0,
           environmentInjector: this._environmentInjector,
         }
       );
-      this._templateOutputComponent.setInput('outputPayload', this.outputPayload());
-      this._templateOutputComponent.setInput('outputDescriptor', this.outputDescriptor());
+      this._liveOutputComponent.setInput('outputPayload', this.outputPayload());
+      this._liveOutputComponent.setInput('outputDescriptor', this.outputDescriptor());
     }
   }
 
