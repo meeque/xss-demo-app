@@ -34,7 +34,8 @@
             "scripts": [
               "node_modules/dompurify/dist/purify.min.js",
               "node_modules/jquery/dist/jquery.slim.min.js",
-              "node_modules/cookie-store/index.js"
+              "node_modules/cookie-store/index.js",
+              "src-js/payload-output-functions.js"
             ]
           },
           "configurations": {
@@ -104,7 +105,8 @@
             "scripts": [
               "node_modules/dompurify/dist/purify.min.js",
               "node_modules/jquery/dist/jquery.slim.min.js",
-              "node_modules/cookie-store/index.js"
+              "node_modules/cookie-store/index.js",
+              "src-js/payload-output-functions.js"
             ],
             "karmaConfig": "karma.conf.js"
           }

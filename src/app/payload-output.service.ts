@@ -1,8 +1,7 @@
-import { Injectable, Type } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { XssContext, XssContextCollection } from './xss-demo.common';
-import { PayloadProcessors, HtmlSourceProviders, DomInjectors, JQueryInjectors } from './payload-output.code';
 import { LiveOutputType, Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute } from './live-output.component';
 
 
@@ -12,6 +11,8 @@ export enum PayloadOutputQuality {
   Questionable,
   Insecure
 }
+
+
 
 interface PayloadProcessor {
   (payload: string): any;
@@ -28,6 +29,37 @@ interface Injector {
 interface DomInjector extends Injector {};
 
 interface JQueryInjector extends Injector {};
+
+
+
+interface PayloadProcessors {
+  new (sanitizer: DomSanitizer): PayloadProcessors;
+  [prop: string]: PayloadProcessor;
+}
+
+interface HtmlSourceProviders {
+  new (): HtmlSourceProviders;
+  [prop: string]: HtmlSourceProvider;
+}
+
+interface DomInjectors {
+  new (): DomInjectors;
+  [prop: string]: DomInjector;
+}
+
+interface JQueryInjectors {
+  new (): JQueryInjectors;
+  [prop: string]: JQueryInjector;
+}
+
+interface PayloadOutputFunctions {
+  readonly PayloadProcessors: PayloadProcessors;
+  readonly HtmlSourceProviders: HtmlSourceProviders;
+  readonly DomInjectors: DomInjectors;
+  readonly JQueryInjectors: JQueryInjectors;
+}
+
+
 
 export interface PayloadOutputDescriptor {
   readonly id: string;
@@ -46,21 +78,22 @@ export interface PayloadOutputDescriptor {
 @Injectable()
 export class PayloadOutputService {
 
-  private readonly _processors: { [prop: string]: PayloadProcessor };
+  private readonly _processors: PayloadProcessors;
 
-  private readonly _providers: { [prop: string]: HtmlSourceProvider };
+  private readonly _providers: HtmlSourceProviders;
 
-  private readonly _domInjectors: { [prop: string]: DomInjector };
+  private readonly _domInjectors: DomInjectors;
 
-  private readonly _jQueryInjectors: { [prop: string]: JQueryInjector };
+  private readonly _jQueryInjectors: JQueryInjectors;
 
   readonly descriptors: XssContextCollection<PayloadOutputDescriptor>[];
 
   constructor(sanitizer: DomSanitizer) {
-    this._processors = new PayloadProcessors(sanitizer);
-    this._providers = new HtmlSourceProviders();
-    this._domInjectors = new DomInjectors();
-    this._jQueryInjectors = new JQueryInjectors();
+    const payloadOutputFunctions = (window as any).XssDemoApp.PayloadOutputFunctions as PayloadOutputFunctions;
+    this._processors = new payloadOutputFunctions.PayloadProcessors(sanitizer);
+    this._providers = new payloadOutputFunctions.HtmlSourceProviders();
+    this._domInjectors = new payloadOutputFunctions.DomInjectors();
+    this._jQueryInjectors = new payloadOutputFunctions.JQueryInjectors();
 
     this.descriptors = [
 
