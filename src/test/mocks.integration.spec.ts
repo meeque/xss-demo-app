@@ -1,4 +1,4 @@
-import { AsymmetricEqualityTester, anyOf, timeout, domTreeAvailable } from '../test/lib.spec';
+import { AsymmetricEqualityTester, anyOf, timeout, domTreeAvailable, queryAndExpectCount, queryAndExpectOne } from './lib.spec';
 
 describe('XSS Demo Mocks', () => {
 
@@ -1341,15 +1341,5 @@ describe('XSS Demo Mocks', () => {
     document.body.removeChild(pageFixture);
     pageFixture = null;
     mockPageDoc = null;
-  }
-
-  function queryAndExpectOne(context: HTMLElement, selector: string): HTMLElement {
-    return queryAndExpectCount(context, selector)[0];
-  }
-
-  function queryAndExpectCount(context: HTMLElement, selector: string, count: number = 1): HTMLElement[] {
-    const result = context.querySelectorAll(selector);
-    expect(result.length).withContext('number of elements matching query "' + selector + '"').toBe(count);
-    return Array.from(result) as HTMLElement[];
   }
 });

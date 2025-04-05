@@ -1,5 +1,5 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { timeout, domTreeAvailable} from './lib.spec';
+import { timeout, domTreeAvailable, whenStableDetectChanges} from './lib.spec';
 
 import { XssContext } from '../app/xss-demo.common';
 import { xssDemoConfig } from '../app/xss-demo.config';
@@ -402,7 +402,7 @@ describe('Xss Demo App', async () => {
                   .toBeResolved();
 
                 const cleanupPromise = presetTestConfig.doCleanup();
-                await Promise.all([timeoutPromise, triggerPromise, cleanupPromise, whenStableDetectChanges()]);
+                await Promise.all([timeoutPromise, triggerPromise, cleanupPromise, whenStableDetectChanges(fixture)]);
               });
 
           }
@@ -425,7 +425,7 @@ describe('Xss Demo App', async () => {
       console.error(err);
     }
 
-    await whenStableDetectChanges();
+    await whenStableDetectChanges(fixture);
   }
 
   function queryMenuLink(combobox: HTMLElement, groupLabelText: string, linkText: string): HTMLLinkElement {
@@ -443,15 +443,6 @@ describe('Xss Demo App', async () => {
 
   function queryOutput(): HTMLElement {
     return queryPayloadOutputComponent().querySelector('.live-output.fd-layout-panel .fd-layout-panel__body');
-  }
-
-  async function whenStableDetectChanges(): Promise<void> {
-    try {
-      await fixture.whenStable();
-      fixture.detectChanges();
-    } catch(err) {
-      console.error(err);
-    }
   }
 
   function nextXssPromise(): Promise<boolean> {
