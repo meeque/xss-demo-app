@@ -1,4 +1,4 @@
-import { NgIf, NgFor } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, TemplateRef, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -13,7 +13,7 @@ import { PayloadOutputComponent } from './payload-output.component';
     templateUrl: './xss-demo.component.html',
     styleUrls: ['./xss-demo.component.css'],
     standalone: true,
-    imports: [NgIf, NgFor, FormsModule, ComboboxInputComponent, PayloadOutputComponent]
+    imports: [NgIf, FormsModule, ComboboxInputComponent, PayloadOutputComponent]
 })
 export class XssDemoComponent implements OnInit, AfterViewInit {
 
