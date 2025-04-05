@@ -67,6 +67,15 @@ export function queryAndExpectOne(context: HTMLElement, selector: string): HTMLE
   return queryAndExpectCount(context, selector)[0];
 }
 
+export function queryAndExpectOptional(context: HTMLElement, selector: string): HTMLElement {
+  const result = context.querySelectorAll(selector);
+  expect(result.length).withContext('number of elements matching query "' + selector + '" to be either zero or one').toBeLessThanOrEqual(1);
+  if (result.length === 1) {
+    return result[0] as HTMLElement;
+  }
+  return null;
+}
+
 export function queryAndExpectCount(context: HTMLElement, selector: string, count: number = 1): HTMLElement[] {
   const result = context.querySelectorAll(selector);
   expect(result.length).withContext('number of elements matching query "' + selector + '"').toBe(count);
