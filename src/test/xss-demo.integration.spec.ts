@@ -1,11 +1,11 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { timeout, domTreeAvailable} from './lib.spec';
 
-import { XssContext } from './xss-demo.common';
-import { xssDemoConfig } from './xss-demo.config';
-import { PayloadPresetService } from './payload-preset.service';
-import { PayloadOutputQuality, PayloadOutputService } from './payload-output.service';
-import { XssDemoComponent } from './xss-demo.component';
+import { XssContext } from '../app/xss-demo.common';
+import { xssDemoConfig } from '../app/xss-demo.config';
+import { PayloadPresetService } from '../app/payload-preset.service';
+import { PayloadOutputQuality, PayloadOutputService } from '../app/payload-output.service';
+import { XssDemoComponent } from '../app/xss-demo.component';
 
 
 interface PresetTestConfig {

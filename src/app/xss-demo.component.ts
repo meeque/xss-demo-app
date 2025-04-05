@@ -2,7 +2,7 @@ import { NgIf, NgFor } from '@angular/common';
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, TemplateRef, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from './combobox-input.component';
+import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from '../lib/combobox-input.component';
 import { XssContext, XssContextCollection } from './xss-demo.common';
 import { PayloadPresetService, PayloadPresetDescriptor } from './payload-preset.service';
 import { PayloadOutputService, PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';

@@ -1,4 +1,4 @@
-import { AsymmetricEqualityTester, anyOf, timeout, domTreeAvailable } from './lib.spec';
+import { AsymmetricEqualityTester, anyOf, timeout, domTreeAvailable } from '../test/lib.spec';
 
 describe('XSS Demo Mocks', () => {
 

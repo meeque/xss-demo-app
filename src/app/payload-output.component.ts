@@ -2,9 +2,9 @@ import { NgIf, NgClass } from '@angular/common';
 import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, ComponentRef, Signal, signal, input, model, computed, effect, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
 import { XssContext } from './xss-demo.common';
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
-import { StripExtraIndentPipe } from './strip-extra-indent.pipe';
 import { AngularTemplateOutput, NonAngular } from './template-outputs/angular-template-output.components';
 
 @Component({
