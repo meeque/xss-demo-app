@@ -19,11 +19,11 @@ interface PayloadProcessor {
 }
 
 interface HtmlSourceProvider {
-  (payload: string): string;
+  (payload: any): string;
 }
 
 interface Injector {
-  (element: any, payload: string): void;
+  (element: HTMLElement, payload: any): void;
 }
 
 interface DomInjector extends Injector {};
