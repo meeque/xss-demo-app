@@ -42,28 +42,28 @@ export class NonAngular extends LiveOutputComponent {
     super();
 
     effect(() => {
-      const outputElement = this._element.nativeElement;
-      const payloadString = '' + this.outputPayload();
-      const outputDescriptor = this.outputDescriptor();
-      if (outputDescriptor?.htmlSourceProvider) {
+      const element = this._element.nativeElement;
+      const payload = this.outputPayload();
+      const descriptor = this.outputDescriptor();
+      if (descriptor?.htmlSourceProvider) {
         try {
-          outputElement.innerHTML = outputDescriptor.htmlSourceProvider(payloadString);
+          element.innerHTML = descriptor.htmlSourceProvider(payload);
         } catch (err) {
           console.error(err);
         }
       }
-      else if (outputDescriptor?.domInjector) {
-        outputElement.textContent = '';
+      else if (descriptor?.domInjector) {
+        element.textContent = '';
         try {
-          outputDescriptor.domInjector(outputElement, payloadString);
+          descriptor.domInjector(element, payload);
         } catch (err) {
           console.error(err);
         }
       }
-      else if (outputDescriptor?.jQueryInjector) {
-        outputElement.textContent = '';
+      else if (descriptor?.jQueryInjector) {
+        element.textContent = '';
         try {
-          outputDescriptor.jQueryInjector(outputElement, payloadString);
+          descriptor.jQueryInjector(element, payload);
         } catch (err) {
           console.error(err);
         }
