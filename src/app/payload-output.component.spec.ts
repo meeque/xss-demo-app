@@ -18,7 +18,7 @@ import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
   standalone: true
 })
 class MockOutputComponent implements LiveOutput {
-  static templateCode = '<p [innerHTML]="payload()"></p>';
+  static templateCode = '<p [innerHTML]="payload"></p>';
 
   outputDescriptor = input<PayloadOutputDescriptor>();
   outputPayload = input<any>();
@@ -143,6 +143,29 @@ describe('PayloadOutputComponent', () => {
 
     await setPayload('');
     expectComponentView(mockDescriptorFoo, '<div></div>');
+  });
+
+  it('should reflect mixed changes of output and payload in its view', async () => {
+    await setPayload('some text');
+    expectComponentView(mockDescriptorFoo, '<div>some text</div>');
+
+    await setDescriptor(mockDescriptorBar);
+    expectComponentView(mockDescriptorBar, 'SOME TEXT');
+
+    await setPayload('<img src="wteyk" onerror="console.log(\'xss\')">');
+    expectComponentView(mockDescriptorBar, '&lt;IMG SRC="WTEYK" ONERROR="CONSOLE.LOG(\'XSS\')"&gt;');
+
+    await setDescriptor(mockDescriptorQux);
+    expectComponentView(mockDescriptorQux, '<p title="<img src=&quot;wteyk&quot; onerror=&quot;console.log(\'xss\')&quot;>">This is a paragraph.</p>');
+
+    await setDescriptor(mockDescriptorBaz);
+    expectComponentView(mockDescriptorBaz, '<p><img src="wteyk" onerror="console.log(\'xss\')"></p>');
+
+    await setPayload('more harmless text');
+    expectComponentView(mockDescriptorBaz, '<p>more harmless text</p>');
+
+    await setDescriptor(mockDescriptorQux);
+    expectComponentView(mockDescriptorQux, '<p title="more harmless text">This is a paragraph.</p>');
   });
 
   async function setDescriptor(descriptor: PayloadOutputDescriptor): Promise<void> {
