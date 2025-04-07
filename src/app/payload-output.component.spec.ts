@@ -27,7 +27,117 @@ describe('PayloadOutputComponent', () => {
     }
   }
 
-  beforeEach(async () => {
+  describe('initially', () => {
+
+    beforeEach(setUpComponentFixture);
+
+    it('should be created', () => {
+      expect(component).toBeDefined();
+    });
+
+    it('should have empty payload', () => {
+      expect(component.payload()).toBe('');
+    });
+
+    it('should have empty payload', () => {
+      expect(component.autoUpdate()).toBeTrue();
+    });
+
+    describeComponentView(mockDescriptorFoo, '<div></div>');
+  });
+
+  describe('with', () => {
+
+    beforeAll(setUpComponentFixture);
+
+    describe('paylaod "plain text"', async () => {
+
+      beforeAll(async () => {
+        componentRef.setInput('payload', 'plain text');
+        await whenStableDetectChanges(fixture);
+        await whenStableDetectChanges(fixture);
+      });
+
+      describeComponentView(mockDescriptorFoo, '<div>plain text</div>');
+
+    });
+
+  });
+
+  function describeComponentView(descriptor: PayloadOutputDescriptor, expectedOutputCode?: string) {
+
+    describe('should have a view with', () => {
+
+      it(`title "${descriptor.title}"`, () => {
+        queryAndExpectTitle(descriptor);
+      });
+
+      it(
+        descriptor.payloadProcessor
+          ? `a Payload Processor Function panel with function "${descriptor.payloadProcessor.name}()"`
+          : 'NO Payload Processor Function panel',
+        () => {
+          queryAndExpectPayloadProcessor(descriptor);
+        }
+      );
+
+      it(
+        descriptor.htmlSourceProvider
+          ? `a HTML Source Provider Function panel with function "${descriptor.htmlSourceProvider.name}()"`
+          : 'NO HTML Source Provider Function panel',
+        () => {
+          queryAndExpectHtmlSourceProvider(descriptor);
+        }
+      );
+
+      it(
+        descriptor.domInjector
+          ? `a DOM Injector Function panel with function "${descriptor.domInjector.name}()"`
+          : 'NO DOM Injector Function panel',
+        () => {
+          queryAndExpectDomInjector(descriptor);
+        }
+      );
+
+      it(
+        descriptor.jQueryInjector
+          ? `a jQuery Injector Function panel with function "${descriptor.jQueryInjector.name}()"`
+          : 'NO jQuery Injector Function panel',
+        () => {
+          queryAndExpectJQueryInjector(descriptor);
+        }
+      );
+
+      it(
+        descriptor.templateComponentType
+          ? `a Angular Template Code panel`
+          : 'NO Angular Template Code panel',
+        () => {
+          queryAndExpectTemplateComponentType(descriptor);
+        }
+      );
+
+      it(
+        expectedOutputCode != null
+          ? `a Live HTML Output panel with output "${expectedOutputCode}"`
+          : 'a Live HTML Output panel',
+        () => {
+          queryAndExpectLiveOutput(expectedOutputCode);
+        }
+      );
+
+      it(
+        expectedOutputCode != null
+          ? `a Live Source Code panel with output "${expectedOutputCode}"`
+          : 'a Live Source Code panel',
+        () => {
+          queryAndExpectLiveSourceCode(expectedOutputCode);
+        }
+      );
+    });
+  }
+
+  async function setUpComponentFixture() {
     TestBed.configureTestingModule({
       imports: [PayloadOutputComponent]
     });
@@ -41,89 +151,6 @@ describe('PayloadOutputComponent', () => {
     fixture.componentRef.setInput('outputDescriptor', mockDescriptorFoo);
     fixture.detectChanges();
     await whenStableDetectChanges(fixture);
-  });
-
-  it('should be created', () => {
-    expect(component).toBeDefined();
-  });
-
-  describe('initially', () => {
-
-    it('should have empty payload', () => {
-      expect(component.payload()).toBe('');
-    });
-
-    describeComponentView(mockDescriptorFoo, '<div></div>');
-  });
-
-  function describeComponentView(descriptor: PayloadOutputDescriptor, expectedOutputCode?: string) {
-
-    it(`should have title "${descriptor.title}"`, () => {
-      queryAndExpectTitle(descriptor);
-    });
-
-    it(
-      descriptor.payloadProcessor
-        ? `should have a Payload Processor Function panel with function "${descriptor.payloadProcessor.name}()"`
-        : 'should have NO Payload Processor Function panel',
-      () => {
-        queryAndExpectPayloadProcessor(descriptor);
-      }
-    );
-
-    it(
-      descriptor.htmlSourceProvider
-        ? `should have a HTML Source Provider Function panel with function "${descriptor.htmlSourceProvider.name}()"`
-        : 'should have NO HTML Source Provider Function panel',
-      () => {
-        queryAndExpectHtmlSourceProvider(descriptor);
-      }
-    );
-
-    it(
-      descriptor.domInjector
-        ? `should have a DOM Injector Function panel with function "${descriptor.domInjector.name}()"`
-        : 'should have NO DOM Injector Function panel',
-      () => {
-        queryAndExpectDomInjector(descriptor);
-      }
-    );
-
-    it(
-      descriptor.jQueryInjector
-        ? `should have a jQuery Injector Function panel with function "${descriptor.jQueryInjector.name}()"`
-        : 'should have NO jQuery Injector Function panel',
-      () => {
-        queryAndExpectJQueryInjector(descriptor);
-      }
-    );
-
-    it(
-      descriptor.templateComponentType
-        ? `should have a Angular Template Code panel`
-        : 'should have NO Angular Template Code panel',
-      () => {
-        queryAndExpectTemplateComponentType(descriptor);
-      }
-    );
-
-    it(
-      expectedOutputCode != null
-        ? `should have a Live HTML Output panel with output "${expectedOutputCode}"`
-        : 'should have a Live HTML Output panel',
-      () => {
-        queryAndExpectLiveOutput(expectedOutputCode);
-      }
-    );
-
-    it(
-      expectedOutputCode != null
-        ? `should have a Live Source Code panel with output "${expectedOutputCode}"`
-        : 'should have a Live Source Code panel',
-      () => {
-        queryAndExpectLiveSourceCode(expectedOutputCode);
-      }
-    );
   }
 
   function queryAndExpectTitle(descriptor: PayloadOutputDescriptor) {
