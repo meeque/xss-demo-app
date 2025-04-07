@@ -53,10 +53,10 @@ describe('PayloadOutputComponent', () => {
       expect(component.payload()).toBe('');
     });
 
-    describeComponentUI(mockDescriptorFoo, '<template-output-non-angular><div></div></template-output-non-angular><!--container-->', '<div></div>');
+    describeComponentView(mockDescriptorFoo, '<div></div>');
   });
 
-  function describeComponentUI(descriptor: PayloadOutputDescriptor, liveOutput?: string, liveSourceCode?: string) {
+  function describeComponentView(descriptor: PayloadOutputDescriptor, expectedOutputCode?: string) {
 
     it(`should have title "${descriptor.title}"`, () => {
       queryAndExpectTitle(descriptor);
@@ -108,20 +108,20 @@ describe('PayloadOutputComponent', () => {
     );
 
     it(
-      liveOutput != null
-        ? `should have a Live HTML Output panel with output "${liveOutput}"`
+      expectedOutputCode != null
+        ? `should have a Live HTML Output panel with output "${expectedOutputCode}"`
         : 'should have a Live HTML Output panel',
       () => {
-        queryAndExpectLiveOutput(liveOutput);
+        queryAndExpectLiveOutput(expectedOutputCode);
       }
     );
 
     it(
-      liveSourceCode != null
-        ? `should have a Live Source Code panel with output "${liveSourceCode}"`
+      expectedOutputCode != null
+        ? `should have a Live Source Code panel with output "${expectedOutputCode}"`
         : 'should have a Live Source Code panel',
       () => {
-        queryAndExpectLiveSourceCode(liveSourceCode);
+        queryAndExpectLiveSourceCode(expectedOutputCode);
       }
     );
   }
@@ -212,24 +212,25 @@ describe('PayloadOutputComponent', () => {
     return body;
   }
 
-  function queryAndExpectLiveOutput(expectedOutput?: string) {
+  function queryAndExpectLiveOutput(expectedCode?: string) {
     const panel = queryAndExpectOne(element, 'div.live-output.fd-layout-panel');
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('Live HTML Output');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    if (expectedOutput != null) {
-      expect(body.innerHTML.trim()).toBe(expectedOutput);
+    if (expectedCode != null) {
+      const outputContainer = queryAndExpectOne(body, ':scope > *');
+      expect(outputContainer.innerHTML.trim()).toBe(expectedCode);
     }
     return body;
   }
 
-  function queryAndExpectLiveSourceCode(expectedSourceCode?: string) {
+  function queryAndExpectLiveSourceCode(expectedCode?: string) {
     const panel = queryAndExpectOne(element, 'div.live-source-code.fd-layout-panel');
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('Live HTML Source Code');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    if (expectedSourceCode != null) {
-      expect(body.textContent.trim()).toBe(expectedSourceCode);
+    if (expectedCode != null) {
+      expect(body.textContent.trim()).toBe(expectedCode);
     }
     return body;
   }
