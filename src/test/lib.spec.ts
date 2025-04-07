@@ -63,10 +63,6 @@ function querySelectorOrCondition<T>(context: HTMLElement, selectorOrCondition: 
 
 
 
-export function queryAndExpectOne(context: HTMLElement, selector: string): HTMLElement {
-  return queryAndExpectCount(context, selector)[0];
-}
-
 export function queryAndExpectOptional(context: HTMLElement, selector: string): HTMLElement {
   const result = context.querySelectorAll(selector);
   expect(result.length).withContext('number of elements matching query "' + selector + '" to be either zero or one').toBeLessThanOrEqual(1);
@@ -80,6 +76,14 @@ export function queryAndExpectCount(context: HTMLElement, selector: string, coun
   const result = context.querySelectorAll(selector);
   expect(result.length).withContext('number of elements matching query "' + selector + '"').toBe(count);
   return Array.from(result) as HTMLElement[];
+}
+
+export function queryAndExpectOne(context: HTMLElement, selector: string): HTMLElement {
+  return queryAndExpectCount(context, selector)[0];
+}
+
+export function queryAndExpectNone(context: HTMLElement, selector: string): void {
+  queryAndExpectCount(context, selector, 0);
 }
 
 

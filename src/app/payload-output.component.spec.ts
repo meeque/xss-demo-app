@@ -4,7 +4,7 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 
 import { fn } from 'jquery';
 
-import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/lib.spec';
+import { queryAndExpectNone, queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/lib.spec';
 
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
@@ -168,6 +168,22 @@ describe('PayloadOutputComponent', () => {
     expectComponentView(mockDescriptorQux, '<p title="more harmless text">This is a paragraph.</p>');
   });
 
+  it('should toggle auto-update', async () => {
+    const liveOutputPanel = queryAndExpectLiveOutput('<div></div>');
+    const autoUpdateToggle = queryAndExpectOne(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions label input[type=checkbox]');
+    queryAndExpectNone(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions span a');
+
+    autoUpdateToggle.click();
+    await whenStableDetectChanges(fixture);
+    expect(component.autoUpdate()).toBe(false);
+    queryAndExpectOne(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions span a');
+
+    autoUpdateToggle.click();
+    await whenStableDetectChanges(fixture);
+    expect(component.autoUpdate()).toBe(true);
+    queryAndExpectNone(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions span a');
+  });
+
   async function setDescriptor(descriptor: PayloadOutputDescriptor): Promise<void> {
     componentRef.setInput('outputDescriptor', descriptor);
     // needs 2 change detection cycles until live source code panel is properly updated
@@ -212,7 +228,7 @@ describe('PayloadOutputComponent', () => {
     expect(title.textContent.trim()).toBe('Payload Processor Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
     expect(body.textContent.trim()).withContext('Payload Processor Function').toBe(strip(descriptor.payloadProcessor.toString()));
-    return body;
+    return panel;
   }
 
   function queryAndExpectHtmlSourceProvider(descriptor: PayloadOutputDescriptor) {
@@ -228,7 +244,7 @@ describe('PayloadOutputComponent', () => {
     expect(title.textContent.trim()).toBe('HTML Source Provider Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
     expect(body.textContent.trim()).withContext('HTML Source Provider Function').toBe(strip(descriptor.htmlSourceProvider));
-    return body;
+    return panel;
   }
 
   function queryAndExpectDomInjector(descriptor: PayloadOutputDescriptor) {
@@ -244,7 +260,7 @@ describe('PayloadOutputComponent', () => {
     expect(title.textContent.trim()).toBe('DOM Injector Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
     expect(body.textContent.trim()).withContext('DOM Injector Function').toBe(strip(descriptor.domInjector));
-    return body;
+    return panel;
   }
 
   function queryAndExpectJQueryInjector(descriptor: PayloadOutputDescriptor) {
@@ -260,7 +276,7 @@ describe('PayloadOutputComponent', () => {
     expect(title.textContent.trim()).toBe('jQuery Injector Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
     expect(body.textContent.trim()).withContext('jQuery Injector Function').toBe(strip(descriptor.jQueryInjector));
-    return body;
+    return panel;
   }
 
   function queryAndExpectTemplateComponentType(descriptor: PayloadOutputDescriptor) {
@@ -276,7 +292,7 @@ describe('PayloadOutputComponent', () => {
     expect(title.textContent.trim()).toBe('Angular Template Code');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
     expect(body.textContent.trim()).withContext('Angular Template Code').toBe(strip(descriptor.templateComponentType.templateCode));
-    return body;
+    return panel;
   }
 
   function queryAndExpectLiveOutput(expectedCode?: string) {
@@ -288,7 +304,7 @@ describe('PayloadOutputComponent', () => {
       const outputContainer = queryAndExpectOne(body, ':scope > *');
       expect(outputContainer.innerHTML.trim()).withContext('Live HTML Output').toBe(expectedCode);
     }
-    return body;
+    return panel;
   }
 
   function queryAndExpectLiveSourceCode(expectedCode?: string) {
@@ -299,7 +315,7 @@ describe('PayloadOutputComponent', () => {
     if (expectedCode != null) {
       expect(body.textContent.trim()).withContext('Live HTML Source Code').toBe(expectedCode);
     }
-    return body;
+    return panel;
   }
 
   function strip(text: any): string {
