@@ -1,21 +1,41 @@
-import { ComponentRef } from '@angular/core';
+import { Component, ComponentRef, input } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 
 import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/lib.spec';
 
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
+import { LiveOutput } from './live-output.component';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
 
 
+@Component({
+  selector: 'mock-template-output',
+  template: MockOutputComponent.templateCode,
+  standalone: true
+})
+class MockOutputComponent implements LiveOutput {
+  static templateCode = '<p [innerHTML]="payload()"></p>';
+
+  outputDescriptor = input<PayloadOutputDescriptor>();
+  outputPayload = input<any>();
+
+  get payload() {
+    return this.outputPayload();
+  };
+}
+
+
 describe('PayloadOutputComponent', () => {
+
+  const stripExtraIndentPipe = new StripExtraIndentPipe();
+  let domSanitizer : DomSanitizer;
 
   let fixture : ComponentFixture<PayloadOutputComponent>;
   let componentRef: ComponentRef<PayloadOutputComponent>;
   let component : PayloadOutputComponent;
   let element : HTMLElement;
-
-  const stripExtraIndentPipe = new StripExtraIndentPipe();
 
   const mockDescriptorFoo: PayloadOutputDescriptor = {
     id: 'foo',
@@ -27,13 +47,39 @@ describe('PayloadOutputComponent', () => {
     }
   }
 
+  const mockDescriptorBar: PayloadOutputDescriptor = {
+    id: 'bar',
+    name: 'Bar',
+    title: 'Mock PayloadOutputDescriptor <em>Bar</em>',
+    quality: PayloadOutputQuality.Recommended,
+    payloadProcessor: function toUpperCase(payload) {
+      return payload.toUpperCase();
+    },
+    domInjector: function innerText(element, payload) {
+      return element.innerText = payload;
+    }
+  }
+
+  const mockDescriptorBaz: PayloadOutputDescriptor = {
+    id: 'baz',
+    name: 'Baz',
+    title: 'Mock PayloadOutputDescriptor Baz',
+    quality: PayloadOutputQuality.Insecure,
+    payloadProcessor: function trustHtml(payload) {
+      return domSanitizer.bypassSecurityTrustHtml(payload);
+    },
+    templateComponentType: MockOutputComponent
+  }
+
   beforeEach(async () => {
     TestBed.configureTestingModule({
       imports: [PayloadOutputComponent]
     });
     await TestBed.compileComponents();
-    fixture = TestBed.createComponent(PayloadOutputComponent);
 
+    domSanitizer = TestBed.inject(DomSanitizer);
+
+    fixture = TestBed.createComponent(PayloadOutputComponent);
     componentRef = fixture.componentRef;
     component = fixture.componentInstance;
     element = fixture.nativeElement;
@@ -62,6 +108,17 @@ describe('PayloadOutputComponent', () => {
     });
   });
 
+  it('should reflect output descriptor changes in its view', async () => {
+    await setDescriptor(mockDescriptorBar);
+    expectComponentView(mockDescriptorBar, '');
+
+    await setDescriptor(mockDescriptorBaz);
+    expectComponentView(mockDescriptorBaz, '<p></p>');
+
+    await setDescriptor(mockDescriptorFoo);
+    expectComponentView(mockDescriptorFoo, '<div></div>');
+  });
+
   it('should reflect payload changes in its view', async () => {
     await setPayload('plain text');
     expectComponentView(mockDescriptorFoo, '<div>plain text</div>');
@@ -73,9 +130,16 @@ describe('PayloadOutputComponent', () => {
     expectComponentView(mockDescriptorFoo, '<div></div>');
   });
 
+  async function setDescriptor(descriptor: PayloadOutputDescriptor): Promise<void> {
+    componentRef.setInput('outputDescriptor', descriptor);
+    // needs 2 change detection cycles until live source code panel is properly updated
+    await whenStableDetectChanges(fixture);
+    await whenStableDetectChanges(fixture);
+  }
+
   async function setPayload(payload: string): Promise<void> {
     componentRef.setInput('payload', payload);
-    // needs 2 change detection cycles until live source code panel is properly updated 
+    // needs 2 change detection cycles until live source code panel is properly updated
     await whenStableDetectChanges(fixture);
     await whenStableDetectChanges(fixture);
   }
@@ -98,18 +162,18 @@ describe('PayloadOutputComponent', () => {
   }
 
   function queryAndExpectPayloadProcessor(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.paylaod-processor.fd-layout-panel');
+    const panel = queryAndExpectOptional(element, 'div.payload-processor.fd-layout-panel');
 
     if (descriptor.payloadProcessor === undefined) {
-      expect(panel).withContext('Payload Processor panel for PauloadOutputDescripter without a paylaodProcessor').toBeNull();
+      expect(panel).withContext('Payload Processor panel for PayloadOutputDescripter without a payloadProcessor').toBeNull();
       return null;
     }
 
-    expect(panel).withContext('Payload Processor panel for PauloadOutputDescripter with a paylaodProcessor').not.toBeNull();
+    expect(panel).withContext('Payload Processor panel for PayloadOutputDescripter with a payloadProcessor').not.toBeNull();
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('Payload Processor Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    expect(body.textContent.trim()).toBe(descriptor.payloadProcessor.toString());
+    expect(body.textContent.trim()).toBe(strip(descriptor.payloadProcessor.toString()));
     return body;
   }
 
