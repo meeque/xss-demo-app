@@ -48,43 +48,83 @@ describe('PayloadOutputComponent', () => {
   });
 
   describe('initially', () => {
-    
+
     it('should have empty payload', () => {
       expect(component.payload()).toBe('');
     });
-    
-    it('should have title "' + mockDescriptorFoo.title + '"', () => {
-      queryAndExpectTitle(mockDescriptorFoo);
-    });
-    
-    it('should have no Payload Processor function', () => {
-      queryAndExpectPayloadProcessor(mockDescriptorFoo);
-    });
-    
-    it('should have HTML Source Provider function "' + mockDescriptorFoo.htmlSourceProvider.name + '"', () => {
-      queryAndExpectHtmlSourceProvider(mockDescriptorFoo);
-    });
-    
-    it('should have no DOM Injector function', () => {
-      queryAndExpectDomInjector(mockDescriptorFoo);
-    });
-    
-    it('should have no jQuery Injector function', () => {
-      queryAndExpectJQueryInjector(mockDescriptorFoo);
-    });
-    
-    it('should have no Angular Template code', () => {
-      queryAndExpectTemplateComponentType(mockDescriptorFoo);
-    });
-    
-    it('should have Live HTML Output "<div></div>"', () => {
-      queryAndExpectLiveOutput('<template-output-non-angular><div></div></template-output-non-angular><!--container-->');
-    });
-    
-    it('should have live source code "<div></div>"', () => {
-      queryAndExpectLiveSourceCode('<div></div>');
-    });
+
+    describeComponentUI(mockDescriptorFoo, '<template-output-non-angular><div></div></template-output-non-angular><!--container-->', '<div></div>');
   });
+
+  function describeComponentUI(descriptor: PayloadOutputDescriptor, liveOutput?: string, liveSourceCode?: string) {
+
+    it(`should have title "${descriptor.title}"`, () => {
+      queryAndExpectTitle(descriptor);
+    });
+
+    it(
+      descriptor.payloadProcessor
+        ? `should have a Payload Processor Function panel with function "${descriptor.payloadProcessor.name}()"`
+        : 'should have NO Payload Processor Function panel',
+      () => {
+        queryAndExpectPayloadProcessor(descriptor);
+      }
+    );
+
+    it(
+      descriptor.htmlSourceProvider
+        ? `should have a HTML Source Provider Function panel with function "${descriptor.htmlSourceProvider.name}()"`
+        : 'should have NO HTML Source Provider Function panel',
+      () => {
+        queryAndExpectHtmlSourceProvider(descriptor);
+      }
+    );
+
+    it(
+      descriptor.domInjector
+        ? `should have a DOM Injector Function panel with function "${descriptor.domInjector.name}()"`
+        : 'should have NO DOM Injector Function panel',
+      () => {
+        queryAndExpectDomInjector(descriptor);
+      }
+    );
+
+    it(
+      descriptor.jQueryInjector
+        ? `should have a jQuery Injector Function panel with function "${descriptor.jQueryInjector.name}()"`
+        : 'should have NO jQuery Injector Function panel',
+      () => {
+        queryAndExpectJQueryInjector(descriptor);
+      }
+    );
+
+    it(
+      descriptor.templateComponentType
+        ? `should have a Angular Template Code panel`
+        : 'should have NO Angular Template Code panel',
+      () => {
+        queryAndExpectTemplateComponentType(descriptor);
+      }
+    );
+
+    it(
+      liveOutput != null
+        ? `should have a Live HTML Output panel with output "${liveOutput}"`
+        : 'should have a Live HTML Output panel',
+      () => {
+        queryAndExpectLiveOutput(liveOutput);
+      }
+    );
+
+    it(
+      liveSourceCode != null
+        ? `should have a Live Source Code panel with output "${liveSourceCode}"`
+        : 'should have a Live Source Code panel',
+      () => {
+        queryAndExpectLiveSourceCode(liveSourceCode);
+      }
+    );
+  }
 
   function queryAndExpectTitle(descriptor: PayloadOutputDescriptor) {
     const title = queryAndExpectOne(element, 'div.title.fd-layout-panel h3');
