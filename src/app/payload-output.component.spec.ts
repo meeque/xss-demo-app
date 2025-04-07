@@ -2,6 +2,8 @@ import { Component, ComponentRef, input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 
+import { fn } from 'jquery';
+
 import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/lib.spec';
 
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
@@ -56,7 +58,7 @@ describe('PayloadOutputComponent', () => {
       return payload.toUpperCase();
     },
     domInjector: function innerText(element, payload) {
-      return element.innerText = payload;
+      element.innerText = payload;
     }
   }
 
@@ -69,6 +71,16 @@ describe('PayloadOutputComponent', () => {
       return domSanitizer.bypassSecurityTrustHtml(payload);
     },
     templateComponentType: MockOutputComponent
+  }
+
+  const mockDescriptorQux: PayloadOutputDescriptor = {
+    id: 'qux',
+    name: 'Qux',
+    title: 'Mock <strong>PayloadOutputDescriptor</strong> Qux',
+    quality: PayloadOutputQuality.Recommended,
+    jQueryInjector: function paragraphTitle(element, payload) {
+      $('<p>').attr('title', payload).text('This is a paragraph.').appendTo(element);
+    }
   }
 
   beforeEach(async () => {
@@ -108,7 +120,7 @@ describe('PayloadOutputComponent', () => {
     });
   });
 
-  it('should reflect output descriptor changes in its view', async () => {
+  it('should reflect output changes in its view', async () => {
     await setDescriptor(mockDescriptorBar);
     expectComponentView(mockDescriptorBar, '');
 
@@ -117,6 +129,9 @@ describe('PayloadOutputComponent', () => {
 
     await setDescriptor(mockDescriptorFoo);
     expectComponentView(mockDescriptorFoo, '<div></div>');
+
+    await setDescriptor(mockDescriptorQux);
+    expectComponentView(mockDescriptorQux, '<p title="">This is a paragraph.</p>');
   });
 
   it('should reflect payload changes in its view', async () => {
@@ -173,7 +188,7 @@ describe('PayloadOutputComponent', () => {
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('Payload Processor Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    expect(body.textContent.trim()).toBe(strip(descriptor.payloadProcessor.toString()));
+    expect(body.textContent.trim()).withContext('Payload Processor Function').toBe(strip(descriptor.payloadProcessor.toString()));
     return body;
   }
 
@@ -189,7 +204,7 @@ describe('PayloadOutputComponent', () => {
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('HTML Source Provider Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    expect(body.textContent.trim()).toBe(strip(descriptor.htmlSourceProvider));
+    expect(body.textContent.trim()).withContext('HTML Source Provider Function').toBe(strip(descriptor.htmlSourceProvider));
     return body;
   }
 
@@ -205,7 +220,7 @@ describe('PayloadOutputComponent', () => {
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('DOM Injector Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    expect(body.textContent.trim()).toBe(strip(descriptor.domInjector));
+    expect(body.textContent.trim()).withContext('DOM Injector Function').toBe(strip(descriptor.domInjector));
     return body;
   }
 
@@ -221,7 +236,7 @@ describe('PayloadOutputComponent', () => {
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('jQuery Injector Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    expect(body.textContent.trim()).toBe(strip(descriptor.jQueryInjector));
+    expect(body.textContent.trim()).withContext('jQuery Injector Function').toBe(strip(descriptor.jQueryInjector));
     return body;
   }
 
@@ -237,7 +252,7 @@ describe('PayloadOutputComponent', () => {
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('Angular Template Code');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    expect(body.textContent.trim()).toBe(strip(descriptor.templateComponentType.templateCode));
+    expect(body.textContent.trim()).withContext('Angular Template Code').toBe(strip(descriptor.templateComponentType.templateCode));
     return body;
   }
 
@@ -248,7 +263,7 @@ describe('PayloadOutputComponent', () => {
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
     if (expectedCode != null) {
       const outputContainer = queryAndExpectOne(body, ':scope > *');
-      expect(outputContainer.innerHTML.trim()).toBe(expectedCode);
+      expect(outputContainer.innerHTML.trim()).withContext('Live HTML Output').toBe(expectedCode);
     }
     return body;
   }
@@ -259,7 +274,7 @@ describe('PayloadOutputComponent', () => {
     expect(title.textContent.trim()).toBe('Live HTML Source Code');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
     if (expectedCode != null) {
-      expect(body.textContent.trim()).toBe(expectedCode);
+      expect(body.textContent.trim()).withContext('Live HTML Source Code').toBe(expectedCode);
     }
     return body;
   }
