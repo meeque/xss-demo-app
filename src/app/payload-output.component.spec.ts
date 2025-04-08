@@ -207,6 +207,26 @@ describe('PayloadOutputComponent', () => {
     expectComponentView(mockDescriptorFoo, '<div>now, let\'s change the payload again</div>');
   });
 
+  it('should update on output changes, even when auto-update is disabled', async () => {
+    await setPayload('ye olde payload');
+    expectComponentView(mockDescriptorFoo, '<div>ye olde payload</div>');
+
+    const autoUpdateToggle = queryAndExpectAutoUpdateToggle();
+    autoUpdateToggle.click();
+    await whenStableDetectChanges(fixture);
+    expect(component.autoUpdate()).toBe(false);
+    expectComponentView(mockDescriptorFoo, '<div>ye olde payload</div>');
+
+    await setDescriptor(mockDescriptorBar);
+    expectComponentView(mockDescriptorBar, 'YE OLDE PAYLOAD');
+
+    await setDescriptor(mockDescriptorQux);
+    expectComponentView(mockDescriptorQux, '<p title="ye olde payload">This is a paragraph.</p>');
+
+    await setDescriptor(mockDescriptorFoo);
+    expectComponentView(mockDescriptorFoo, '<div>ye olde payload</div>');
+  });
+
 
 
   async function setDescriptor(descriptor: PayloadOutputDescriptor): Promise<void> {

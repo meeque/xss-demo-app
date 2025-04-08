@@ -105,8 +105,11 @@ export class PayloadOutputComponent implements AfterViewInit {
           environmentInjector: this._environmentInjector,
         }
       );
-      this._liveOutputComponent.setInput('outputPayload', this.outputPayload());
       this._liveOutputComponent.setInput('outputDescriptor', this.outputDescriptor());
+      this._liveOutputComponent.setInput('outputPayload', this.outputPayload());
+      if (!this.autoUpdate()) {
+        this.update();
+      }
     }
   }
 
