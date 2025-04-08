@@ -4,7 +4,7 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 
 import { fn } from 'jquery';
 
-import { queryAndExpectNone, queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/lib.spec';
+import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/lib.spec';
 
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
@@ -169,20 +169,48 @@ describe('PayloadOutputComponent', () => {
   });
 
   it('should toggle auto-update', async () => {
-    const liveOutputPanel = queryAndExpectLiveOutput('<div></div>');
-    const autoUpdateToggle = queryAndExpectOne(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions label input[type=checkbox]');
-    queryAndExpectNone(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions span a');
+    const autoUpdateToggle = queryAndExpectAutoUpdateToggle();
 
     autoUpdateToggle.click();
     await whenStableDetectChanges(fixture);
     expect(component.autoUpdate()).toBe(false);
-    queryAndExpectOne(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions span a');
+    queryAndExpectUpdateNowLink(true);
 
     autoUpdateToggle.click();
     await whenStableDetectChanges(fixture);
     expect(component.autoUpdate()).toBe(true);
-    queryAndExpectNone(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions span a');
+    queryAndExpectUpdateNowLink(false);
   });
+
+  it('should support manual update of payload', async () => {
+    const autoUpdateToggle = queryAndExpectAutoUpdateToggle();
+    autoUpdateToggle.click();
+    await whenStableDetectChanges(fixture);
+    expect(component.autoUpdate()).toBe(false);
+    expectComponentView(mockDescriptorFoo, '<div></div>');
+
+    setPayload('let\'s enter some payload ...');
+    expectComponentView(mockDescriptorFoo, '<div></div>');
+
+    setPayload('let\'s enter some payload without updating the output');
+    expectComponentView(mockDescriptorFoo, '<div></div>');
+
+    setPayload('next, let\'s update the output manually');
+    expectComponentView(mockDescriptorFoo, '<div></div>');
+
+    queryAndExpectUpdateNowLink(true).click();
+    await whenStableDetectChanges(fixture);
+    expectComponentView(mockDescriptorFoo, '<div>next, let\'s update the output manually</div>');
+
+    setPayload('now, let\'s change the payload again');
+    expectComponentView(mockDescriptorFoo, '<div>next, let\'s update the output manually</div>');
+
+    queryAndExpectUpdateNowLink(true).click();
+    await whenStableDetectChanges(fixture);
+    expectComponentView(mockDescriptorFoo, '<div>now, let\'s change the payload again</div>');
+  });
+
+
 
   async function setDescriptor(descriptor: PayloadOutputDescriptor): Promise<void> {
     componentRef.setInput('outputDescriptor', descriptor);
@@ -316,6 +344,22 @@ describe('PayloadOutputComponent', () => {
       expect(body.textContent.trim()).withContext('Live HTML Source Code').toBe(expectedCode);
     }
     return panel;
+  }
+
+  function queryAndExpectAutoUpdateToggle() {
+    const liveOutputPanel = queryAndExpectLiveOutput();
+    return queryAndExpectOne(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions label input[type=checkbox]');
+  }
+
+  function queryAndExpectUpdateNowLink(expectItToExist?: boolean) {
+    const liveOutputPanel = queryAndExpectLiveOutput();
+    const updateNowLink = queryAndExpectOptional(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions span a');
+
+    if (expectItToExist !== undefined) {
+      expect(!!updateNowLink).withContext('Update Now link exists').toBe(expectItToExist);
+    }
+
+    return updateNowLink;
   }
 
   function strip(text: any): string {
