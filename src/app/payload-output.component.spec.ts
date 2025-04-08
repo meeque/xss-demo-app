@@ -97,7 +97,7 @@ describe('PayloadOutputComponent', () => {
     element = fixture.nativeElement;
 
     fixture.componentRef.setInput('outputDescriptor', mockDescriptorFoo);
-    fixture.detectChanges();
+    fixture.autoDetectChanges();
     await whenStableDetectChanges(fixture);
   });
 
@@ -172,12 +172,10 @@ describe('PayloadOutputComponent', () => {
     const autoUpdateToggle = queryAndExpectAutoUpdateToggle();
 
     autoUpdateToggle.click();
-    await whenStableDetectChanges(fixture);
     expect(component.autoUpdate()).toBe(false);
     queryAndExpectUpdateNowLink(true);
 
     autoUpdateToggle.click();
-    await whenStableDetectChanges(fixture);
     expect(component.autoUpdate()).toBe(true);
     queryAndExpectUpdateNowLink(false);
   });
@@ -185,24 +183,23 @@ describe('PayloadOutputComponent', () => {
   it('should support manual update of payload', async () => {
     const autoUpdateToggle = queryAndExpectAutoUpdateToggle();
     autoUpdateToggle.click();
-    await whenStableDetectChanges(fixture);
     expect(component.autoUpdate()).toBe(false);
     expectComponentView(mockDescriptorFoo, '<div></div>');
 
-    setPayload('let\'s enter some payload ...');
+    await setPayload('let\'s enter some payload ...');
     expectComponentView(mockDescriptorFoo, '<div></div>');
 
-    setPayload('let\'s enter some payload without updating the output');
+    await setPayload('let\'s enter some payload without updating the output');
     expectComponentView(mockDescriptorFoo, '<div></div>');
 
-    setPayload('next, let\'s update the output manually');
+    await setPayload('next, let\'s update the output manually');
     expectComponentView(mockDescriptorFoo, '<div></div>');
 
     queryAndExpectUpdateNowLink(true).click();
     await whenStableDetectChanges(fixture);
     expectComponentView(mockDescriptorFoo, '<div>next, let\'s update the output manually</div>');
 
-    setPayload('now, let\'s change the payload again');
+    await setPayload('now, let\'s change the payload again');
     expectComponentView(mockDescriptorFoo, '<div>next, let\'s update the output manually</div>');
 
     queryAndExpectUpdateNowLink(true).click();
@@ -214,15 +211,11 @@ describe('PayloadOutputComponent', () => {
 
   async function setDescriptor(descriptor: PayloadOutputDescriptor): Promise<void> {
     componentRef.setInput('outputDescriptor', descriptor);
-    // needs 2 change detection cycles until live source code panel is properly updated
-    await whenStableDetectChanges(fixture);
     await whenStableDetectChanges(fixture);
   }
 
   async function setPayload(payload: string): Promise<void> {
     componentRef.setInput('payload', payload);
-    // needs 2 change detection cycles until live source code panel is properly updated
-    await whenStableDetectChanges(fixture);
     await whenStableDetectChanges(fixture);
   }
 
