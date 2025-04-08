@@ -108,12 +108,12 @@ export class PayloadOutputComponent implements AfterViewInit {
       this._liveOutputComponent.setInput('outputDescriptor', this.outputDescriptor());
       this._liveOutputComponent.setInput('outputPayload', this.outputPayload());
       if (!this.autoUpdate()) {
-        this.update();
+        this.updateNow();
       }
     }
   }
 
-  update(): boolean {
+  updateNow(): boolean {
     this.autoUpdate.set(true);
     this.outputPayload();
     this.autoUpdate.set(false);
