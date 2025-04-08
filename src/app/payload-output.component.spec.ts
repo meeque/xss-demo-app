@@ -120,167 +120,171 @@ describe('PayloadOutputComponent', () => {
     });
   });
 
-  it('should reflect output changes in its view', async () => {
-    await setDescriptor(mockDescriptorBar);
-    expectComponentView(mockDescriptorBar, '');
+  describe('view with auto-update', () => {
 
-    await setDescriptor(mockDescriptorBaz);
-    expectComponentView(mockDescriptorBaz, '<p></p>');
+    it('should reflect output changes', async () => {
+      await setDescriptor(mockDescriptorBar);
+      expectComponentView(mockDescriptorBar, '');
 
-    await setDescriptor(mockDescriptorFoo);
-    expectComponentView(mockDescriptorFoo, '<div></div>');
+      await setDescriptor(mockDescriptorBaz);
+      expectComponentView(mockDescriptorBaz, '<p></p>');
 
-    await setDescriptor(mockDescriptorQux);
-    expectComponentView(mockDescriptorQux, '<p title="">This is a paragraph.</p>');
+      await setDescriptor(mockDescriptorFoo);
+      expectComponentView(mockDescriptorFoo, '<div></div>');
+
+      await setDescriptor(mockDescriptorQux);
+      expectComponentView(mockDescriptorQux, '<p title="">This is a paragraph.</p>');
+    });
+
+    it('should reflect payload changes', async () => {
+      await setPayload('plain text');
+      expectComponentView(mockDescriptorFoo, '<div>plain text</div>');
+
+      await setPayload('<img src="ufrvnrty" onerror="console.log(\'xss\')">');
+      expectComponentView(mockDescriptorFoo, '<div><img src="ufrvnrty" onerror="console.log(\'xss\')"></div>');
+
+      await setPayload('');
+      expectComponentView(mockDescriptorFoo, '<div></div>');
+    });
+
+    it('should reflect a mix of output changes and payload changes', async () => {
+      await setPayload('some text');
+      expectComponentView(mockDescriptorFoo, '<div>some text</div>');
+
+      await setDescriptor(mockDescriptorBar);
+      expectComponentView(mockDescriptorBar, 'SOME TEXT');
+
+      await setPayload('<img src="wteyk" onerror="console.log(\'xss\')">');
+      expectComponentView(mockDescriptorBar, '&lt;IMG SRC="WTEYK" ONERROR="CONSOLE.LOG(\'XSS\')"&gt;');
+
+      await setDescriptor(mockDescriptorQux);
+      expectComponentView(mockDescriptorQux, '<p title="<img src=&quot;wteyk&quot; onerror=&quot;console.log(\'xss\')&quot;>">This is a paragraph.</p>');
+
+      await setDescriptor(mockDescriptorBaz);
+      expectComponentView(mockDescriptorBaz, '<p><img src="wteyk" onerror="console.log(\'xss\')"></p>');
+
+      await setPayload('more harmless text');
+      expectComponentView(mockDescriptorBaz, '<p>more harmless text</p>');
+
+      await setDescriptor(mockDescriptorQux);
+      expectComponentView(mockDescriptorQux, '<p title="more harmless text">This is a paragraph.</p>');
+    });
   });
 
-  it('should reflect payload changes in its view', async () => {
-    await setPayload('plain text');
-    expectComponentView(mockDescriptorFoo, '<div>plain text</div>');
+  describe('view with manual update', () => {
 
-    await setPayload('<img src="ufrvnrty" onerror="console.log(\'xss\')">');
-    expectComponentView(mockDescriptorFoo, '<div><img src="ufrvnrty" onerror="console.log(\'xss\')"></div>');
+    it('should toggle auto-update', async () => {
+      const autoUpdateToggle = queryAndExpectAutoUpdateToggle();
 
-    await setPayload('');
-    expectComponentView(mockDescriptorFoo, '<div></div>');
+      autoUpdateToggle.click();
+      expect(component.autoUpdate()).toBe(false);
+      queryAndExpectUpdateNowLink(true);
+
+      autoUpdateToggle.click();
+      expect(component.autoUpdate()).toBe(true);
+      queryAndExpectUpdateNowLink(false);
+    });
+
+    it('should always reflect output changes immediately', async () => {
+      await setPayload('ye olde payload');
+      expectComponentView(mockDescriptorFoo, '<div>ye olde payload</div>');
+
+      queryAndExpectAutoUpdateToggle().click();
+      await whenStableDetectChanges(fixture);
+      expect(component.autoUpdate()).toBe(false);
+      expectComponentView(mockDescriptorFoo, '<div>ye olde payload</div>');
+
+      await setDescriptor(mockDescriptorBar);
+      expectComponentView(mockDescriptorBar, 'YE OLDE PAYLOAD');
+
+      await setDescriptor(mockDescriptorQux);
+      expectComponentView(mockDescriptorQux, '<p title="ye olde payload">This is a paragraph.</p>');
+
+      await setDescriptor(mockDescriptorFoo);
+      expectComponentView(mockDescriptorFoo, '<div>ye olde payload</div>');
+    });
+
+    it('should only reflect payload changes after manual update', async () => {
+      queryAndExpectAutoUpdateToggle().click();
+      expect(component.autoUpdate()).toBe(false);
+      expectComponentView(mockDescriptorFoo, '<div></div>');
+
+      await setPayload('let\'s enter some payload ...');
+      expectComponentView(mockDescriptorFoo, '<div></div>');
+
+      await setPayload('let\'s enter some payload without updating the output');
+      expectComponentView(mockDescriptorFoo, '<div></div>');
+
+      await setPayload('next, let\'s update the output manually');
+      expectComponentView(mockDescriptorFoo, '<div></div>');
+
+      queryAndExpectUpdateNowLink(true).click();
+      await whenStableDetectChanges(fixture);
+      expectComponentView(mockDescriptorFoo, '<div>next, let\'s update the output manually</div>');
+
+      await setPayload('now, let\'s change the payload again');
+      expectComponentView(mockDescriptorFoo, '<div>next, let\'s update the output manually</div>');
+
+      queryAndExpectUpdateNowLink(true).click();
+      await whenStableDetectChanges(fixture);
+      expectComponentView(mockDescriptorFoo, '<div>now, let\'s change the payload again</div>');
+    });
+
+    it('should reflect a mix of automatic changes of output and manual changes of payload', async () => {
+      expectComponentView(mockDescriptorFoo, '<div></div>');
+
+      queryAndExpectAutoUpdateToggle().click();
+      await whenStableDetectChanges(fixture);
+      expect(component.autoUpdate()).toBe(false);
+      expectComponentView(mockDescriptorFoo, '<div></div>');
+
+      await setPayload('f');
+      expectComponentView(mockDescriptorFoo, '<div></div>');
+
+      await setPayload('fo');
+      expectComponentView(mockDescriptorFoo, '<div></div>');
+
+      await setPayload('foo');
+      expectComponentView(mockDescriptorFoo, '<div></div>');
+
+      queryAndExpectUpdateNowLink(true).click();
+      await whenStableDetectChanges(fixture);
+      expectComponentView(mockDescriptorFoo, '<div>foo</div>');
+
+      await setPayload('foo bar');
+      expectComponentView(mockDescriptorFoo, '<div>foo</div>');
+
+      await setDescriptor(mockDescriptorQux);
+      expectComponentView(mockDescriptorQux, '<p title="foo bar">This is a paragraph.</p>');
+
+      await setDescriptor(mockDescriptorBaz);
+      expectComponentView(mockDescriptorBaz, '<p>foo bar</p>');
+
+      queryAndExpectUpdateNowLink(true).click();
+      await whenStableDetectChanges(fixture);
+      expectComponentView(mockDescriptorBaz, '<p>foo bar</p>');
+
+      await setPayload('And Now for Something Completely Different');
+      expectComponentView(mockDescriptorBaz, '<p>foo bar</p>');
+
+      queryAndExpectUpdateNowLink(true).click();
+      await whenStableDetectChanges(fixture);
+      expectComponentView(mockDescriptorBaz, '<p>And Now for Something Completely Different</p>');
+
+      await setPayload('Here be <img src="sdgt" onerror="console.log(\'xss\')">');
+      expectComponentView(mockDescriptorBaz, '<p>And Now for Something Completely Different</p>');
+
+      await setDescriptor(mockDescriptorBar);
+      expectComponentView(mockDescriptorBar, 'HERE BE &lt;IMG SRC="SDGT" ONERROR="CONSOLE.LOG(\'XSS\')"&gt;');
+
+      await setPayload('We\'re done here! Let\'s go back to auto update...');
+      expectComponentView(mockDescriptorBar, 'HERE BE &lt;IMG SRC="SDGT" ONERROR="CONSOLE.LOG(\'XSS\')"&gt;');
+
+      queryAndExpectAutoUpdateToggle().click();
+      await whenStableDetectChanges(fixture);
+      expectComponentView(mockDescriptorBar, 'WE\'RE DONE HERE! LET\'S GO BACK TO AUTO UPDATE...');
+    });
   });
-
-  it('should reflect mixed changes of output and payload in its view', async () => {
-    await setPayload('some text');
-    expectComponentView(mockDescriptorFoo, '<div>some text</div>');
-
-    await setDescriptor(mockDescriptorBar);
-    expectComponentView(mockDescriptorBar, 'SOME TEXT');
-
-    await setPayload('<img src="wteyk" onerror="console.log(\'xss\')">');
-    expectComponentView(mockDescriptorBar, '&lt;IMG SRC="WTEYK" ONERROR="CONSOLE.LOG(\'XSS\')"&gt;');
-
-    await setDescriptor(mockDescriptorQux);
-    expectComponentView(mockDescriptorQux, '<p title="<img src=&quot;wteyk&quot; onerror=&quot;console.log(\'xss\')&quot;>">This is a paragraph.</p>');
-
-    await setDescriptor(mockDescriptorBaz);
-    expectComponentView(mockDescriptorBaz, '<p><img src="wteyk" onerror="console.log(\'xss\')"></p>');
-
-    await setPayload('more harmless text');
-    expectComponentView(mockDescriptorBaz, '<p>more harmless text</p>');
-
-    await setDescriptor(mockDescriptorQux);
-    expectComponentView(mockDescriptorQux, '<p title="more harmless text">This is a paragraph.</p>');
-  });
-
-  it('should toggle auto-update', async () => {
-    const autoUpdateToggle = queryAndExpectAutoUpdateToggle();
-
-    autoUpdateToggle.click();
-    expect(component.autoUpdate()).toBe(false);
-    queryAndExpectUpdateNowLink(true);
-
-    autoUpdateToggle.click();
-    expect(component.autoUpdate()).toBe(true);
-    queryAndExpectUpdateNowLink(false);
-  });
-
-  it('should support manual update of payload', async () => {
-    queryAndExpectAutoUpdateToggle().click();
-    expect(component.autoUpdate()).toBe(false);
-    expectComponentView(mockDescriptorFoo, '<div></div>');
-
-    await setPayload('let\'s enter some payload ...');
-    expectComponentView(mockDescriptorFoo, '<div></div>');
-
-    await setPayload('let\'s enter some payload without updating the output');
-    expectComponentView(mockDescriptorFoo, '<div></div>');
-
-    await setPayload('next, let\'s update the output manually');
-    expectComponentView(mockDescriptorFoo, '<div></div>');
-
-    queryAndExpectUpdateNowLink(true).click();
-    await whenStableDetectChanges(fixture);
-    expectComponentView(mockDescriptorFoo, '<div>next, let\'s update the output manually</div>');
-
-    await setPayload('now, let\'s change the payload again');
-    expectComponentView(mockDescriptorFoo, '<div>next, let\'s update the output manually</div>');
-
-    queryAndExpectUpdateNowLink(true).click();
-    await whenStableDetectChanges(fixture);
-    expectComponentView(mockDescriptorFoo, '<div>now, let\'s change the payload again</div>');
-  });
-
-  it('should update on output changes, even when auto-update is disabled', async () => {
-    await setPayload('ye olde payload');
-    expectComponentView(mockDescriptorFoo, '<div>ye olde payload</div>');
-
-    queryAndExpectAutoUpdateToggle().click();
-    await whenStableDetectChanges(fixture);
-    expect(component.autoUpdate()).toBe(false);
-    expectComponentView(mockDescriptorFoo, '<div>ye olde payload</div>');
-
-    await setDescriptor(mockDescriptorBar);
-    expectComponentView(mockDescriptorBar, 'YE OLDE PAYLOAD');
-
-    await setDescriptor(mockDescriptorQux);
-    expectComponentView(mockDescriptorQux, '<p title="ye olde payload">This is a paragraph.</p>');
-
-    await setDescriptor(mockDescriptorFoo);
-    expectComponentView(mockDescriptorFoo, '<div>ye olde payload</div>');
-  });
-
-  it('should reflect mixed changes of output and manual payload chnages in its view', async () => {
-    expectComponentView(mockDescriptorFoo, '<div></div>');
-
-    queryAndExpectAutoUpdateToggle().click();
-    await whenStableDetectChanges(fixture);
-    expect(component.autoUpdate()).toBe(false);
-    expectComponentView(mockDescriptorFoo, '<div></div>');
-
-    await setPayload('f');
-    expectComponentView(mockDescriptorFoo, '<div></div>');
-
-    await setPayload('fo');
-    expectComponentView(mockDescriptorFoo, '<div></div>');
-
-    await setPayload('foo');
-    expectComponentView(mockDescriptorFoo, '<div></div>');
-
-    queryAndExpectUpdateNowLink(true).click();
-    await whenStableDetectChanges(fixture);
-    expectComponentView(mockDescriptorFoo, '<div>foo</div>');
-
-    await setPayload('foo bar');
-    expectComponentView(mockDescriptorFoo, '<div>foo</div>');
-
-    await setDescriptor(mockDescriptorQux);
-    expectComponentView(mockDescriptorQux, '<p title="foo bar">This is a paragraph.</p>');
-
-    await setDescriptor(mockDescriptorBaz);
-    expectComponentView(mockDescriptorBaz, '<p>foo bar</p>');
-
-    queryAndExpectUpdateNowLink(true).click();
-    await whenStableDetectChanges(fixture);
-    expectComponentView(mockDescriptorBaz, '<p>foo bar</p>');
-
-    await setPayload('And Now for Something Completely Different');
-    expectComponentView(mockDescriptorBaz, '<p>foo bar</p>');
-
-    queryAndExpectUpdateNowLink(true).click();
-    await whenStableDetectChanges(fixture);
-    expectComponentView(mockDescriptorBaz, '<p>And Now for Something Completely Different</p>');
-
-    await setPayload('Here be <img src="sdgt" onerror="console.log(\'xss\')">');
-    expectComponentView(mockDescriptorBaz, '<p>And Now for Something Completely Different</p>');
-
-    await setDescriptor(mockDescriptorBar);
-    expectComponentView(mockDescriptorBar, 'HERE BE &lt;IMG SRC="SDGT" ONERROR="CONSOLE.LOG(\'XSS\')"&gt;');
-
-    await setPayload('We\'re done here! Let\'s go back to auto update...');
-    expectComponentView(mockDescriptorBar, 'HERE BE &lt;IMG SRC="SDGT" ONERROR="CONSOLE.LOG(\'XSS\')"&gt;');
-
-    queryAndExpectAutoUpdateToggle().click();
-    await whenStableDetectChanges(fixture);
-    expectComponentView(mockDescriptorBar, 'WE\'RE DONE HERE! LET\'S GO BACK TO AUTO UPDATE...');
-  });
-
-
 
   async function setDescriptor(descriptor: PayloadOutputDescriptor): Promise<void> {
     componentRef.setInput('outputDescriptor', descriptor);
