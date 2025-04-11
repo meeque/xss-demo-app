@@ -45,6 +45,10 @@ export class PayloadPresetService {
           url: 'assets/presets/html/iframe-content.txt'
         },
         {
+          name: 'IFrame content (sandboxed)',
+          url: 'assets/presets/html/iframe-content-sandboxed.txt'
+        },
+        {
           name: 'Image src',
           url: 'assets/presets/html/img-src.txt'
         },
