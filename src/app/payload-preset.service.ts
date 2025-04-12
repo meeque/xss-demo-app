@@ -185,36 +185,36 @@ export class PayloadPresetService {
           url: 'assets/presets/js/js-for-parent-and-opener.txt'
         },
         {
-          name: 'JS code breaking "string"',
+          name: 'JS code breaking "string" literal',
           url: 'assets/presets/js/break-double-quotes.txt'
         },
         {
-          name: 'JS code breaking \'string\'',
+          name: 'JS code breaking \'string\' literal',
           url: 'assets/presets/js/break-single-quotes.txt'
         },
         {
-          name: 'JS attack on a plain HTML page (iframe)',
-          url: 'assets/presets/js/attack-plain-html-mock-in-frame.txt'
+          name: 'Interact with Plain HTML mock (iframe)',
+          url: 'assets/presets/js/plain-html-mock-frame.txt'
         },
         {
-          name: 'JS attack on a plain HTML page (window)',
-          url: 'assets/presets/js/attack-plain-html-mock-in-tlbc.txt'
+          name: 'Interact with Plain HTML mock (window)',
+          url: 'assets/presets/js/plain-html-mock-window.txt'
         },
         {
-          name: 'JS attack on browser storage (iframe)',
-          url: 'assets/presets/js/attack-storage-in-frame.txt'
+          name: 'Interact with Browser Storage mock (iframe)',
+          url: 'assets/presets/js/storage-mock-frame.txt'
         },
         {
-          name: 'JS attack on browser storage (window)',
-          url: 'assets/presets/js/attack-storage-in-tlbc.txt'
+          name: 'Interact with Browser Storage mock (window)',
+          url: 'assets/presets/js/storage-mock-window.txt'
         },
         {
-          name: 'JS attack on cookies (iframe)',
-          url: 'assets/presets/js/attack-cookies-in-frame.txt'
+          name: 'Interact with Cookies mock (iframe)',
+          url: 'assets/presets/js/cookies-mock-frame.txt'
         },
         {
-          name: 'JS attack on cookies (window)',
-          url: 'assets/presets/js/attack-cookies-in-tlbc.txt'
+          name: 'Interact with Cookies mock (window)',
+          url: 'assets/presets/js/cookies-mock-window.txt'
         },
         {
           name: 'JSFuck',
