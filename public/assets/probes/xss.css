@@ -9,7 +9,7 @@ li.target ul.status.xss-error li.xss-error
  {
     display: list-item;
     color: red;
-    list-style-type: "x ";
+    list-style-type: '⨯ ';
 }
 
 li.target ul.status.has-target li.has-target,
@@ -19,7 +19,7 @@ li.target ul.status.xss-available li.xss-available,
 li.target ul.status.xss-invoked li.xss-invoked,
 li.target ul.status.xss-success li.xss-success {
     display: list-item;
-    list-style-type: "✔ ";
+    list-style-type: '✔ ';
 }
 
 li.target ul.status.xss-success li.xss-success {

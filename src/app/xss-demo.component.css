@@ -97,6 +97,14 @@
   font-weight: bold;
 }
 
+.fd-shell__overlay .fd-message-strip .fd-button i.sap-icon--decline::before {
+  content: '⨯';
+}
+
+.fd-shell__overlay .fd-message-strip .fd-button i.sap-icon--decline {
+  color: var(--fdMessageStrip_Text_Color);
+}
+
 .fd-shell__overlay .fd-message-strip.fd-message-strip--error {
   background-color: var(--sapErrorBackground);
   border-color: var(--sapErrorColor);
