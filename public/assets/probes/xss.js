@@ -1,4 +1,6 @@
+let parentWindow = null;
 let parentXssError = null;
+let openerWindow = null;
 let openerXssError = null;
 
 
@@ -6,13 +8,15 @@ let openerXssError = null;
 // the gist:
 
 try {
-    window.parent.xss();
+    parentWindow = window.parent != window ? window.parent : null;
+    parentWindow.xss();
 } catch (err) {
     parentXssError = err;
 }
 
 try {
-    window.opener.xss();
+    openerWindow = window.opener;
+    openerWindow.xss();
 } catch (err) {
     openerXssError = err;
 }
@@ -21,7 +25,12 @@ try {
 
 // diagnostics:
 
-function diagnostics($status, target, xssError) {
+function probeDiagnostics($status) {
+    $status.querySelector('.origin code').textContent = window.origin;
+    $status.querySelector('.effective-domain code').textContent = window.document.domain;
+}
+
+function targetDiagnostics($status, target, xssError) {
 
     if (xssError !== null) {
         $status.querySelector('code.error').textContent = xssError;
@@ -34,7 +43,13 @@ function diagnostics($status, target, xssError) {
         $status.classList.add('has-no-target');
         return;
     } else {
+        try {
+        $status.querySelector('.origin code').textContent = target?.origin;
+        $status.querySelector('.effective-domain code').textContent = target?.document?.domain;
         $status.classList.add('has-target');
+        } catch (err) {
+            console.log('Failed to access origin or effective domain of target: ' + err);
+        }
     }
 
     let targetXss = null;
@@ -62,14 +77,20 @@ function diagnostics($status, target, xssError) {
 document.addEventListener(
     'DOMContentLoaded',
     () => {
-        diagnostics(
-            document.querySelector('li.target.parent ul.status'),
-            window.parent != window ? window.parent : null,
-            parentXssError);
+        probeDiagnostics(
+            document.querySelector('.probe.status')
+        );
 
-        diagnostics(
+        targetDiagnostics(
+            document.querySelector('li.target.parent ul.status'),
+            parentWindow,
+            parentXssError
+        );
+
+        targetDiagnostics(
             document.querySelector('li.target.opener ul.status'),
-            window.opener,
-            openerXssError);
+            openerWindow,
+            openerXssError
+        );
     }
 );

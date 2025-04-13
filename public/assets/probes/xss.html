@@ -7,10 +7,17 @@
 </head>
 <body>
     <h1>XSS Demo: XSS Probe</h1>
+
     <p>
         This simple HTML page tries to invoke the XSS Demo App's global <code>xss()<code> function.
         It can therefore be used to trigger an XSS alert in the XSS Demo App, when the XSS demo page loads this XSS probe page.
     </p>
+    <p>Diagnostic status:</p>
+    <ul class="probe status">
+        <li class="origin">This probe's origin:<br> <code></code></li>
+        <li class="effective-domain">This probe's effective domain:<br> <code></code></li>
+    </ul>
+
     <p>
         This probe attempts to invoke <code>xss()<code> in two different ways:
         <ul>
@@ -21,6 +28,8 @@
                 <ul class="status">
                     <li class="has-target">      This probe page <strong>does</strong> have a parent. </li>
                     <li class="has-no-target">   This probe page <strong>does not</strong> have a parent. </li>
+                    <li class="origin">          The parent's origin is:<br> <code></code></li>
+                    <li class="effective-domain">The parent's effective domain is:<br> <code></code></li>
                     <li class="xss-available">   The parent <strong>does</strong> have an <code>xss</code> entry in its global namespace. </li>
                     <li class="xss-unavailable"> The parent <strong>does not</strong> have an <code>xss</code> entry in its global namespace. </li>
                     <li class="xss-invoked">     This probe <strong>has</strong> invoked <code>xss()</code> in the parent. </li>
@@ -36,6 +45,8 @@
                 <ul class="status">
                     <li class="has-target">      This probe page <strong>does</strong> have an opener. </li>
                     <li class="has-no-target">   This probe page <strong>does not</strong> have an opener. </li>
+                    <li class="origin">          The opener's origin is:<br> <code></code></li>
+                    <li class="effective-domain">The opener's effective domain is:<br> <code></code></li>
                     <li class="xss-available">   The opener <strong>does</strong> have an <code>xss</code> entry in its global namespace. </li>
                     <li class="xss-unavailable"> The opener <strong>does not</strong> have an <code>xss</code> entry in its global namespace. </li>
                     <li class="xss-invoked">     This probe <strong>has</strong> invoked <code>xss()</code> in the opener. </li>
