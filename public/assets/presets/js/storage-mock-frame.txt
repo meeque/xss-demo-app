@@ -2,7 +2,7 @@ var workArea = document.createElement('div');
 document.currentScript.insertAdjacentElement('afterend', workArea);
 
 workArea.innerHTML = '\n'
-    + '<iframe class="guest" style="width:100%;height:60em;" src="/assets/mocks/storage.html"></iframe>\n'
+    + '<iframe src="/assets/mocks/storage.html" class="guest" style="width:100%;height:60em;border:red dashed 5px;"></iframe>\n'
     + '<form class="storage-form">\n'
     + '<div>Storage: <input type="radio" name="type" value="local" checked>Local <input type="radio" name="type" value="session">Session</div>\n'
     + '<div>Key: <input type="text" name="key"></div>\n'

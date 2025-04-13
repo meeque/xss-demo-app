@@ -2,7 +2,7 @@ var workArea = document.createElement('div');
 document.currentScript.insertAdjacentElement('afterend', workArea);
 
 workArea.innerHTML = '\n'
-    + '<iframe class="guest" style="width:100%;height:60em;" src="/assets/mocks/plain.html"></iframe>\n'
+    + '<iframe src="/assets/mocks/plain.html" class="guest" style="width:100%;height:60em;border:red dashed 5px;"></iframe>\n'
     + '<div class="host-input">\n'
     + '<div>Send content: <input type="text" name="send-content" value="p0wn" class="input1" ></div>\n'
     + '</div>\n'

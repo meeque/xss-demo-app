@@ -179,6 +179,9 @@
         trustedScriptBlockPlainMockIframe(element, payload) {
           let iframe = document.createElement('iframe');
           iframe.src = '/assets/mocks/plain.html';
+          iframe.style.width = '100%';
+          iframe.style.height = '60em';
+          iframe.style.border = 'red dashed 5px';
           iframe.addEventListener('load', () => {
             const scriptBlock = iframe.contentDocument.createElement('script');
             scriptBlock.setAttribute('type', 'text/javascript');
@@ -207,6 +210,9 @@
         trustedScriptBlockStorageMockIframe(element, payload) {
           let iframe = document.createElement('iframe');
           iframe.src = '/assets/mocks/storage.html';
+          iframe.style.width = '100%';
+          iframe.style.height = '60em';
+          iframe.style.border = 'red dashed 5px';
           iframe.addEventListener('load', () => {
             const scriptBlock = iframe.contentDocument.createElement('script');
             scriptBlock.setAttribute('type', 'text/javascript');
@@ -235,6 +241,9 @@
         trustedScriptBlockCookiesMockIframe(element, payload) {
           let iframe = document.createElement('iframe');
           iframe.src = '/assets/mocks/cookies.html';
+          iframe.style.width = '100%';
+          iframe.style.height = '60em';
+          iframe.style.border = 'red dashed 5px';
           iframe.addEventListener('load', () => {
             const scriptBlock = iframe.contentDocument.createElement('script');
             scriptBlock.setAttribute('type', 'text/javascript');

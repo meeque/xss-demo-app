@@ -2,7 +2,7 @@ var workArea = document.createElement('div');
 document.currentScript.insertAdjacentElement('afterend', workArea);
 
 workArea.innerHTML = '\n'
-    + '<iframe class="guest" style="width:100%;height:30em;" src="/assets/mocks/cookies.html"></iframe>\n'
+    + '<iframe src="/assets/mocks/cookies.html" class="guest" style="width:100%;height:30em;border:red dashed 5px;"></iframe>\n'
     + '<form class="cookie-form">\n'
     + '<div>Domain: <input type="text" name="domain"></div>\n'
     + '<div>Path: <input type="text" name="path"></div>\n'
