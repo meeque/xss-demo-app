@@ -147,7 +147,7 @@
     <div *ngIf="xssTriggered" [id]="'app-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered" role="note">
       <p class="fd-message-strip__text">
         <span *ngIf="xssTriggered > 1" class="fd-counter">{{ xssTriggered }} </span>
-        <span> XSS has been triggered! </span>
+        <span> {{ xssMessage }}</span>
       </p>
       <button
           (click)="resetXss()"

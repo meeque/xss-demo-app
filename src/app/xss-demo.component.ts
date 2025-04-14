@@ -17,6 +17,8 @@ import { PayloadOutputComponent } from './payload-output.component';
 })
 export class XssDemoComponent implements OnInit, AfterViewInit {
 
+  static readonly DEFAULT_XSS_MESSAGE = 'XSS has been triggered!'
+
   static nextComponentId: number = 0;
   componentId: number = XssDemoComponent.nextComponentId++;
 
@@ -61,6 +63,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   payloadOutputGroups: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor>[] = [];
 
   xssTriggered = 0;
+  xssMessage = XssDemoComponent.DEFAULT_XSS_MESSAGE;
 
   payloadOutputTechnologyFilters: string[] = [];
 
@@ -187,8 +190,9 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     this.payloadOutputQualityFilters = newFilters;
   }
 
-  doXss() {
-    console.error("XSS has been triggered!");
+  doXss(message?: string) {
+    this.xssMessage = message != undefined ? 'XSS: ' + message : XssDemoComponent.DEFAULT_XSS_MESSAGE;
+    console.error(this.xssMessage);
     this.xssTriggered++;
     this._changeDetector.detectChanges();
   }
