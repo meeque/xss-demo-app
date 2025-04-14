@@ -193,16 +193,19 @@
         }
 
         trustedScriptBlockPlainMockWindow(element, payload) {
-          let newWindow = window.open('/assets/mocks/plain.html', '_blank');
-          newWindow.addEventListener('load', () => {
-            const scriptBlock = newWindow.document.createElement('script');
-            scriptBlock.setAttribute('type', 'text/javascript');
-            scriptBlock.textContent
-              = '(async function() {\n'
-              + payload + '\n'
-              + '})();\n';
-            newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
-          });
+          let newWindow = window.open('/assets/mocks/plain.html', 'xss-demo-plain-html-mock');
+          setTimeout(
+            () => {
+              const scriptBlock = newWindow.document.createElement('script');
+              scriptBlock.setAttribute('type', 'text/javascript');
+              scriptBlock.textContent
+                = '(async function() {\n'
+                + payload + '\n'
+                + '})();\n';
+              newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
+            },
+            200
+          );
         }
 
         trustedScriptBlockStorageMockIframe(element, payload) {
@@ -222,16 +225,19 @@
         }
 
         trustedScriptBlockStorageMockWindow(element, payload) {
-          let newWindow = window.open('/assets/mocks/storage.html', '_blank');
-          newWindow.addEventListener('load', () => {
-            const scriptBlock = newWindow.document.createElement('script');
-            scriptBlock.setAttribute('type', 'text/javascript');
-            scriptBlock.textContent
-              = '(async function() {\n'
-              + payload + '\n'
-              + '})();\n';
-            newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
-          });
+          let newWindow = window.open('/assets/mocks/storage.html', 'xss-demo-storage-mock');
+          setTimeout(
+            () => {
+              const scriptBlock = newWindow.document.createElement('script');
+              scriptBlock.setAttribute('type', 'text/javascript');
+              scriptBlock.textContent
+                = '(async function() {\n'
+                + payload + '\n'
+                + '})();\n';
+              newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
+            },
+            200
+          );
         }
 
         trustedScriptBlockCookiesMockIframe(element, payload) {
@@ -251,16 +257,19 @@
         }
 
         trustedScriptBlockCookiesMockWindow(element, payload) {
-          let newWindow = window.open('/assets/mocks/cookies.html', '_blank');
-          newWindow.addEventListener('load', () => {
-            const scriptBlock = newWindow.document.createElement('script');
-            scriptBlock.setAttribute('type', 'text/javascript');
-            scriptBlock.textContent
-              = '(async function() {\n'
-              + payload + '\n'
-              + '})();\n';
-            newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
-          });
+          let newWindow = window.open('/assets/mocks/cookies.html', 'xss-demo-cookies-mock');
+          setTimeout(
+            () => {
+              const scriptBlock = newWindow.document.createElement('script');
+              scriptBlock.setAttribute('type', 'text/javascript');
+              scriptBlock.textContent
+                = '(async function() {\n'
+                + payload + '\n'
+                + '})();\n';
+              newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
+            },
+            200
+          );
         }
       },
 
