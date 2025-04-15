@@ -1,5 +1,5 @@
 import { NgIf, NgClass } from '@angular/common';
-import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, ComponentRef, Signal, signal, input, model, computed, effect, untracked } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, ComponentRef, signal, input, model, effect, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
@@ -25,10 +25,10 @@ export class PayloadOutputComponent implements AfterViewInit {
   outputDescriptor = input<PayloadOutputDescriptor>();
   payload = input<any>('');
 
-  autoUpdate = model(true);
+  readonly autoUpdate = model(true);
   private lastOutputPayload = '';
-  private readonly outputPayload: Signal<any>;
-  liveSourceCode = signal('');
+  private readonly outputPayload = signal('');
+  readonly liveSourceCode = signal('');
 
   showPayloadProcessor = true;
   showHtmlSourceProvider = true;
@@ -46,7 +46,7 @@ export class PayloadOutputComponent implements AfterViewInit {
   @ViewChild('liveOutputViewContainer', {read: ViewContainerRef})
   private _liveOutputViewContainer : ViewContainerRef;
 
-  private _liveOutputComponent : ComponentRef<LiveOutput> = null;
+  _liveOutputComponent : ComponentRef<LiveOutput> = null;
 
   constructor(private readonly _environmentInjector : EnvironmentInjector) {
 
@@ -57,19 +57,8 @@ export class PayloadOutputComponent implements AfterViewInit {
       }
     );
 
-    this.outputPayload = computed<any>(
-      () => {
-        if (this.autoUpdate()) {
-          const payloadProcessor = this.outputDescriptor()?.payloadProcessor;
-          if (payloadProcessor) {
-            this.lastOutputPayload = payloadProcessor(this.payload());
-          } else {
-            this.lastOutputPayload = this.payload();
-          }
-          this.change.emit();
-        }
-        return this.lastOutputPayload;
-      }
+    effect(
+      () => this.updateOutputPayload()
     );
 
     effect(
@@ -94,7 +83,7 @@ export class PayloadOutputComponent implements AfterViewInit {
     this.switchLiveOutput(this.outputDescriptor());
   }
 
-  switchLiveOutput(outputDescriptor: PayloadOutputDescriptor): void {
+  private switchLiveOutput(outputDescriptor: PayloadOutputDescriptor): void {
     if (this._liveOutputViewContainer) {
       this._liveOutputViewContainer.clear();
       const liveOutputComponentType = outputDescriptor.templateComponentType || NonAngular;
@@ -113,10 +102,22 @@ export class PayloadOutputComponent implements AfterViewInit {
     }
   }
 
+  private updateOutputPayload(force?: boolean): void {
+    if (force === true || this.autoUpdate()) {
+      const payloadProcessor = this.outputDescriptor()?.payloadProcessor;
+      if (payloadProcessor) {
+        this.lastOutputPayload = payloadProcessor(this.payload());
+      } else {
+        this.lastOutputPayload = this.payload();
+      }
+      this.change.emit();
+    }
+    this.outputPayload.set(this.lastOutputPayload);
+    this._liveOutputComponent?.instance?.update();
+  }
+
   updateNow(): boolean {
-    this.autoUpdate.set(true);
-    this.outputPayload();
-    this.autoUpdate.set(false);
+    this.updateOutputPayload(true);
     return false;
   }
 }

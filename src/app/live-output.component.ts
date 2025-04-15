@@ -1,4 +1,4 @@
-import { Component, Type, ElementRef, InputSignal, input, effect } from "@angular/core";
+import { Component, Type, ElementRef, InputSignal, input, effect, ViewContainerRef, inject, ChangeDetectorRef } from "@angular/core";
 import { NgStyle } from '@angular/common';
 
 import { PayloadOutputDescriptor } from "./payload-output.service";
@@ -8,6 +8,7 @@ export interface LiveOutput {
   outputDescriptor: InputSignal<PayloadOutputDescriptor>;
   outputPayload: InputSignal<any>;
   readonly payload: any ;
+  update(): void;
 }
 
 export interface LiveOutputType extends Type<LiveOutput> {
@@ -23,9 +24,13 @@ abstract class LiveOutputComponent implements LiveOutput {
 
   outputDescriptor = input.required<PayloadOutputDescriptor>();
   outputPayload = input.required<any>();
+
   get payload() {
     return this.outputPayload();
   }
+
+  update() {
+  };
 }
 
 
@@ -42,33 +47,53 @@ export class NonAngular extends LiveOutputComponent {
     super();
 
     effect(() => {
-      const element = this._element.nativeElement;
-      const payload = this.outputPayload();
-      const descriptor = this.outputDescriptor();
-      if (descriptor?.htmlSourceProvider) {
-        try {
-          element.innerHTML = descriptor.htmlSourceProvider(payload);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      else if (descriptor?.domInjector) {
-        element.textContent = '';
-        try {
-          descriptor.domInjector(element, payload);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      else if (descriptor?.jQueryInjector) {
-        element.textContent = '';
-        try {
-          descriptor.jQueryInjector(element, payload);
-        } catch (err) {
-          console.error(err);
-        }
-      }
+      this.update();
     });
+  }
+
+  override update(): void {
+    const payload = this.outputPayload();
+    const descriptor = this.outputDescriptor();
+    const element = this._element.nativeElement;
+    if (descriptor?.htmlSourceProvider) {
+      try {
+        element.innerHTML = descriptor.htmlSourceProvider(payload);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    else if (descriptor?.domInjector) {
+      element.textContent = '';
+      try {
+        descriptor.domInjector(element, payload);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    else if (descriptor?.jQueryInjector) {
+      element.textContent = '';
+      try {
+        descriptor.jQueryInjector(element, payload);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+}
+
+
+
+@Component({
+  template: ''
+})
+abstract class Angular extends LiveOutputComponent {
+
+  private readonly _changeDetector = inject(ChangeDetectorRef);
+  private readonly _viewContainer = inject(ViewContainerRef);
+
+  override update() {
+    this._viewContainer.clear();
+    this._changeDetector.detectChanges();
   }
 }
 
@@ -79,7 +104,7 @@ export class NonAngular extends LiveOutputComponent {
     template: Encoded.templateCode,
     standalone: true
 })
-export class Encoded extends LiveOutputComponent {
+export class Encoded extends Angular {
   static readonly templateCode = '{{ payload }}';
 }
 
@@ -88,7 +113,7 @@ export class Encoded extends LiveOutputComponent {
   template: TextContent.templateCode,
   standalone: true
 })
-export class TextContent extends LiveOutputComponent {
+export class TextContent extends Angular {
   static readonly templateCode = '<div [textContent]="payload"></div>';
 }
 
@@ -97,7 +122,7 @@ export class TextContent extends LiveOutputComponent {
   template: InnerText.templateCode,
   standalone: true
 })
-export class InnerText extends LiveOutputComponent {
+export class InnerText extends Angular {
   static readonly templateCode = '<div [innerText]="payload"></div>';
 }
 
@@ -106,7 +131,7 @@ export class InnerText extends LiveOutputComponent {
   template: InnerHtml.templateCode,
   standalone: true
 })
-export class InnerHtml extends LiveOutputComponent {
+export class InnerHtml extends Angular {
   static readonly templateCode = '<div [innerHTML]="payload"></div>';
 }
 
@@ -115,7 +140,7 @@ export class InnerHtml extends LiveOutputComponent {
   template: ParagraphTitle.templateCode,
   standalone: true
 })
-export class ParagraphTitle extends LiveOutputComponent {
+export class ParagraphTitle extends Angular {
   static readonly templateCode = '<p [title]="payload">This paragraph has a title.</p>';
 }
 
@@ -124,7 +149,7 @@ export class ParagraphTitle extends LiveOutputComponent {
   template: LinkUrl.templateCode,
   standalone: true
 })
-export class LinkUrl extends LiveOutputComponent {
+export class LinkUrl extends Angular {
   static readonly templateCode = '<a [href]="payload">Click here to test your payload as a URL!</a>';
 }
 
@@ -133,7 +158,7 @@ export class LinkUrl extends LiveOutputComponent {
   template: IframeUrl.templateCode,
   standalone: true
 })
-export class IframeUrl extends LiveOutputComponent {
+export class IframeUrl extends Angular {
   static readonly templateCode = '<iframe [src]="payload"></iframe>';
 }
 
@@ -142,7 +167,7 @@ export class IframeUrl extends LiveOutputComponent {
   template: StyleBlock.templateCode,
   standalone: true
 })
-export class StyleBlock extends LiveOutputComponent {
+export class StyleBlock extends Angular {
   static readonly templateCode = '<style type="text/css" [innerHTML]="payload"></style>';
 }
 
@@ -151,7 +176,7 @@ export class StyleBlock extends LiveOutputComponent {
   template: StyleAttribute.templateCode,
   standalone: true
 })
-export class StyleAttribute extends LiveOutputComponent {
+export class StyleAttribute extends Angular {
   static readonly templateCode = '<div [style]="payload">Element with custom style</div>';
 }
 
@@ -161,6 +186,6 @@ export class StyleAttribute extends LiveOutputComponent {
   standalone: true,
   imports: [NgStyle]
 })
-export class StructuredStyleAttribute extends LiveOutputComponent {
+export class StructuredStyleAttribute extends Angular {
   static readonly templateCode = '<div [ngStyle]="payload">Element with custom style</div>';
 }
