@@ -26,7 +26,7 @@ export class PayloadOutputComponent implements AfterViewInit {
   payload = input<any>('');
 
   readonly autoUpdate = model(true);
-  private lastOutputPayload = '';
+  private lastOutputPayload = '' as any;
   private readonly outputPayload = signal('' as any);
   readonly liveSourceCode = signal('');
 
@@ -105,7 +105,7 @@ export class PayloadOutputComponent implements AfterViewInit {
       this._liveOutputComponent.setInput('outputDescriptor', this.outputDescriptor());
       this._liveOutputComponent.setInput('outputPayload', this.outputPayload());
       if (!this.autoUpdate()) {
-        this.updateNow();
+        this.updateOutputPayload(true);
       }
     }
   }
@@ -115,10 +115,10 @@ export class PayloadOutputComponent implements AfterViewInit {
       const processedPayload = this.processPayload();
       if (processedPayload != this.lastOutputPayload) {
         this.lastOutputPayload = processedPayload;
-        this.outputPayload.set(this.lastOutputPayload);
+        this.outputPayload.set(processedPayload);
       }
       else if (force === true) {
-        this._liveOutputComponent?.instance?.update();
+        this._liveOutputComponent?.instance?.reload();
       }
       this.change.emit();
     }
