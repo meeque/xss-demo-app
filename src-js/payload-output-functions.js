@@ -170,10 +170,14 @@
         }
 
         trustedScriptBlock(element, payload) {
-          let scriptBlock = document.createElement('script');
-          scriptBlock.setAttribute('type', 'text/javascript');
-          scriptBlock.textContent = '\n' + payload + '\n';
-          element.insertAdjacentElement('beforeend', scriptBlock);
+          setTimeout(
+            () => {
+              let scriptBlock = document.createElement('script');
+              scriptBlock.type = 'text/javascript';
+              scriptBlock.textContent = '\n' + payload + '\n';
+              element.insertAdjacentElement('beforeend', scriptBlock);
+            }
+          );
         }
 
         trustedScriptBlockPlainMockIframe(element, payload) {
@@ -182,7 +186,7 @@
           iframe.className = 'xss-demo-guest';
           iframe.addEventListener('load', () => {
             const scriptBlock = iframe.contentDocument.createElement('script');
-            scriptBlock.setAttribute('type', 'text/javascript');
+            scriptBlock.type = 'text/javascript';
             scriptBlock.textContent
               = '(async function() {\n'
               + payload + '\n'
@@ -197,7 +201,7 @@
           setTimeout(
             () => {
               const scriptBlock = newWindow.document.createElement('script');
-              scriptBlock.setAttribute('type', 'text/javascript');
+              scriptBlock.type = 'text/javascript';
               scriptBlock.textContent
                 = '(async function() {\n'
                 + payload + '\n'
@@ -214,7 +218,7 @@
           iframe.className = 'xss-demo-guest';
           iframe.addEventListener('load', () => {
             const scriptBlock = iframe.contentDocument.createElement('script');
-            scriptBlock.setAttribute('type', 'text/javascript');
+            scriptBlock.type = 'text/javascript';
             scriptBlock.textContent
               = '(async function() {\n'
               + payload + '\n'
@@ -229,7 +233,7 @@
           setTimeout(
             () => {
               const scriptBlock = newWindow.document.createElement('script');
-              scriptBlock.setAttribute('type', 'text/javascript');
+              scriptBlock.type = 'text/javascript';
               scriptBlock.textContent
                 = '(async function() {\n'
                 + payload + '\n'
@@ -246,7 +250,7 @@
           iframe.className = 'xss-demo-guest';
           iframe.addEventListener('load', () => {
             const scriptBlock = iframe.contentDocument.createElement('script');
-            scriptBlock.setAttribute('type', 'text/javascript');
+            scriptBlock.type = 'text/javascript';
             scriptBlock.textContent
               = '(async function() {\n'
               + payload + '\n'
@@ -261,7 +265,7 @@
           setTimeout(
             () => {
               const scriptBlock = newWindow.document.createElement('script');
-              scriptBlock.setAttribute('type', 'text/javascript');
+              scriptBlock.type = 'text/javascript';
               scriptBlock.textContent
                 = '(async function() {\n'
                 + payload + '\n'
