@@ -1,5 +1,27 @@
+ul.probe.status li {
+    display: list-item;
+    list-style-type: '🛈 ';
+}
+
+ul.probe.status li code {
+    color: blue;
+    font-weight: bold;
+}
+
 li.target ul.status li {
     display: none;
+}
+
+li.target ul.status.has-target li.origin,
+li.target ul.status.has-target li.effective-domain {
+    display: list-item;
+    list-style-type: '🛈 ';
+}
+
+li.target ul.status.has-target li.origin code,
+li.target ul.status.has-target li.effective-domain code {
+    color: blue;
+    font-weight: bold;
 }
 
 li.target ul.status.has-no-target li.has-no-target,
@@ -13,8 +35,6 @@ li.target ul.status.xss-error li.xss-error
 }
 
 li.target ul.status.has-target li.has-target,
-li.target ul.status.has-target li.origin,
-li.target ul.status.has-target li.effective-domain,
 li.target ul.status.xss-available li.xss-available,
 li.target ul.status.xss-invoked li.xss-invoked,
 li.target ul.status.xss-success li.xss-success {
