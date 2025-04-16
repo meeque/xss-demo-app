@@ -23,10 +23,11 @@ export class PayloadOutputComponent implements AfterViewInit {
   readonly PayloadOutputQuality = PayloadOutputQuality;
 
   outputDescriptor = input<PayloadOutputDescriptor>();
-  payload = input<any>('');
+  payload = input('');
 
   readonly autoUpdate = model(true);
-  private lastOutputPayload = '' as any;
+  private lastEmittedPayload = null;
+  private lastEmittedOutputDescriptor = null;
   private readonly outputPayload = signal('' as any);
   readonly liveSourceCode = signal('');
 
@@ -112,12 +113,21 @@ export class PayloadOutputComponent implements AfterViewInit {
 
   private updateOutputPayload(force?: boolean): void {
     if (force === true || this.autoUpdate()) {
+      const descriptor = this.outputDescriptor();
+      const payload = this.payload();
       const processedPayload = this.processPayload();
-      if (processedPayload != this.lastOutputPayload) {
-        this.lastOutputPayload = processedPayload;
+      if (
+        this.lastEmittedPayload != payload
+        ||
+        this.lastEmittedOutputDescriptor != descriptor
+      ) {
+        this.lastEmittedPayload = payload;
+        this.lastEmittedOutputDescriptor = descriptor;
         this.outputPayload.set(processedPayload);
       }
       else if (force === true) {
+        //this.lastEmittedPayload = payload;
+        //this.outputPayload.set(processedPayload);
         this._liveOutputComponent?.instance?.reload();
       }
       this.change.emit();
