@@ -8,7 +8,7 @@ import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } fr
 
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
-import { AngularLiveOutputComponent } from './live-output.component';
+import { LiveOutputComponent } from './live-output.component';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
 
 
@@ -25,7 +25,7 @@ interface MockPayloadOutputDescriptors {
   template: MockOutputComponent.templateCode,
   standalone: true
 })
-class MockOutputComponent extends AngularLiveOutputComponent {
+class MockOutputComponent extends LiveOutputComponent {
   static templateCode = '<p [innerHTML]="payload"></p>';
 }
 

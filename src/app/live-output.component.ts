@@ -1,4 +1,4 @@
-import { Component, Type, ElementRef, InputSignal, input, effect, ViewContainerRef, inject, ChangeDetectorRef } from "@angular/core";
+import { Component, Type, ElementRef, InputSignal, input, effect } from "@angular/core";
 import { NgStyle } from '@angular/common';
 
 import { PayloadOutputDescriptor } from "./payload-output.service";
@@ -20,7 +20,7 @@ export interface LiveOutputType extends Type<LiveOutput> {
 @Component({
   template: ''
 })
-abstract class LiveOutputComponent implements LiveOutput {
+export abstract class LiveOutputComponent implements LiveOutput {
 
   outputDescriptor = input.required<PayloadOutputDescriptor>();
   outputPayload = input.required<any>();
@@ -88,27 +88,11 @@ export class NonAngular extends LiveOutputComponent {
 
 
 @Component({
-  template: ''
-})
-export abstract class AngularLiveOutputComponent extends LiveOutputComponent {
-
-  private readonly _changeDetector = inject(ChangeDetectorRef);
-  private readonly _viewContainer = inject(ViewContainerRef);
-
-  override reload() {
-    this._viewContainer.clear();
-    this._changeDetector.detectChanges();
-  }
-}
-
-
-
-@Component({
     selector: 'template-output-encoded',
     template: Encoded.templateCode,
     standalone: true
 })
-export class Encoded extends AngularLiveOutputComponent {
+export class Encoded extends LiveOutputComponent {
   static readonly templateCode = '{{ payload }}';
 }
 
@@ -117,7 +101,7 @@ export class Encoded extends AngularLiveOutputComponent {
   template: TextContent.templateCode,
   standalone: true
 })
-export class TextContent extends AngularLiveOutputComponent {
+export class TextContent extends LiveOutputComponent {
   static readonly templateCode = '<div [textContent]="payload"></div>';
 }
 
@@ -126,7 +110,7 @@ export class TextContent extends AngularLiveOutputComponent {
   template: InnerText.templateCode,
   standalone: true
 })
-export class InnerText extends AngularLiveOutputComponent {
+export class InnerText extends LiveOutputComponent {
   static readonly templateCode = '<div [innerText]="payload"></div>';
 }
 
@@ -135,7 +119,7 @@ export class InnerText extends AngularLiveOutputComponent {
   template: InnerHtml.templateCode,
   standalone: true
 })
-export class InnerHtml extends AngularLiveOutputComponent {
+export class InnerHtml extends LiveOutputComponent {
   static readonly templateCode = '<div [innerHTML]="payload"></div>';
 }
 
@@ -144,7 +128,7 @@ export class InnerHtml extends AngularLiveOutputComponent {
   template: ParagraphTitle.templateCode,
   standalone: true
 })
-export class ParagraphTitle extends AngularLiveOutputComponent {
+export class ParagraphTitle extends LiveOutputComponent {
   static readonly templateCode = '<p [title]="payload">This paragraph has a title.</p>';
 }
 
@@ -153,7 +137,7 @@ export class ParagraphTitle extends AngularLiveOutputComponent {
   template: LinkUrl.templateCode,
   standalone: true
 })
-export class LinkUrl extends AngularLiveOutputComponent {
+export class LinkUrl extends LiveOutputComponent {
   static readonly templateCode = '<a [href]="payload">Click here to test your payload as a URL!</a>';
 }
 
@@ -162,7 +146,7 @@ export class LinkUrl extends AngularLiveOutputComponent {
   template: IframeUrl.templateCode,
   standalone: true
 })
-export class IframeUrl extends AngularLiveOutputComponent {
+export class IframeUrl extends LiveOutputComponent {
   static readonly templateCode = '<iframe [src]="payload"></iframe>';
 }
 
@@ -171,7 +155,7 @@ export class IframeUrl extends AngularLiveOutputComponent {
   template: StyleBlock.templateCode,
   standalone: true
 })
-export class StyleBlock extends AngularLiveOutputComponent {
+export class StyleBlock extends LiveOutputComponent {
   static readonly templateCode = '<style type="text/css" [innerHTML]="payload"></style>';
 }
 
@@ -180,7 +164,7 @@ export class StyleBlock extends AngularLiveOutputComponent {
   template: StyleAttribute.templateCode,
   standalone: true
 })
-export class StyleAttribute extends AngularLiveOutputComponent {
+export class StyleAttribute extends LiveOutputComponent {
   static readonly templateCode = '<div [style]="payload">Element with custom style</div>';
 }
 
@@ -190,6 +174,6 @@ export class StyleAttribute extends AngularLiveOutputComponent {
   standalone: true,
   imports: [NgStyle]
 })
-export class StructuredStyleAttribute extends AngularLiveOutputComponent {
+export class StructuredStyleAttribute extends LiveOutputComponent {
   static readonly templateCode = '<div [ngStyle]="payload">Element with custom style</div>';
 }
