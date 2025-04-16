@@ -71,6 +71,15 @@ export class PayloadOutputComponent implements AfterViewInit {
       }
     );
 
+    effect(
+      () => {
+        const autoUpdate = this.autoUpdate();
+        if (autoUpdate) {
+          untracked(() => this.updateOutputPayload(true));
+        }
+      }
+    );
+
     this.change.subscribe(
       () => {
         this.liveSourceCode.set(
@@ -103,6 +112,7 @@ export class PayloadOutputComponent implements AfterViewInit {
           environmentInjector: this._environmentInjector,
         }
       );
+
       this._liveOutputComponent.setInput('outputDescriptor', this.outputDescriptor());
       this._liveOutputComponent.setInput('outputPayload', this.outputPayload());
       if (!this.autoUpdate()) {
@@ -126,8 +136,6 @@ export class PayloadOutputComponent implements AfterViewInit {
         this.outputPayload.set(processedPayload);
       }
       else if (force === true) {
-        //this.lastEmittedPayload = payload;
-        //this.outputPayload.set(processedPayload);
         this._liveOutputComponent?.instance?.reload();
       }
       this.change.emit();

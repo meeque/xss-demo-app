@@ -349,14 +349,11 @@ describe('PayloadOutputComponent', () => {
           expect(reloadSpy).toHaveBeenCalled();
           reloadSpy.calls.reset();
 
-          // TODO force a reload after auto update is turned on, even if not output payload changes
-          /*
           queryAndExpectAutoUpdateToggle().click();
           await whenStableDetectChanges(fixture);
           expectComponentView(mockDescriptor, mockDescriptor.outputCalculator('foo bar'));
           expect(reloadSpy).toHaveBeenCalled();
           reloadSpy.calls.reset();
-          */
         });
 
       });
