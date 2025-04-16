@@ -13,7 +13,7 @@ import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
 
 
 interface MockPayloadOutputDescriptor extends PayloadOutputDescriptor {
-  outputCalculator(input: string): string;
+  calculateExpectedOutput(input: string): string;
 }
 
 interface MockPayloadOutputDescriptors {
@@ -50,7 +50,7 @@ describe('PayloadOutputComponent', () => {
       htmlSourceProvider: function divContent(payload) {
         return '<div>' + payload + '</div>';
       },
-      outputCalculator: input => `<div>${input}</div>`
+      calculateExpectedOutput: input => `<div>${input}</div>`
     },
 
     bar: {
@@ -64,7 +64,7 @@ describe('PayloadOutputComponent', () => {
       domInjector: function innerText(element, payload) {
         element.innerText = payload;
       },
-      outputCalculator: input => {
+      calculateExpectedOutput: input => {
         return input
           .toUpperCase()
           .replaceAll('<', '&lt;')
@@ -81,7 +81,7 @@ describe('PayloadOutputComponent', () => {
         return domSanitizer.bypassSecurityTrustHtml(payload);
       },
       templateComponentType: MockOutputComponent,
-      outputCalculator: input => `<p>${input}</p>`
+      calculateExpectedOutput: input => `<p>${input}</p>`
     },
 
     qux: {
@@ -92,7 +92,7 @@ describe('PayloadOutputComponent', () => {
       jQueryInjector: function paragraphTitle(element, payload) {
         $('<p>').attr('title', payload).text('This is a paragraph.').appendTo(element);
       },
-      outputCalculator: (input: string) => {
+      calculateExpectedOutput: (input: string) => {
         return `<p title="${input.replaceAll('"', '&quot;')}">This is a paragraph.</p>`;
       }
     }
@@ -131,7 +131,7 @@ describe('PayloadOutputComponent', () => {
     });
 
     it('should have a view with empty payload', () => {
-      expectComponentView(mockDescriptors.foo, '<div></div>');
+      expectComponentView(mockDescriptors.foo, '');
     });
   });
 
@@ -142,36 +142,36 @@ describe('PayloadOutputComponent', () => {
       expectComponentView(mockDescriptors.bar, '');
 
       await setDescriptor(mockDescriptors.baz);
-      expectComponentView(mockDescriptors.baz, '<p></p>');
+      expectComponentView(mockDescriptors.baz, '');
 
       await setDescriptor(mockDescriptors.foo);
-      expectComponentView(mockDescriptors.foo, '<div></div>');
+      expectComponentView(mockDescriptors.foo, '');
 
       await setDescriptor(mockDescriptors.qux);
-      expectComponentView(mockDescriptors.qux, '<p title="">This is a paragraph.</p>');
+      expectComponentView(mockDescriptors.qux, '');
     });
 
     it('should reflect a mix of output changes and payload changes', async () => {
       await setPayload('some text');
-      expectComponentView(mockDescriptors.foo, '<div>some text</div>');
+      expectComponentView(mockDescriptors.foo, 'some text');
 
       await setDescriptor(mockDescriptors.bar);
-      expectComponentView(mockDescriptors.bar, 'SOME TEXT');
+      expectComponentView(mockDescriptors.bar, 'some text');
 
       await setPayload('<img src="wteyk" onerror="console.log(\'xss\')">');
-      expectComponentView(mockDescriptors.bar, '&lt;IMG SRC="WTEYK" ONERROR="CONSOLE.LOG(\'XSS\')"&gt;');
+      expectComponentView(mockDescriptors.bar, '<img src="wteyk" onerror="console.log(\'xss\')">');
 
       await setDescriptor(mockDescriptors.qux);
-      expectComponentView(mockDescriptors.qux, '<p title="<img src=&quot;wteyk&quot; onerror=&quot;console.log(\'xss\')&quot;>">This is a paragraph.</p>');
+      expectComponentView(mockDescriptors.qux, '<img src="wteyk" onerror="console.log(\'xss\')">');
 
       await setDescriptor(mockDescriptors.baz);
-      expectComponentView(mockDescriptors.baz, '<p><img src="wteyk" onerror="console.log(\'xss\')"></p>');
+      expectComponentView(mockDescriptors.baz, '<img src="wteyk" onerror="console.log(\'xss\')">');
 
       await setPayload('more harmless text');
-      expectComponentView(mockDescriptors.baz, '<p>more harmless text</p>');
+      expectComponentView(mockDescriptors.baz, 'more harmless text');
 
       await setDescriptor(mockDescriptors.qux);
-      expectComponentView(mockDescriptors.qux, '<p title="more harmless text">This is a paragraph.</p>');
+      expectComponentView(mockDescriptors.qux, 'more harmless text');
     });
 
     for (const mockDescriptor of Object.values(mockDescriptors)) {
@@ -182,13 +182,13 @@ describe('PayloadOutputComponent', () => {
           await setDescriptor(mockDescriptor);
 
           await setPayload('plain text');
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator('plain text'));
+          expectComponentView(mockDescriptor, 'plain text');
 
           await setPayload('<img src="ufrvnrty" onerror="console.log(\'xss\')">');
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator('<img src="ufrvnrty" onerror="console.log(\'xss\')">'));
+          expectComponentView(mockDescriptor, '<img src="ufrvnrty" onerror="console.log(\'xss\')">');
 
           await setPayload('');
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator(''));
+          expectComponentView(mockDescriptor, '');
         });
 
       });
@@ -213,76 +213,76 @@ describe('PayloadOutputComponent', () => {
 
     it('should always reflect output changes immediately', async () => {
       await setPayload('ye olde payload');
-      expectComponentView(mockDescriptors.foo, '<div>ye olde payload</div>');
+      expectComponentView(mockDescriptors.foo, 'ye olde payload');
 
       queryAndExpectAutoUpdateToggle().click();
       await whenStableDetectChanges(fixture);
       expect(component.autoUpdate()).toBe(false);
-      expectComponentView(mockDescriptors.foo, '<div>ye olde payload</div>');
+      expectComponentView(mockDescriptors.foo, 'ye olde payload');
 
       await setDescriptor(mockDescriptors.bar);
-      expectComponentView(mockDescriptors.bar, 'YE OLDE PAYLOAD');
+      expectComponentView(mockDescriptors.bar, 'ye olde payload');
 
       await setDescriptor(mockDescriptors.qux);
-      expectComponentView(mockDescriptors.qux, '<p title="ye olde payload">This is a paragraph.</p>');
+      expectComponentView(mockDescriptors.qux, 'ye olde payload');
 
       await setDescriptor(mockDescriptors.foo);
-      expectComponentView(mockDescriptors.foo, '<div>ye olde payload</div>');
+      expectComponentView(mockDescriptors.foo, 'ye olde payload');
     });
 
     it('should reflect a mix of automatic changes of output and manual changes of payload', async () => {
-      expectComponentView(mockDescriptors.foo, '<div></div>');
+      expectComponentView(mockDescriptors.foo, '');
 
       queryAndExpectAutoUpdateToggle().click();
       await whenStableDetectChanges(fixture);
       expect(component.autoUpdate()).toBe(false);
-      expectComponentView(mockDescriptors.foo, '<div></div>');
+      expectComponentView(mockDescriptors.foo, '');
 
       await setPayload('f');
-      expectComponentView(mockDescriptors.foo, '<div></div>');
+      expectComponentView(mockDescriptors.foo, '');
 
       await setPayload('fo');
-      expectComponentView(mockDescriptors.foo, '<div></div>');
+      expectComponentView(mockDescriptors.foo, '');
 
       await setPayload('foo');
-      expectComponentView(mockDescriptors.foo, '<div></div>');
+      expectComponentView(mockDescriptors.foo, '');
 
       queryAndExpectUpdateNowLink(true).click();
       await whenStableDetectChanges(fixture);
-      expectComponentView(mockDescriptors.foo, '<div>foo</div>');
+      expectComponentView(mockDescriptors.foo, 'foo');
 
       await setPayload('foo bar');
-      expectComponentView(mockDescriptors.foo, '<div>foo</div>');
+      expectComponentView(mockDescriptors.foo, 'foo');
 
       await setDescriptor(mockDescriptors.qux);
-      expectComponentView(mockDescriptors.qux, '<p title="foo bar">This is a paragraph.</p>');
+      expectComponentView(mockDescriptors.qux, 'foo bar');
 
       await setDescriptor(mockDescriptors.baz);
-      expectComponentView(mockDescriptors.baz, '<p>foo bar</p>');
+      expectComponentView(mockDescriptors.baz, 'foo bar');
 
       queryAndExpectUpdateNowLink(true).click();
       await whenStableDetectChanges(fixture);
-      expectComponentView(mockDescriptors.baz, '<p>foo bar</p>');
+      expectComponentView(mockDescriptors.baz, 'foo bar');
 
       await setPayload('And Now for Something Completely Different');
-      expectComponentView(mockDescriptors.baz, '<p>foo bar</p>');
+      expectComponentView(mockDescriptors.baz, 'foo bar');
 
       queryAndExpectUpdateNowLink(true).click();
       await whenStableDetectChanges(fixture);
-      expectComponentView(mockDescriptors.baz, '<p>And Now for Something Completely Different</p>');
+      expectComponentView(mockDescriptors.baz, 'And Now for Something Completely Different');
 
       await setPayload('Here be <img src="sdgt" onerror="console.log(\'xss\')">');
-      expectComponentView(mockDescriptors.baz, '<p>And Now for Something Completely Different</p>');
+      expectComponentView(mockDescriptors.baz, 'And Now for Something Completely Different');
 
       await setDescriptor(mockDescriptors.bar);
-      expectComponentView(mockDescriptors.bar, 'HERE BE &lt;IMG SRC="SDGT" ONERROR="CONSOLE.LOG(\'XSS\')"&gt;');
+      expectComponentView(mockDescriptors.bar, 'Here be <img src="sdgt" onerror="console.log(\'xss\')">');
 
       await setPayload('We\'re done here! Let\'s go back to auto update...');
-      expectComponentView(mockDescriptors.bar, 'HERE BE &lt;IMG SRC="SDGT" ONERROR="CONSOLE.LOG(\'XSS\')"&gt;');
+      expectComponentView(mockDescriptors.bar, 'Here be <img src="sdgt" onerror="console.log(\'xss\')">');
 
       queryAndExpectAutoUpdateToggle().click();
       await whenStableDetectChanges(fixture);
-      expectComponentView(mockDescriptors.bar, 'WE\'RE DONE HERE! LET\'S GO BACK TO AUTO UPDATE...');
+      expectComponentView(mockDescriptors.bar, 'We\'re done here! Let\'s go back to auto update...');
     });
 
     for (const mockDescriptor of Object.values(mockDescriptors)) {
@@ -293,65 +293,65 @@ describe('PayloadOutputComponent', () => {
           queryAndExpectAutoUpdateToggle().click();
           expect(component.autoUpdate()).toBe(false);
           await setDescriptor(mockDescriptor);
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator(''));
+          expectComponentView(mockDescriptor, '');
 
           await setPayload('let\'s enter some payload ...');
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator(''));
+          expectComponentView(mockDescriptor, '');
 
           await setPayload('let\'s enter some payload without updating the output');
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator(''));
+          expectComponentView(mockDescriptor, '');
 
           await setPayload('next, let\'s update the output manually');
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator(''));
+          expectComponentView(mockDescriptor, '');
 
           queryAndExpectUpdateNowLink(true).click();
           await whenStableDetectChanges(fixture);
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator('next, let\'s update the output manually'));
+          expectComponentView(mockDescriptor, 'next, let\'s update the output manually');
 
           await setPayload('now, let\'s change the payload again');
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator('next, let\'s update the output manually'));
+          expectComponentView(mockDescriptor, 'next, let\'s update the output manually');
 
           queryAndExpectUpdateNowLink(true).click();
           await whenStableDetectChanges(fixture);
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator('now, let\'s change the payload again'));
+          expectComponentView(mockDescriptor, 'now, let\'s change the payload again');
         });
 
         it('should reload live output on manual update, even when payload has not changed', async () => {
           queryAndExpectAutoUpdateToggle().click();
           expect(component.autoUpdate()).toBe(false);
           await setDescriptor(mockDescriptor);
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator(''));
+          expectComponentView(mockDescriptor, '');
 
           const reloadSpy = spyOn(component._liveOutputComponent.instance, 'reload').and.callThrough();
 
           queryAndExpectUpdateNowLink(true).click();
           await whenStableDetectChanges(fixture);
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator(''));
+          expectComponentView(mockDescriptor, '');
           expect(reloadSpy).toHaveBeenCalled();
           reloadSpy.calls.reset();
 
           await setPayload('foo');
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator(''));
+          expectComponentView(mockDescriptor, '');
           expect(reloadSpy).not.toHaveBeenCalled();
 
           await setPayload('foo bar');
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator(''));
+          expectComponentView(mockDescriptor, '');
           expect(reloadSpy).not.toHaveBeenCalled();
 
           queryAndExpectUpdateNowLink(true).click();
           await whenStableDetectChanges(fixture);
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator('foo bar'));
+          expectComponentView(mockDescriptor, 'foo bar');
           expect(reloadSpy).not.toHaveBeenCalled();
 
           queryAndExpectUpdateNowLink(true).click();
           await whenStableDetectChanges(fixture);
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator('foo bar'));
+          expectComponentView(mockDescriptor, 'foo bar');
           expect(reloadSpy).toHaveBeenCalled();
           reloadSpy.calls.reset();
 
           queryAndExpectAutoUpdateToggle().click();
           await whenStableDetectChanges(fixture);
-          expectComponentView(mockDescriptor, mockDescriptor.outputCalculator('foo bar'));
+          expectComponentView(mockDescriptor, 'foo bar');
           expect(reloadSpy).toHaveBeenCalled();
           reloadSpy.calls.reset();
         });
@@ -372,15 +372,26 @@ describe('PayloadOutputComponent', () => {
     await whenStableDetectChanges(fixture);
   }
 
-  function expectComponentView(descriptor: PayloadOutputDescriptor, expectedOutputCode?: string) {
+  function expectComponentView(descriptor: MockPayloadOutputDescriptor, expectedOutput?: string) {
+
+    let expectedOutputString = null;
+    if (expectedOutput != null) {
+      if (descriptor.calculateExpectedOutput(expectedOutput)) {
+        expectedOutputString = descriptor.calculateExpectedOutput(expectedOutput);
+      }
+      else {
+        expectedOutputString = expectedOutput
+      }
+    }
+
     queryAndExpectTitle(descriptor);
     queryAndExpectPayloadProcessor(descriptor);
     queryAndExpectHtmlSourceProvider(descriptor);
     queryAndExpectDomInjector(descriptor);
     queryAndExpectJQueryInjector(descriptor);
     queryAndExpectTemplateComponentType(descriptor);
-    queryAndExpectLiveOutput(expectedOutputCode);
-    queryAndExpectLiveSourceCode(expectedOutputCode);
+    queryAndExpectLiveOutput(expectedOutputString);
+    queryAndExpectLiveSourceCode(expectedOutputString);
   }
 
   function queryAndExpectTitle(descriptor: PayloadOutputDescriptor) {
