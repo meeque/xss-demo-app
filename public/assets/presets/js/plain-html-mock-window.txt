@@ -10,7 +10,7 @@ workArea.innerHTML = '\n'
     + '<div>Menu selection value: <span class="output2"></span></div>\n'
     + '</div>\n';
 
-var newWindow = window.open('/assets/mocks/plain.html', '_blank');
+var newWindow = window.open('/assets/mocks/plain.html', 'xss-demo-plain-html-mock');
 var hostInputs = workArea.querySelector('div.host-input');
 var hostOutputs = workArea.querySelector('div.host-output');
 

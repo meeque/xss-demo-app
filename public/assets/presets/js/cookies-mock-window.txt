@@ -13,7 +13,7 @@ workArea.innerHTML = '\n'
     + '<div><button type="button" name="get">Get</button><button type="button" name="set">Set</button><button type="button" name="del">Delete</button></div>\n'
     + '</form>\n';
 
-var newWindow = window.open('/assets/mocks/cookies.html', '_blank');
+var newWindow = window.open('/assets/mocks/cookies.html', 'xss-demo-cookies-mock');
 
 var cookieForm = workArea.querySelector('form.cookie-form');
 var fieldDomain = cookieForm.querySelector('input[name=domain]');
