@@ -1,5 +1,5 @@
 import { NgIf, NgClass } from '@angular/common';
-import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, ComponentRef, Signal, signal, input, model, computed, effect, untracked } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, ComponentRef, signal, input, model, effect, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
@@ -23,12 +23,13 @@ export class PayloadOutputComponent implements AfterViewInit {
   readonly PayloadOutputQuality = PayloadOutputQuality;
 
   outputDescriptor = input<PayloadOutputDescriptor>();
-  payload = input<any>('');
+  payload = input('');
 
-  autoUpdate = model(true);
-  private lastOutputPayload = '';
-  private readonly outputPayload: Signal<any>;
-  liveSourceCode = signal('');
+  readonly autoUpdate = model(true);
+  private lastEmittedPayload = null;
+  private lastEmittedOutputDescriptor = null;
+  private readonly outputPayload = signal('' as any);
+  readonly liveSourceCode = signal('');
 
   showPayloadProcessor = true;
   showHtmlSourceProvider = true;
@@ -46,7 +47,7 @@ export class PayloadOutputComponent implements AfterViewInit {
   @ViewChild('liveOutputViewContainer', {read: ViewContainerRef})
   private _liveOutputViewContainer : ViewContainerRef;
 
-  private _liveOutputComponent : ComponentRef<LiveOutput> = null;
+  _liveOutputComponent : ComponentRef<LiveOutput> = null;
 
   constructor(private readonly _environmentInjector : EnvironmentInjector) {
 
@@ -57,19 +58,8 @@ export class PayloadOutputComponent implements AfterViewInit {
       }
     );
 
-    this.outputPayload = computed<any>(
-      () => {
-        if (this.autoUpdate()) {
-          const payloadProcessor = this.outputDescriptor()?.payloadProcessor;
-          if (payloadProcessor) {
-            this.lastOutputPayload = payloadProcessor(this.payload());
-          } else {
-            this.lastOutputPayload = this.payload();
-          }
-          this.change.emit();
-        }
-        return this.lastOutputPayload;
-      }
+    effect(
+      () => this.updateOutputPayload()
     );
 
     effect(
@@ -77,6 +67,15 @@ export class PayloadOutputComponent implements AfterViewInit {
         const outputPayload = this.outputPayload();
         if (this._liveOutputComponent) {
           this._liveOutputComponent.setInput('outputPayload', outputPayload);
+        }
+      }
+    );
+
+    effect(
+      () => {
+        const autoUpdate = this.autoUpdate();
+        if (autoUpdate) {
+          untracked(() => this.updateOutputPayload(true));
         }
       }
     );
@@ -94,7 +93,15 @@ export class PayloadOutputComponent implements AfterViewInit {
     this.switchLiveOutput(this.outputDescriptor());
   }
 
-  switchLiveOutput(outputDescriptor: PayloadOutputDescriptor): void {
+  private processPayload(): any {
+    const payloadProcessor = this.outputDescriptor()?.payloadProcessor;
+    if (payloadProcessor) {
+      return payloadProcessor(this.payload());
+    }
+    return this.payload();
+  }
+
+  private switchLiveOutput(outputDescriptor: PayloadOutputDescriptor): void {
     if (this._liveOutputViewContainer) {
       this._liveOutputViewContainer.clear();
       const liveOutputComponentType = outputDescriptor.templateComponentType || NonAngular;
@@ -105,18 +112,38 @@ export class PayloadOutputComponent implements AfterViewInit {
           environmentInjector: this._environmentInjector,
         }
       );
+
       this._liveOutputComponent.setInput('outputDescriptor', this.outputDescriptor());
       this._liveOutputComponent.setInput('outputPayload', this.outputPayload());
       if (!this.autoUpdate()) {
-        this.updateNow();
+        this.updateOutputPayload(true);
       }
     }
   }
 
+  private updateOutputPayload(force?: boolean): void {
+    if (force === true || this.autoUpdate()) {
+      const descriptor = this.outputDescriptor();
+      const payload = this.payload();
+      const processedPayload = this.processPayload();
+      if (
+        this.lastEmittedPayload != payload
+        ||
+        this.lastEmittedOutputDescriptor != descriptor
+      ) {
+        this.lastEmittedPayload = payload;
+        this.lastEmittedOutputDescriptor = descriptor;
+        this.outputPayload.set(processedPayload);
+      }
+      else if (force === true) {
+        this._liveOutputComponent?.instance?.reload();
+      }
+      this.change.emit();
+    }
+  }
+
   updateNow(): boolean {
-    this.autoUpdate.set(true);
-    this.outputPayload();
-    this.autoUpdate.set(false);
+    this.updateOutputPayload(true);
     return false;
   }
 }

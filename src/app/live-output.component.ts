@@ -8,6 +8,7 @@ export interface LiveOutput {
   outputDescriptor: InputSignal<PayloadOutputDescriptor>;
   outputPayload: InputSignal<any>;
   readonly payload: any ;
+  reload(): void;
 }
 
 export interface LiveOutputType extends Type<LiveOutput> {
@@ -19,13 +20,17 @@ export interface LiveOutputType extends Type<LiveOutput> {
 @Component({
   template: ''
 })
-abstract class LiveOutputComponent implements LiveOutput {
+export abstract class LiveOutputComponent implements LiveOutput {
 
   outputDescriptor = input.required<PayloadOutputDescriptor>();
   outputPayload = input.required<any>();
+
   get payload() {
     return this.outputPayload();
   }
+
+  reload() {
+  };
 }
 
 
@@ -42,33 +47,41 @@ export class NonAngular extends LiveOutputComponent {
     super();
 
     effect(() => {
-      const element = this._element.nativeElement;
-      const payload = this.outputPayload();
-      const descriptor = this.outputDescriptor();
-      if (descriptor?.htmlSourceProvider) {
-        try {
-          element.innerHTML = descriptor.htmlSourceProvider(payload);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      else if (descriptor?.domInjector) {
-        element.textContent = '';
-        try {
-          descriptor.domInjector(element, payload);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-      else if (descriptor?.jQueryInjector) {
-        element.textContent = '';
-        try {
-          descriptor.jQueryInjector(element, payload);
-        } catch (err) {
-          console.error(err);
-        }
-      }
+      this.doReload();
     });
+  }
+
+  override reload() {
+    this.doReload();
+  };
+
+  private doReload(): void {
+    const payload = this.outputPayload();
+    const descriptor = this.outputDescriptor();
+    const element = this._element.nativeElement;
+    if (descriptor?.htmlSourceProvider) {
+      try {
+        element.innerHTML = descriptor.htmlSourceProvider(payload);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    else if (descriptor?.domInjector) {
+      element.textContent = '';
+      try {
+        descriptor.domInjector(element, payload);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    else if (descriptor?.jQueryInjector) {
+      element.textContent = '';
+      try {
+        descriptor.jQueryInjector(element, payload);
+      } catch (err) {
+        console.error(err);
+      }
+    }
   }
 }
 
