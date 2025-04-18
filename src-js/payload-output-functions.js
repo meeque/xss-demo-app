@@ -275,6 +275,38 @@
             200
           );
         }
+
+        trustedScriptBlockMessageMockIframe(element, payload) {
+          let iframe = document.createElement('iframe');
+          iframe.src = '/assets/mocks/message.html';
+          iframe.className = 'xss-demo-guest';
+          iframe.addEventListener('load', () => {
+            const scriptBlock = iframe.contentDocument.createElement('script');
+            scriptBlock.type = 'text/javascript';
+            scriptBlock.textContent
+              = '(async function() {\n'
+              + payload + '\n'
+              + '})();\n';
+            iframe.contentDocument.body.insertAdjacentElement('beforeend', scriptBlock);
+          });
+          element.insertAdjacentElement('beforeend', iframe);
+        }
+
+        trustedScriptBlockMessageMockWindow(element, payload) {
+          let newWindow = window.open('/assets/mocks/message.html', 'xss-demo-message-mock');
+          setTimeout(
+            () => {
+              const scriptBlock = newWindow.document.createElement('script');
+              scriptBlock.type = 'text/javascript';
+              scriptBlock.textContent
+                = '(async function() {\n'
+                + payload + '\n'
+                + '})();\n';
+              newWindow.document.body.insertAdjacentElement('beforeend', scriptBlock);
+            },
+            200
+          );
+        }
       },
 
       JQueryInjectors: class JQueryInjectors {
