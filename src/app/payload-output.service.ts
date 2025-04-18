@@ -741,6 +741,22 @@ export class PayloadOutputService {
             name: 'JavaScript in Cookies Mock (Window)',
             title: 'Payload JavaScript in cookies mock page via new window (Script Block with DOM .textContent)',
             domInjector: this._domInjectors.trustedScriptBlockCookiesMockWindow
+          },
+
+          {
+            id: 'BlockDomMessageMockIframe',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'JavaScript in Post Message Mock (Iframe)',
+            title: 'Payload JavaScript in post message mock page via iframe (Script Block with DOM .textContent)',
+            domInjector: this._domInjectors.trustedScriptBlockMessageMockIframe
+          },
+
+          {
+            id: 'BlockDomMessageMockWindow',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'JavaScript in Post Message Mock (Window)',
+            title: 'Payload JavaScript in post message mock page via new window (Script Block with DOM .textContent)',
+            domInjector: this._domInjectors.trustedScriptBlockMessageMockWindow
           }
         ]
       }
