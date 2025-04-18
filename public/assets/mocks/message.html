@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XSS Demo: Post Message Mock</title>
+    <link rel="stylesheet" href="message.css">
+    <script src="message.js"></script>
+</head>
+<body>
+
+    <h1>XSS Demo: Post Message Mock</h1>
+    <p>
+        This is a simple HTML document that displays post-message events that it receives.
+    </p>
+
+    <div class="origins">
+        <h2>Trusted Origins</h2>
+
+        <p>Post-message events from the following origins will be considered trusted:</p>
+
+        <table class="origins">
+            <tr class="head">
+                <th>Origin</th>
+                <th>Actions</th>
+            </tr>
+            <tr class="message empty">
+                <td colspan="9">No origins are currently considered trusted.</td>
+            </tr>
+            <tr class="actions">
+                <td class="message error">An error has occurred.</td>
+                <td><button type="button" name="new">New trusted origin...</button></td>
+            </tr>
+        </table>
+
+        <template id="origin">
+            <tr class="origin">
+                <td class="origin">
+                    <input type="text" name="origin">
+                </td>
+                <td class="actions">
+                    <button type="button" name="untrust">Untrust</button>
+                    <button type="button" name="trust">Trust</button>
+                    <button type="button" name="cancel">Cancel</button>
+                </td>
+            </tr>
+        </template>
+    </div>
+
+    <div class="events">
+
+        <h2>Received Events</h2>
+
+        <p>The following post-message events have been received so far:</p>
+
+        <table class="events">
+            <tr class="head">
+                <th>Trust</th>
+                <th>Sender Origin</th>
+                <th>Timestamp</th>
+                <th>Received Data</th>
+            </tr>
+            <tr class="message empty">
+                <td colspan="9">No events have been received yet.</td>
+            </tr>
+            <tr class="actions">
+                <td colspan="3" class="message error">An error has occurred.</td>
+                <td><button type="button" name="clear">Clear Events</button></td>
+            </tr>
+        </table>
+
+        <template id="event">
+            <tr class="event">
+                <td class="trust"></td>
+                <td class="origin"></td>
+                <td class="timestamp"></td>
+                <td class="data"></td>
+            </tr>
+        </template>
+    </div>
+</body>

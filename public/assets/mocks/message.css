@@ -1,0 +1,28 @@
+table.origins tr.message {
+    display: none;
+}
+
+table.origins.empty tr.message.empty {
+    display: table-row;
+}
+
+table.origins tr.origin button[name=trust],
+table.origins tr.origin button[name=cancel],
+table.origins tr.origin.new button[name=untrust] {
+    display: none;
+}
+
+table.origins tr.origin.new button[name=trust],
+table.origins tr.origin.new button[name=cancel] {
+    display: inline-block;
+}
+
+
+
+table.events tr.message {
+    display: none;
+}
+
+table.events.empty tr.message.empty {
+    display: table-row;
+}
