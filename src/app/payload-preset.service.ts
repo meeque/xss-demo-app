@@ -217,6 +217,14 @@ export class PayloadPresetService {
           url: 'assets/presets/js/cookies-mock-window.txt'
         },
         {
+          name: 'Interact with Post Message mock (iframe)',
+          url: 'assets/presets/js/message-mock-frame.txt'
+        },
+        {
+          name: 'Interact with Post Message mock (window)',
+          url: 'assets/presets/js/message-mock-window.txt'
+        },
+        {
           name: 'JSFuck',
           url: 'assets/presets/js/jsfuck.txt'
         },
