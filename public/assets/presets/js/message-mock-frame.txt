@@ -19,7 +19,7 @@ fieldOrigin.value = window.origin;
 
 buttonPost.addEventListener(
     'click',
-    (event) => {
+    () => {
         guestIFrame.contentWindow.postMessage(
             fieldData.value,
             fieldOrigin.value

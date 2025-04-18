@@ -19,7 +19,7 @@ function link(input, output) {
     output.innerText = input.value;
     input.addEventListener(
         'input',
-        (event) => { output.innerText = input.value; }
+        () => { output.innerText = input.value; }
     );
 }
 

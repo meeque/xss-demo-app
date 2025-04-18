@@ -21,7 +21,7 @@ fieldOrigin.value = window.origin;
 
 buttonPost.addEventListener(
     'click',
-    (event) => {
+    () => {
         targetWindow.postMessage(
             fieldData.value,
             fieldOrigin.value

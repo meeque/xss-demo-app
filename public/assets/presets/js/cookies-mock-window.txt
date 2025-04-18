@@ -29,21 +29,21 @@ var buttonDel = cookieForm.querySelector('button[name=del]');
 
 buttonGet.addEventListener(
     'click',
-    (event) => {
+    () => {
         fieldValue.value = getCookieValue(fieldName.value);
     }
 );
 
 buttonSet.addEventListener(
     'click',
-    (event) => {
+    () => {
         setCookie(fieldDomain.value, fieldPath.value, fieldName.value, fieldValue.value, fieldSecure.checked, fieldSamesite.value, fieldMaxAge.value);
     }
 );
 
 buttonDel.addEventListener(
     'click',
-    (event) => {
+    () => {
         setCookie(fieldDomain.value, fieldPath.value, fieldName.value, '', false, '', 0);
     }
 );
