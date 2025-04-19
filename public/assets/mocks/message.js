@@ -196,7 +196,7 @@ function $messagePage() {
 
             const $cellTrusted = $rowEvent.querySelector('.trust');
             const $cellOrigin = $rowEvent.querySelector('.origin');
-            const $cellTimestamp = $rowEvent.querySelector('.timestamp');
+            const $cellTimeStamp = $rowEvent.querySelector('.timestamp');
             const $cellData = $rowEvent.querySelector('.data');
 
             if (trustedOrigins.has(event.origin)) {
@@ -211,7 +211,7 @@ function $messagePage() {
             resetErrorMessage();
 
             $cellOrigin.textContent = event.origin;
-            $cellTimestamp.textContent = event.timestamp;
+            $cellTimeStamp.textContent = event.timeStamp;
             $cellData.textContent = JSON.stringify(event.data);
         }
     }
