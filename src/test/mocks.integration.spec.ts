@@ -1473,6 +1473,16 @@ describe('XSS Demo Mocks', () => {
             await configureTrustedOrigins(testOriginConfig.origins);
             const postedEvents = [] as TestEvent[];
 
+            await postMessageAndExpectEventsTable('first', postedEvents, testOriginConfig);
+            await postMessageAndExpectEventsTable('second', postedEvents, testOriginConfig);
+            await postMessageAndExpectEventsTable('third', postedEvents, testOriginConfig);
+            await postMessageAndExpectEventsTable('fourth', postedEvents, testOriginConfig);
+
+            const clearButton = queryEventsTable().querySelector('tr.actions button[name=clear]') as HTMLButtonElement;
+            clearButton.click();
+            postedEvents.splice(0);
+            expectEventsTable();
+
             await postMessageAndExpectEventsTable('foo', postedEvents, testOriginConfig);
             await postMessageAndExpectEventsTable('bar', postedEvents, testOriginConfig);
             await postMessageAndExpectEventsTable('baz', postedEvents, testOriginConfig);
@@ -1617,11 +1627,11 @@ describe('XSS Demo Mocks', () => {
       );
       await expectEventsTable(
         postedEvents,
-        testOriginConfig.expectTrusted
+        !testOriginConfig.expectTrusted
       );
     }
 
-    async function expectEventsTable(events = [] as TestEvent[], expectTrusted = true) {
+    async function expectEventsTable(events = [] as TestEvent[], expectError = false) {
       const eventsTable = queryEventsTable()
       const rowCount = events.length + 3;
 
@@ -1636,11 +1646,11 @@ describe('XSS Demo Mocks', () => {
       expect(clearButton.disabled).withContext('"clear events" button disabled').toBeFalse();
 
       const errorMessageCell = queryAndExpectOne(eventsTable, 'tr.actions td.message.error');
-      if (expectTrusted) {
-        expect(errorMessageCell.textContent.trim()).toBe('');
+      if (expectError) {
+        expect(errorMessageCell.textContent.trim()).not.toBe('');
       }
       else {
-        expect(errorMessageCell.textContent.trim()).not.toBe('');
+        expect(errorMessageCell.textContent.trim()).toBe('');
       }
 
       let index = 2;
