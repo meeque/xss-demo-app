@@ -1280,8 +1280,8 @@ describe('XSS Demo Mocks', () => {
 
   describe('Post Message Page', () => {
 
-    interface TestEvent<T> {
-      data: T;
+    interface TestEvent {
+      data: any;
       expectTrusted?: boolean;
     }
 
@@ -1471,7 +1471,7 @@ describe('XSS Demo Mocks', () => {
           + ' ]',
           async () => {
             await configureTrustedOrigins(testOriginConfig.origins);
-            const postedEvents = [] as TestEvent<any>[];
+            const postedEvents = [] as TestEvent[];
 
             await postMessageAndExpectEventsTable('foo', postedEvents, testOriginConfig);
             await postMessageAndExpectEventsTable('bar', postedEvents, testOriginConfig);
@@ -1603,7 +1603,7 @@ describe('XSS Demo Mocks', () => {
       return queryAndExpectOne(mockPageDoc.body, 'table.events') as HTMLTableElement;
     }
 
-    async function postMessageAndExpectEventsTable(newEventData: string, postedEvents: TestEvent<any>[], testOriginConfig: TestOriginConfig) {
+    async function postMessageAndExpectEventsTable(newEventData: string, postedEvents: TestEvent[], testOriginConfig: TestOriginConfig) {
 
       pageFixture.contentWindow.postMessage(newEventData, window.origin);
 
@@ -1621,7 +1621,7 @@ describe('XSS Demo Mocks', () => {
       );
     }
 
-    async function expectEventsTable(events = [] as TestEvent<any>[], expectTrusted = true) {
+    async function expectEventsTable(events = [] as TestEvent[], expectTrusted = true) {
       const eventsTable = queryEventsTable()
       const rowCount = events.length + 3;
 
