@@ -1,4 +1,4 @@
-import { AsymmetricEqualityTester, anyOf, timeout, domTreeAvailable, queryAndExpectCount, queryAndExpectNone, queryAndExpectOne } from './lib.spec';
+import { AsymmetricEqualityTester, anyOf, timeout, domTreeAvailable, queryAndExpectCount, queryAndExpectOne } from './lib.spec';
 
 describe('XSS Demo Mocks', () => {
 
@@ -1281,8 +1281,13 @@ describe('XSS Demo Mocks', () => {
   describe('Post Message Page', () => {
 
     interface TestEvent<T> {
-      data: T,
-      expectTrusted?: boolean
+      data: T;
+      expectTrusted?: boolean;
+    }
+
+    interface TestOriginConfig {
+      origins: string[];
+      expectTrusted?: boolean;
     }
 
     beforeEach(async () => await setUpPageFixture('/assets/mocks/message.html'));
@@ -1324,7 +1329,7 @@ describe('XSS Demo Mocks', () => {
       expect(mockPageDoc).toEqual(jasmine.anything());
     });
 
-    describe('trusted origins table', () => {
+    describe('"Trusted Origins" table', () => {
 
       it('should initially contain own origin', () => {
         return expectOriginsTable([window.origin]);
@@ -1421,67 +1426,62 @@ describe('XSS Demo Mocks', () => {
 
     });
 
-    describe('received post-message events table', () => {
+    describe('"Received Post-Message Events" table', () => {
+
+      const testOriginConfigs: TestOriginConfig[] = [
+        {
+          origins: [window.origin],
+          expectTrusted: true
+        },
+        {
+          origins: ['https://xss.example', window.origin],
+          expectTrusted: true
+        },
+        {
+          origins: [window.origin, 'http://yss.example'],
+          expectTrusted: true
+        },
+        {
+          origins: [],
+          expectTrusted: false
+        },
+        {
+          origins: ['https://xss.example'],
+          expectTrusted: false
+        },
+        {
+          origins: ['http://yss.example', 'http://zss.example'],
+          expectTrusted: false
+        },
+      ];
 
       it('should initially be empty', async () => {
         await expectEventsTable();
       });
 
-      describe('should trust events from ' + window.origin, () => {
+      for (const testOriginConfig of testOriginConfigs) {
 
-        for (const trustedOrigins of [
-          [window.origin],
-          ['https://xss.example', window.origin],
-          [window.origin, 'http://yss.example'],
-        ]) {
-
-          it('when trusted origns are [' + trustedOrigins.join(', ') + ']', async () => {
-
-            await configureTrustedOrigins(trustedOrigins);
+        it(
+          'should '
+          + (testOriginConfig.expectTrusted ? '' : 'NOT ')
+          + 'trust events from '
+          + window.origin
+          + ' when trusted origns are [ '
+          + testOriginConfig.origins.join(', ')
+          + ' ]',
+          async () => {
+            await configureTrustedOrigins(testOriginConfig.origins);
             const postedEvents = [] as TestEvent<any>[];
 
-            postedEvents.push(postMessage('foo'));
-            await expectEventsTable(postedEvents);
+            await postMessageAndExpectEventsTable('foo', postedEvents, testOriginConfig);
+            await postMessageAndExpectEventsTable('bar', postedEvents, testOriginConfig);
+            await postMessageAndExpectEventsTable('baz', postedEvents, testOriginConfig);
+            await postMessageAndExpectEventsTable('qux', postedEvents, testOriginConfig);
+          }
+        );
 
-            postedEvents.push(postMessage('bar'));
-            await expectEventsTable(postedEvents);
+      }
 
-            postedEvents.push(postMessage('baz'));
-            await expectEventsTable(postedEvents);
-
-            postedEvents.push(postMessage('qux'));
-            await expectEventsTable(postedEvents);
-          });
-        }
-      });
-
-      describe('should NOT trust events from ' + window.origin, () => {
-
-        for (const trustedOrigins of [
-          [],
-          ['https://xss.example'],
-          ['http://yss.example', 'http://zss.example'],
-        ]) {
-
-          it('when trusted origns are [' + trustedOrigins.join(', ') + ']', async () => {
-
-            await configureTrustedOrigins(trustedOrigins);
-            const postedEvents = [] as TestEvent<any>[];
-
-            postedEvents.push(postMessage('one', false));
-            await expectEventsTable(postedEvents, true);
-
-            postedEvents.push(postMessage('two', false));
-            await expectEventsTable(postedEvents, true);
-
-            postedEvents.push(postMessage('three', false));
-            await expectEventsTable(postedEvents, true);
-
-            postedEvents.push(postMessage('four', false));
-            await expectEventsTable(postedEvents, true);
-          });
-        }
-      });
     });
 
     function queryOriginsTable(): HTMLTableElement {
@@ -1603,11 +1603,28 @@ describe('XSS Demo Mocks', () => {
       return queryAndExpectOne(mockPageDoc.body, 'table.events') as HTMLTableElement;
     }
 
-    async function expectEventsTable(events = [] as TestEvent<any>[], expectError = false) {
+    async function postMessageAndExpectEventsTable(newEventData: string, postedEvents: TestEvent<any>[], testOriginConfig: TestOriginConfig) {
+
+      pageFixture.contentWindow.postMessage(newEventData, window.origin);
+
+      postedEvents.push({
+        data: newEventData,
+        expectTrusted: testOriginConfig.expectTrusted
+      });
+      await domTreeAvailable(
+        queryEventsTable(),
+        ':nth-child(' + postedEvents.length + ' of tr.event)'
+      );
+      await expectEventsTable(
+        postedEvents,
+        testOriginConfig.expectTrusted
+      );
+    }
+
+    async function expectEventsTable(events = [] as TestEvent<any>[], expectTrusted = true) {
       const eventsTable = queryEventsTable()
       const rowCount = events.length + 3;
 
-      await domTreeAvailable(eventsTable, () => eventsTable.querySelectorAll('tr.event').length == events.length);
       expect(eventsTable.classList).withContext('events table classes').toEqual(jasmine.arrayWithExactContents(events.length > 0 ? ['events'] : ['events', 'empty']));
 
       const eventRows = queryAndExpectCount(eventsTable, 'tr', rowCount);
@@ -1619,11 +1636,11 @@ describe('XSS Demo Mocks', () => {
       expect(clearButton.disabled).withContext('"clear events" button disabled').toBeFalse();
 
       const errorMessageCell = queryAndExpectOne(eventsTable, 'tr.actions td.message.error');
-      if (expectError) {
-        expect(errorMessageCell.textContent.trim()).not.toBe('');
+      if (expectTrusted) {
+        expect(errorMessageCell.textContent.trim()).toBe('');
       }
       else {
-        expect(errorMessageCell.textContent.trim()).toBe('');
+        expect(errorMessageCell.textContent.trim()).not.toBe('');
       }
 
       let index = 2;
@@ -1640,14 +1657,6 @@ describe('XSS Demo Mocks', () => {
         expect(Number.parseFloat(timeStampCell.textContent)).withContext('post-message event timestamp').not.toBeNaN();
         expect(dataCell.textContent).withContext('post-message event data (JSON encoded)').toBe(JSON.stringify(event.data));
       }
-    }
-
-    function postMessage<T>(data: T, expectTrusted = true): TestEvent<T> {
-      pageFixture.contentWindow.postMessage(data, window.origin);
-      return {
-        data: data,
-        expectTrusted
-      };
     }
   });
 
