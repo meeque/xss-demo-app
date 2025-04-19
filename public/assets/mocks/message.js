@@ -21,6 +21,10 @@ function validateOrigin(origin) {
     return originRegex.test(origin);
 }
 
+function sortOrigins(origins) {
+    return Array.from(origins).sort();
+}
+
 function $messagePage() {
 
     const trustedOrigins = new Set();
@@ -52,7 +56,7 @@ function $messagePage() {
                 $remove($rowOrigin);
             }
 
-            const sortedTrustedOrigins = Array.from(trustedOrigins).sort();
+            const sortedTrustedOrigins = sortOrigins(trustedOrigins);
             for (const origin of sortedTrustedOrigins) {
                 originController(origin);
             }
@@ -147,7 +151,7 @@ function $messagePage() {
         }
 
         function enableStandardButtons() {
-            $enable(... $tableOrigins.querySelectorAll('button[name=new], button[name=delete]'));
+            $enable(... $tableOrigins.querySelectorAll('button[name=new], button[name=untrust]'));
         }
     }
 

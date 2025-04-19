@@ -1,4 +1,4 @@
-import { AsymmetricEqualityTester, anyOf, timeout, domTreeAvailable, queryAndExpectCount, queryAndExpectOne } from './lib.spec';
+import { AsymmetricEqualityTester, anyOf, timeout, domTreeAvailable, queryAndExpectCount, queryAndExpectNone, queryAndExpectOne } from './lib.spec';
 
 describe('XSS Demo Mocks', () => {
 
@@ -1275,6 +1275,270 @@ describe('XSS Demo Mocks', () => {
       }
       domains.pop();
       return domains;
+    }
+  });
+
+  describe('Post Message Page', () => {
+
+    const testEventData = 'Test Event Data';
+
+    beforeEach(async () => await setUpPageFixture('/assets/mocks/message.html'));
+
+    it('should sort origins alphabethically', async () => {
+      await expectAsync(sortOrigins([])).toBeResolvedTo([]);
+
+      await expectAsync(sortOrigins([null])).toBeResolvedTo([null]);
+      await expectAsync(sortOrigins([undefined])).toBeResolvedTo([null]);
+      await expectAsync(sortOrigins([''])).toBeResolvedTo(['']);
+      await expectAsync(sortOrigins(['foo'])).toBeResolvedTo(['foo']);
+      await expectAsync(sortOrigins(['https://xss.example'])).toBeResolvedTo(['https://xss.example']);
+      await expectAsync(sortOrigins(['http://xss.example:8080'])).toBeResolvedTo(['http://xss.example:8080']);
+
+      await expectAsync(sortOrigins([null, 'origin'])).toBeResolvedTo([null, 'origin']);
+      await expectAsync(sortOrigins(['origin', null])).toBeResolvedTo([null, 'origin']);
+      await expectAsync(sortOrigins([undefined, 'value'])).toBeResolvedTo([null, 'value']);
+      await expectAsync(sortOrigins(['value', undefined])).toBeResolvedTo([null, 'value']);
+      await expectAsync(sortOrigins(['', 'test'])).toBeResolvedTo(['', 'test']);
+      await expectAsync(sortOrigins(['test', ''])).toBeResolvedTo(['', 'test']);
+      await expectAsync(sortOrigins(['foo', 'bar'])).toBeResolvedTo(['bar', 'foo']);
+      await expectAsync(sortOrigins(['bar', 'foo'])).toBeResolvedTo(['bar', 'foo']);
+      await expectAsync(sortOrigins(['http://xss.example', 'https://xss.example'])).toBeResolvedTo(['http://xss.example', 'https://xss.example']);
+      await expectAsync(sortOrigins(['https://xss.example', 'http://xss.example'])).toBeResolvedTo(['http://xss.example', 'https://xss.example']);
+      await expectAsync(sortOrigins(['https://xss.example', 'https://yss.example'])).toBeResolvedTo(['https://xss.example', 'https://yss.example']);
+      await expectAsync(sortOrigins(['https://yss.example', 'https://xss.example'])).toBeResolvedTo(['https://xss.example', 'https://yss.example']);
+
+      await expectAsync(sortOrigins(['one', 'three', 'two'])).toBeResolvedTo(['one', 'three', 'two']);
+      await expectAsync(sortOrigins(['one', 'two', 'three'])).toBeResolvedTo(['one', 'three', 'two']);
+      await expectAsync(sortOrigins(['three', 'one', 'two'])).toBeResolvedTo(['one', 'three', 'two']);
+      await expectAsync(sortOrigins(['three', 'two', 'one'])).toBeResolvedTo(['one', 'three', 'two']);
+
+      await expectAsync(sortOrigins(['http://xss.example', 'http://xss.example:8080', 'http://yss.example', 'http://yss.example:8080', 'https://xss.example', 'https://xss.example:8443', 'https://yss.example', 'https://yss.example:8443'])).toBeResolvedTo(['http://xss.example', 'http://xss.example:8080', 'http://yss.example', 'http://yss.example:8080', 'https://xss.example', 'https://xss.example:8443', 'https://yss.example', 'https://yss.example:8443']);
+      await expectAsync(sortOrigins(['https://yss.example', 'http://yss.example', 'http://xss.example:8080', 'http://yss.example:8080', 'https://xss.example', 'https://yss.example:8443', 'http://xss.example', 'https://xss.example:8443'])).toBeResolvedTo(['http://xss.example', 'http://xss.example:8080', 'http://yss.example', 'http://yss.example:8080', 'https://xss.example', 'https://xss.example:8443', 'https://yss.example', 'https://yss.example:8443']);
+      await expectAsync(sortOrigins(['http://yss.example', 'https://xss.example:8443', 'http://xss.example:8080', 'http://yss.example:8080', 'https://yss.example', 'https://xss.example', 'https://yss.example:8443', 'http://xss.example'])).toBeResolvedTo(['http://xss.example', 'http://xss.example:8080', 'http://yss.example', 'http://yss.example:8080', 'https://xss.example', 'https://xss.example:8443', 'https://yss.example', 'https://yss.example:8443']);
+    });
+
+    it('is loaded', () => {
+      expect(mockPageDoc).toEqual(jasmine.anything());
+    });
+
+    describe('trusted origins table', () => {
+
+      it('should initially contain own origin', () => {
+        return expectOriginsTable([window.origin]);
+      });
+
+      it('should manage trusted origins', async () => {
+
+        const origins = new Set<string>([window.origin]);
+        await expectOriginsTable(origins);
+
+        {
+          const origin = 'https://xss.example';
+          origins.add(origin);
+          fillNewOriginForm(origin);
+          await expectOriginsTable(origins);
+        }
+
+        {
+          const origin = 'https://yss.example';
+          origins.add(origin);
+          fillNewOriginForm(origin);
+          await expectOriginsTable(origins);
+        }
+
+        {
+          const origin = window.origin;
+          origins.delete(origin);
+          untrustOrigin(origin);
+          await expectOriginsTable(origins);
+        }
+
+        {
+          // start adding origin, but do not save
+          const origin = 'https://zss.example';
+          fillNewOriginForm(origin, false);
+          await expectOriginsTable(origins);
+        }
+
+        {
+          const origin = 'lololo';
+          origins.add(origin);
+          fillNewOriginForm(origin);
+          await expectOriginsTable(origins, true);
+
+          origins.delete(origin);
+          untrustOrigin(origin);
+          await expectOriginsTable(origins);
+        }
+
+        {
+          // re-add existing origin
+          const origin = 'https://xss.example';
+          fillNewOriginForm(origin);
+          await expectOriginsTable(origins);
+        }
+
+        {
+          const origin = window.origin;
+          origins.add(origin);
+          fillNewOriginForm(origin);
+          await expectOriginsTable(origins);
+        }
+
+        {
+          const origin = 'https://zss.example';
+          origins.delete(origin);
+          untrustOrigin(origin);
+          await expectOriginsTable(origins);
+        }
+
+        {
+          const origin = 'https://yss.example';
+          origins.delete(origin);
+          untrustOrigin(origin);
+          await expectOriginsTable(origins);
+        }
+
+        {
+          const origin = 'https://xss.example';
+          origins.delete(origin);
+          untrustOrigin(origin);
+          await expectOriginsTable(origins);
+        }
+
+        {
+          const origin = window.origin;
+          origins.delete(origin);
+          untrustOrigin(origin);
+          await expectOriginsTable(origins);
+        }
+
+        await expectOriginsTable([]);
+      });
+
+    });
+
+    describe('received events table', () => {
+
+      it('should initially be empty', () => {
+        const eventsTable = queryAndExpectOne(mockPageDoc.body, 'table.events');
+        queryAndExpectNone(eventsTable, 'tr.event');
+      });
+
+      it('should trust event from default origin', () => {
+        pageFixture.contentWindow.postMessage(testEventData, window.origin);
+
+        queryAndExpectOne(mockPageDoc.body, 'table.events') as HTMLTableElement;
+      });
+
+    });
+
+    function queryOriginsTable(): HTMLTableElement {
+      return queryAndExpectOne(mockPageDoc.body, 'table.origins') as HTMLTableElement;
+    }
+
+    function queryOriginsTableOrigin(origin: string): HTMLTableRowElement {
+      const originRows = queryOriginsTable().querySelectorAll('tr.origin') as NodeListOf<HTMLTableRowElement>;
+      for (const originRow of originRows) {
+        const originField = queryAndExpectOne(originRow, 'td.origin input[name=origin]') as HTMLInputElement;
+        if (originField.value == origin) {
+          return originRow;
+        }
+      }
+      return null;
+    }
+
+    async function fillNewOriginForm(origin: string, save = true): Promise<void> {
+
+      const isExistingOrigin = queryOriginsTableOrigin(origin) != null;
+
+      const originsTable = queryOriginsTable();
+      const initialOriginsTableRows = originsTable.querySelectorAll('tr');
+
+      const newOriginButton = queryAndExpectOne(originsTable, 'tr.actions button[name=new]') as HTMLButtonElement;
+      newOriginButton.click();
+
+      queryAndExpectCount(originsTable, 'tr', initialOriginsTableRows.length + 1);
+      expect(originsTable.classList).withContext('origins table classes').not.toContain('empty');
+      expect(newOriginButton.disabled).withContext('"new trusted origin" button disabled').toBeTrue();
+      const errorMessageCell = queryAndExpectOne(originsTable, 'tr.actions td.message.error');
+      expect(errorMessageCell.textContent.trim()).toBe('');
+
+      const originRow = queryAndExpectOne(originsTable, 'tr.origin.new') as HTMLTableRowElement;
+      const originField = queryAndExpectOne(originRow, 'td.origin input[name=origin]') as HTMLInputElement;
+      const untrustButton = queryAndExpectOne(originRow, 'td.actions button[name=untrust]') as HTMLButtonElement;
+      const trustButton = queryAndExpectOne(originRow, 'td.actions button[name=trust]') as HTMLButtonElement;
+      const cancelButton = queryAndExpectOne(originRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
+
+      expect(originField.value).toBe('');
+      expect(originField.disabled).toBeFalse();
+      expect(untrustButton.disabled).toBeTrue();
+      expect(trustButton.disabled).toBeFalse();
+      expect(cancelButton.disabled).toBeFalse();
+
+      originField.value = origin;
+      (save ? trustButton : cancelButton).dispatchEvent(new Event('click'));
+
+      queryAndExpectCount(queryOriginsTable(), 'tr', initialOriginsTableRows.length + ((save && !isExistingOrigin) ? 1 : 0));
+    }
+
+    async function untrustOrigin(origin: string): Promise<void> {
+
+      const originsTable = queryAndExpectOne(mockPageDoc.body, 'table.origins');
+      const initialOriginsTableRows = originsTable.querySelectorAll('tr');
+      const originRow = queryOriginsTableOrigin(origin);
+      const untrustButton = queryAndExpectOne(originRow, 'td.actions button[name=untrust]') as HTMLButtonElement;
+
+      untrustButton.click();
+      queryAndExpectCount(queryOriginsTable(), 'tr', initialOriginsTableRows.length - 1);
+    }
+
+    async function expectOriginsTable(origins = [] as Iterable<string>, expectError = false) {
+      const originsTable = queryOriginsTable()
+
+      const sortedOrigins = await sortOrigins(origins);
+      const originsCount = sortedOrigins.length;
+      const rowCount = originsCount + 3;
+
+      const originRows = queryAndExpectCount(originsTable, 'tr', rowCount);
+      expect(originRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
+      expect(originRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
+      expect(originRows[rowCount-1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
+
+      const newOriginButton = queryAndExpectOne(originRows[rowCount-1], 'button[name=new]') as HTMLButtonElement;
+      expect(newOriginButton.disabled).withContext('"new trusted origin" button disabled').toBeFalse();
+
+      const errorMessageCell = queryAndExpectOne(originsTable, 'tr.actions td.message.error');
+      if (expectError) {
+        expect(errorMessageCell.textContent.trim()).not.toBe('');
+      }
+      else {
+        expect(errorMessageCell.textContent.trim()).toBe('');
+      }
+
+      let index = 2;
+      for (const origin of sortedOrigins) {
+        const originRow = originRows[index++];``
+
+        const originField = queryAndExpectOne(originRow, 'td.origin input[name=origin]') as HTMLInputElement;
+        const untrustButton = queryAndExpectOne(originRow, 'td.actions button[name=untrust]') as HTMLButtonElement;
+        const trustButton = queryAndExpectOne(originRow, 'td.actions button[name=trust]') as HTMLButtonElement;
+        const cancelButton = queryAndExpectOne(originRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
+
+        expect(originRow.classList).withContext('origin row classes').not.toContain('new');
+        expect(originField.value).toBe(origin);
+        expect(originField.disabled).toBeTrue();
+        expect(untrustButton.disabled).toBeFalse();
+        expect(trustButton.disabled).toBeTrue();
+        expect(cancelButton.disabled).toBeTrue();
+
+      }
+    }
+
+    function sortOrigins(origins: Iterable<string> ): Promise<string[]> {
+      return runInPageFixture(
+        'return sortOrigins(' + JSON.stringify(Array.from(origins)) +');'
+      );
     }
   });
 
