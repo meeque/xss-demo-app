@@ -1,10 +1,57 @@
+.message.error {
+    color: red;
+}
 
-.meta.status ul li {
-    display: list-item;
+.message.warning {
+    color: orange;
+}
+
+.message.info {
+    color: blue;
+}
+
+.message.success {
+    color: green;
+}
+
+
+
+li.error {
+    list-style-type: '⨯ ';
+}
+
+li.error::marker {
+    color: red;
+    font-size: 120%;
+}
+
+li.warning {
+    list-style-type: '⚠ ';
+}
+
+li.warning::marker {
+    color: orange;
+}
+
+li.info {
     list-style-type: '🛈 ';
 }
 
-.meta.status ul li code {
+li.info::marker {
     color: blue;
+    font-size: 80%;
+}
+
+li.success {
+    list-style-type: '✔ ';
+}
+
+li.success::marker {
+    color: green;
+}
+
+
+
+.meta.status ul li code {
     font-weight: bold;
 }

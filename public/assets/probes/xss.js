@@ -39,8 +39,8 @@ function targetDiagnostics($status, target, xssError) {
         return;
     } else {
         try {
-        $status.querySelector('.origin code').textContent = target?.origin;
-        $status.querySelector('.effective-domain code').textContent = target?.document?.domain;
+        $status.querySelector('.target-origin code').textContent = target?.origin;
+        $status.querySelector('.target-effective-domain code').textContent = target?.document?.domain;
         $status.classList.add('has-target');
         } catch (err) {
             console.log('Failed to access origin or effective domain of target: ' + err);

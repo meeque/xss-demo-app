@@ -1,38 +1,20 @@
-
-li.target ul.status li {
+.target ul.status li {
     display: none;
 }
 
-li.target ul.status.has-target li.origin,
-li.target ul.status.has-target li.effective-domain {
+.target ul.status.has-target li.has-target,
+.target ul.status.has-target li.target-origin,
+.target ul.status.has-target li.target-effective-domain,
+.target ul.status.has-no-target li.has-no-target,
+.target ul.status.xss-available li.xss-available,
+.target ul.status.xss-unavailable li.xss-unavailable,
+.target ul.status.xss-invoked li.xss-invoked,
+.target ul.status.xss-not-invoked li.xss-not-invoked,
+.target ul.status.xss-success li.xss-success,
+.target ul.status.xss-error li.xss-error {
     display: list-item;
-    list-style-type: '🛈 ';
 }
 
-li.target ul.status.has-target li.origin code,
-li.target ul.status.has-target li.effective-domain code {
-    color: blue;
+.target ul.status li code {
     font-weight: bold;
-}
-
-li.target ul.status.has-no-target li.has-no-target,
-li.target ul.status.xss-unavailable li.xss-unavailable,
-li.target ul.status.xss-not-invoked li.xss-not-invoked,
-li.target ul.status.xss-error li.xss-error
- {
-    display: list-item;
-    color: red;
-    list-style-type: '⨯ ';
-}
-
-li.target ul.status.has-target li.has-target,
-li.target ul.status.xss-available li.xss-available,
-li.target ul.status.xss-invoked li.xss-invoked,
-li.target ul.status.xss-success li.xss-success {
-    display: list-item;
-    list-style-type: '✔ ';
-}
-
-li.target ul.status.xss-success li.xss-success {
-    color: green;
 }
