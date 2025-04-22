@@ -180,7 +180,7 @@ describe('XSS Demo Mocks', () => {
       });
 
       function queryStorageTable(): HTMLTableElement {
-        return mockPageDoc.body.querySelector('div.' + testStorageName + ' table.storage');
+        return mockPageDoc.body.querySelector('main article.' + testStorageName + ' table.storage');
       }
 
       function queryStorageTableEntry(key: string, item?: string): HTMLTableRowElement {
@@ -923,7 +923,7 @@ describe('XSS Demo Mocks', () => {
     }
 
     function queryCookiesTable(): HTMLTableElement {
-      return queryAndExpectOne(mockPageDoc.body, 'div.cookies table.cookies') as HTMLTableElement;
+      return queryAndExpectOne(mockPageDoc.body, 'main article.cookies table.cookies') as HTMLTableElement;
     }
 
     function queryCookiesTableCookie(cookie: CookieId, value?: string): HTMLTableRowElement {
