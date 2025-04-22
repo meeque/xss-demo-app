@@ -2,24 +2,32 @@
 <html>
 <head>
     <title>XSS Demo: XSS Probe</title>
+    <link rel="stylesheet" href="../common.css">
     <link rel="stylesheet" href="xss.css">
+    <script src="../common.js"></script>
     <script src="xss.js"></script>
 </head>
 <body>
-    <h1>XSS Demo: XSS Probe</h1>
+    <header>
+        <h1>XSS Demo: XSS Probe</h1>
 
-    <p>
-        This simple HTML page tries to invoke the XSS Demo App's global <code>xss()<code> function.
-        It can therefore be used to trigger an XSS alert in the XSS Demo App, when the XSS demo page loads this XSS probe page.
-    </p>
-    <p>Diagnostic status:</p>
-    <ul class="probe status">
-        <li class="origin">This probe's origin:<br> <code></code></li>
-        <li class="effective-domain">This probe's effective domain:<br> <code></code></li>
-    </ul>
+        <p>
+            This simple HTML page tries to invoke the XSS Demo App's global <code>xss()<code> function.
+            It can therefore be used to trigger an XSS alert in the XSS Demo App, when the XSS demo page loads this XSS probe page.
+        </p>
+    </header>
 
-    <p>
-        This probe attempts to invoke <code>xss()<code> in two different ways:
+    <aside class="meta status">
+        <h3>Page Status:</h3>
+        <ul>
+            <li class="origin">This document's origin:<br> <code></code></li>
+            <li class="effective-domain">This document's effective domain:<br> <code></code></li>
+        </ul>
+    </aside>
+
+    <main>
+        <h2>XSS Probes</h2>
+        <p>This probe attempts to invoke <code>xss()</code> in two different ways:</p>
         <ul>
             <li class="target parent">
                 <h3>Page Parent</h3>
@@ -56,13 +64,16 @@
                 </ul>
             </li>
         </ul>
-    </p>
-    <p>
-        <em>
-            Note:<br>
-            Successful triggering of <code>xss()</code> and other diagnostic status printed above is subject to <strong>same-origin policy</strong>.<br>
-            If the <a href="/" target="_top">XSS Demo App</a> (or any other parent or opener) has a different origin, this probe will fail! See error messages above.
-        </em>
-    </p>
+    </main>
+
+    <aside>
+        <h3>Note:</h3>
+        <p>
+            <em>
+                Successful triggering of <code>xss()</code> and other diagnostic status printed above is subject to <strong>same-origin policy</strong>.<br>
+                If the <a href="/" target="_top">XSS Demo App</a> (or any other parent or opener) has a different origin, this probe will fail! See error messages above.
+            </em>
+        </p>
+    </aside>
 </body>
 </html>

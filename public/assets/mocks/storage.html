@@ -2,23 +2,37 @@
 <html>
 <head>
     <title>XSS Demo: Browser Storage Mock</title>
+    <link rel="stylesheet" href="../common.css">
     <link rel="stylesheet" href="storage.css">
+    <script src="../common.js"></script>
     <script src="storage.js"></script>
 </head>
 <body>
 
-    <h1>XSS Demo: Browser Storage Mock</h1>
-    <p>
-        This is a simple HTML document that displays the contents of <code>localStorage</code> and <code>sessionStorage</code>.
-    </p>
+    <header>
+        <h1>XSS Demo: Browser Storage Mock</h1>
+        <p>
+            This is a simple HTML document that displays and manipulates the contents of <code>localStorage</code> and <code>sessionStorage</code>.
+        </p>
+    </header>
 
-    <div class="localStorage">
-        <h2>Local Storage</h2>
-    </div>
+    <main>
+        <article class="localStorage">
+            <h2>Local Storage</h2>
+        </article>
 
-    <div class="sessionStorage">
-        <h2>Session Storage</h2>
-    </div>
+        <article class="sessionStorage">
+            <h2>Session Storage</h2>
+        </article>
+    </main>
+
+    <aside class="meta status">
+        <h3>Page Status:</h3>
+        <ul>
+            <li class="origin">This document's origin:<br> <code></code></li>
+            <li class="effective-domain">This document's effective domain:<br> <code></code></li>
+        </ul>
+    </aside>
 
     <template id="storage">
         <table class="storage">

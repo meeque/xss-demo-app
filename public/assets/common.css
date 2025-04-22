@@ -1,0 +1,10 @@
+
+.meta.status ul li {
+    display: list-item;
+    list-style-type: '🛈 ';
+}
+
+.meta.status ul li code {
+    color: blue;
+    font-weight: bold;
+}

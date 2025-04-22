@@ -2,23 +2,37 @@
 <html>
 <head>
     <title>XSS Demo: Cookies Mock</title>
+    <link rel="stylesheet" href="../common.css">
     <link rel="stylesheet" href="cookies.css">
     <script src="/scripts.js"></script>
+    <script src="../common.js"></script>
     <script src="cookies.js"></script>
 </head>
 <body>
 
-    <h1>XSS Demo: Cookies Mock</h1>
-    <p>
-        This is a simple HTML document that displays browser cookies.
-    </p>
-    <p>
-        For technical reasons, this client-side mock can only work with cookies that are <strong>not</strong> <code>HTTPOnly</code>.
-    </p>
+    <header>
+        <h1>XSS Demo: Cookies Mock</h1>
+        <p>
+            This is a simple HTML document that displays browser cookies.
+        </p>
+        <p>
+            For technical reasons, this client-side mock can only work with cookies that are <strong>not</strong> <code>HTTPOnly</code>.
+        </p>
+    </header>
 
-    <div class="cookies">
-        <h2>Cookies</h2>
-    </div>
+    <main>
+        <article class="cookies">
+            <h2>Cookies</h2>
+        </article>
+    </main>
+
+    <aside class="meta status">
+        <h3>Page Status:</h3>
+        <ul>
+            <li class="origin">This document's origin:<br> <code></code></li>
+            <li class="effective-domain">This document's effective domain:<br> <code></code></li>
+        </ul>
+    </aside>
 
     <template id="cookies">
         <table class="cookies">

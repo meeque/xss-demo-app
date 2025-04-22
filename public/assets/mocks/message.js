@@ -1,21 +1,3 @@
-function $enable() {
-    for (const arg of arguments) {
-        arg.disabled = false;
-    }
-}
-
-function $disable() {
-    for (const arg of arguments) {
-        arg.disabled = true;
-    }
-}
-
-function $remove(node) {
-    if (node && node.parentNode) {
-        node.parentNode.removeChild(node);
-    }
-}
-
 function validateOrigin(origin) {
     const originRegex = /^([a-z][-+.a-z0-9]*:\/\/)([a-z0-9][-._~a-z0-9]*)(:[0-9]+)?$/;
     return originRegex.test(origin);
@@ -25,7 +7,7 @@ function sortOrigins(origins) {
     return Array.from(origins).sort();
 }
 
-function $messagePage() {
+function messagePage() {
 
     const trustedOrigins = new Set();
     if (window.origin) {
@@ -34,6 +16,7 @@ function $messagePage() {
 
     originsController();
     eventsController();
+    pageStatus(document.querySelector('.meta.status'));
 
     function originsController() {
 
@@ -221,4 +204,4 @@ function $messagePage() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', $messagePage);
+document.addEventListener('DOMContentLoaded', messagePage);

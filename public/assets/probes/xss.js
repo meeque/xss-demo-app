@@ -25,11 +25,6 @@ try {
 
 // diagnostics:
 
-function probeDiagnostics($status) {
-    $status.querySelector('.origin code').textContent = window.origin;
-    $status.querySelector('.effective-domain code').textContent = window.document.domain;
-}
-
 function targetDiagnostics($status, target, xssError) {
 
     if (xssError !== null) {
@@ -77,8 +72,8 @@ function targetDiagnostics($status, target, xssError) {
 document.addEventListener(
     'DOMContentLoaded',
     () => {
-        probeDiagnostics(
-            document.querySelector('.probe.status')
+        pageStatus(
+            document.querySelector('.meta.status')
         );
 
         targetDiagnostics(

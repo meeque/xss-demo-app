@@ -1,12 +1,3 @@
-ul.probe.status li {
-    display: list-item;
-    list-style-type: '🛈 ';
-}
-
-ul.probe.status li code {
-    color: blue;
-    font-weight: bold;
-}
 
 li.target ul.status li {
     display: none;

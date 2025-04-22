@@ -1,22 +1,3 @@
-function $enable() {
-    for (const arg of arguments) {
-        arg.disabled = false;
-    }
-}
-
-function $disable() {
-    for (const arg of arguments) {
-        arg.disabled = true;
-    }
-}
-
-function $remove(node) {
-    if (node && node.parentNode) {
-        node.parentNode.removeChild(node);
-    }
-}
-
-
 
 function sortCookies(cookies) {
     cookies.sort( (c1, c2) => c1.name == c2.name ? 0 : (c1.name < c2.name ? -1 : 1 ) );
@@ -108,7 +89,7 @@ function parseDate(date) {
     return null;
 }
 
-function $cookiesPage() {
+function cookiesPage() {
 
     const $$cookies = document.getElementById('cookies').content;
     const $$cookie = document.getElementById('cookie').content;
@@ -129,9 +110,8 @@ function $cookiesPage() {
         $dataListCookieDomains.insertAdjacentElement('beforeend', $domainOption);
     }
 
-    for (const $cookiesContainer of document.querySelectorAll('.cookies')) {
-        cookiesController($cookiesContainer);
-    }
+    cookiesController(document.querySelector('.cookies'));
+    pageStatus(document.querySelector('.meta.status'));
 
     async function cookiesController($container) {
 
@@ -326,4 +306,4 @@ function $cookiesPage() {
 
 
 
-document.addEventListener('DOMContentLoaded', $cookiesPage);
+document.addEventListener('DOMContentLoaded', cookiesPage);
