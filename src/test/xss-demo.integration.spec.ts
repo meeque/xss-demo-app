@@ -142,19 +142,20 @@ describe('Xss Demo App', async () => {
       });
     },
     clickLinkNew: (name: string) => {
-      const mockLinkTarget = 'xss-demo_integration-test_click-link-to-new-window';
+      const MOCK_LINK_TARGET = 'xss-demo_integration-test_click-link-to-new-window';
+      let link = null as HTMLLinkElement;
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const link = await domTreeAvailable<HTMLLinkElement>(queryOutput(), 'a');
+          link = await domTreeAvailable<HTMLLinkElement>(queryOutput(), 'a');
           if (link.target === '_blank') {
-            console.log('Tweaking link with target "_blank" to use target "' + mockLinkTarget + '" instead.');
-            link.target = mockLinkTarget;
+            console.log('Tweaking link with target "_blank" to use target "' + MOCK_LINK_TARGET + '" instead.');
+            link.target = MOCK_LINK_TARGET;
           }
           link.click();
         },
         cleanup: async () => {
-          window.open('javascript:window.close();', mockLinkTarget);
+          window.open('javascript:window.close();', link.target);
         },
         timeout: 2000
       });

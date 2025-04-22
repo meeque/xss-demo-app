@@ -1,1 +1,1 @@
-<a target="_blank" rel="opener" href="/assets/probes/xss.html">Click here to open a new window/tab that triggers XSS!</a>
+<a target="xss-demo-xss-probe" rel="opener" href="/assets/probes/xss.html">Click here to open a new window/tab that triggers XSS!</a>
