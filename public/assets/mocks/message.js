@@ -23,10 +23,10 @@ function messagePage() {
         const $$origin = document.getElementById('origin').content;
         const $tableOrigins = document.querySelector('table.origins');
 
-        var messageError = null;
+        var messageWarning = null;
 
         const $rowActions = $tableOrigins.querySelector('tr.actions');
-        const $cellMessageError = $rowActions.querySelector('td.message.error');
+        const $cellMessageWarning = $rowActions.querySelector('td.message');
         const $buttonNew = $rowActions.querySelector('button[name=new]');
 
         init();
@@ -45,7 +45,7 @@ function messagePage() {
             }
 
             resetEmptyMessage();
-            resetErrorMessage();
+            resetWarningMessage();
             enableStandardButtons();
         }
 
@@ -57,12 +57,12 @@ function messagePage() {
             }
         }
 
-        function resetErrorMessage() {
-            if (messageError === null) {
-                $cellMessageError.textContent = '';
+        function resetWarningMessage() {
+            if (messageWarning === null) {
+                $cellMessageWarning.textContent = '';
             } else {
-                $cellMessageError.textContent = messageError;
-                messageError = null;
+                $cellMessageWarning.textContent = messageWarning;
+                messageWarning = null;
             }
         }
 
@@ -97,7 +97,7 @@ function messagePage() {
             function newOrigin() {
                 $rowOrigin.classList.add('new');
                 resetEmptyMessage();
-                resetErrorMessage();
+                resetWarningMessage();
                 disableButtons();
 
                 $enable($inputOrigin, $buttonTrust, $buttonCancel);
@@ -112,10 +112,10 @@ function messagePage() {
             function trust() {
                 origin = $inputOrigin.value;
                 if (validateOrigin(origin)) {
-                    messageError = null;
+                    messageWarning = null;
                 }
                 else {
-                    messageError = 'Warning: "' + origin + '" does not look like a valid origin. Origins are expressed as hierarchical URIs with only a scheme, host, and optional port component. E.g. "https://example.net:42".\n'
+                    messageWarning = 'Warning: "' + origin + '" does not look like a valid origin. Origins are expressed as hierarchical URIs with only a scheme, host, and optional port component. E.g. "https://example.net:42".\n'
                         + 'Adding "' + origin + '" to the trust list anyway, but it is unlikely to ever match the origin of a post-message event!'
                 }
                 trustedOrigins.add(origin);
@@ -148,7 +148,7 @@ function messagePage() {
         messageError = null;
 
         const $rowActions = $tableEvents.querySelector('tr.actions');
-        const $cellMessageError = $rowActions.querySelector('td.message.error');
+        const $cellMessageError = $rowActions.querySelector('td.message');
         const $buttonClear = $rowActions.querySelector('button[name=clear]');
 
         init();

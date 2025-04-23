@@ -1522,8 +1522,8 @@ describe('XSS Demo Mocks', () => {
       queryAndExpectCount(originsTable, 'tr', initialOriginsTableRows.length + 1);
       expect(originsTable.classList).withContext('origins table classes').not.toContain('empty');
       expect(newOriginButton.disabled).withContext('"new trusted origin" button disabled').toBeTrue();
-      const errorMessageCell = queryAndExpectOne(originsTable, 'tr.actions td.message.error');
-      expect(errorMessageCell.textContent.trim()).toBe('');
+      const warningMessageCell = queryAndExpectOne(originsTable, 'tr.actions td.message.warning');
+      expect(warningMessageCell.textContent.trim()).toBe('');
 
       const originRow = queryAndExpectOne(originsTable, 'tr.origin.new') as HTMLTableRowElement;
       const originField = queryAndExpectOne(originRow, 'td.origin input[name=origin]') as HTMLInputElement;
@@ -1562,7 +1562,7 @@ describe('XSS Demo Mocks', () => {
       }
     }
 
-    async function expectOriginsTable(origins = [] as Iterable<string>, expectError = false) {
+    async function expectOriginsTable(origins = [] as Iterable<string>, expectWarning = false) {
       const originsTable = queryOriginsTable();
 
       const sortedOrigins = await sortOrigins(origins);
@@ -1571,18 +1571,18 @@ describe('XSS Demo Mocks', () => {
 
       const originRows = queryAndExpectCount(originsTable, 'tr', rowCount);
       expect(originRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
-      expect(originRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
+      expect(originRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'info', 'empty']));
       expect(originRows[rowCount-1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
 
       const newOriginButton = queryAndExpectOne(originRows[rowCount-1], 'button[name=new]') as HTMLButtonElement;
       expect(newOriginButton.disabled).withContext('"new trusted origin" button disabled').toBeFalse();
 
-      const errorMessageCell = queryAndExpectOne(originsTable, 'tr.actions td.message.error');
-      if (expectError) {
-        expect(errorMessageCell.textContent.trim()).not.toBe('');
+      const warningMessageCell = queryAndExpectOne(originsTable, 'tr.actions td.message.warning');
+      if (expectWarning) {
+        expect(warningMessageCell.textContent.trim()).not.toBe('');
       }
       else {
-        expect(errorMessageCell.textContent.trim()).toBe('');
+        expect(warningMessageCell.textContent.trim()).toBe('');
       }
 
       let index = 2;
@@ -1639,7 +1639,7 @@ describe('XSS Demo Mocks', () => {
 
       const eventRows = queryAndExpectCount(eventsTable, 'tr', rowCount);
       expect(eventRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
-      expect(eventRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
+      expect(eventRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'info', 'empty']));
       expect(eventRows[rowCount-1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
 
       const clearButton = queryAndExpectOne(eventRows[rowCount-1], 'button[name=clear]') as HTMLButtonElement;
