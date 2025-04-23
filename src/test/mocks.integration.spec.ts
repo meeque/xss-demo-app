@@ -1136,7 +1136,7 @@ describe('XSS Demo Mocks', () => {
 
       const cookieRows = queryAndExpectCount(cookiesTable, 'tr', rowCount);
       expect(cookieRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
-      expect(cookieRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
+      expect(cookieRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'info', 'empty']));
       expect(cookieRows[rowCount-1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
 
       let index = 2;
