@@ -1657,11 +1657,13 @@ describe('XSS Demo Mocks', () => {
       for (const event of events) {
         const eventRow = eventRows[index++];
 
+        const trustElement = queryAndExpectOne(eventRow, 'td.trust') as HTMLElement;
         const originElement = queryAndExpectOne(eventRow, 'td.origin code') as HTMLElement;
         const timeStampElement = queryAndExpectOne(eventRow, 'td.timestamp code') as HTMLElement;
         const dataElement = queryAndExpectOne(eventRow, 'td.data code') as HTMLElement;
 
         expect(eventRow.classList).withContext('post-message event classes').toContain(event.expectTrusted ? 'trusted' : 'untrusted');
+        expect(trustElement.title).withContext('post-message trust title').not.toBe('');
         expect(originElement.textContent).withContext('post-message event origin').toBe(window.origin);
         expect(Number.parseFloat(timeStampElement.textContent)).withContext('post-message event timestamp').not.toBeNaN();
         expect(dataElement.textContent).withContext('post-message event data (JSON encoded)').toBe(JSON.stringify(event.data));

@@ -74,10 +74,22 @@
 
             <template id="event">
                 <tr class="event">
-                    <td class="trust"></td>
-                    <td class="origin"><code></code></td>
-                    <td class="timestamp"><code></code></td>
-                    <td class="data"><code></code></td>
+                    <td class="trust"
+                        data-title-trusted="This 'MessageEvent' has been marked as TRUSTED, because at the time that it was received its 'origin' property exactly matched one of the trusted origins configured above"
+                        data-title-untrusted="This 'MessageEvent' has been marked as UNTRUSTED, because at the time that it was received its 'origin' property did NOT match any of the trusted origins configured above">
+                    </td>
+                    <td class="origin"
+                        title="The 'origin' property of the received 'MessageEvent'">
+                        <code></code>
+                    </td>
+                    <td class="timestamp"
+                        title="The 'timestamp' property of the received 'MessageEvent'">
+                        <code></code>
+                    </td>
+                    <td class="data"
+                        title="The 'data' property of the received 'MessageEvent', JSON encoded">
+                        <code></code>
+                    </td>
                 </tr>
             </template>
         </article>

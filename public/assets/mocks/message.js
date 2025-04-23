@@ -181,16 +181,19 @@ function messagePage() {
             const $rowEvent = $$event.cloneNode(true).querySelector('tr');
             $rowActions.insertAdjacentElement('beforebegin', $rowEvent);
 
+            const $elementTrust = $rowEvent.querySelector('.trust');
             const $elementOrigin = $rowEvent.querySelector('.origin code');
             const $elementTimeStamp = $rowEvent.querySelector('.timestamp code');
             const $elementData = $rowEvent.querySelector('.data code');
 
             if (trustedOrigins.has(event.origin)) {
                 $rowEvent.classList.add('trusted');
+                $elementTrust.title = $elementTrust.dataset.titleTrusted;
                 messageError = null;
             }
             else {
                 $rowEvent.classList.add('untrusted');
+                $elementTrust.title = $elementTrust.dataset.titleUntrusted;
                 messageError = 'Received event from untrusted origin "' + event.origin + '"!';
             }
             resetErrorMessage();
