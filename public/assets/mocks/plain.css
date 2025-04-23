@@ -1,0 +1,8 @@
+.xss-challenges .work-area {
+    padding: 1em;
+    background: lightyellow;
+}
+
+.xss-challenges .challenge1 .work-area {
+    font-size: 150%;
+}

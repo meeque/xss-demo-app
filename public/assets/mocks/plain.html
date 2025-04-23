@@ -2,43 +2,51 @@
 <html>
 <head>
     <title>XSS Demo: Plain HTML Mock</title>
+    <link rel="stylesheet" href="../common.css">
+    <link rel="stylesheet" href="plain.css">
 </head>
 <body>
 
-    <h1>XSS Demo: Plain HTML Mock</h1>
-    <p>
-        This is a plain HTML page mock.
-        This page is statically served and contains no client-side JS code either.
-        Therefore, this page is <strong>not</strong> vulnerable to XSS by itself.
-    </p>
-    <p>
-        However, any other HTML document that is hosted on the same origin (protocol, host, port) can load this page and manipulate its DOM at will.
-    </p>
-
-    <div class="xss-challenges">
-
-        <h2>XSS Challenges</h2>
+    <header>
+        <h1>XSS Demo: Plain HTML Mock</h1>
+        <p>
+            This is a plain HTML page mock.
+            This page is statically served and contains no client-side JS code either.
+            Therefore, this page is <strong>not</strong> vulnerable to XSS by itself.
+        </p>
+        <p>
+            However, any other HTML document that is hosted on the same origin (scheme, host, port) can load this page and manipulate its DOM at will.
+        </p>
         <p>
             Try it yourself with the following challenges...
         </p>
+    </header>
 
+    <main class="xss-challenges">
+
+        <h2>XSS Challenges</h2>
         <div class="challenge1">
             <h3>Manipulate the DOM</h3>
-            <p>Try manipulating the contents of the following paragraph:</p>
+            <p>
+                Try manipulating the contents of the following paragraph.
+                For your convenience, this paragraph is accessible through CSS selector <code class="message info">.xss-challenges .challenge1 .work-area</code>:
+            </p>
             <p class="work-area">
-                For your convenience, this paragraph is accessible through CSS selector <tt>.xss-challenges .challenge1 .work-area</tt>.
+                Initial paragraph content.
             </p>
         </div>
 
         <div class="challenge2">
             <h3>Exfiltrate Data</h3>
-            <p>Try getting the values from the following form fields:</p>
+            <p>
+                Try getting the values from the following form fields.
+                For your convenience, this form is accessible through CSS selector <code class="message info">.xss-challenges .challenge2 .work-area</code>:
+            </p>
             <form action="#" class="work-area">
-                <div>For your convenience, this form is accessible through CSS selector <tt>.xss-challenges .challenge2 .work-area</tt>.</div>
                 <div>
                     <label>
                         <p>A text input field:</p>
-                        <input type="text" name="free-text" value="initial text contents">
+                        <input type="text" name="free-text" value="initial field content">
                     </label>
                 </div>
                 <div>
@@ -47,19 +55,15 @@
                         <select name="menu">
                             <option selected>First</option>
                             <option>Second</option>
+                            <option>Third</option>
                         </select>
                     </label>
                 </div>
                 <div>
-                    <label>
-                        <p>A submit button:</p>
-                        <button type="submit">Submit</button>
-                    </label>
-                </div>
             </form>
         </div>
 
-    </div>
+    </main>
 
 </body>
 </html>
