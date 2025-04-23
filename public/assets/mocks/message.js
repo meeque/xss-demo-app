@@ -181,25 +181,23 @@ function messagePage() {
             const $rowEvent = $$event.cloneNode(true).querySelector('tr');
             $rowActions.insertAdjacentElement('beforebegin', $rowEvent);
 
-            const $cellTrusted = $rowEvent.querySelector('.trust');
-            const $cellOrigin = $rowEvent.querySelector('.origin');
-            const $cellTimeStamp = $rowEvent.querySelector('.timestamp');
-            const $cellData = $rowEvent.querySelector('.data');
+            const $elementOrigin = $rowEvent.querySelector('.origin code');
+            const $elementTimeStamp = $rowEvent.querySelector('.timestamp code');
+            const $elementData = $rowEvent.querySelector('.data code');
 
             if (trustedOrigins.has(event.origin)) {
                 $rowEvent.classList.add('trusted');
-                $cellTrusted.textContent = 'yes';
                 messageError = null;
             }
             else {
-                $cellTrusted.textContent = 'no';
+                $rowEvent.classList.add('untrusted');
                 messageError = 'Received event from untrusted origin "' + event.origin + '"!';
             }
             resetErrorMessage();
 
-            $cellOrigin.textContent = event.origin;
-            $cellTimeStamp.textContent = event.timeStamp;
-            $cellData.textContent = JSON.stringify(event.data);
+            $elementOrigin.textContent = event.origin;
+            $elementTimeStamp.textContent = event.timeStamp;
+            $elementData.textContent = JSON.stringify(event.data);
         }
     }
 }

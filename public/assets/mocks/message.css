@@ -26,3 +26,38 @@ table.events tr.message {
 table.events.empty tr.message.empty {
     display: table-row;
 }
+
+table.events tr.event td.trust {
+    text-align: center;
+    font-size: 120%;
+}
+
+table.events tr.event.trusted td.trust {
+    color: green;
+}
+
+table.events tr.event.trusted td.trust::before {
+    content: '✔';
+}
+
+table.events tr.event.trusted td.origin {
+    font-weight: bold;
+    color: green;
+}
+
+table.events tr.event.untrusted td.trust {
+    color: red;
+}
+
+table.events tr.event.untrusted td.trust::before {
+    content: '⨯';
+}
+
+table.events tr.event.untrusted td.origin {
+    font-weight: bold;
+    color: red;
+}
+
+table.events tr.event td.data {
+    font-weight: bold;
+}
