@@ -131,6 +131,7 @@ describe('Xss Demo App', async () => {
 
 
   const cf: PresetTestConfigFactory = {
+
     clickLink: (name: string) => {
       return new DefaultPresetTestConfig({
         presetName: name,
@@ -141,6 +142,7 @@ describe('Xss Demo App', async () => {
         timeout: 1000
       });
     },
+
     clickLinkNew: (name: string) => {
       const MOCK_LINK_TARGET = 'xss-demo_integration-test_click-link-to-new-window';
       let link = null as HTMLLinkElement;
@@ -160,6 +162,7 @@ describe('Xss Demo App', async () => {
         timeout: 2000
       });
     },
+
     focusInput: (name: string) => {
       return new DefaultPresetTestConfig({
         presetName: name,
@@ -170,6 +173,7 @@ describe('Xss Demo App', async () => {
         timeout: 500
       });
     },
+
     mouseenter: (name: string) => {
       return new DefaultPresetTestConfig({
         presetName: name,
@@ -180,6 +184,7 @@ describe('Xss Demo App', async () => {
         timeout: 500
       });
     },
+
     newWindow: (name: string) => {
       let windowOpenSpy: jasmine.Spy;
       return new DefaultPresetTestConfig({
@@ -194,20 +199,7 @@ describe('Xss Demo App', async () => {
         }
       })
     },
-    newWindowXss: (name: string) => {
-      let windowOpenSpy: jasmine.Spy;
-      return new DefaultPresetTestConfig({
-        presetName: name,
-        setup: async () => {
-          windowOpenSpy = spyOn(window, 'open').and.callThrough();
-        },
-        expectXss: true,
-        cleanup: async () => {
-          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
-          openedWindow?.close();
-        }
-      });
-    },
+
     deface: (name: string) => {
       return new DefaultPresetTestConfig({
         presetName: name,
@@ -225,6 +217,7 @@ describe('Xss Demo App', async () => {
         timeout: 1000
       });
     },
+
     defaceIframe: (name: string) => {
       return new DefaultPresetTestConfig({
         presetName: name,
@@ -237,26 +230,7 @@ describe('Xss Demo App', async () => {
         timeout: 1000
       });
     },
-    defaceNewWindow: (name: string) => {
-      let windowOpenSpy: jasmine.Spy;
-      return new DefaultPresetTestConfig({
-        presetName: name,
-        setup: async () => {
-          windowOpenSpy = spyOn(window, 'open').and.callThrough();
-        },
-        expectXss: false,
-        expect: async () => {
-          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
-          expect(openedWindow.document.body.childElementCount).toBe(1);
-          expect(openedWindow.document.body.querySelector('div.xss-demo-defacement')).not.toBeNull();
-        },
-        cleanup: async () => {
-          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
-          openedWindow?.close();
-        },
-        timeout: 1000
-      });
-    },
+
     skip: (name: string) => {
       return new DefaultPresetTestConfig({
         presetName: name,
@@ -302,17 +276,9 @@ describe('Xss Demo App', async () => {
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.JavaScript.toString()] = {
-    'DqStringDomTrusted':        [                                                                                     'JS code breaking "string" literal'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ],
-    'SqStringDomTrusted':        [                                                                                                                                        'JS code breaking \'string\' literal'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ],
-    'BlockDomTrusted':           ['pure JS code',               'pure JS code for parent and opener',                                                                                                                          cf.newWindow('Inject JS into document (window)'),                                                         cf.newWindow('Interact with Plain HTML mock (window)'),                                                              cf.newWindow('Interact with Browser Storage mock (window)'),                                                      cf.newWindow('Interact with Cookies mock (window)'),                                                           cf.newWindow('Interact with Post Message mock (window)'), 'JSFuck',               cf.deface('pure JS defacement attack')         ],
-    'BlockDomPlainMockIframe':   [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string" literal'), cf.newWindow('JS code breaking \'string\' literal'), cf.skip('Inject JS into document (window)'),                                                              cf.skip('Interact with Plain HTML mock (window)'),                                                                   cf.skip('Interact with Browser Storage mock (window)'),                                                           cf.skip('Interact with Cookies mock (window)'),                                                                cf.skip('Interact with Post Message mock (window)'),      cf.newWindow('JSFuck'), cf.defaceIframe('pure JS defacement attack')   ],
-    'BlockDomPlainMockWindow':   [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string" literal'), cf.newWindow('JS code breaking \'string\' literal'), cf.skip('Inject JS into document (window)'),      cf.newWindow('Interact with Plain HTML mock (iframe)'), cf.skip('Interact with Plain HTML mock (window)'),      cf.newWindow('Interact with Browser Storage mock (iframe)'), cf.skip('Interact with Browser Storage mock (window)'),      cf.newWindow('Interact with Cookies mock (iframe)'), cf.skip('Interact with Cookies mock (window)'),      cf.newWindow('Interact with Post Message mock (iframe)'), cf.skip('Interact with Post Message mock (window)'),      cf.newWindow('JSFuck'), cf.defaceNewWindow('pure JS defacement attack')],
-    'BlockDomStorageMockIframe': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string" literal'), cf.newWindow('JS code breaking \'string\' literal'), cf.skip('Inject JS into document (window)'),                                                              cf.skip('Interact with Plain HTML mock (window)'),                                                                   cf.skip('Interact with Browser Storage mock (window)'),                                                           cf.skip('Interact with Cookies mock (window)'),                                                                cf.skip('Interact with Post Message mock (window)'),      cf.newWindow('JSFuck'), cf.defaceIframe('pure JS defacement attack')   ],
-    'BlockDomStorageMockWindow': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string" literal'), cf.newWindow('JS code breaking \'string\' literal'), cf.skip('Inject JS into document (window)'),      cf.newWindow('Interact with Plain HTML mock (iframe)'), cf.skip('Interact with Plain HTML mock (window)'),      cf.newWindow('Interact with Browser Storage mock (iframe)'), cf.skip('Interact with Browser Storage mock (window)'),      cf.newWindow('Interact with Cookies mock (iframe)'), cf.skip('Interact with Cookies mock (window)'),      cf.newWindow('Interact with Post Message mock (iframe)'), cf.skip('Interact with Post Message mock (window)'),      cf.newWindow('JSFuck'), cf.defaceNewWindow('pure JS defacement attack')],
-    'BlockDomCookiesMockIframe': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string" literal'), cf.newWindow('JS code breaking \'string\' literal'), cf.skip('Inject JS into document (window)'),                                                              cf.skip('Interact with Plain HTML mock (window)'),                                                                   cf.skip('Interact with Browser Storage mock (window)'),                                                           cf.skip('Interact with Cookies mock (window)'),                                                                cf.skip('Interact with Post Message mock (window)'),      cf.newWindow('JSFuck'), cf.defaceIframe('pure JS defacement attack')   ],
-    'BlockDomCookiesMockWindow': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string" literal'), cf.newWindow('JS code breaking \'string\' literal'), cf.skip('Inject JS into document (window)'),      cf.newWindow('Interact with Plain HTML mock (iframe)'), cf.skip('Interact with Plain HTML mock (window)'),      cf.newWindow('Interact with Browser Storage mock (iframe)'), cf.skip('Interact with Browser Storage mock (window)'),      cf.newWindow('Interact with Cookies mock (iframe)'), cf.skip('Interact with Cookies mock (window)'),      cf.newWindow('Interact with Post Message mock (iframe)'), cf.skip('Interact with Post Message mock (window)'),      cf.newWindow('JSFuck'), cf.defaceNewWindow('pure JS defacement attack')],
-    'BlockDomMessageMockIframe': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string" literal'), cf.newWindow('JS code breaking \'string\' literal'), cf.skip('Inject JS into document (window)'),                                                              cf.skip('Interact with Plain HTML mock (window)'),                                                                   cf.skip('Interact with Browser Storage mock (window)'),                                                           cf.skip('Interact with Cookies mock (window)'),                                                                cf.skip('Interact with Post Message mock (window)'),      cf.newWindow('JSFuck'), cf.defaceIframe('pure JS defacement attack')   ],
-    'BlockDomMessageMockWindow': [cf.newWindow('pure JS code'), cf.newWindowXss('pure JS code for parent and opener'), cf.newWindow('JS code breaking "string" literal'), cf.newWindow('JS code breaking \'string\' literal'), cf.skip('Inject JS into document (window)'),      cf.newWindow('Interact with Plain HTML mock (iframe)'), cf.skip('Interact with Plain HTML mock (window)'),      cf.newWindow('Interact with Browser Storage mock (iframe)'), cf.skip('Interact with Browser Storage mock (window)'),      cf.newWindow('Interact with Cookies mock (iframe)'), cf.skip('Interact with Cookies mock (window)'),      cf.newWindow('Interact with Post Message mock (iframe)'), cf.skip('Interact with Post Message mock (window)'),      cf.newWindow('JSFuck'), cf.defaceNewWindow('pure JS defacement attack')],
+    'DqStringDomTrusted': [                                                      'JS code breaking "string" literal'                                                                                                                                                                                                                                                                                                                                                                                ],
+    'SqStringDomTrusted': [                                                                                           'JS code breaking \'string\' literal'                                                                                                                                                                                                                                                                                                                                         ],
+    'BlockDomTrusted':    ['pure JS code', 'pure JS code for parent and opener',                                                                             cf.newWindow('Inject JS into document (window)'), cf.newWindow('Interact with Plain HTML mock (window)'), cf.newWindow('Interact with Browser Storage mock (window)'), cf.newWindow('Interact with Cookies mock (window)'), cf.newWindow('Interact with Post Message mock (window)'), 'JSFuck', cf.deface('pure JS defacement attack') ],
   };
 
 
