@@ -1,30 +1,30 @@
-var workArea = document.createElement('div');
-document.currentScript.insertAdjacentElement('afterend', workArea);
+(function() {
+    const workArea = document.createElement('div');
+    document.currentScript.insertAdjacentElement('afterend', workArea);
 
-workArea.innerHTML = '\n'
-    + '<form class="message-form">\n'
-    + '<div>Target Origin: <input type="text" name="origin" value="*"></div>\n'
-    + '<div>Message Data: <input type="text" name="data"></div>\n'
-    + '<div><button type="button" name="post">Post Message</button></div>\n'
-    + '</form>\n';
+    workArea.innerHTML = '\n'
+        + '<form class="message-form">\n'
+        + '<div>Target Origin: <input type="text" name="origin" value="*"></div>\n'
+        + '<div>Message Data: <input type="text" name="data"></div>\n'
+        + '<div><button type="button" name="post">Post Message</button></div>\n'
+        + '</form>\n';
 
+    const guest = window.open('/assets/mocks/message.html', 'xss-demo-message-mock');
 
-var targetWindow = window.open('/assets/mocks/message.html', 'xss-demo-message-mock');
+    const messageForm = workArea.querySelector('form.message-form');
+    const fieldOrigin = messageForm.querySelector('input[name=origin]');
+    const fieldData = messageForm.querySelector('input[name=data]');
+    const buttonPost = messageForm.querySelector('button[name=post]');
 
-var guestIFrame = workArea.querySelector('iframe.xss-demo-guest')
-var messageForm = workArea.querySelector('form.message-form');
-var fieldOrigin = messageForm.querySelector('input[name=origin]');
-var fieldData = messageForm.querySelector('input[name=data]');
-var buttonPost = messageForm.querySelector('button[name=post]');
+    fieldOrigin.value = window.origin;
 
-fieldOrigin.value = window.origin;
-
-buttonPost.addEventListener(
-    'click',
-    () => {
-        targetWindow.postMessage(
-            fieldData.value,
-            fieldOrigin.value
-        );
-    }
-);
+    buttonPost.addEventListener(
+        'click',
+        () => {
+            guest.postMessage(
+                fieldData.value,
+                fieldOrigin.value
+            );
+        }
+    );
+})();
