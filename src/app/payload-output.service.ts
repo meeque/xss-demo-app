@@ -152,7 +152,7 @@ export class PayloadOutputService {
             id: 'DomTextContent',
             quality: PayloadOutputQuality.Recommended,
             name: 'DOM .textContent',
-            title: 'Payload as Text Content (DOM .textContent)',
+            title: 'Payload as Text Content (DOM .textContent = ...)',
             domInjector: this._domInjectors.textContent
           },
 
@@ -160,7 +160,7 @@ export class PayloadOutputService {
             id: 'DomInnerText',
             quality: PayloadOutputQuality.Recommended,
             name: 'DOM .innerText',
-            title: 'Payload as Inner Text (DOM .innerText)',
+            title: 'Payload as Inner Text (DOM .innerText = ...)',
             domInjector: this._domInjectors.innerText
           },
 
@@ -168,7 +168,7 @@ export class PayloadOutputService {
             id: 'DomInnerHtmlEncoded',
             quality: PayloadOutputQuality.Questionable,
             name: 'DOM .innerHtml Encoded',
-            title: 'Payload as Manually Encoded Inner HTML (DOM .innerHTML)',
+            title: 'Payload as Manually Encoded Inner HTML (DOM .innerHTML = ...)',
             payloadProcessor: this._processors.htmlEncoding,
             domInjector: this._domInjectors.innerHtml
           },
@@ -177,7 +177,7 @@ export class PayloadOutputService {
             id: 'DomInnerHtmlSanitizedDefault',
             quality: PayloadOutputQuality.Recommended,
             name: 'DOM .innerHtml Sanitized (DOMPurify default)',
-            title: 'Payload as Sanitized Inner HTML (DOM .innerHTML with DOMPurify default policy)',
+            title: 'Payload as Sanitized Inner HTML (DOM .innerHTML = ..., with DOMPurify default policy)',
             payloadProcessor: this._processors.htmlSanitizingDomPurify,
             domInjector: this._domInjectors.innerHtml
           },
@@ -186,7 +186,7 @@ export class PayloadOutputService {
             id: 'DomInnerHtmlSanitizedMinimalInline',
             quality: PayloadOutputQuality.Recommended,
             name: 'DOM .innerHtml Sanitized (DOMPurify minimal inline)',
-            title: 'Payload as Sanitized Inner HTML (DOM .innerHTML with DOMPurify minimal policy for inline markup)',
+            title: 'Payload as Sanitized Inner HTML (DOM .innerHTML = ..., with DOMPurify minimal policy for inline markup)',
             payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
             domInjector: this._domInjectors.innerHtml
           },
@@ -195,7 +195,7 @@ export class PayloadOutputService {
             id: 'DomInnerHTMLSanitizedInlineBlockLinks',
             quality: PayloadOutputQuality.Recommended,
             name: 'DOM .innerHtml Sanitized (DOMPurify some inline, block, links)',
-            title: 'Payload as Sanitized Inner HTML (DOM .innerHTML with DOMPurify policy for some inline, block, and link markup)',
+            title: 'Payload as Sanitized Inner HTML (DOM .innerHTML = ..., with DOMPurify policy for some inline, block, and link markup)',
             payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
             domInjector: this._domInjectors.innerHtml
           },
@@ -204,7 +204,7 @@ export class PayloadOutputService {
             id: 'DomInnerHtmlRaw',
             quality: PayloadOutputQuality.Insecure,
             name: 'DOM .innerHTML Raw',
-            title: 'Payload as Raw HTML (DOM .innerHTML)',
+            title: 'Payload as Raw HTML (DOM .innerHTML = ...)',
             domInjector: this._domInjectors.innerHtml
           },
 
@@ -212,7 +212,7 @@ export class PayloadOutputService {
             id: 'DomInnerHtmlRawNoInsert',
             quality: PayloadOutputQuality.Insecure,
             name: 'DOM .innerHTML Raw (No Insert)',
-            title: 'Payload as Raw HTML (DOM .innerHTML without insertion into the document)',
+            title: 'Payload as Raw HTML (DOM .innerHTML = ..., without insertion into the document)',
             domInjector: this._domInjectors.innerHtmlNoOutput
           },
 
@@ -595,60 +595,60 @@ export class PayloadOutputService {
         items: [
 
           {
-            id: 'BlockDomTrusted',
+            id: 'DomStyleBlockRaw',
             quality: PayloadOutputQuality.Questionable,
-            name: 'Style Block DOM .textContent',
-            title: 'Payload CSS Raw (Style Block with DOM .textContent)',
+            name: 'DOM style.textContent Raw',
+            title: 'Payload as Style Block Text-Content (DOM style.textContent = ...)',
             domInjector: this._domInjectors.trustedStyleBlock,
           },
 
           {
-            id: 'AttributeDomTrusted',
+            id: 'DomStyleAttributeRaw',
             quality: PayloadOutputQuality.Questionable,
-            name: 'Style Attribute DOM .style',
-            title: 'Payload CSS Raw (Style Attribute with DOM .style)',
+            name: 'DOM div.setAttribute(\'style\') Raw',
+            title: 'Payload as Style Attribute Value (DOM div.setAttribute(\'style\', ...))',
             domInjector: this._domInjectors.trustedStyleAttribute,
           },
 
           {
-            id: 'BlockNgSanitized',
+            id: 'NgStyleBlockSanitized',
             quality: PayloadOutputQuality.Questionable,
-            name: 'Sanitized Style Block ng [innerHTML]',
-            title: 'Payload CSS Sanitized (Style block with Angular [innerHTML])',
+            name: 'ng <style [innerHTML]> Sanitized',
+            title: 'Payload as Sanitized Style Block HTML (Angular <style [innerHTML]="...">)',
             templateComponentType: StyleBlock
           },
 
           {
-            id: 'BlockNgTrusted',
+            id: 'NgStyleBlockTrusted',
             quality: PayloadOutputQuality.Questionable,
-            name: 'Trusted Style Block ng [innerHTML]',
-            title: 'Payload CSS Trusted (Style block with Angular [innerHTML] and DomSanitizer.bypassSecurityTrustCss())',
+            name: 'ng <style [innerHTML]> Trusted',
+            title: 'Payload as Trusted Style Block HTML (Angular <style [innerHTML]="..."> with DomSanitizer.bypassSecurityTrusStyle())',
             payloadProcessor: this._processors.ngTrustedStyle,
             templateComponentType: StyleBlock
           },
 
           {
-            id: 'AttributeNgSanitized',
+            id: 'NgStyleAttributeSanitized',
             quality: PayloadOutputQuality.Questionable,
-            name: 'Sanitized Style Attribute ng [style]',
-            title: 'Payload CSS Sanitized (Style attribute with Angular [style])',
+            name: 'ng [style] Sanitized',
+            title: 'Payload as Sanitized Style Attribute Value (Angular <div [style]="...">)',
             templateComponentType: StyleAttribute
           },
 
           {
-            id: 'AttributeNgTrusted',
+            id: 'NgStyleAttributeTrusted',
             quality: PayloadOutputQuality.Questionable,
-            name: 'Trusted Style Attribute ng [style]',
-            title: 'Payload CSS Trusted (Style attribute with Angular [style] and DomSanitizer.bypassSecurityTrustStyle()',
+            name: 'ng [style] Trusted',
+            title: 'Payload as Trusted Style Attribute Value (Angular <div [style]="..."> with DomSanitizer.bypassSecurityTrustStyle()',
             payloadProcessor: this._processors.ngTrustedStyle,
             templateComponentType: StyleAttribute
           },
 
           {
-            id: 'AttributeNgStructured',
+            id: 'NgStyleAttributePropertiesSanitized',
             quality: PayloadOutputQuality.Questionable,
-            name: 'Structured Style Attribute ng [ngStyle]',
-            title: 'Payload CSS Sanitized (Style attribute with Angular [ngStyle] and JSON data)',
+            name: 'ng [ngStyle] Sanitized',
+            title: 'Payload as Sanitized Style Attribute Properties (Angular <div [ngStyle]="..."> with JSON.parse())',
             payloadProcessor: this._processors.jsonParsing,
             templateComponentType: StructuredStyleAttribute
           }
@@ -661,37 +661,37 @@ export class PayloadOutputService {
         items: [
 
           {
-            id: 'ValueDomEncoded',
+            id: 'DomScriptBlockValueEncoded',
             quality: PayloadOutputQuality.Questionable,
-            name: 'Encoded JS value',
-            title: 'Payload JavaScript Encoded (JSON encoding and DOM .textContent)',
+            name: 'DOM <script>-Block Expression Encoded',
+            title: 'Payload as JavaScript-Encoded Expression in a JavaScript Block (DOM script.textContent = ..., with JSON.stringify())',
             payloadProcessor: this._processors.jsEncoding,
             domInjector: this._domInjectors.trustedScriptBlock
           },
 
           {
-            id: 'DqStringDomTrusted',
+            id: 'DomScriptBlockStringLiteralDq',
             quality: PayloadOutputQuality.Insecure,
-            name: 'Trusted JS "string"',
-            title: 'Payload JavaScript Trusted (JS "string" and DOM .textContent)',
+            name: 'DOM <script>-Block "string literal" Raw',
+            title: 'Payload as Raw Content of a Double-Quoted String Literal in a JavaScript Block (DOM script.textContent = \'"\' + ... + \'"\')',
             payloadProcessor: this._processors.jsDoubleQuoting,
             domInjector: this._domInjectors.trustedScriptBlock
           },
 
           {
-            id: 'SqStringDomTrusted',
+            id: 'DomScriptBlockStringLiteralSq',
             quality: PayloadOutputQuality.Insecure,
-            name: 'Trusted JS \'string\'',
-            title: 'Payload JavaScript Trusted (JS \'string\' and DOM .textContent)',
+            name: 'DOM <script>-Block \'string literal\' Raw',
+            title: 'Payload as Raw Content of a Single-Quoted String Literal in a JavaScript Block (DOM script.textContent = \'\\\'\' + ... + \'\\\'\')',
             payloadProcessor: this._processors.jsSingleQuoting,
             domInjector: this._domInjectors.trustedScriptBlock
           },
 
           {
-            id: 'BlockDomTrusted',
+            id: 'DomScriptBlockRaw',
             quality: PayloadOutputQuality.Insecure,
-            name: 'Trusted JavaScript Block',
-            title: 'Payload JavaScript Trusted (Script Block with DOM .textContent)',
+            name: 'DOM <script>-Block Content Raw',
+            title: 'Payload as Raw Content of a JavaScript Block (DOM script.textContent = ...)',
             domInjector: this._domInjectors.trustedScriptBlock
           }
         ]
