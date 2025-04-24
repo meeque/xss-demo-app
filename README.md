@@ -13,6 +13,10 @@ You will need `node.js`, `npm,` `ng` (the Angular CLI tool) to build the XSS Dem
     ng build
 
 
+## Testing
+
+TODO Deactivate popup blockers for integration tests!
+
 ## Running
 
 After the build, the XSS Demo App will be available in the `dist/` directory. It can be deployed on any web-server that can host static files.
@@ -27,6 +31,9 @@ http://localhost:4200/
 By default, `ng serve` binds to host address 128.0.0.1, i.e. the local loopback interface. If you want to share access to the XSS Demo App, or access it accross local VMs, you will need to loosen this restriction. Use the `--host` aregument to bind to a different host address. The following will bind to all interfaces:
 
     ng serve --host 0.0.0.0
+
+TODO Exlain dev certificates
+TODO Explain implications of binding to all interfaces
 
 
 ## Security Considerations

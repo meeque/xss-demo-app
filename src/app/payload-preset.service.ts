@@ -193,6 +193,14 @@ export class PayloadPresetService {
           url: 'assets/presets/js/break-single-quotes.txt'
         },
         {
+          name: 'Inject JS into document (frame)',
+          url: 'assets/presets/js/js-in-frame.txt'
+        },
+        {
+          name: 'Inject JS into document (window)',
+          url: 'assets/presets/js/js-in-window.txt'
+        },
+        {
           name: 'Interact with Plain HTML mock (iframe)',
           url: 'assets/presets/js/plain-html-mock-frame.txt'
         },

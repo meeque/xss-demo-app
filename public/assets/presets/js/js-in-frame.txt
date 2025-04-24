@@ -1,0 +1,26 @@
+(function() {
+    const workArea = document.createElement('div');
+    document.currentScript.insertAdjacentElement('afterend', workArea);
+
+    workArea.innerHTML = '\n'
+        + '<iframe src="/assets/mocks/plain.html" class="xss-demo-guest"></iframe>\n'
+        + '<form>\n'
+        + '<div>Your JS Code:</div>\n'
+        + '<textarea name="code" rows="10" style="width:100%;"></textarea>\n'
+        + '<button type="button" name="run">Run in IFrame</button>\n'
+        + '</form>\n';
+
+    const guest = workArea.querySelector('iframe').contentWindow;
+    const codeField = workArea.querySelector('textarea');
+    const runButton = workArea.querySelector('button');
+
+    runButton.addEventListener('click', () => {
+        const scriptBlock = guest.document.createElement('script');
+        scriptBlock.type = 'text/javascript';
+        scriptBlock.textContent
+            = '(async function() {\n'
+            + codeField.value + '\n'
+            + '})();\n';
+        guest.document.body.insertAdjacentElement('beforeend', scriptBlock);
+    });
+})();

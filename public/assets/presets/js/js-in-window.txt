@@ -1,0 +1,25 @@
+(function() {
+    const workArea = document.createElement('div');
+    document.currentScript.insertAdjacentElement('afterend', workArea);
+
+    workArea.innerHTML = '\n'
+        + '<form>\n'
+        + '<div>Your JS Code:</div>\n'
+        + '<textarea name="code" rows="10" style="width:100%;"></textarea>\n'
+        + '<button type="button" name="run">Run In Other Window</button>\n'
+        + '</form>\n';
+
+    const guest = window.open('/assets/mocks/plain.html', 'xss-demo-inject-js');
+    const codeField = workArea.querySelector('textarea');
+    const runButton = workArea.querySelector('button');
+
+    runButton.addEventListener('click', () => {
+        const scriptBlock = guest.document.createElement('script');
+        scriptBlock.type = 'text/javascript';
+        scriptBlock.textContent
+            = '(async function() {\n'
+            + codeField.value + '\n'
+            + '})();\n';
+        guest.document.body.insertAdjacentElement('beforeend', scriptBlock);
+    });
+})();
