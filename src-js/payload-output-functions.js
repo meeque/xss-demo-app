@@ -138,7 +138,7 @@
         titleAttribute(element, payload) {
           let paragraph = document.createElement('p');
           paragraph.textContent = 'This paragraph has a title.'
-          paragraph.title = payload;
+          paragraph.setAttribute('title', payload);
           element.insertAdjacentElement('beforeend', paragraph);
         }
 

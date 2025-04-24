@@ -74,7 +74,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     private readonly _payloadOutputService: PayloadOutputService,
     private readonly _changeDetector: ChangeDetectorRef
   ) {
-    this.activateOutput(XssContext.HtmlContent, 'HtmlEncodedContent');
+    this.activateOutput(XssContext.HtmlContent, 'HtmlContentEncoded');
   }
 
   ngOnInit() {
