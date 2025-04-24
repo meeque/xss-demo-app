@@ -10,12 +10,9 @@
     <header>
         <h1>XSS Demo: Plain HTML Mock</h1>
         <p>
-            This is a plain HTML page mock.
-            This page is statically served and contains no client-side JS code either.
-            Therefore, this page is <strong>not</strong> vulnerable to XSS by itself.
-        </p>
-        <p>
-            However, any other HTML document that is hosted on the same origin (scheme, host, port) can load this page and manipulate its DOM at will.
+            This is a plain HTML document with <strong>no JavaScript code</strong>.
+            This page is <strong>not</strong> vulnerable to <strong>XSS</strong>.
+            However, any other HTML document on the same origin (scheme, host, port) can access and manipulate its DOM (Document Object Model).
         </p>
         <p>
             Try it yourself with the following challenges...
