@@ -1,37 +1,40 @@
-var workArea = document.createElement('div');
-document.currentScript.insertAdjacentElement('afterend', workArea);
+(function() {
+    const workArea = document.createElement('div');
+    document.currentScript.insertAdjacentElement('afterend', workArea);
 
-workArea.innerHTML = '\n'
-    + '<div class="host-input">\n'
-    + '<div>Send content: <input type="text" name="send-content" value="p0wn" class="input1" ></div>\n'
-    + '</div>\n'
-    + '<div class="host-output">\n'
-    + '<div>Text field value: <span class="output1"></span></div>\n'
-    + '<div>Menu selection value: <span class="output2"></span></div>\n'
-    + '</div>\n';
+    workArea.innerHTML = '\n'
+        + '<div class="host-input">\n'
+        + '<div>Send content: <input type="text" name="send-content" value="p0wn" class="input1" ></div>\n'
+        + '</div>\n'
+        + '<div class="host-output">\n'
+        + '<div>Text field value: <span class="output1"></span></div>\n'
+        + '<div>Menu selection value: <span class="output2"></span></div>\n'
+        + '</div>\n';
 
-var newWindow = window.open('/assets/mocks/plain.html', 'xss-demo-plain-html-mock');
-var hostInputs = workArea.querySelector('div.host-input');
-var hostOutputs = workArea.querySelector('div.host-output');
+    const guest = window.open('/assets/mocks/plain.html', 'xss-demo-plain-html-mock');
 
-function link(input, output) {
-    output.innerText = input.value;
-    input.addEventListener(
-        'input',
-        () => { output.innerText = input.value; }
-    );
-}
+    const hostInputs = workArea.querySelector('div.host-input');
+    const hostOutputs = workArea.querySelector('div.host-output');
 
-newWindow.addEventListener(
-    'load',
-    (event) => {
-        var newDoc = event.target;
-
-        var paragraph = newDoc.querySelector('.xss-challenges .challenge1 .work-area');
-        link(hostInputs.querySelector('input[type=text].input1'), paragraph);
-
-        var form = newDoc.querySelector('.xss-challenges .challenge2 .work-area');
-        link(form.querySelector('input[type=text]'), hostOutputs.querySelector('.output1'));
-        link(form.querySelector('select'), hostOutputs.querySelector('.output2'));
+    function link(input, output) {
+        output.innerText = input.value;
+        input.addEventListener(
+            'input',
+            () => { output.innerText = input.value; }
+        );
     }
-);
+
+    guest.addEventListener(
+        'load',
+        (event) => {
+            const doc = event.target;
+
+            const paragraph = doc.querySelector('.xss-challenges .challenge1 .work-area');
+            link(hostInputs.querySelector('input[type=text].input1'), paragraph);
+
+            const form = doc.querySelector('.xss-challenges .challenge2 .work-area');
+            link(form.querySelector('input[type=text]'), hostOutputs.querySelector('.output1'));
+            link(form.querySelector('select'), hostOutputs.querySelector('.output2'));
+        }
+    );
+})();
