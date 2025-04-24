@@ -185,6 +185,44 @@ describe('Xss Demo App', async () => {
       });
     },
 
+    injectJsFrame: (name: string) => {
+      return new DefaultPresetTestConfig({
+        presetName: name,
+        trigger: async () => {
+          await domTreeAvailable<HTMLElement>(queryOutput(), 'iframe.xss-demo-guest');
+          const codeField = await domTreeAvailable<HTMLElement>(queryOutput(), 'textarea[name=code]') as HTMLTextAreaElement;
+          const runButton = await domTreeAvailable<HTMLElement>(queryOutput(), 'button[name=run]') as HTMLButtonElement;
+          codeField.value = 'parent.xss()';
+          runButton.click();
+        },
+        timeout: 500
+      });
+    },
+
+    injectJsWindow: (name: string) => {
+      let windowOpenSpy: jasmine.Spy;
+      return new DefaultPresetTestConfig({
+        presetName: name,
+        setup: async () => {
+          windowOpenSpy = spyOn(window, 'open').and.callThrough();
+        },
+        trigger: async () => {
+          const codeField = await domTreeAvailable<HTMLElement>(queryOutput(), 'textarea[name=code]') as HTMLTextAreaElement;
+          const runButton = await domTreeAvailable<HTMLElement>(queryOutput(), 'button[name=run]') as HTMLButtonElement;
+          codeField.value = 'opener.xss()';
+          runButton.click();
+        },
+        expect: async () => {
+          expect(windowOpenSpy).toHaveBeenCalled();
+        },
+        cleanup: async () => {
+          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
+          openedWindow?.close();
+        },
+        timeout: 500
+      });
+    },
+
     newWindow: (name: string) => {
       let windowOpenSpy: jasmine.Spy;
       return new DefaultPresetTestConfig({
@@ -193,6 +231,9 @@ describe('Xss Demo App', async () => {
           windowOpenSpy = spyOn(window, 'open').and.callThrough();
         },
         expectXss: false,
+        expect: async () => {
+          expect(windowOpenSpy).toHaveBeenCalled();
+        },
         cleanup: async () => {
           const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
           openedWindow?.close();
@@ -215,26 +256,6 @@ describe('Xss Demo App', async () => {
           document.body.style.background = null;
         },
         timeout: 1000
-      });
-    },
-
-    defaceIframe: (name: string) => {
-      return new DefaultPresetTestConfig({
-        presetName: name,
-        expectXss: false,
-        expect: async () => {
-          const iframe = queryOutput().querySelector('iframe');
-          expect(iframe.contentDocument.body.childElementCount).toBe(1);
-          expect(iframe.contentDocument.body.querySelector('div.xss-demo-defacement')).not.toBeNull();
-        },
-        timeout: 1000
-      });
-    },
-
-    skip: (name: string) => {
-      return new DefaultPresetTestConfig({
-        presetName: name,
-        skip: true
       });
     }
   }
@@ -276,9 +297,9 @@ describe('Xss Demo App', async () => {
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.JavaScript.toString()] = {
-    'DqStringDomTrusted': [                                                      'JS code breaking "string" literal'                                                                                                                                                                                                                                                                                                                                                                                ],
-    'SqStringDomTrusted': [                                                                                           'JS code breaking \'string\' literal'                                                                                                                                                                                                                                                                                                                                         ],
-    'BlockDomTrusted':    ['pure JS code', 'pure JS code for parent and opener',                                                                             cf.newWindow('Inject JS into document (window)'), cf.newWindow('Interact with Plain HTML mock (window)'), cf.newWindow('Interact with Browser Storage mock (window)'), cf.newWindow('Interact with Cookies mock (window)'), cf.newWindow('Interact with Post Message mock (window)'), 'JSFuck', cf.deface('pure JS defacement attack') ],
+    'DqStringDomTrusted': [                                                      'JS code breaking "string" literal'                                                                                                                                                                                                                                                                                                                                                                                                                                         ],
+    'SqStringDomTrusted': [                                                                                           'JS code breaking \'string\' literal'                                                                                                                                                                                                                                                                                                                                                                                                  ],
+    'BlockDomTrusted':    ['pure JS code', 'pure JS code for parent and opener',                                                                            cf.injectJsFrame('Inject JS into document (frame)'), cf.injectJsWindow('Inject JS into document (window)'), cf.newWindow('Interact with Plain HTML mock (window)'), cf.newWindow('Interact with Browser Storage mock (window)'), cf.newWindow('Interact with Cookies mock (window)'), cf.newWindow('Interact with Post Message mock (window)'), 'JSFuck', cf.deface('pure JS defacement attack') ],
   };
 
 
