@@ -1,47 +1,49 @@
-var workArea = document.createElement('div');
-document.currentScript.insertAdjacentElement('afterend', workArea);
+(function() {
+    const workArea = document.createElement('div');
+    document.currentScript.insertAdjacentElement('afterend', workArea);
 
-workArea.innerHTML = '\n'
-    + '<iframe src="/assets/mocks/storage.html" class="xss-demo-guest"></iframe>\n'
-    + '<form class="storage-form">\n'
-    + '<div>Storage: <input type="radio" name="type" value="local" checked>Local <input type="radio" name="type" value="session">Session</div>\n'
-    + '<div>Key: <input type="text" name="key"></div>\n'
-    + '<div>Item: <input type="text" name="item"></div>\n'
-    + '<div><button type="button" name="get">Get</button><button type="button" name="set">Set</button><button type="button" name="del">Delete</button></div>\n'
-    + '</form>\n';
+    workArea.innerHTML = '\n'
+        + '<iframe src="/assets/mocks/storage.html" class="xss-demo-guest"></iframe>\n'
+        + '<form class="storage-form">\n'
+        + '<div>Storage: <input type="radio" name="type" value="local" checked>Local <input type="radio" name="type" value="session">Session</div>\n'
+        + '<div>Key: <input type="text" name="key"></div>\n'
+        + '<div>Item: <input type="text" name="item"></div>\n'
+        + '<div><button type="button" name="get">Get</button><button type="button" name="set">Set</button><button type="button" name="del">Delete</button></div>\n'
+        + '</form>\n';
 
-var storageForm = workArea.querySelector('form.storage-form');
-var fieldTypeLocal = storageForm.querySelector('input[name=type][value=local]');
-var fieldKey = storageForm.querySelector('input[name=key]');
-var fieldItem = storageForm.querySelector('input[name=item]');
-var buttonGet = storageForm.querySelector('button[name=get]');
-var buttonSet = storageForm.querySelector('button[name=set]');
-var buttonDel = storageForm.querySelector('button[name=del]');
+    const storageForm = workArea.querySelector('form.storage-form');
+    const fieldTypeLocal = storageForm.querySelector('input[name=type][value=local]');
+    const fieldKey = storageForm.querySelector('input[name=key]');
+    const fieldItem = storageForm.querySelector('input[name=item]');
+    const buttonGet = storageForm.querySelector('button[name=get]');
+    const buttonSet = storageForm.querySelector('button[name=set]');
+    const buttonDel = storageForm.querySelector('button[name=del]');
 
-buttonSet.addEventListener(
-    'click',
-    () => {
-        var storage = fieldTypeLocal.checked ? window.localStorage : window.sessionStorage;
+    buttonSet.addEventListener(
+        'click',
+        () => {
+            const storage = fieldTypeLocal.checked ? window.localStorage : window.sessionStorage;
 
-        storage.setItem(fieldKey.value, fieldItem.value);
-    }
-);
+            storage.setItem(fieldKey.value, fieldItem.value);
+        }
+    );
 
-buttonGet.addEventListener(
-    'click',
-    () => {
-        var storage = fieldTypeLocal.checked ? window.localStorage : window.sessionStorage;
+    buttonGet.addEventListener(
+        'click',
+        () => {
+            const storage = fieldTypeLocal.checked ? window.localStorage : window.sessionStorage;
 
-        var item = storage.getItem(fieldKey.value);
-        fieldItem.value = item || '';
-    }
-);
+            const item = storage.getItem(fieldKey.value);
+            fieldItem.value = item || '';
+        }
+    );
 
-buttonDel.addEventListener(
-    'click',
-    () => {
-        var storage = fieldTypeLocal.checked ? window.localStorage : window.sessionStorage;
+    buttonDel.addEventListener(
+        'click',
+        () => {
+            const storage = fieldTypeLocal.checked ? window.localStorage : window.sessionStorage;
 
-        storage.removeItem(fieldKey.value);
-    }
-);
+            storage.removeItem(fieldKey.value);
+        }
+    );
+})();
