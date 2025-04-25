@@ -1,0 +1,1 @@
+javascript:opener.xss()

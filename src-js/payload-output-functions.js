@@ -146,6 +146,8 @@
           let link = document.createElement('a');
           link.textContent = 'Click here to test your payload as a URL!'
           link.href = payload;
+          link.rel = 'opener';
+          link.target = 'xss-demo-xss-probe';
           element.insertAdjacentElement('beforeend', link);
         }
 
@@ -248,7 +250,7 @@
         linkHref(element, payload) {
           $(element)
             .html(
-              $('<a>').text('Click here to test your payload as a URL!').attr('href', payload)
+              $('<a target="xss-demo-xss-probe" rel="opener">').text('Click here to test your payload as a URL!').attr('href', payload)
             );
         }
 

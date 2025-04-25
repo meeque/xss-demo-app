@@ -65,8 +65,8 @@ export class PayloadPresetService {
             url: 'assets/presets/html/a-href.txt',
         },
         {
-            name: 'A link target content',
-            url: 'assets/presets/html/a-target-content.txt',
+            name: 'A link destination content',
+            url: 'assets/presets/html/a-destination-content.txt',
         },
         {
             name: 'Input field onfocus',
@@ -101,6 +101,10 @@ export class PayloadPresetService {
         {
           name: 'IFrame src',
           url: 'assets/presets/html-attr/iframe-src.txt'
+        },
+        {
+          name: 'IFrame content',
+          url: 'assets/presets/html-attr/iframe-content.txt'
         },
         {
           name: 'Image src',
@@ -145,8 +149,16 @@ export class PayloadPresetService {
           url: 'assets/presets/url/script-url.txt'
         },
         {
-          name: 'javascript URL (for parent)',
+          name: 'javascript URL for parent',
           url: 'assets/presets/url/script-url-parent.txt'
+        },
+        {
+          name: 'javascript URL for opener',
+          url: 'assets/presets/url/script-url-opener.txt'
+        },
+        {
+          name: 'URL resource content',
+          url: 'assets/presets/url/url-resource-content.txt'
         }
       ]
     },

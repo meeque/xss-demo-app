@@ -263,34 +263,39 @@ describe('Xss Demo App', async () => {
   const presetsTestConfigsByContextAndOutput: {[context: string]: { [output: string]: (string|EnhancedPresetTestConfig)[] }} = {};
 
   presetsTestConfigsByContextAndOutput[XssContext.HtmlContent.toString()] = {
-    'HtmlContentRaw':          [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'DomInnerHtmlRaw':         [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'DomInnerHtmlRawNoInsert': [                                              'Image onerror', 'Image onerror (legacy flavors)',                                                                                                                                                 'Mixed HTML Content'],
-    'JQueryHtmlRaw':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryConstructorRaw':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryPrependRaw':        ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryAppendRaw':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryBeforeRaw':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryAfterRaw':          ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryWrapInnerRaw':      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryWrapRaw':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryReplaceWithRaw':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'NgInnerHtmlTrusted':      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link target content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'HtmlContentRaw':          [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'DomInnerHtmlRaw':         [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'DomInnerHtmlRawNoInsert': [                                              'Image onerror', 'Image onerror (legacy flavors)',                                                                                                                                                      'Mixed HTML Content'],
+    'JQueryHtmlRaw':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryConstructorRaw':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryPrependRaw':        ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryAppendRaw':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryBeforeRaw':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryAfterRaw':          ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryWrapInnerRaw':      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryWrapRaw':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'JQueryReplaceWithRaw':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+    'NgInnerHtmlTrusted':      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.HtmlAttribute.toString()] = {
-    'HtmlTitleAttributeRawQuoted':        ['IFrame src', 'Image onerror', cf.mouseenter('onmouseenter attribute'),                                                     'Mixed HTML Content'],
-    'HtmlTitleAttributeRawUnquoted':      [                                                                        cf.mouseenter('onmouseenter attribute (unquoted)'),                     ],
-    'HtmlTitleAttributeEncodedUnquoted' : [                                                                        cf.mouseenter('onmouseenter attribute (unquoted)'),                     ],
+    'HtmlTitleAttributeRawQuoted':        ['IFrame src', 'IFrame content', 'Image onerror', cf.mouseenter('onmouseenter attribute'),                                                     'Mixed HTML Content'],
+    'HtmlTitleAttributeRawUnquoted':      [                                                                                          cf.mouseenter('onmouseenter attribute (unquoted)'),                     ],
+    'HtmlTitleAttributeEncodedUnquoted' : [                                                                                          cf.mouseenter('onmouseenter attribute (unquoted)'),                     ],
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.Url.toString()] = {
-    'DomLinkHrefRaw':     [cf.clickLink('javascript URL')                               ],
-    'JQueryLinkHrefRaw':  [cf.clickLink('javascript URL')                               ],
-    'NgLinkHrefTrusted':  [cf.clickLink('javascript URL')                               ],
-    'DomIframeSrcRaw':    [                                'javascript URL (for parent)'],
-    'JQueryIframeSrcRaw': [                                'javascript URL (for parent)'],
-    'NgIframeSrcTrusted': [                                'javascript URL (for parent)'],
+    'DomLinkHrefRaw':           [cf.clickLinkNew('javascript URL for opener'), cf.clickLinkNew('URL resource content')                                                     ],
+    'DomLinkHrefValidated':     [                                              cf.clickLinkNew('URL resource content')                                                     ],
+    'JQueryLinkHrefRaw':        [cf.clickLinkNew('javascript URL for opener'), cf.clickLinkNew('URL resource content')                                                     ],
+    'JQueryLinkHrefValidated':  [                                              cf.clickLinkNew('URL resource content')                                                     ],
+    'NgLinkHrefTrusted':        [cf.clickLinkNew('javascript URL for opener'), cf.clickLinkNew('URL resource content')                                                     ],
+    'NgLinkHrefSanitized':      [                                              cf.clickLinkNew('URL resource content')                                                     ],
+    'DomIframeSrcRaw':          [                                                                                       'javascript URL for parent', 'URL resource content'],
+    'DomIframeSrcValidated':    [                                                                                                                    'URL resource content'],
+    'JQueryIframeSrcRaw':       [                                                                                       'javascript URL for parent', 'URL resource content'],
+    'JQueryIframeSrcValidated': [                                                                                                                    'URL resource content'],
+    'NgIframeSrcTrusted':       [                                                                                       'javascript URL for parent', 'URL resource content'],
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.Css.toString()] = {

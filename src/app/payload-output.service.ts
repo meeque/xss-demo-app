@@ -487,8 +487,8 @@ export class PayloadOutputService {
 
           {
             id: 'DomLinkHrefValidated',
-            quality: PayloadOutputQuality.Recommended,
-            name: 'DOM a.href URL-Validated ',
+            quality: PayloadOutputQuality.Questionable,
+            name: 'DOM a.href URL-Validated',
             title: 'Payload as URL-Validated Link-URL (DOM a.href = ...)',
             payloadProcessor: this._processors.urlValidation,
             domInjector: this._domInjectors.linkHref
@@ -504,7 +504,7 @@ export class PayloadOutputService {
 
           {
             id: 'JQueryLinkHrefValidated',
-            quality: PayloadOutputQuality.Recommended,
+            quality: PayloadOutputQuality.Questionable,
             name: '$(a).attr(\'href\') URL-Validated',
             title: 'Payload as URL-Validated Link-URL (jQuery(a).attr(\'href\', ...))',
             payloadProcessor: this._processors.urlValidation,
@@ -521,7 +521,7 @@ export class PayloadOutputService {
 
           {
             id: 'NgLinkHrefSanitized',
-            quality: PayloadOutputQuality.Recommended,
+            quality: PayloadOutputQuality.Questionable,
             name: 'ng <a [href]> Sanitized',
             title: 'Payload as Sanitized Link-URL (Angular <a [href]="...">)',
             templateComponentType: LinkUrl
@@ -538,7 +538,7 @@ export class PayloadOutputService {
 
           {
             id: 'DomIframeSrcValidated',
-            quality: PayloadOutputQuality.Recommended,
+            quality: PayloadOutputQuality.Questionable,
             name: 'DOM iframe.src URL-Validated',
             title: 'Payload as URL-Validated IFrame-URL (DOM iframe.src = ...)',
             payloadProcessor: this._processors.urlValidation,
@@ -555,7 +555,7 @@ export class PayloadOutputService {
 
           {
             id: 'JQueryIframeSrcValidated',
-            quality: PayloadOutputQuality.Recommended,
+            quality: PayloadOutputQuality.Questionable,
             name: '$(iframe).attr(\'src\') URL-Validated',
             title: 'Payload as URL-Validated IFrame-URL (jQuery(iframe).attr(\'src\', ...))',
             payloadProcessor: this._processors.urlValidation,

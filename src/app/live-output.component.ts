@@ -138,7 +138,7 @@ export class ParagraphTitle extends LiveOutputComponent {
   standalone: true
 })
 export class LinkUrl extends LiveOutputComponent {
-  static readonly templateCode = '<a [href]="payload">Click here to test your payload as a URL!</a>';
+  static readonly templateCode = '<a [href]="payload" target="xss-demo-xss-probe" rel="opener">Click here to test your payload as a URL!</a>';
 }
 
 @Component({
