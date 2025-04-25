@@ -108,7 +108,7 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
 }
 
 interface PresetTestConfigFactory {
-  [config: string]: (presetName: string) => EnhancedPresetTestConfig;
+  [config: string]: (presetName: string, expectXss?: boolean) => EnhancedPresetTestConfig;
 }
 
 
@@ -132,18 +132,19 @@ describe('Xss Demo App', async () => {
 
   const cf: PresetTestConfigFactory = {
 
-    clickLink: (name: string) => {
+    clickLink: (name: string, expectXss = true) => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
           const link = await domTreeAvailable<HTMLElement>(queryOutput(), 'a');
           link.click();
         },
+        expectXss,
         timeout: 1000
       });
     },
 
-    clickLinkNew: (name: string) => {
+    clickLinkNew: (name: string, expectXss = true) => {
       const MOCK_LINK_TARGET = 'xss-demo_integration-test_click-link-to-new-window';
       let link = null as HTMLLinkElement;
       return new DefaultPresetTestConfig({
@@ -156,6 +157,7 @@ describe('Xss Demo App', async () => {
           }
           link.click();
         },
+        expectXss,
         cleanup: async () => {
           window.open('javascript:window.close();', link.target);
         },
@@ -285,17 +287,17 @@ describe('Xss Demo App', async () => {
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.Url.toString()] = {
-    'DomLinkHrefRaw':           [cf.clickLinkNew('javascript URL for opener'), cf.clickLinkNew('URL resource content')                                                     ],
-    'DomLinkHrefValidated':     [                                              cf.clickLinkNew('URL resource content')                                                     ],
-    'JQueryLinkHrefRaw':        [cf.clickLinkNew('javascript URL for opener'), cf.clickLinkNew('URL resource content')                                                     ],
-    'JQueryLinkHrefValidated':  [                                              cf.clickLinkNew('URL resource content')                                                     ],
-    'NgLinkHrefTrusted':        [cf.clickLinkNew('javascript URL for opener'), cf.clickLinkNew('URL resource content')                                                     ],
-    'NgLinkHrefSanitized':      [                                              cf.clickLinkNew('URL resource content')                                                     ],
-    'DomIframeSrcRaw':          [                                                                                       'javascript URL for parent', 'URL resource content'],
-    'DomIframeSrcValidated':    [                                                                                                                    'URL resource content'],
-    'JQueryIframeSrcRaw':       [                                                                                       'javascript URL for parent', 'URL resource content'],
-    'JQueryIframeSrcValidated': [                                                                                                                    'URL resource content'],
-    'NgIframeSrcTrusted':       [                                                                                       'javascript URL for parent', 'URL resource content'],
+    'DomLinkHrefRaw':           [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener'),        cf.clickLinkNew('URL resource content')                                                     ],
+    'DomLinkHrefValidated':     [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener', false), cf.clickLinkNew('URL resource content')                                                     ],
+    'JQueryLinkHrefRaw':        [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener'),        cf.clickLinkNew('URL resource content')                                                     ],
+    'JQueryLinkHrefValidated':  [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener', false), cf.clickLinkNew('URL resource content')                                                     ],
+    'NgLinkHrefTrusted':        [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener'),        cf.clickLinkNew('URL resource content')                                                     ],
+    'NgLinkHrefSanitized':      [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener', false), cf.clickLinkNew('URL resource content')                                                     ],
+    'DomIframeSrcRaw':          [                                                                                                                                                                                             'javascript URL for parent', 'URL resource content'],
+    'DomIframeSrcValidated':    [                                                                                                                                                                                                                          'URL resource content'],
+    'JQueryIframeSrcRaw':       [                                                                                                                                                                                             'javascript URL for parent', 'URL resource content'],
+    'JQueryIframeSrcValidated': [                                                                                                                                                                                                                          'URL resource content'],
+    'NgIframeSrcTrusted':       [                                                                                                                                                                                             'javascript URL for parent', 'URL resource content'],
   };
 
   presetsTestConfigsByContextAndOutput[XssContext.Css.toString()] = {
