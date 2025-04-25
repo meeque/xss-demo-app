@@ -140,7 +140,7 @@ describe('Xss Demo App', async () => {
           link.click();
         },
         expectXss,
-        timeout: 1000
+        timeout: 500
       });
     },
 
@@ -161,7 +161,7 @@ describe('Xss Demo App', async () => {
         cleanup: async () => {
           window.open('javascript:window.close();', link.target);
         },
-        timeout: 2000
+        timeout: 1000
       });
     },
 
