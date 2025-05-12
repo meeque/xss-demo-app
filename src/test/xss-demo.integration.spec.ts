@@ -340,15 +340,15 @@ describe('Xss Demo App', async () => {
     expect(component).toBeDefined();
   });
 
-  for (const context of payloadOutputServiceStub.descriptors) {
+  for (const outputContext of payloadOutputServiceStub.descriptors) {
 
-    describe('"' + context.name + '"', () => {
+    describe('"' + outputContext.name + '"', () => {
 
-      const presetContextDescriptor = payloadPresetServiceStub.descriptors.find(descriptor => descriptor.id == context.id);
+      const presetContexts = payloadPresetServiceStub.descriptors.filter(descriptor => descriptor.id == outputContext.id);
 
-      for (const outputDescriptor of context.items) {
+      for (const outputDescriptor of outputContext.items) {
 
-        const presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[context.id.toString()][outputDescriptor.id]);
+        const presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[outputContext.id.toString()][outputDescriptor.id]);
 
         describe('payload output "' + outputDescriptor.name + '"', () => {
 
@@ -366,58 +366,61 @@ describe('Xss Demo App', async () => {
 
           }
 
-          for (const presetDescriptor of presetContextDescriptor.items) {
+          for (const presetContext of presetContexts) {
 
-            const presetTestConfig = DefaultPresetTestConfig.getByNameOrDefault(presetTestConfigs, presetDescriptor.name);
-            if (presetTestConfig.isSkip()) {
-              continue;
+            for (const presetDescriptor of presetContext.items) {
+
+              const presetTestConfig = DefaultPresetTestConfig.getByNameOrDefault(presetTestConfigs, presetDescriptor.name);
+              if (presetTestConfig.isSkip()) {
+                continue;
+              }
+              const expectXss = presetTestConfig.isExpectXss();
+
+              it(
+                'should '
+                  + (expectXss ? '' : 'NOT ')
+                  + 'trigger XSS for payload "' + presetDescriptor.name + '"'
+                  + (presetTestConfig.trigger ? ' with custom trigger' : '')
+                  + (presetTestConfig.expect ? ' with custom expectation' : ''),
+                async () => {
+                  await presetTestConfig.doSetup();
+                  const xssPromise = nextXssPromise();
+                  await selectInputOutput(presetContext.name, presetTestConfig.presetName, outputContext.name, outputDescriptor.name);
+                  const triggerPromise = presetTestConfig.doTrigger();
+                  const timeoutPromise = timeout(presetTestConfig.getTimeout(), false);
+                  await expectAsync(Promise.race([xssPromise, timeoutPromise]))
+                    .withContext('call xss() probe before timeout')
+                    .toBeResolvedTo(expectXss);
+
+                  expect(alertOverlay.querySelector('.alert-xss-triggered'))
+                    .withContext('show XSS alert message')
+                    .toEqual(expectXss ? jasmine.anything() : null);
+
+                  await expectAsync(presetTestConfig.doExpect())
+                    .withContext('custom expectations')
+                    .toBeResolved();
+
+                  const cleanupPromise = presetTestConfig.doCleanup();
+                  await Promise.all([timeoutPromise, triggerPromise, cleanupPromise, whenStableDetectChanges(fixture)]);
+                });
+
             }
-            const expectXss = presetTestConfig.isExpectXss();
-
-            it(
-              'should '
-                + (expectXss ? '' : 'NOT ')
-                + 'trigger XSS for payload "' + presetDescriptor.name + '"'
-                + (presetTestConfig.trigger ? ' with custom trigger' : '')
-                + (presetTestConfig.expect ? ' with custom expectation' : ''),
-              async () => {
-                await presetTestConfig.doSetup();
-                const xssPromise = nextXssPromise();
-                await selectInputOutput(context.name, presetTestConfig.presetName, outputDescriptor.name);
-                const triggerPromise = presetTestConfig.doTrigger();
-                const timeoutPromise = timeout(presetTestConfig.getTimeout(), false);
-                await expectAsync(Promise.race([xssPromise, timeoutPromise]))
-                  .withContext('call xss() probe before timeout')
-                  .toBeResolvedTo(expectXss);
-
-                expect(alertOverlay.querySelector('.alert-xss-triggered'))
-                  .withContext('show XSS alert message')
-                  .toEqual(expectXss ? jasmine.anything() : null);
-
-                await expectAsync(presetTestConfig.doExpect())
-                  .withContext('custom expectations')
-                  .toBeResolved();
-
-                const cleanupPromise = presetTestConfig.doCleanup();
-                await Promise.all([timeoutPromise, triggerPromise, cleanupPromise, whenStableDetectChanges(fixture)]);
-              });
-
           }
         });
       }
     });
   }
 
-  async function selectInputOutput(context: string, input: string, output: string): Promise<void> {
+  async function selectInputOutput(inputContext: string, inputName: string, outputContext: string, outputName: string): Promise<void> {
 
     try {
-      queryMenuLink(payloadInputCombobox, context, input).dispatchEvent(new Event('click'));
+      queryMenuLink(payloadInputCombobox, inputContext, inputName).dispatchEvent(new Event('click'));
     } catch (err) {
       console.error(err);
     }
 
     try {
-      queryMenuLink(payloadOutputCombobox, context, output).dispatchEvent(new Event('click'));
+      queryMenuLink(payloadOutputCombobox, outputContext, outputName).dispatchEvent(new Event('click'));
     } catch (err) {
       console.error(err);
     }

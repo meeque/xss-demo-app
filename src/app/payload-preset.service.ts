@@ -205,6 +205,20 @@ export class PayloadPresetService {
           url: 'assets/presets/js/break-single-quotes.txt'
         },
         {
+          name: 'JSFuck',
+          url: 'assets/presets/js/jsfuck.txt'
+        },
+        {
+          name: 'pure JS defacement attack',
+          url: 'assets/presets/js/defacement.txt'
+        }
+      ]
+    },
+    {
+      id: XssContext.JavaScript,
+      name: 'JavaScript Tool Box',
+      items: [
+        {
           name: 'Inject JS into document (frame)',
           url: 'assets/presets/js/js-in-frame.txt'
         },
@@ -244,14 +258,7 @@ export class PayloadPresetService {
           name: 'Interact with Post Message mock (window)',
           url: 'assets/presets/js/message-mock-window.txt'
         },
-        {
-          name: 'JSFuck',
-          url: 'assets/presets/js/jsfuck.txt'
-        },
-        {
-          name: 'pure JS defacement attack',
-          url: 'assets/presets/js/defacement.txt'
-        }
+
       ]
     }
   ]
