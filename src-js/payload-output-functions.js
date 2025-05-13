@@ -181,6 +181,15 @@
             }
           );
         }
+
+        challengeDoubleTrouble(element, payload) {
+          const headline = document.createElement('h3');
+          headline.innerHTML = DOMPurify.sanitize(payload, {ALLOWED_TAGS:[], ALLOWED_ATTR:[]});
+          element.insertAdjacentElement('beforeend', headline);
+          const paragraph = document.createElement('p');
+          paragraph.innerHTML = 'The above headline says:<br><em>' + headline.innerText + '</em>'
+          element.insertAdjacentElement('beforeend', paragraph);
+        }
       },
 
       JQueryInjectors: class JQueryInjectors {

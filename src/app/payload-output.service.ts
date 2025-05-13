@@ -695,6 +695,20 @@ export class PayloadOutputService {
             domInjector: this._domInjectors.trustedScriptBlock
           }
         ]
+      },
+
+      {
+        context: null,
+        name: 'Challenges',
+        items: [
+          {
+            id: 'DoubleTrouble',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'Double Trouble',
+            title: 'Double Trouble Challenge',
+            domInjector: this._domInjectors.challengeDoubleTrouble
+          }
+        ]
       }
     ];
   }

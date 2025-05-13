@@ -121,6 +121,7 @@ describe('Xss Demo App', async () => {
 
   let payloadInputCombobox: HTMLElement;
   let payloadOutputCombobox: HTMLElement;
+  let payloadInputTextArea: HTMLTextAreaElement;
   let alertOverlay: HTMLElement;
 
   let payloadPresetServiceStub = new PayloadPresetService(null);
@@ -262,6 +263,8 @@ describe('Xss Demo App', async () => {
     }
   }
 
+
+
   const presetsTestConfigsByContextAndOutput: {[context: string]: { [output: string]: (string|EnhancedPresetTestConfig)[] }} = {};
 
   presetsTestConfigsByContextAndOutput[XssContext.HtmlContent.toString()] = {
@@ -309,6 +312,47 @@ describe('Xss Demo App', async () => {
     'DomScriptBlockRaw':             ['pure JS code', 'pure JS code for parent and opener',                                                                            cf.injectJsFrame('Inject JS into document (frame)'), cf.injectJsWindow('Inject JS into document (window)'), cf.newWindow('Interact with Plain HTML mock (window)'), cf.newWindow('Interact with Browser Storage mock (window)'), cf.newWindow('Interact with Cookies mock (window)'), cf.newWindow('Interact with Post Message mock (window)'), 'JSFuck', cf.deface('pure JS defacement attack') ],
   };
 
+  presetsTestConfigsByContextAndOutput['null'] = {
+    'DoubleTrouble': ['Script tag']
+  }
+
+
+
+  const payloadTestsByContextAndOutput: {[context: string]: { [output: string]: () => Promise<void> }} = {};
+
+  payloadTestsByContextAndOutput[XssContext.HtmlContent.toString()] = {
+  }
+
+  payloadTestsByContextAndOutput[XssContext.HtmlAttribute.toString()] = {
+  }
+
+  payloadTestsByContextAndOutput[XssContext.Url.toString()] = {
+  }
+
+  payloadTestsByContextAndOutput[XssContext.Css.toString()] = {
+  }
+
+  payloadTestsByContextAndOutput[XssContext.JavaScript.toString()] = {
+  }
+
+  payloadTestsByContextAndOutput['null'] = {
+    'DoubleTrouble': async () => {
+      await timeout(200);
+      expect(alertOverlay.querySelector('.alert-xss-triggered'))
+        .withContext('show XSS alert message')
+        .toEqual(null);
+
+      payloadInputTextArea.value = '&lt;img src="." onerror="xss()"&gt;';
+      payloadInputTextArea.dispatchEvent(new Event('input'));
+      await whenStableDetectChanges(fixture);
+
+      await timeout(200);
+      expect(alertOverlay.querySelector('.alert-xss-triggered'))
+        .withContext('show XSS alert message')
+        .toEqual(jasmine.anything());
+    }
+  }
+
 
 
   beforeEach(async () => {
@@ -320,6 +364,7 @@ describe('Xss Demo App', async () => {
     component = fixture.componentInstance;
     element = fixture.nativeElement;
 
+    payloadInputTextArea = element.querySelector('section.input-area textarea.payload');
     payloadInputCombobox = element.querySelector('section.input-area combobox-input');
     payloadOutputCombobox = element.querySelector('section.output-area combobox-input');
     alertOverlay = element.querySelector('.fd-shell__overlay.fd-overlay--alert');
@@ -346,7 +391,7 @@ describe('Xss Demo App', async () => {
 
     for (const outputDescriptor of outputCollection.items) {
 
-      const presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[outputCollection.context.toString()][outputDescriptor.id]);
+      const presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[String(outputCollection.context)][outputDescriptor.id]);
 
       describe('"' + outputCollection.name + '" payload output "' + outputDescriptor.name + '"', () => {
 
@@ -406,6 +451,15 @@ describe('Xss Demo App', async () => {
               );
             });
           }
+        }
+
+        const payloadTest = payloadTestsByContextAndOutput[String(outputCollection.context)][outputDescriptor.id];
+        if (payloadTest) {
+          it('should pass test with custom payload', async () => {
+            payloadInputTextArea.value = '';
+            await selectInputOutput(null, null, outputCollection.name, outputDescriptor.name);
+            return payloadTest();
+          });
         }
       });
     }
