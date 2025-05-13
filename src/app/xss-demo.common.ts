@@ -7,7 +7,7 @@ export enum XssContext {
 }
 
 export interface XssContextCollection<P> {
-  readonly id: XssContext;
+  readonly context: XssContext;
   readonly name: string;
   readonly items: P[];
 }

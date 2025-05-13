@@ -98,7 +98,7 @@ export class PayloadOutputService {
     this.descriptors = [
 
       {
-        id: XssContext.HtmlContent,
+        context: XssContext.HtmlContent,
         name: 'HTML Content',
         items: [
 
@@ -407,7 +407,7 @@ export class PayloadOutputService {
       },
 
       {
-        id: XssContext.HtmlAttribute,
+        context: XssContext.HtmlAttribute,
         name: 'HTML Attributes',
         items: [
 
@@ -481,7 +481,7 @@ export class PayloadOutputService {
       },
 
       {
-        id: XssContext.Url,
+        context: XssContext.Url,
         name: 'URLs',
         items: [
 
@@ -590,7 +590,7 @@ export class PayloadOutputService {
       },
 
       {
-        id: XssContext.Css,
+        context: XssContext.Css,
         name: 'CSS Styles',
         items: [
 
@@ -656,7 +656,7 @@ export class PayloadOutputService {
       },
 
       {
-        id: XssContext.JavaScript,
+        context: XssContext.JavaScript,
         name: 'JavaScript',
         items: [
 
@@ -701,7 +701,7 @@ export class PayloadOutputService {
 
   contextDescriptorById(contextId: XssContext): XssContextCollection<PayloadOutputDescriptor> {
     for (const context of this.descriptors) {
-      if (context.id == contextId) {
+      if (context.context == contextId) {
         return context;
       }
     }

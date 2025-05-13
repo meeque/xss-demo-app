@@ -18,7 +18,7 @@ export class PayloadPresetService {
   readonly descriptors: XssContextCollection<PayloadPresetDescriptor>[] =
   [
     {
-      id: null,
+      context: null,
       name: null,
       items: [
         {
@@ -29,7 +29,7 @@ export class PayloadPresetService {
     },
 
     {
-      id: XssContext.HtmlContent,
+      context: XssContext.HtmlContent,
       name: 'HTML Content',
       items: [
         {
@@ -95,7 +95,7 @@ export class PayloadPresetService {
       ]
     },
     {
-      id: XssContext.HtmlAttribute,
+      context: XssContext.HtmlAttribute,
       name: 'HTML Attributes',
       items: [
         {
@@ -141,7 +141,7 @@ export class PayloadPresetService {
       ]
     },
     {
-      id: XssContext.Url,
+      context: XssContext.Url,
       name: 'URLs',
       items: [
         {
@@ -163,7 +163,7 @@ export class PayloadPresetService {
       ]
     },
     {
-      id: XssContext.Css,
+      context: XssContext.Css,
       name: 'CSS Styles',
       items: [
         {
@@ -185,7 +185,7 @@ export class PayloadPresetService {
       ]
     },
     {
-      id: XssContext.JavaScript,
+      context: XssContext.JavaScript,
       name: 'JavaScript',
       items: [
         {
@@ -215,7 +215,7 @@ export class PayloadPresetService {
       ]
     },
     {
-      id: XssContext.JavaScript,
+      context: XssContext.JavaScript,
       name: 'JavaScript Tool Box',
       items: [
         {

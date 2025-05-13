@@ -340,52 +340,52 @@ describe('Xss Demo App', async () => {
     expect(component).toBeDefined();
   });
 
-  for (const outputContext of payloadOutputServiceStub.descriptors) {
+  for (const outputCollection of payloadOutputServiceStub.descriptors) {
 
-    describe('"' + outputContext.name + '"', () => {
+    const presetCollections = payloadPresetServiceStub.descriptors.filter(descriptor => descriptor.context == outputCollection.context);
 
-      const presetContexts = payloadPresetServiceStub.descriptors.filter(descriptor => descriptor.id == outputContext.id);
+    for (const outputDescriptor of outputCollection.items) {
 
-      for (const outputDescriptor of outputContext.items) {
+      const presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[outputCollection.context.toString()][outputDescriptor.id]);
 
-        const presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[outputContext.id.toString()][outputDescriptor.id]);
+      describe('"' + outputCollection.name + '" payload output "' + outputDescriptor.name + '"', () => {
 
-        describe('payload output "' + outputDescriptor.name + '"', () => {
+        if(DefaultPresetTestConfig.hasAnyXss(presetTestConfigs)) {
 
-          if(DefaultPresetTestConfig.hasAnyXss(presetTestConfigs)) {
+          it('should not be marked as "Recommended"', () => {
+            expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
+          });
 
-            it('should not be marked as "Recommended"', () => {
-              expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
-            });
+        } else {
 
-          } else {
+          it('should not be marked as "Insecure"', () => {
+            expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Insecure);
+          });
 
-            it('should not be marked as "Insecure"', () => {
-              expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Insecure);
-            });
+        }
 
-          }
+        for (const presetCollection of presetCollections) {
 
-          for (const presetContext of presetContexts) {
+          for (const presetDescriptor of presetCollection.items) {
 
-            for (const presetDescriptor of presetContext.items) {
+            const presetTestConfig = DefaultPresetTestConfig.getByNameOrDefault(presetTestConfigs, presetDescriptor.name);
+            if (presetTestConfig.isSkip()) {
+              continue;
+            }
+            const expectXss = presetTestConfig.isExpectXss();
 
-              const presetTestConfig = DefaultPresetTestConfig.getByNameOrDefault(presetTestConfigs, presetDescriptor.name);
-              if (presetTestConfig.isSkip()) {
-                continue;
-              }
-              const expectXss = presetTestConfig.isExpectXss();
+            describe('with "' + presetCollection.name + '" payload preset "' + presetDescriptor.name + '"', () => {
 
               it(
                 'should '
                   + (expectXss ? '' : 'NOT ')
-                  + 'trigger XSS for payload "' + presetDescriptor.name + '"'
+                  + 'trigger XSS'
                   + (presetTestConfig.trigger ? ' with custom trigger' : '')
                   + (presetTestConfig.expect ? ' with custom expectation' : ''),
                 async () => {
                   await presetTestConfig.doSetup();
                   const xssPromise = nextXssPromise();
-                  await selectInputOutput(presetContext.name, presetTestConfig.presetName, outputContext.name, outputDescriptor.name);
+                  await selectInputOutput(presetCollection.name, presetTestConfig.presetName, outputCollection.name, outputDescriptor.name);
                   const triggerPromise = presetTestConfig.doTrigger();
                   const timeoutPromise = timeout(presetTestConfig.getTimeout(), false);
                   await expectAsync(Promise.race([xssPromise, timeoutPromise]))
@@ -402,13 +402,13 @@ describe('Xss Demo App', async () => {
 
                   const cleanupPromise = presetTestConfig.doCleanup();
                   await Promise.all([timeoutPromise, triggerPromise, cleanupPromise, whenStableDetectChanges(fixture)]);
-                });
-
-            }
+                }
+              );
+            });
           }
-        });
-      }
-    });
+        }
+      });
+    }
   }
 
   async function selectInputOutput(inputContext: string, inputName: string, outputContext: string, outputName: string): Promise<void> {

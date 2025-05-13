@@ -100,7 +100,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
         };
         items.push(item);
       }
-      if (group.value.id == null) {
+      if (group.value.context == null) {
         this.presetItems = items;
       } else {
         group.items = items;
@@ -135,7 +135,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
           name: payloadOutput.name,
           value: payloadOutput,
           select: (item: MenuItem<PayloadOutputDescriptor>) => {
-            return this.activateOutput(context.id, payloadOutput.id);
+            return this.activateOutput(context.context, payloadOutput.id);
           },
           filter: this.payloadOutputMenuItemFilter,
           template: this.payloadOutputMenuItemTemplate
