@@ -12,27 +12,7 @@ export class PayloadProcessors {
     this.sanitizer = sanitizer;
   }
 
-  ngTrustedHtml = (payload) => {
-    return this.sanitizer.bypassSecurityTrustHtml(payload);
-  }
-
-  ngTrustedUrl = (payload) => {
-    return this.sanitizer.bypassSecurityTrustUrl(payload);
-  }
-
-  ngTrustedResourceUrl = (payload) => {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(payload);
-  }
-
-  ngTrustedStyle(payload) {
-    return this.sanitizer.bypassSecurityTrustStyle(payload);
-  }
-
-  domTextNode(payload) {
-    return document.createTextNode(payload);
-  }
-
-  htmlEncoding(payload) {
+  htmlEncode(payload) {
     return payload
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -41,11 +21,11 @@ export class PayloadProcessors {
         .replace(/'/g, '&#x27;');
   }
 
-  htmlSanitizingDomPurify(payload) {
+  htmlSanitizeDomPurifyDefault(payload) {
     return DOMPurify.sanitize(payload);
   }
 
-  htmlSanitizingDomPurifyMinimalInline(payload) {
+  htmlSanitizeDomPurifyMinimalInline(payload) {
     return DOMPurify.sanitize(
       payload,
       {
@@ -54,7 +34,7 @@ export class PayloadProcessors {
       });
   }
 
-  htmlSanitizingDomPurifyInlineBlockLinks(payload) {
+  htmlSanitizeDomPurifyInlineBlockLinks(payload) {
     return DOMPurify.sanitize(
       payload,
       {
@@ -63,7 +43,7 @@ export class PayloadProcessors {
       });
   }
 
-  urlValidation(payload) {
+  urlValidate(payload) {
     try {
       var url = new URL(payload, document.baseURI);
     } catch(e) {
@@ -75,7 +55,7 @@ export class PayloadProcessors {
     return payload;
   }
 
-  jsonParsing(payload) {
+  jsonParse(payload) {
     try {
       return JSON.parse(payload);
     } catch (e) {
@@ -84,22 +64,42 @@ export class PayloadProcessors {
     }
   }
 
-  jsEncoding(payload) {
+  jsEncode(payload) {
     return 'var outputElement = document.createElement(\'div\');\n'
         + 'outputElement.textContent = ' + JSON.stringify(payload) + ';\n'
         + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
   }
 
-  jsDoubleQuoting(payload) {
+  jsDoubleQuote(payload) {
     return 'var outputElement = document.createElement(\'div\');\n'
         + 'outputElement.textContent = "' + payload + '";\n'
         + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
   }
 
-  jsSingleQuoting(payload) {
+  jsSingleQuote(payload) {
     return 'var outputElement = document.createElement(\'div\');\n'
         + 'outputElement.textContent = \'' + payload + '\';\n'
         + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
+  }
+
+  domTextNode(payload) {
+    return document.createTextNode(payload);
+  }
+
+  ngTrustAsHtml = (payload) => {
+    return this.sanitizer.bypassSecurityTrustHtml(payload);
+  }
+
+  ngTrustAsUrl = (payload) => {
+    return this.sanitizer.bypassSecurityTrustUrl(payload);
+  }
+
+  ngTrustAsResourceUrl = (payload) => {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(payload);
+  }
+
+  ngTrustAsStyle(payload) {
+    return this.sanitizer.bypassSecurityTrustStyle(payload);
   }
 }
 
@@ -107,7 +107,7 @@ export class PayloadProcessors {
 
 export class HtmlSourceProviders {
 
-  raw(payload) {
+  content(payload) {
     return payload;
   }
 
@@ -115,7 +115,7 @@ export class HtmlSourceProviders {
     return '<p title="' + payload + '">This paragraph has a title.</p>';
   }
 
-  unquotedParagraphTitle(payload) {
+  paragraphTitleUnquoted(payload) {
     return '<p title=' + payload + '>This paragraph has a title.</p>';
   }
 }

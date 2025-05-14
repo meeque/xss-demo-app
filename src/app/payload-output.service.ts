@@ -77,8 +77,8 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'HTML Encoded',
             title: 'Payload as Manually Encoded HTML Content',
-            payloadProcessor: this._processors.htmlEncoding,
-            htmlSourceProvider: this._providers.raw
+            payloadProcessor: this._processors.htmlEncode,
+            htmlSourceProvider: this._providers.content
           },
 
           {
@@ -86,8 +86,8 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'HTML Sanitized (DOMPurify default)',
             title: 'Payload as Sanitized HTML Content (DOMPurify default policy)',
-            payloadProcessor: this._processors.htmlSanitizingDomPurify,
-            htmlSourceProvider: this._providers.raw
+            payloadProcessor: this._processors.htmlSanitizeDomPurifyDefault,
+            htmlSourceProvider: this._providers.content
           },
 
           {
@@ -95,8 +95,8 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'HTML Sanitized (DOMPurify minimal inline)',
             title: 'Payload as Sanitized HTML Content (DOMPurify minimal policy for inline markup)',
-            payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
-            htmlSourceProvider: this._providers.raw
+            payloadProcessor: this._processors.htmlSanitizeDomPurifyMinimalInline,
+            htmlSourceProvider: this._providers.content
           },
 
           {
@@ -104,8 +104,8 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'HTML Sanitized (DOMPurify some inline, block, links)',
             title: 'Payload as Sanitized HTML Content (DOMPurify policy for some inline, block, and link markup)',
-            payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
-            htmlSourceProvider: this._providers.raw
+            payloadProcessor: this._processors.htmlSanitizeDomPurifyInlineBlockLinks,
+            htmlSourceProvider: this._providers.content
           },
 
           {
@@ -113,7 +113,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Insecure,
             name: 'HTML Raw',
             title: 'Payload as Raw HTML Content',
-            htmlSourceProvider: this._providers.raw
+            htmlSourceProvider: this._providers.content
           },
 
 
@@ -139,7 +139,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'DOM .innerHtml Encoded',
             title: 'Payload as Manually Encoded Inner HTML (DOM .innerHTML = ...)',
-            payloadProcessor: this._processors.htmlEncoding,
+            payloadProcessor: this._processors.htmlEncode,
             domInjector: this._domInjectors.innerHtml
           },
 
@@ -148,7 +148,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'DOM .innerHtml Sanitized (DOMPurify default)',
             title: 'Payload as Sanitized Inner HTML (DOM .innerHTML = ..., with DOMPurify default policy)',
-            payloadProcessor: this._processors.htmlSanitizingDomPurify,
+            payloadProcessor: this._processors.htmlSanitizeDomPurifyDefault,
             domInjector: this._domInjectors.innerHtml
           },
 
@@ -157,7 +157,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'DOM .innerHtml Sanitized (DOMPurify minimal inline)',
             title: 'Payload as Sanitized Inner HTML (DOM .innerHTML = ..., with DOMPurify minimal policy for inline markup)',
-            payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
+            payloadProcessor: this._processors.htmlSanitizeDomPurifyMinimalInline,
             domInjector: this._domInjectors.innerHtml
           },
 
@@ -166,7 +166,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'DOM .innerHtml Sanitized (DOMPurify some inline, block, links)',
             title: 'Payload as Sanitized Inner HTML (DOM .innerHTML = ..., with DOMPurify policy for some inline, block, and link markup)',
-            payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
+            payloadProcessor: this._processors.htmlSanitizeDomPurifyInlineBlockLinks,
             domInjector: this._domInjectors.innerHtml
           },
 
@@ -201,7 +201,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: '$().html() Sanitized (DOMPurify default)',
             title: 'Payload as Sanitized HTML (jQuery().html(...) with DOMPurify default policy)',
-            payloadProcessor: this._processors.htmlSanitizingDomPurify,
+            payloadProcessor: this._processors.htmlSanitizeDomPurifyDefault,
             jQueryInjector: this._jQueryInjectors.html
           },
 
@@ -210,7 +210,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: '$().html() Sanitized (DOMPurify minimal inline)',
             title: 'Payload as Sanitized HTML (jQuery().html(...) with DOMPurify minimal policy for inline markup)',
-            payloadProcessor: this._processors.htmlSanitizingDomPurifyMinimalInline,
+            payloadProcessor: this._processors.htmlSanitizeDomPurifyMinimalInline,
             jQueryInjector: this._jQueryInjectors.html
           },
 
@@ -219,7 +219,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: '$().html() Sanitized (DOMPurify some inline, block, links)',
             title: 'Payload as Sanitized HTML (jQuery().html(...) with DOMPurify policy for some inline, block, and link markup)',
-            payloadProcessor: this._processors.htmlSanitizingDomPurifyInlineBlockLinks,
+            payloadProcessor: this._processors.htmlSanitizeDomPurifyInlineBlockLinks,
             jQueryInjector: this._jQueryInjectors.html
           },
 
@@ -228,7 +228,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: '$().html() Encoded',
             title: 'Payload as Manually Encoded HTML (jQuery().html(...))',
-            payloadProcessor: this._processors.htmlEncoding,
+            payloadProcessor: this._processors.htmlEncode,
             jQueryInjector: this._jQueryInjectors.html
           },
 
@@ -237,7 +237,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: '$() Encoded',
             title: 'Payload as Manually Encoded HTML Through Constructor (jQuery(...))',
-            payloadProcessor: this._processors.htmlEncoding,
+            payloadProcessor: this._processors.htmlEncode,
             jQueryInjector: this._jQueryInjectors.jQueryConstructor
           },
 
@@ -370,7 +370,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Insecure,
             name: 'ng [innerHTML] Trusted',
             title: 'Payload as Trusted Inner-HTML (Angular <div [innerHTML]="..."> with DomSanitizer.bypassSecurityTrustHtml())',
-            payloadProcessor: this._processors.ngTrustedHtml,
+            payloadProcessor: this._processors.ngTrustAsHtml,
             templateComponentType: InnerHtml
           }
         ]
@@ -386,7 +386,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'HTML <p title> Encoded & Quoted',
             title: 'Payload as Manually Encoded and Quoted HTML Title Attribute Value (<p title="...">)',
-            payloadProcessor: this._processors.htmlEncoding,
+            payloadProcessor: this._processors.htmlEncode,
             htmlSourceProvider: this._providers.paragraphTitle
           },
 
@@ -403,8 +403,8 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Insecure,
             name: 'HTML <p title> Encoded & Unquoted',
             title: 'Payload as Manually Encoded, But Unquoted HTML Title Attribute Value (<p title=...>)',
-            payloadProcessor: this._processors.htmlEncoding,
-            htmlSourceProvider: this._providers.unquotedParagraphTitle
+            payloadProcessor: this._processors.htmlEncode,
+            htmlSourceProvider: this._providers.paragraphTitleUnquoted
           },
 
           {
@@ -412,7 +412,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Insecure,
             name: 'HTML <p title> Raw & Unquoted',
             title: 'Payload as Raw and Unquoted HTML Title Attribute Value (<p title=...>)',
-            htmlSourceProvider: this._providers.unquotedParagraphTitle
+            htmlSourceProvider: this._providers.paragraphTitleUnquoted
           },
 
           {
@@ -444,7 +444,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'ng <p [title]> Trusted',
             title: 'Payload as Trusted Title Attribute (Angular <p [title]="..."> with DomSanitizer.bypassSecurityTrustHtml())',
-            payloadProcessor: this._processors.ngTrustedHtml,
+            payloadProcessor: this._processors.ngTrustAsHtml,
             templateComponentType: ParagraphTitle
           }
         ]
@@ -460,7 +460,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'DOM a.href URL-Validated',
             title: 'Payload as URL-Validated Link-URL (DOM a.href = ...)',
-            payloadProcessor: this._processors.urlValidation,
+            payloadProcessor: this._processors.urlValidate,
             domInjector: this._domInjectors.linkHref
           },
 
@@ -477,7 +477,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: '$(a).attr(\'href\') URL-Validated',
             title: 'Payload as URL-Validated Link-URL (jQuery(a).attr(\'href\', ...))',
-            payloadProcessor: this._processors.urlValidation,
+            payloadProcessor: this._processors.urlValidate,
             jQueryInjector: this._jQueryInjectors.linkHref
           },
 
@@ -502,7 +502,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Insecure,
             name: 'ng <a [href]> Trusted',
             title: 'Payload as Trusted Link-URL (Angular <a [href]="..."> with DomSanitizer.bypassSecurityTrustUrl())',
-            payloadProcessor: this._processors.ngTrustedUrl,
+            payloadProcessor: this._processors.ngTrustAsUrl,
             templateComponentType: LinkUrl
           },
 
@@ -511,7 +511,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'DOM iframe.src URL-Validated',
             title: 'Payload as URL-Validated IFrame-URL (DOM iframe.src = ...)',
-            payloadProcessor: this._processors.urlValidation,
+            payloadProcessor: this._processors.urlValidate,
             domInjector: this._domInjectors.iframeSrc
           },
 
@@ -528,7 +528,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: '$(iframe).attr(\'src\') URL-Validated',
             title: 'Payload as URL-Validated IFrame-URL (jQuery(iframe).attr(\'src\', ...))',
-            payloadProcessor: this._processors.urlValidation,
+            payloadProcessor: this._processors.urlValidate,
             jQueryInjector: this._jQueryInjectors.iframeSrc
           },
 
@@ -553,7 +553,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Insecure,
             name: 'ng <iframe [src]> Trusted',
             title: 'Payload as Trusted Resource IFrame-URL (Angular <iframe [src]="..."> with DomSanitizer.bypassSecurityTrustResourceUrl())',
-            payloadProcessor: this._processors.ngTrustedResourceUrl,
+            payloadProcessor: this._processors.ngTrustAsResourceUrl,
             templateComponentType: IframeUrl
           }
         ]
@@ -593,7 +593,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'ng <style [innerHTML]> Trusted',
             title: 'Payload as Trusted Style Block HTML (Angular <style [innerHTML]="..."> with DomSanitizer.bypassSecurityTrusStyle())',
-            payloadProcessor: this._processors.ngTrustedStyle,
+            payloadProcessor: this._processors.ngTrustAsStyle,
             templateComponentType: StyleBlock
           },
 
@@ -610,7 +610,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'ng [style] Trusted',
             title: 'Payload as Trusted Style Attribute Value (Angular <div [style]="..."> with DomSanitizer.bypassSecurityTrustStyle()',
-            payloadProcessor: this._processors.ngTrustedStyle,
+            payloadProcessor: this._processors.ngTrustAsStyle,
             templateComponentType: StyleAttribute
           },
 
@@ -619,7 +619,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'ng [ngStyle] Sanitized',
             title: 'Payload as Sanitized Style Attribute Properties (Angular <div [ngStyle]="..."> with JSON.parse())',
-            payloadProcessor: this._processors.jsonParsing,
+            payloadProcessor: this._processors.jsonParse,
             templateComponentType: StructuredStyleAttribute
           }
         ]
@@ -635,7 +635,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'DOM <script>-Block Expression Encoded',
             title: 'Payload as JavaScript-Encoded Expression in a JavaScript Block (DOM script.textContent = ..., with JSON.stringify())',
-            payloadProcessor: this._processors.jsEncoding,
+            payloadProcessor: this._processors.jsEncode,
             domInjector: this._domInjectors.trustedScriptBlock
           },
 
@@ -644,7 +644,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Insecure,
             name: 'DOM <script>-Block "string literal" Raw',
             title: 'Payload as Raw Content of a Double-Quoted String Literal in a JavaScript Block (DOM script.textContent = \'"\' + ... + \'"\')',
-            payloadProcessor: this._processors.jsDoubleQuoting,
+            payloadProcessor: this._processors.jsDoubleQuote,
             domInjector: this._domInjectors.trustedScriptBlock
           },
 
@@ -653,7 +653,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Insecure,
             name: 'DOM <script>-Block \'string literal\' Raw',
             title: 'Payload as Raw Content of a Single-Quoted String Literal in a JavaScript Block (DOM script.textContent = \'\\\'\' + ... + \'\\\'\')',
-            payloadProcessor: this._processors.jsSingleQuoting,
+            payloadProcessor: this._processors.jsSingleQuote,
             domInjector: this._domInjectors.trustedScriptBlock
           },
 
