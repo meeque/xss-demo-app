@@ -677,6 +677,14 @@ export class PayloadOutputService {
             name: 'Double Trouble',
             title: 'Double Trouble Challenge',
             domInjector: this._domInjectors.challengeDoubleTrouble
+          },
+          {
+            id: 'WhatsLeft',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'What\'s Left?',
+            title: 'What\'s Left Challenge',
+            payloadProcessor: this._processors.htmlChallangeStripTags,
+            htmlSourceProvider: this._providers.content
           }
         ]
       }

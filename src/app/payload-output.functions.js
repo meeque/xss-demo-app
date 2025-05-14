@@ -43,6 +43,10 @@ export class PayloadProcessors {
       });
   }
 
+  htmlChallangeStripTags(payload) {
+    return payload.replaceAll(/<[/]?[-_.:0-9a-zA-Z]+(\s[^<>]*)?[/]?>/g, '');
+  }
+
   urlValidate(payload) {
     try {
       var url = new URL(payload, document.baseURI);
