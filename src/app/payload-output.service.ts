@@ -3,7 +3,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 import { XssContext, XssContextCollection } from './xss-demo.common';
 import { LiveOutputType, Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute } from './live-output.component';
-
+import { PayloadProcessors, HtmlSourceProviders, DomInjectors, JQueryInjectors} from './payload-output.functions';
 
 
 export enum PayloadOutputQuality {
@@ -29,35 +29,6 @@ interface Injector {
 interface DomInjector extends Injector {};
 
 interface JQueryInjector extends Injector {};
-
-
-
-interface PayloadProcessors {
-  new (sanitizer: DomSanitizer): PayloadProcessors;
-  [prop: string]: PayloadProcessor;
-}
-
-interface HtmlSourceProviders {
-  new (): HtmlSourceProviders;
-  [prop: string]: HtmlSourceProvider;
-}
-
-interface DomInjectors {
-  new (): DomInjectors;
-  [prop: string]: DomInjector;
-}
-
-interface JQueryInjectors {
-  new (): JQueryInjectors;
-  [prop: string]: JQueryInjector;
-}
-
-interface PayloadOutputFunctions {
-  readonly PayloadProcessors: PayloadProcessors;
-  readonly HtmlSourceProviders: HtmlSourceProviders;
-  readonly DomInjectors: DomInjectors;
-  readonly JQueryInjectors: JQueryInjectors;
-}
 
 
 
@@ -89,11 +60,10 @@ export class PayloadOutputService {
   readonly descriptors: XssContextCollection<PayloadOutputDescriptor>[];
 
   constructor(sanitizer: DomSanitizer) {
-    const payloadOutputFunctions = (window as any).XssDemoApp.PayloadOutputFunctions as PayloadOutputFunctions;
-    this._processors = new payloadOutputFunctions.PayloadProcessors(sanitizer);
-    this._providers = new payloadOutputFunctions.HtmlSourceProviders();
-    this._domInjectors = new payloadOutputFunctions.DomInjectors();
-    this._jQueryInjectors = new payloadOutputFunctions.JQueryInjectors();
+    this._processors = new PayloadProcessors(sanitizer);
+    this._providers = new HtmlSourceProviders();
+    this._domInjectors = new DomInjectors();
+    this._jQueryInjectors = new JQueryInjectors();
 
     this.descriptors = [
 
