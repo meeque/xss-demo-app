@@ -1,8 +1,13 @@
-Welcome to the XSS demo!
+Welcome to the XSS Demo App!
 
-Write your XSS attack payload here!
-Then choose a context in which your payload should be processed!
+Enter your XSS attack into this Payload Input field!
+Or, select one of the Payload Presets from the menu above.
 
-Some payload processing contexts prevent successful XSS attacks, others allow them. Find out which ones!
+Then, choose a Payload Output that processes your Payload Input.
+Payload Outputs are the XSS Demo App's predefined examples of web application code.
+Some Payload Outputs defend against XSS attacks, others are vulnerable to XSS.
+It's up to you to find out which Payload Input can exploit the XSS vulnerability in a specific Payload Output.
 
-If you find an XSS vulnerability, you can execute arbitrary JavaScript. For your convenience, we provide global JavaScript function xss(). Invoke xss() and you will see a corresponding message...
+Once you've found a suitable XSS Payload Input, you can run arbitrary JavaScript code.
+For your convenience, the XSS Demo App provides a global JavaScript function named xss().
+Invoke xss() and you will see a prominent alert message.
