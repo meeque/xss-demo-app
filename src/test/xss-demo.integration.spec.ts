@@ -313,7 +313,9 @@ describe('Xss Demo App', async () => {
   };
 
   presetsTestConfigsByContextAndOutput['null'] = {
-    'DoubleTrouble': ['Script tag']
+    'DoubleTrouble': ['Script tag'],
+    'WhatsLeft': ['Script tag'],
+    'LikeLiterally': ['Script tag']
   }
 
 
@@ -343,6 +345,38 @@ describe('Xss Demo App', async () => {
         .toEqual(null);
 
       payloadInputTextArea.value = '&lt;img src="." onerror="xss()"&gt;';
+      payloadInputTextArea.dispatchEvent(new Event('input'));
+      await whenStableDetectChanges(fixture);
+
+      await timeout(200);
+      expect(alertOverlay.querySelector('.alert-xss-triggered'))
+        .withContext('show XSS alert message')
+        .toEqual(jasmine.anything());
+    },
+
+    'WhatsLeft': async () => {
+      await timeout(200);
+      expect(alertOverlay.querySelector('.alert-xss-triggered'))
+        .withContext('show XSS alert message')
+        .toEqual(null);
+
+      payloadInputTextArea.value = '<im<br>g src="." onerror="xss()">';
+      payloadInputTextArea.dispatchEvent(new Event('input'));
+      await whenStableDetectChanges(fixture);
+
+      await timeout(200);
+      expect(alertOverlay.querySelector('.alert-xss-triggered'))
+        .withContext('show XSS alert message')
+        .toEqual(jasmine.anything());
+    },
+
+    'LikeLiterally': async () => {
+      await timeout(200);
+      expect(alertOverlay.querySelector('.alert-xss-triggered'))
+        .withContext('show XSS alert message')
+        .toEqual(null);
+
+      payloadInputTextArea.value = '${xss()}';
       payloadInputTextArea.dispatchEvent(new Event('input'));
       await whenStableDetectChanges(fixture);
 

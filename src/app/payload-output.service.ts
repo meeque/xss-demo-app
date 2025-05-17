@@ -681,10 +681,18 @@ export class PayloadOutputService {
           {
             id: 'WhatsLeft',
             quality: PayloadOutputQuality.Insecure,
-            name: 'What\'s Left?',
+            name: 'What\'s Left',
             title: 'What\'s Left Challenge',
-            payloadProcessor: this._processors.htmlChallangeStripTags,
+            payloadProcessor: this._processors.htmlChallengeStripTags,
             htmlSourceProvider: this._providers.content
+          },
+          {
+            id: 'LikeLiterally',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'Like Literally',
+            title: 'Like Literally Challenge',
+            payloadProcessor: this._processors.jsChallengeLikeLiterally,
+            domInjector: this._domInjectors.trustedScriptBlock
           }
         ]
       }

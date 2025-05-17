@@ -43,7 +43,7 @@ export class PayloadProcessors {
       });
   }
 
-  htmlChallangeStripTags(payload) {
+  htmlChallengeStripTags(payload) {
     return payload.replaceAll(/<[/]?[-_.:0-9a-zA-Z]+(\s[^<>]*)?[/]?>/g, '');
   }
 
@@ -83,6 +83,28 @@ export class PayloadProcessors {
   jsSingleQuote(payload) {
     return 'var outputElement = document.createElement(\'div\');\n'
         + 'outputElement.textContent = \'' + payload + '\';\n'
+        + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
+  }
+
+  jsChallengeLikeLiterally(payload) {
+    const encodedPayload =
+      [...payload]
+      .map(char => {
+        switch (char) {
+          case '\\':
+            return '\\\\';
+          case '"':
+            return '\\"';
+          case '\'':
+            return '\\\'';
+          case '`':
+            return '\\`'
+        }
+        return char;
+      })
+      .join('');
+    return 'var outputElement = document.createElement(\'div\');\n'
+        + 'outputElement.textContent = `' + encodedPayload + '`;\n'
         + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
   }
 
