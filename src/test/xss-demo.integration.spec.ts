@@ -348,13 +348,6 @@ describe('Xss Demo App', async () => {
       'DomScriptBlockStringLiteralSq': [                                                                                           'JS code breaking \'string\' literal'                                                                                                                                                                                                                                                                                                                                                                                                  ],
       'DomScriptBlockRaw':             ['pure JS code', 'pure JS code for parent and opener',                                                                            cf.injectJsFrame('Inject JS into document (frame)'), cf.injectJsWindow('Inject JS into document (window)'), cf.newWindow('Interact with Plain HTML mock (window)'), cf.newWindow('Interact with Browser Storage mock (window)'), cf.newWindow('Interact with Cookies mock (window)'), cf.newWindow('Interact with Post Message mock (window)'), 'JSFuck', cf.deface('pure JS defacement attack') ],
     },
-
-    null: {
-      'DoubleTrouble': ['Script tag'],
-      'WhatsLeft': ['Script tag'],
-      'LikeLiterally': ['Script tag'],
-      'TheGreatEscape': ['Script tag'],
-    }
   }
 
 
@@ -377,7 +370,7 @@ describe('Xss Demo App', async () => {
       WhatsLeft:      ['<im<br>g src="." onerror="xss()">',   cf2.noXss('<img src="." onerror="xss()">')],
       LikeLiterally:  ['${xss()}',                            cf2.noXss('xss()')                        ],
       TheGreatEscape: ['\\"; xss(); //;',                     cf2.noXss('"; xss(); //;')                ],
-    }
+    },
   }
 
 
@@ -428,15 +421,15 @@ describe('Xss Demo App', async () => {
 
         describe('and payload output "' + outputDescriptor.name + '"', () => {
 
-          if(DefaultPresetTestConfig.hasAnyXss(presetTestConfigs)) {
+          if(DefaultTestConfig.hasAnyXss([... presetTestConfigs, ... payloadTestConfigs])) {
 
-            it('should not be marked as "Recommended"', () => {
+            it('should not be marked as "Recommended", because some tests trigger XSS', () => {
               expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
             });
 
           } else {
 
-            it('should not be marked as "Insecure"', () => {
+            it('should not be marked as "Insecure", because no tests trigger XSS', () => {
               expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Insecure);
             });
 
