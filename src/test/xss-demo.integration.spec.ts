@@ -360,10 +360,10 @@ describe('Xss Demo App', async () => {
 
   const cf2: TestConfigFactory<EnhancedPayloadTestConfig> = {
 
-    default: (payload: string, expectXss = true) => {
+    noXss: (payload: string) => {
       return new DefaultPayloadTestConfig({
         payload: payload,
-        expectXss
+        expectXss: false
       });
     }
 
@@ -372,10 +372,10 @@ describe('Xss Demo App', async () => {
   const payloadTestConfigsByContextAndOutput: {[context: string]: { [output: string]: (string|EnhancedPayloadTestConfig)[] }} = {
 
     null: {
-      DoubleTrouble:  ['&lt;img src="." onerror="xss()"&gt;', cf2.default('<img src="." onerror="xss()">', false)],
-      WhatsLeft:      ['<im<br>g src="." onerror="xss()">'],
-      LikeLiterally:  ['${xss()}'],
-      TheGreatEscape: ['\\"; xss(); //;'],
+      DoubleTrouble:  ['&lt;img src="." onerror="xss()"&gt;', cf2.noXss('<img src="." onerror="xss()">')],
+      WhatsLeft:      ['<im<br>g src="." onerror="xss()">',   cf2.noXss('<img src="." onerror="xss()">')],
+      LikeLiterally:  ['${xss()}',                            cf2.noXss('xss()')                        ],
+      TheGreatEscape: ['\\"; xss(); //;',                     cf2.noXss('"; xss(); //;')                ],
     }
   }
 
