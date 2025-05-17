@@ -265,125 +265,127 @@ describe('Xss Demo App', async () => {
 
 
 
-  const presetsTestConfigsByContextAndOutput: {[context: string]: { [output: string]: (string|EnhancedPresetTestConfig)[] }} = {};
+  const presetsTestConfigsByContextAndOutput: {[context: string]: { [output: string]: (string|EnhancedPresetTestConfig)[] }} = {
 
-  presetsTestConfigsByContextAndOutput[XssContext.HtmlContent.toString()] = {
-    'HtmlContentRaw':          [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'DomInnerHtmlRaw':         [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'DomInnerHtmlRawNoInsert': [                                              'Image onerror', 'Image onerror (legacy flavors)',                                                                                                                                                      'Mixed HTML Content'],
-    'JQueryHtmlRaw':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryConstructorRaw':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryPrependRaw':        ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryAppendRaw':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryBeforeRaw':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryAfterRaw':          ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryWrapInnerRaw':      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryWrapRaw':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'JQueryReplaceWithRaw':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-    'NgInnerHtmlTrusted':      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-  };
-
-  presetsTestConfigsByContextAndOutput[XssContext.HtmlAttribute.toString()] = {
-    'HtmlTitleAttributeRawQuoted':        ['IFrame src', 'IFrame content', 'Image onerror', cf.mouseenter('onmouseenter attribute'),                                                     'Mixed HTML Content'],
-    'HtmlTitleAttributeRawUnquoted':      [                                                                                          cf.mouseenter('onmouseenter attribute (unquoted)'),                     ],
-    'HtmlTitleAttributeEncodedUnquoted' : [                                                                                          cf.mouseenter('onmouseenter attribute (unquoted)'),                     ],
-  };
-
-  presetsTestConfigsByContextAndOutput[XssContext.Url.toString()] = {
-    'DomLinkHrefRaw':           [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener'),        cf.clickLinkNew('URL resource content')                                                     ],
-    'DomLinkHrefValidated':     [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener', false), cf.clickLinkNew('URL resource content')                                                     ],
-    'JQueryLinkHrefRaw':        [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener'),        cf.clickLinkNew('URL resource content')                                                     ],
-    'JQueryLinkHrefValidated':  [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener', false), cf.clickLinkNew('URL resource content')                                                     ],
-    'NgLinkHrefTrusted':        [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener'),        cf.clickLinkNew('URL resource content')                                                     ],
-    'NgLinkHrefSanitized':      [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener', false), cf.clickLinkNew('URL resource content')                                                     ],
-    'DomIframeSrcRaw':          [                                                                                                                                                                                             'javascript URL for parent', 'URL resource content'],
-    'DomIframeSrcValidated':    [                                                                                                                                                                                                                          'URL resource content'],
-    'JQueryIframeSrcRaw':       [                                                                                                                                                                                             'javascript URL for parent', 'URL resource content'],
-    'JQueryIframeSrcValidated': [                                                                                                                                                                                                                          'URL resource content'],
-    'NgIframeSrcTrusted':       [                                                                                                                                                                                             'javascript URL for parent', 'URL resource content'],
-  };
-
-  presetsTestConfigsByContextAndOutput[XssContext.Css.toString()] = {
-  };
-
-  presetsTestConfigsByContextAndOutput[XssContext.JavaScript.toString()] = {
-    'DomScriptBlockStringLiteralDq': [                                                      'JS code breaking "string" literal'                                                                                                                                                                                                                                                                                                                                                                                                                                         ],
-    'DomScriptBlockStringLiteralSq': [                                                                                           'JS code breaking \'string\' literal'                                                                                                                                                                                                                                                                                                                                                                                                  ],
-    'DomScriptBlockRaw':             ['pure JS code', 'pure JS code for parent and opener',                                                                            cf.injectJsFrame('Inject JS into document (frame)'), cf.injectJsWindow('Inject JS into document (window)'), cf.newWindow('Interact with Plain HTML mock (window)'), cf.newWindow('Interact with Browser Storage mock (window)'), cf.newWindow('Interact with Cookies mock (window)'), cf.newWindow('Interact with Post Message mock (window)'), 'JSFuck', cf.deface('pure JS defacement attack') ],
-  };
-
-  presetsTestConfigsByContextAndOutput['null'] = {
-    'DoubleTrouble': ['Script tag'],
-    'WhatsLeft': ['Script tag'],
-    'LikeLiterally': ['Script tag']
-  }
-
-
-
-  const payloadTestsByContextAndOutput: {[context: string]: { [output: string]: () => Promise<void> }} = {};
-
-  payloadTestsByContextAndOutput[XssContext.HtmlContent.toString()] = {
-  }
-
-  payloadTestsByContextAndOutput[XssContext.HtmlAttribute.toString()] = {
-  }
-
-  payloadTestsByContextAndOutput[XssContext.Url.toString()] = {
-  }
-
-  payloadTestsByContextAndOutput[XssContext.Css.toString()] = {
-  }
-
-  payloadTestsByContextAndOutput[XssContext.JavaScript.toString()] = {
-  }
-
-  payloadTestsByContextAndOutput['null'] = {
-    'DoubleTrouble': async () => {
-      await timeout(200);
-      expect(alertOverlay.querySelector('.alert-xss-triggered'))
-        .withContext('show XSS alert message')
-        .toEqual(null);
-
-      payloadInputTextArea.value = '&lt;img src="." onerror="xss()"&gt;';
-      payloadInputTextArea.dispatchEvent(new Event('input'));
-      await whenStableDetectChanges(fixture);
-
-      await timeout(200);
-      expect(alertOverlay.querySelector('.alert-xss-triggered'))
-        .withContext('show XSS alert message')
-        .toEqual(jasmine.anything());
+    HtmlContent: {
+      'HtmlContentRaw':          [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      'DomInnerHtmlRaw':         [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      'DomInnerHtmlRawNoInsert': [                                              'Image onerror', 'Image onerror (legacy flavors)',                                                                                                                                                      'Mixed HTML Content'],
+      'JQueryHtmlRaw':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      'JQueryConstructorRaw':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      'JQueryPrependRaw':        ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      'JQueryAppendRaw':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      'JQueryBeforeRaw':         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      'JQueryAfterRaw':          ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      'JQueryWrapInnerRaw':      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      'JQueryWrapRaw':           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      'JQueryReplaceWithRaw':    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      'NgInnerHtmlTrusted':      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
     },
 
-    'WhatsLeft': async () => {
-      await timeout(200);
-      expect(alertOverlay.querySelector('.alert-xss-triggered'))
-        .withContext('show XSS alert message')
-        .toEqual(null);
-
-      payloadInputTextArea.value = '<im<br>g src="." onerror="xss()">';
-      payloadInputTextArea.dispatchEvent(new Event('input'));
-      await whenStableDetectChanges(fixture);
-
-      await timeout(200);
-      expect(alertOverlay.querySelector('.alert-xss-triggered'))
-        .withContext('show XSS alert message')
-        .toEqual(jasmine.anything());
+    HtmlAttribute: {
+      'HtmlTitleAttributeRawQuoted':        ['IFrame src', 'IFrame content', 'Image onerror', cf.mouseenter('onmouseenter attribute'),                                                     'Mixed HTML Content'],
+      'HtmlTitleAttributeRawUnquoted':      [                                                                                          cf.mouseenter('onmouseenter attribute (unquoted)'),                     ],
+      'HtmlTitleAttributeEncodedUnquoted' : [                                                                                          cf.mouseenter('onmouseenter attribute (unquoted)'),                     ],
     },
 
-    'LikeLiterally': async () => {
-      await timeout(200);
-      expect(alertOverlay.querySelector('.alert-xss-triggered'))
-        .withContext('show XSS alert message')
-        .toEqual(null);
+    Url: {
+      'DomLinkHrefRaw':           [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener'),        cf.clickLinkNew('URL resource content')                                                     ],
+      'DomLinkHrefValidated':     [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener', false), cf.clickLinkNew('URL resource content')                                                     ],
+      'JQueryLinkHrefRaw':        [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener'),        cf.clickLinkNew('URL resource content')                                                     ],
+      'JQueryLinkHrefValidated':  [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener', false), cf.clickLinkNew('URL resource content')                                                     ],
+      'NgLinkHrefTrusted':        [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener'),        cf.clickLinkNew('URL resource content')                                                     ],
+      'NgLinkHrefSanitized':      [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener', false), cf.clickLinkNew('URL resource content')                                                     ],
+      'DomIframeSrcRaw':          [                                                                                                                                                                                             'javascript URL for parent', 'URL resource content'],
+      'DomIframeSrcValidated':    [                                                                                                                                                                                                                          'URL resource content'],
+      'JQueryIframeSrcRaw':       [                                                                                                                                                                                             'javascript URL for parent', 'URL resource content'],
+      'JQueryIframeSrcValidated': [                                                                                                                                                                                                                          'URL resource content'],
+      'NgIframeSrcTrusted':       [                                                                                                                                                                                             'javascript URL for parent', 'URL resource content'],
+    },
 
-      payloadInputTextArea.value = '${xss()}';
-      payloadInputTextArea.dispatchEvent(new Event('input'));
-      await whenStableDetectChanges(fixture);
+    Css: {
+    },
 
-      await timeout(200);
-      expect(alertOverlay.querySelector('.alert-xss-triggered'))
-        .withContext('show XSS alert message')
-        .toEqual(jasmine.anything());
+    JavaScript: {
+      'DomScriptBlockStringLiteralDq': [                                                      'JS code breaking "string" literal'                                                                                                                                                                                                                                                                                                                                                                                                                                         ],
+      'DomScriptBlockStringLiteralSq': [                                                                                           'JS code breaking \'string\' literal'                                                                                                                                                                                                                                                                                                                                                                                                  ],
+      'DomScriptBlockRaw':             ['pure JS code', 'pure JS code for parent and opener',                                                                            cf.injectJsFrame('Inject JS into document (frame)'), cf.injectJsWindow('Inject JS into document (window)'), cf.newWindow('Interact with Plain HTML mock (window)'), cf.newWindow('Interact with Browser Storage mock (window)'), cf.newWindow('Interact with Cookies mock (window)'), cf.newWindow('Interact with Post Message mock (window)'), 'JSFuck', cf.deface('pure JS defacement attack') ],
+    },
+
+    null: {
+      'DoubleTrouble': ['Script tag'],
+      'WhatsLeft': ['Script tag'],
+      'LikeLiterally': ['Script tag']
+    }
+  }
+
+
+
+  const payloadTestsByContextAndOutput: {[context: string]: { [output: string]: () => Promise<void> }} = {
+
+    HtmlContent: {
+    },
+
+    HtmlAttribute: {
+    },
+
+    Url: {
+    },
+
+    Css: {
+    },
+
+    JavaScript: {
+    },
+
+    null: {
+      'DoubleTrouble': async () => {
+        await timeout(200);
+        expect(alertOverlay.querySelector('.alert-xss-triggered'))
+          .withContext('show XSS alert message')
+          .toEqual(null);
+
+        payloadInputTextArea.value = '&lt;img src="." onerror="xss()"&gt;';
+        payloadInputTextArea.dispatchEvent(new Event('input'));
+        await whenStableDetectChanges(fixture);
+
+        await timeout(200);
+        expect(alertOverlay.querySelector('.alert-xss-triggered'))
+          .withContext('show XSS alert message')
+          .toEqual(jasmine.anything());
+      },
+
+      'WhatsLeft': async () => {
+        await timeout(200);
+        expect(alertOverlay.querySelector('.alert-xss-triggered'))
+          .withContext('show XSS alert message')
+          .toEqual(null);
+
+        payloadInputTextArea.value = '<im<br>g src="." onerror="xss()">';
+        payloadInputTextArea.dispatchEvent(new Event('input'));
+        await whenStableDetectChanges(fixture);
+
+        await timeout(200);
+        expect(alertOverlay.querySelector('.alert-xss-triggered'))
+          .withContext('show XSS alert message')
+          .toEqual(jasmine.anything());
+      },
+
+      'LikeLiterally': async () => {
+        await timeout(200);
+        expect(alertOverlay.querySelector('.alert-xss-triggered'))
+          .withContext('show XSS alert message')
+          .toEqual(null);
+
+        payloadInputTextArea.value = '${xss()}';
+        payloadInputTextArea.dispatchEvent(new Event('input'));
+        await whenStableDetectChanges(fixture);
+
+        await timeout(200);
+        expect(alertOverlay.querySelector('.alert-xss-triggered'))
+          .withContext('show XSS alert message')
+          .toEqual(jasmine.anything());
+      }
     }
   }
 
