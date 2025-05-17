@@ -423,13 +423,13 @@ describe('Xss Demo App', async () => {
 
     const presetCollections = payloadPresetServiceStub.descriptors.filter(descriptor => descriptor.context == outputCollection.context);
 
-    describe('output context "' + outputCollection.context + '" collection  "' + outputCollection.name + '"', () => {
+    describe('with output collection  "' + outputCollection.name + '" (' + outputCollection.context + ')', () => {
 
       for (const outputDescriptor of outputCollection.items) {
 
         const presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[String(outputCollection.context)][outputDescriptor.id]);
 
-        describe('payload output "' + outputDescriptor.name + '"', () => {
+        describe('and payload output "' + outputDescriptor.name + '"', () => {
 
           if(DefaultPresetTestConfig.hasAnyXss(presetTestConfigs)) {
 
@@ -447,7 +447,7 @@ describe('Xss Demo App', async () => {
 
           for (const presetCollection of presetCollections) {
 
-            describe('with preset context "' + presetCollection.context + '" collection "' + presetCollection.name + '"', () => {
+            describe('with preset collection "' + presetCollection.name + '" (' + outputCollection.context + ')', () => {
 
               for (const presetDescriptor of presetCollection.items) {
 
@@ -457,7 +457,7 @@ describe('Xss Demo App', async () => {
                 }
                 const expectXss = presetTestConfig.isExpectXss();
 
-                describe('payload preset "' + presetDescriptor.name + '"', () => {
+                describe('and payload preset "' + presetDescriptor.name + '"', () => {
 
                   it(
                     'should '
