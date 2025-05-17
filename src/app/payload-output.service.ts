@@ -693,6 +693,14 @@ export class PayloadOutputService {
             title: 'Like Literally Challenge',
             payloadProcessor: this._processors.jsChallengeLikeLiterally,
             domInjector: this._domInjectors.trustedScriptBlock
+          },
+          {
+            id: 'TheGreatEscape',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'The Great Escape',
+            title: 'The Great Escape Challenge',
+            payloadProcessor: this._processors.jsChallengeTheGreatEscape,
+            domInjector: this._domInjectors.trustedScriptBlock
           }
         ]
       }

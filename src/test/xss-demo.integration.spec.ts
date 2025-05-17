@@ -315,7 +315,8 @@ describe('Xss Demo App', async () => {
     null: {
       'DoubleTrouble': ['Script tag'],
       'WhatsLeft': ['Script tag'],
-      'LikeLiterally': ['Script tag']
+      'LikeLiterally': ['Script tag'],
+      'TheGreatEscape': ['Script tag'],
     }
   }
 
@@ -378,6 +379,22 @@ describe('Xss Demo App', async () => {
           .toEqual(null);
 
         payloadInputTextArea.value = '${xss()}';
+        payloadInputTextArea.dispatchEvent(new Event('input'));
+        await whenStableDetectChanges(fixture);
+
+        await timeout(200);
+        expect(alertOverlay.querySelector('.alert-xss-triggered'))
+          .withContext('show XSS alert message')
+          .toEqual(jasmine.anything());
+      },
+
+      'TheGreatEscape': async () => {
+        await timeout(200);
+        expect(alertOverlay.querySelector('.alert-xss-triggered'))
+          .withContext('show XSS alert message')
+          .toEqual(null);
+
+        payloadInputTextArea.value = '\\"; xss(); //;';
         payloadInputTextArea.dispatchEvent(new Event('input'));
         await whenStableDetectChanges(fixture);
 

@@ -87,7 +87,7 @@ export class PayloadProcessors {
   }
 
   jsChallengeLikeLiterally(payload) {
-    const encodedPayload =
+    const jsEscapedPayload =
       [...payload]
       .map(char => {
         switch (char) {
@@ -98,13 +98,35 @@ export class PayloadProcessors {
           case '\'':
             return '\\\'';
           case '`':
-            return '\\`'
+            return '\\`';
         }
         return char;
       })
       .join('');
     return 'var outputElement = document.createElement(\'div\');\n'
-        + 'outputElement.textContent = `' + encodedPayload + '`;\n'
+        + 'outputElement.textContent = `' + jsEscapedPayload + '`;\n'
+        + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
+  }
+
+  jsChallengeTheGreatEscape(payload) {
+    const jsEscapedPayload =
+      [...payload]
+      .map(char => {
+        switch (char) {
+          case '"':
+            return '\\"';
+          case '\'':
+            return '\\\'';
+          case '`':
+            return '\\`';
+            case '$':
+              return '\\$';
+        }
+        return char;
+      })
+      .join('');
+    return 'var outputElement = document.createElement(\'div\');\n'
+        + 'outputElement.textContent = "' + jsEscapedPayload + '";\n'
         + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
   }
 
