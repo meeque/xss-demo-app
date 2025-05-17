@@ -303,9 +303,6 @@ describe('Xss Demo App', async () => {
       'NgIframeSrcTrusted':       [                                                                                                                                                                                             'javascript URL for parent', 'URL resource content'],
     },
 
-    Css: {
-    },
-
     JavaScript: {
       'DomScriptBlockStringLiteralDq': [                                                      'JS code breaking "string" literal'                                                                                                                                                                                                                                                                                                                                                                                                                                         ],
       'DomScriptBlockStringLiteralSq': [                                                                                           'JS code breaking \'string\' literal'                                                                                                                                                                                                                                                                                                                                                                                                  ],
@@ -323,21 +320,6 @@ describe('Xss Demo App', async () => {
 
 
   const payloadTestsByContextAndOutput: {[context: string]: { [output: string]: () => Promise<void> }} = {
-
-    HtmlContent: {
-    },
-
-    HtmlAttribute: {
-    },
-
-    Url: {
-    },
-
-    Css: {
-    },
-
-    JavaScript: {
-    },
 
     null: {
       'DoubleTrouble': async () => {
@@ -446,7 +428,9 @@ describe('Xss Demo App', async () => {
 
       for (const outputDescriptor of outputCollection.items) {
 
-        const presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[String(outputCollection.context)][outputDescriptor.id]);
+        const rawPresetTestConfigs = presetsTestConfigsByContextAndOutput[String(outputCollection.context)] || {};
+        const presetTestConfigs = DefaultPresetTestConfig.fromRaw(rawPresetTestConfigs[outputDescriptor.id]);
+        const payloadTests = payloadTestsByContextAndOutput[String(outputCollection.context)] || {};
 
         describe('and payload output "' + outputDescriptor.name + '"', () => {
 
@@ -511,7 +495,7 @@ describe('Xss Demo App', async () => {
             });
           }
 
-          const payloadTest = payloadTestsByContextAndOutput[String(outputCollection.context)][outputDescriptor.id];
+          const payloadTest = payloadTests[outputDescriptor.id];
           if (payloadTest) {
             it('should pass test with custom payload', async () => {
               payloadInputTextArea.value = '';
