@@ -1,16 +1,14 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { timeout, domTreeAvailable, whenStableDetectChanges} from './lib.spec';
 
-import { XssContext } from '../app/xss-demo.common';
 import { xssDemoConfig } from '../app/xss-demo.config';
 import { PayloadPresetService } from '../app/payload-preset.service';
 import { PayloadOutputQuality, PayloadOutputService } from '../app/payload-output.service';
 import { XssDemoComponent } from '../app/xss-demo.component';
 
 
-interface PresetTestConfig {
-  readonly presetName: string;
-  readonly skip?: boolean;
+
+interface TestConfig {
   readonly setup?: () => Promise<void>;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
@@ -19,7 +17,7 @@ interface PresetTestConfig {
   readonly timeout?: number;
 }
 
-interface EnhancedPresetTestConfig extends PresetTestConfig {
+interface EnhancedTestConfig extends TestConfig {
   isSkip(): boolean;
   doSetup(): Promise<void>;
   doTrigger(): Promise<void>;
@@ -29,12 +27,18 @@ interface EnhancedPresetTestConfig extends PresetTestConfig {
   getTimeout(): number;
 }
 
-class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
+class DefaultTestConfig implements EnhancedTestConfig {
 
   private static defaultTimeout = 200;
 
-  readonly presetName: string;
-  readonly skip?: boolean;
+  static fromRaw<T,C>(configs: (string | T)[], cnstrctr: new (data: (string | T)) => C ): C[] {
+    return (configs || []).map(config => new cnstrctr(config));
+  }
+
+  static hasAnyXss(configs: EnhancedTestConfig[]): boolean {
+    return null != (configs || []).find((config) => config.isExpectXss());
+  }
+
   readonly setup?: () => Promise<void>;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
@@ -42,34 +46,8 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
   readonly cleanup?: () => Promise<void>;
   readonly timeout?: number;
 
-  static fromRaw(configs: (string | PresetTestConfig)[]): EnhancedPresetTestConfig[] {
-    return (configs || []).map(config => new DefaultPresetTestConfig(config));
-  }
-
-  static hasAnyXss(configs: PresetTestConfig[]): boolean {
-    return null != (configs || []).find((config) => config.expectXss !== false);
-  }
-
-  static getByName(configs: EnhancedPresetTestConfig[], name: string): EnhancedPresetTestConfig {
-    return (configs || []).find((config) => config.presetName === name);
-  }
-
-  static getByNameOrDefault(configs: EnhancedPresetTestConfig[], name: string): EnhancedPresetTestConfig {
-    return DefaultPresetTestConfig.getByName(configs, name) || new DefaultPresetTestConfig({presetName: name, expectXss: false});
-  }
-
-  constructor(config: string | PresetTestConfig) {
-    if (typeof config === 'object') {
-      Object.assign(this, config);
-    } else if (typeof config === 'string') {
-      this.presetName = config;
-    } else {
-      throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
-    }
-  }
-
   public isSkip(): boolean {
-    return this.skip === true;
+    return false;
   }
 
   public async doSetup(): Promise<void> {
@@ -107,8 +85,71 @@ class DefaultPresetTestConfig implements EnhancedPresetTestConfig {
   }
 }
 
-interface PresetTestConfigFactory {
-  [config: string]: (presetName: string, expectXss?: boolean) => EnhancedPresetTestConfig;
+interface TestConfigFactory<T> {
+  [config: string]: (name: string, expectXss?: boolean) => T;
+}
+
+
+
+interface PresetTestConfig extends TestConfig {
+  readonly presetName: string;
+  readonly skip?: boolean;
+}
+
+interface EnhancedPresetTestConfig extends PresetTestConfig, EnhancedTestConfig {
+}
+
+class DefaultPresetTestConfig extends DefaultTestConfig implements EnhancedPresetTestConfig {
+
+  static getByName(configs: EnhancedPresetTestConfig[], name: string): EnhancedPresetTestConfig {
+    return (configs || []).find((config) => config.presetName === name);
+  }
+
+  static getByNameOrDefault(configs: EnhancedPresetTestConfig[], name: string): EnhancedPresetTestConfig {
+    return DefaultPresetTestConfig.getByName(configs, name) || new DefaultPresetTestConfig({presetName: name, expectXss: false});
+  }
+
+  readonly presetName: string;
+  readonly skip?: boolean;
+
+  constructor(config: string | PresetTestConfig) {
+    super();
+    if (typeof config === 'object') {
+      Object.assign(this, config);
+    } else if (typeof config === 'string') {
+      this.presetName = config;
+    } else {
+      throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
+    }
+  }
+
+  public override isSkip(): boolean {
+    return this.skip === true;
+  }
+}
+
+class DefaultPayloadTestConfig extends DefaultTestConfig implements EnhancedPayloadTestConfig {
+
+  readonly payload: string;
+
+  constructor(config: string | PayloadTestConfig) {
+    super();
+    if (typeof config === 'object') {
+      Object.assign(this, config);
+    } else if (typeof config === 'string') {
+      this.payload = config;
+    } else {
+      throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
+    }
+  }
+}
+
+
+interface PayloadTestConfig extends TestConfig {
+  readonly payload: string;
+}
+
+interface EnhancedPayloadTestConfig extends PayloadTestConfig, EnhancedTestConfig {
 }
 
 
@@ -131,7 +172,7 @@ describe('Xss Demo App', async () => {
 
 
 
-  const cf: PresetTestConfigFactory = {
+  const cf: TestConfigFactory<EnhancedPresetTestConfig> = {
 
     clickLink: (name: string, expectXss = true) => {
       return new DefaultPresetTestConfig({
@@ -263,8 +304,6 @@ describe('Xss Demo App', async () => {
     }
   }
 
-
-
   const presetsTestConfigsByContextAndOutput: {[context: string]: { [output: string]: (string|EnhancedPresetTestConfig)[] }} = {
 
     HtmlContent: {
@@ -319,72 +358,24 @@ describe('Xss Demo App', async () => {
 
 
 
-  const payloadTestsByContextAndOutput: {[context: string]: { [output: string]: () => Promise<void> }} = {
+  const cf2: TestConfigFactory<EnhancedPayloadTestConfig> = {
+
+    default: (payload: string, expectXss = true) => {
+      return new DefaultPayloadTestConfig({
+        payload: payload,
+        expectXss
+      });
+    }
+
+  }
+
+  const payloadTestConfigsByContextAndOutput: {[context: string]: { [output: string]: (string|EnhancedPayloadTestConfig)[] }} = {
 
     null: {
-      'DoubleTrouble': async () => {
-        await timeout(200);
-        expect(alertOverlay.querySelector('.alert-xss-triggered'))
-          .withContext('show XSS alert message')
-          .toEqual(null);
-
-        payloadInputTextArea.value = '&lt;img src="." onerror="xss()"&gt;';
-        payloadInputTextArea.dispatchEvent(new Event('input'));
-        await whenStableDetectChanges(fixture);
-
-        await timeout(200);
-        expect(alertOverlay.querySelector('.alert-xss-triggered'))
-          .withContext('show XSS alert message')
-          .toEqual(jasmine.anything());
-      },
-
-      'WhatsLeft': async () => {
-        await timeout(200);
-        expect(alertOverlay.querySelector('.alert-xss-triggered'))
-          .withContext('show XSS alert message')
-          .toEqual(null);
-
-        payloadInputTextArea.value = '<im<br>g src="." onerror="xss()">';
-        payloadInputTextArea.dispatchEvent(new Event('input'));
-        await whenStableDetectChanges(fixture);
-
-        await timeout(200);
-        expect(alertOverlay.querySelector('.alert-xss-triggered'))
-          .withContext('show XSS alert message')
-          .toEqual(jasmine.anything());
-      },
-
-      'LikeLiterally': async () => {
-        await timeout(200);
-        expect(alertOverlay.querySelector('.alert-xss-triggered'))
-          .withContext('show XSS alert message')
-          .toEqual(null);
-
-        payloadInputTextArea.value = '${xss()}';
-        payloadInputTextArea.dispatchEvent(new Event('input'));
-        await whenStableDetectChanges(fixture);
-
-        await timeout(200);
-        expect(alertOverlay.querySelector('.alert-xss-triggered'))
-          .withContext('show XSS alert message')
-          .toEqual(jasmine.anything());
-      },
-
-      'TheGreatEscape': async () => {
-        await timeout(200);
-        expect(alertOverlay.querySelector('.alert-xss-triggered'))
-          .withContext('show XSS alert message')
-          .toEqual(null);
-
-        payloadInputTextArea.value = '\\"; xss(); //;';
-        payloadInputTextArea.dispatchEvent(new Event('input'));
-        await whenStableDetectChanges(fixture);
-
-        await timeout(200);
-        expect(alertOverlay.querySelector('.alert-xss-triggered'))
-          .withContext('show XSS alert message')
-          .toEqual(jasmine.anything());
-      }
+      DoubleTrouble:  ['&lt;img src="." onerror="xss()"&gt;', cf2.default('<img src="." onerror="xss()">', false)],
+      WhatsLeft:      ['<im<br>g src="." onerror="xss()">'],
+      LikeLiterally:  ['${xss()}'],
+      TheGreatEscape: ['\\"; xss(); //;'],
     }
   }
 
@@ -429,8 +420,10 @@ describe('Xss Demo App', async () => {
       for (const outputDescriptor of outputCollection.items) {
 
         const rawPresetTestConfigs = presetsTestConfigsByContextAndOutput[String(outputCollection.context)] || {};
-        const presetTestConfigs = DefaultPresetTestConfig.fromRaw(rawPresetTestConfigs[outputDescriptor.id]);
-        const payloadTests = payloadTestsByContextAndOutput[String(outputCollection.context)] || {};
+        const presetTestConfigs = DefaultTestConfig.fromRaw(rawPresetTestConfigs[outputDescriptor.id], DefaultPresetTestConfig);
+
+        const rawPayloadTestConfigs = payloadTestConfigsByContextAndOutput[String(outputCollection.context)] || {};
+        const payloadTestConfigs = DefaultTestConfig.fromRaw(rawPayloadTestConfigs[outputDescriptor.id], DefaultPayloadTestConfig);
 
         describe('and payload output "' + outputDescriptor.name + '"', () => {
 
@@ -447,6 +440,10 @@ describe('Xss Demo App', async () => {
             });
 
           }
+
+
+
+          // payload output tests based on payload presets
 
           for (const presetCollection of presetCollections) {
 
@@ -495,12 +492,37 @@ describe('Xss Demo App', async () => {
             });
           }
 
-          const payloadTest = payloadTests[outputDescriptor.id];
-          if (payloadTest) {
-            it('should pass test with custom payload', async () => {
-              payloadInputTextArea.value = '';
-              await selectInputOutput(null, null, outputCollection.name, outputDescriptor.name);
-              return payloadTest();
+
+
+          // payload output tests based on custom test payload
+
+          for (const payloadTestConfig of payloadTestConfigs) {
+
+            const expectXss = payloadTestConfig.isExpectXss();
+
+            describe('with test payload "' + payloadTestConfig.payload + '"', () => {
+
+              it(
+                'should '
+                  + (expectXss ? '' : 'NOT ')
+                  + 'trigger XSS',
+                async () => {
+                  payloadInputTextArea.value = '';
+                  await selectInputOutput(null, null, outputCollection.name, outputDescriptor.name);
+                  expect(alertOverlay.querySelector('.alert-xss-triggered'))
+                    .withContext('show XSS alert message')
+                    .toEqual(null);
+
+                  payloadInputTextArea.value = payloadTestConfig.payload;
+                  payloadInputTextArea.dispatchEvent(new Event('input'));
+                  await whenStableDetectChanges(fixture);
+
+                  await timeout(200);
+                  expect(alertOverlay.querySelector('.alert-xss-triggered'))
+                    .withContext('show XSS alert message')
+                    .toEqual(expectXss ? jasmine.anything() : null);
+                }
+              );
             });
           }
         });
