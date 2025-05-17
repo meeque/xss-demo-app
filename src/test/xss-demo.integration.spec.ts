@@ -423,80 +423,86 @@ describe('Xss Demo App', async () => {
 
     const presetCollections = payloadPresetServiceStub.descriptors.filter(descriptor => descriptor.context == outputCollection.context);
 
-    for (const outputDescriptor of outputCollection.items) {
+    describe('output context "' + outputCollection.context + '" collection  "' + outputCollection.name + '"', () => {
 
-      const presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[String(outputCollection.context)][outputDescriptor.id]);
+      for (const outputDescriptor of outputCollection.items) {
 
-      describe('"' + outputCollection.name + '" payload output "' + outputDescriptor.name + '"', () => {
+        const presetTestConfigs = DefaultPresetTestConfig.fromRaw(presetsTestConfigsByContextAndOutput[String(outputCollection.context)][outputDescriptor.id]);
 
-        if(DefaultPresetTestConfig.hasAnyXss(presetTestConfigs)) {
+        describe('payload output "' + outputDescriptor.name + '"', () => {
 
-          it('should not be marked as "Recommended"', () => {
-            expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
-          });
+          if(DefaultPresetTestConfig.hasAnyXss(presetTestConfigs)) {
 
-        } else {
+            it('should not be marked as "Recommended"', () => {
+              expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
+            });
 
-          it('should not be marked as "Insecure"', () => {
-            expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Insecure);
-          });
+          } else {
 
-        }
+            it('should not be marked as "Insecure"', () => {
+              expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Insecure);
+            });
 
-        for (const presetCollection of presetCollections) {
+          }
 
-          for (const presetDescriptor of presetCollection.items) {
+          for (const presetCollection of presetCollections) {
 
-            const presetTestConfig = DefaultPresetTestConfig.getByNameOrDefault(presetTestConfigs, presetDescriptor.name);
-            if (presetTestConfig.isSkip()) {
-              continue;
-            }
-            const expectXss = presetTestConfig.isExpectXss();
+            describe('with preset context "' + presetCollection.context + '" collection "' + presetCollection.name + '"', () => {
 
-            describe('with "' + presetCollection.name + '" payload preset "' + presetDescriptor.name + '"', () => {
+              for (const presetDescriptor of presetCollection.items) {
 
-              it(
-                'should '
-                  + (expectXss ? '' : 'NOT ')
-                  + 'trigger XSS'
-                  + (presetTestConfig.trigger ? ' with custom trigger' : '')
-                  + (presetTestConfig.expect ? ' with custom expectation' : ''),
-                async () => {
-                  await presetTestConfig.doSetup();
-                  const xssPromise = nextXssPromise();
-                  await selectInputOutput(presetCollection.name, presetTestConfig.presetName, outputCollection.name, outputDescriptor.name);
-                  const triggerPromise = presetTestConfig.doTrigger();
-                  const timeoutPromise = timeout(presetTestConfig.getTimeout(), false);
-                  await expectAsync(Promise.race([xssPromise, timeoutPromise]))
-                    .withContext('call xss() probe before timeout')
-                    .toBeResolvedTo(expectXss);
-
-                  expect(alertOverlay.querySelector('.alert-xss-triggered'))
-                    .withContext('show XSS alert message')
-                    .toEqual(expectXss ? jasmine.anything() : null);
-
-                  await expectAsync(presetTestConfig.doExpect())
-                    .withContext('custom expectations')
-                    .toBeResolved();
-
-                  const cleanupPromise = presetTestConfig.doCleanup();
-                  await Promise.all([timeoutPromise, triggerPromise, cleanupPromise, whenStableDetectChanges(fixture)]);
+                const presetTestConfig = DefaultPresetTestConfig.getByNameOrDefault(presetTestConfigs, presetDescriptor.name);
+                if (presetTestConfig.isSkip()) {
+                  continue;
                 }
-              );
+                const expectXss = presetTestConfig.isExpectXss();
+
+                describe('payload preset "' + presetDescriptor.name + '"', () => {
+
+                  it(
+                    'should '
+                      + (expectXss ? '' : 'NOT ')
+                      + 'trigger XSS'
+                      + (presetTestConfig.trigger ? ' with custom trigger' : '')
+                      + (presetTestConfig.expect ? ' with custom expectation' : ''),
+                    async () => {
+                      await presetTestConfig.doSetup();
+                      const xssPromise = nextXssPromise();
+                      await selectInputOutput(presetCollection.name, presetTestConfig.presetName, outputCollection.name, outputDescriptor.name);
+                      const triggerPromise = presetTestConfig.doTrigger();
+                      const timeoutPromise = timeout(presetTestConfig.getTimeout(), false);
+                      await expectAsync(Promise.race([xssPromise, timeoutPromise]))
+                        .withContext('call xss() probe before timeout')
+                        .toBeResolvedTo(expectXss);
+
+                      expect(alertOverlay.querySelector('.alert-xss-triggered'))
+                        .withContext('show XSS alert message')
+                        .toEqual(expectXss ? jasmine.anything() : null);
+
+                      await expectAsync(presetTestConfig.doExpect())
+                        .withContext('custom expectations')
+                        .toBeResolved();
+
+                      const cleanupPromise = presetTestConfig.doCleanup();
+                      await Promise.all([timeoutPromise, triggerPromise, cleanupPromise, whenStableDetectChanges(fixture)]);
+                    }
+                  );
+                });
+              }
             });
           }
-        }
 
-        const payloadTest = payloadTestsByContextAndOutput[String(outputCollection.context)][outputDescriptor.id];
-        if (payloadTest) {
-          it('should pass test with custom payload', async () => {
-            payloadInputTextArea.value = '';
-            await selectInputOutput(null, null, outputCollection.name, outputDescriptor.name);
-            return payloadTest();
-          });
-        }
-      });
-    }
+          const payloadTest = payloadTestsByContextAndOutput[String(outputCollection.context)][outputDescriptor.id];
+          if (payloadTest) {
+            it('should pass test with custom payload', async () => {
+              payloadInputTextArea.value = '';
+              await selectInputOutput(null, null, outputCollection.name, outputDescriptor.name);
+              return payloadTest();
+            });
+          }
+        });
+      }
+    });
   }
 
   async function selectInputOutput(inputContext: string, inputName: string, outputContext: string, outputName: string): Promise<void> {
