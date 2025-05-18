@@ -2,7 +2,7 @@
 set -e -o pipefail
 
 echo 'XSS Demo: Running certificate helper script...'
-xss_demo_tls_dir="$( realpath --relative-to '.' "$(dirname "$0")" )"
+xss_demo_tls_dir="$( realpath "$(dirname "$0")" )"
 cd "${xss_demo_tls_dir}"
 
 echo 'XSS Demo: Setting up "tls/private" dir for private keys...'
