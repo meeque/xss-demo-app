@@ -3,9 +3,8 @@ import { timeout, domTreeAvailable, whenStableDetectChanges} from './lib.spec';
 
 import { xssDemoConfig } from '../app/xss-demo.config';
 import { PayloadPresetService } from '../app/payload-preset.service';
-import { PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputService } from '../app/payload-output.service';
+import { PayloadOutputQuality, PayloadOutputService } from '../app/payload-output.service';
 import { XssDemoComponent } from '../app/xss-demo.component';
-import { XssContextCollection } from '../app/xss-demo.common';
 
 
 
