@@ -21,4 +21,10 @@ else
     echo 'XSS Demo: Successfully generated key pair and certificate for development and testing purposes.'
 fi
 
+echo 'XSS Demo: Certificate fingerprints:'
+echo -n 'XSS Demo: '
+openssl x509 -in xss-dev.cert.pem -noout -fingerprint -sha1
+echo -n 'XSS Demo: '
+openssl x509 -in xss-dev.cert.pem -noout -fingerprint -sha256
+
 echo 'XSS Demo: Certificate helper script done.'
