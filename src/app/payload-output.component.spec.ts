@@ -1,4 +1,4 @@
-import { Component, ComponentRef, input } from '@angular/core';
+import { Component, ComponentRef } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 
@@ -39,6 +39,7 @@ describe('PayloadOutputComponent', () => {
   let componentRef: ComponentRef<PayloadOutputComponent>;
   let component : PayloadOutputComponent;
   let element : HTMLElement;
+  let changeCallbackSpy : jasmine.Spy;
 
 
   const mockDescriptors: MockPayloadOutputDescriptors = {
@@ -114,6 +115,9 @@ describe('PayloadOutputComponent', () => {
     fixture.componentRef.setInput('outputDescriptor', mockDescriptors.foo);
     fixture.autoDetectChanges();
     await whenStableDetectChanges(fixture);
+
+    changeCallbackSpy = jasmine.createSpy('on change event', () => {});
+    component.change.subscribe(changeCallbackSpy);
   });
 
   describe('initially', () => {
@@ -131,7 +135,7 @@ describe('PayloadOutputComponent', () => {
     });
 
     it('should have a view with empty payload', () => {
-      expectComponentView(mockDescriptors.foo, '');
+      expectComponentView(mockDescriptors.foo, '', 0);
     });
   });
 
@@ -180,9 +184,13 @@ describe('PayloadOutputComponent', () => {
 
         it('should reflect payload changes', async () => {
           await setDescriptor(mockDescriptor);
+          expectComponentView(mockDescriptor, '', null);
 
           await setPayload('plain text');
           expectComponentView(mockDescriptor, 'plain text');
+
+          await setPayload('plain tet');
+          expectComponentView(mockDescriptor, 'plain tet');
 
           await setPayload('<img src="ufrvnrty" onerror="console.log(\'xss\')">');
           expectComponentView(mockDescriptor, '<img src="ufrvnrty" onerror="console.log(\'xss\')">');
@@ -218,7 +226,7 @@ describe('PayloadOutputComponent', () => {
       queryAndExpectAutoUpdateToggle().click();
       await whenStableDetectChanges(fixture);
       expect(component.autoUpdate()).toBe(false);
-      expectComponentView(mockDescriptors.foo, 'ye olde payload');
+      expectComponentView(mockDescriptors.foo, 'ye olde payload', 0);
 
       await setDescriptor(mockDescriptors.bar);
       expectComponentView(mockDescriptors.bar, 'ye olde payload');
@@ -231,28 +239,28 @@ describe('PayloadOutputComponent', () => {
     });
 
     it('should reflect a mix of automatic changes of output and manual changes of payload', async () => {
-      expectComponentView(mockDescriptors.foo, '');
+      expectComponentView(mockDescriptors.foo, '', 0);
 
       queryAndExpectAutoUpdateToggle().click();
       await whenStableDetectChanges(fixture);
       expect(component.autoUpdate()).toBe(false);
-      expectComponentView(mockDescriptors.foo, '');
+      expectComponentView(mockDescriptors.foo, '', 0);
 
       await setPayload('f');
-      expectComponentView(mockDescriptors.foo, '');
+      expectComponentView(mockDescriptors.foo, '', 0);
 
       await setPayload('fo');
-      expectComponentView(mockDescriptors.foo, '');
+      expectComponentView(mockDescriptors.foo, '', 0);
 
       await setPayload('foo');
-      expectComponentView(mockDescriptors.foo, '');
+      expectComponentView(mockDescriptors.foo, '', 0);
 
       queryAndExpectUpdateNowLink(true).click();
       await whenStableDetectChanges(fixture);
       expectComponentView(mockDescriptors.foo, 'foo');
 
       await setPayload('foo bar');
-      expectComponentView(mockDescriptors.foo, 'foo');
+      expectComponentView(mockDescriptors.foo, 'foo', 0);
 
       await setDescriptor(mockDescriptors.qux);
       expectComponentView(mockDescriptors.qux, 'foo bar');
@@ -265,24 +273,24 @@ describe('PayloadOutputComponent', () => {
       expectComponentView(mockDescriptors.baz, 'foo bar');
 
       await setPayload('And Now for Something Completely Different');
-      expectComponentView(mockDescriptors.baz, 'foo bar');
+      expectComponentView(mockDescriptors.baz, 'foo bar', 0);
 
       queryAndExpectUpdateNowLink(true).click();
       await whenStableDetectChanges(fixture);
       expectComponentView(mockDescriptors.baz, 'And Now for Something Completely Different');
 
       await setPayload('Here be <img src="sdgt" onerror="console.log(\'xss\')">');
-      expectComponentView(mockDescriptors.baz, 'And Now for Something Completely Different');
+      expectComponentView(mockDescriptors.baz, 'And Now for Something Completely Different', 0);
 
       await setDescriptor(mockDescriptors.bar);
       expectComponentView(mockDescriptors.bar, 'Here be <img src="sdgt" onerror="console.log(\'xss\')">');
 
       await setPayload('We\'re done here! Let\'s go back to auto update...');
-      expectComponentView(mockDescriptors.bar, 'Here be <img src="sdgt" onerror="console.log(\'xss\')">');
+      expectComponentView(mockDescriptors.bar, 'Here be <img src="sdgt" onerror="console.log(\'xss\')">', 0);
 
       queryAndExpectAutoUpdateToggle().click();
       await whenStableDetectChanges(fixture);
-      expectComponentView(mockDescriptors.bar, 'We\'re done here! Let\'s go back to auto update...');
+      expectComponentView(mockDescriptors.bar, 'We\'re done here! Let\'s go back to auto update...', 2);
     });
 
     for (const mockDescriptor of Object.values(mockDescriptors)) {
@@ -293,23 +301,23 @@ describe('PayloadOutputComponent', () => {
           queryAndExpectAutoUpdateToggle().click();
           expect(component.autoUpdate()).toBe(false);
           await setDescriptor(mockDescriptor);
-          expectComponentView(mockDescriptor, '');
+          expectComponentView(mockDescriptor, '', null);
 
           await setPayload('let\'s enter some payload ...');
-          expectComponentView(mockDescriptor, '');
+          expectComponentView(mockDescriptor, '', 0);
 
           await setPayload('let\'s enter some payload without updating the output');
-          expectComponentView(mockDescriptor, '');
+          expectComponentView(mockDescriptor, '', 0);
 
           await setPayload('next, let\'s update the output manually');
-          expectComponentView(mockDescriptor, '');
+          expectComponentView(mockDescriptor, '', 0);
 
           queryAndExpectUpdateNowLink(true).click();
           await whenStableDetectChanges(fixture);
           expectComponentView(mockDescriptor, 'next, let\'s update the output manually');
 
           await setPayload('now, let\'s change the payload again');
-          expectComponentView(mockDescriptor, 'next, let\'s update the output manually');
+          expectComponentView(mockDescriptor, 'next, let\'s update the output manually', 0);
 
           queryAndExpectUpdateNowLink(true).click();
           await whenStableDetectChanges(fixture);
@@ -320,7 +328,7 @@ describe('PayloadOutputComponent', () => {
           queryAndExpectAutoUpdateToggle().click();
           expect(component.autoUpdate()).toBe(false);
           await setDescriptor(mockDescriptor);
-          expectComponentView(mockDescriptor, '');
+          expectComponentView(mockDescriptor, '', null);
 
           const reloadSpy = spyOn(component._liveOutputComponent.instance, 'reload').and.callThrough();
 
@@ -331,11 +339,11 @@ describe('PayloadOutputComponent', () => {
           reloadSpy.calls.reset();
 
           await setPayload('foo');
-          expectComponentView(mockDescriptor, '');
+          expectComponentView(mockDescriptor, '', 0);
           expect(reloadSpy).not.toHaveBeenCalled();
 
           await setPayload('foo bar');
-          expectComponentView(mockDescriptor, '');
+          expectComponentView(mockDescriptor, '', 0);
           expect(reloadSpy).not.toHaveBeenCalled();
 
           queryAndExpectUpdateNowLink(true).click();
@@ -351,7 +359,7 @@ describe('PayloadOutputComponent', () => {
 
           queryAndExpectAutoUpdateToggle().click();
           await whenStableDetectChanges(fixture);
-          expectComponentView(mockDescriptor, 'foo bar');
+          expectComponentView(mockDescriptor, 'foo bar', 2);
           expect(reloadSpy).toHaveBeenCalled();
           reloadSpy.calls.reset();
         });
@@ -372,7 +380,7 @@ describe('PayloadOutputComponent', () => {
     await whenStableDetectChanges(fixture);
   }
 
-  function expectComponentView(descriptor: MockPayloadOutputDescriptor, expectedOutput?: string) {
+  function expectComponentView(descriptor: MockPayloadOutputDescriptor, expectedOutput?: string, expectedChangeEvents=1) {
 
     let expectedOutputString = null;
     if (expectedOutput != null) {
@@ -392,6 +400,11 @@ describe('PayloadOutputComponent', () => {
     queryAndExpectTemplateComponentType(descriptor);
     queryAndExpectLiveOutput(expectedOutputString);
     queryAndExpectLiveSourceCode(expectedOutputString);
+
+    if (expectedChangeEvents != null) {
+      expect(changeCallbackSpy).toHaveBeenCalledTimes(expectedChangeEvents);
+    }
+    changeCallbackSpy.calls.reset();
   }
 
   function queryAndExpectTitle(descriptor: PayloadOutputDescriptor) {
@@ -512,7 +525,7 @@ describe('PayloadOutputComponent', () => {
     const liveOutputPanel = queryAndExpectLiveOutput();
     const updateNowLink = queryAndExpectOptional(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions span a');
 
-    if (expectItToExist !== undefined) {
+    if (expectItToExist != null) {
       expect(!!updateNowLink).withContext('Update Now link exists').toBe(expectItToExist);
     }
 
