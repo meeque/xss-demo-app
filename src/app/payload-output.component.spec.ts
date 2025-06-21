@@ -48,10 +48,13 @@ describe('PayloadOutputComponent', () => {
       name: 'Foo',
       title: 'Mock PayloadOutputDescriptor Foo',
       quality: PayloadOutputQuality.Insecure,
+      payloadProcessor: function removeAllX(payload) {
+        return payload.replaceAll('x', '').replaceAll('X', '');
+      },
       htmlSourceProvider: function divContent(payload) {
         return '<div>' + payload + '</div>';
       },
-      calculateExpectedOutput: input => `<div>${input}</div>`
+      calculateExpectedOutput: input => `<div>${input.replaceAll('x', '').replaceAll('X', '')}</div>`
     },
 
     bar: {
