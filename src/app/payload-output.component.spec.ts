@@ -225,9 +225,7 @@ describe('PayloadOutputComponent', () => {
       await setPayload('ye olde payload');
       expectComponentView(mockDescriptors.foo, 'ye olde payload');
 
-      queryAndExpectAutoUpdateToggle().click();
-      await whenStableDetectChanges(fixture);
-      expect(component.autoUpdate()).toBe(false);
+      await clickAndExpectAutoUpdateToggle(false);
       expectComponentView(mockDescriptors.foo, 'ye olde payload', 0);
 
       await setDescriptor(mockDescriptors.bar);
@@ -526,7 +524,7 @@ describe('PayloadOutputComponent', () => {
   }
 
   async function clickAndExpectAutoUpdateToggle(expectedToggleState?: boolean) {
-    queryAndExpectAutoUpdateToggle().click();
+    queryAndExpectAutoUpdateToggle(expectedToggleState == null ? null : !expectedToggleState).click();
     await whenStableDetectChanges(fixture);
     return queryAndExpectAutoUpdateToggle(expectedToggleState);
   }
