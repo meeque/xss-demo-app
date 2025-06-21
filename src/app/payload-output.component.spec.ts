@@ -211,14 +211,13 @@ describe('PayloadOutputComponent', () => {
   describe('view with manual update', () => {
 
     it('should toggle auto-update', async () => {
-      const autoUpdateToggle = queryAndExpectAutoUpdateToggle();
+      queryAndExpectAutoUpdateToggle(true);
+      queryAndExpectUpdateNowLink(false);
 
-      autoUpdateToggle.click();
-      expect(component.autoUpdate()).toBe(false);
+      await clickAndExpectAutoUpdateToggle(false);
       queryAndExpectUpdateNowLink(true);
 
-      autoUpdateToggle.click();
-      expect(component.autoUpdate()).toBe(true);
+      await clickAndExpectAutoUpdateToggle(true);
       queryAndExpectUpdateNowLink(false);
     });
 
@@ -244,9 +243,8 @@ describe('PayloadOutputComponent', () => {
     it('should reflect a mix of automatic changes of output and manual changes of payload', async () => {
       expectComponentView(mockDescriptors.foo, '', 0);
 
-      queryAndExpectAutoUpdateToggle().click();
+      await clickAndExpectAutoUpdateToggle(false);
       await whenStableDetectChanges(fixture);
-      expect(component.autoUpdate()).toBe(false);
       expectComponentView(mockDescriptors.foo, '', 0);
 
       await setPayload('f');
@@ -291,7 +289,7 @@ describe('PayloadOutputComponent', () => {
       await setPayload('We\'re done here! Let\'s go back to auto update...');
       expectComponentView(mockDescriptors.bar, 'Here be <img src="sdgt" onerror="console.log(\'xss\')">', 0);
 
-      queryAndExpectAutoUpdateToggle().click();
+      await clickAndExpectAutoUpdateToggle(true);
       await whenStableDetectChanges(fixture);
       expectComponentView(mockDescriptors.bar, 'We\'re done here! Let\'s go back to auto update...', 2);
     });
@@ -301,8 +299,7 @@ describe('PayloadOutputComponent', () => {
       describe('with descriptor "' + mockDescriptor.id + '"', () => {
 
         it('should only reflect payload changes after manual update', async () => {
-          queryAndExpectAutoUpdateToggle().click();
-          expect(component.autoUpdate()).toBe(false);
+          await clickAndExpectAutoUpdateToggle(false);
           await setDescriptor(mockDescriptor);
           expectComponentView(mockDescriptor, '', null);
 
@@ -328,8 +325,7 @@ describe('PayloadOutputComponent', () => {
         });
 
         it('should reload live output on manual update, even when payload has not changed', async () => {
-          queryAndExpectAutoUpdateToggle().click();
-          expect(component.autoUpdate()).toBe(false);
+          await clickAndExpectAutoUpdateToggle(false);
           await setDescriptor(mockDescriptor);
           expectComponentView(mockDescriptor, '', null);
 
@@ -360,8 +356,7 @@ describe('PayloadOutputComponent', () => {
           expect(reloadSpy).toHaveBeenCalled();
           reloadSpy.calls.reset();
 
-          queryAndExpectAutoUpdateToggle().click();
-          await whenStableDetectChanges(fixture);
+          await clickAndExpectAutoUpdateToggle(true);
           expectComponentView(mockDescriptor, 'foo bar', 2);
           expect(reloadSpy).toHaveBeenCalled();
           reloadSpy.calls.reset();
@@ -519,17 +514,29 @@ describe('PayloadOutputComponent', () => {
     return panel;
   }
 
-  function queryAndExpectAutoUpdateToggle() {
+  function queryAndExpectAutoUpdateToggle(expectedToggleState?: boolean) {
     const liveOutputPanel = queryAndExpectLiveOutput();
-    return queryAndExpectOne(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions label input[type=checkbox]');
+    const toggle = queryAndExpectOne(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions label input[type=checkbox]') as HTMLInputElement;
+    expect(toggle.type).toBe('checkbox');
+    expect(toggle.checked).toBe(component.autoUpdate());
+    if (expectedToggleState != null) {
+      expect(toggle.checked).toBe(expectedToggleState);
+    }
+    return toggle;
   }
 
-  function queryAndExpectUpdateNowLink(expectItToExist?: boolean) {
+  async function clickAndExpectAutoUpdateToggle(expectedToggleState?: boolean) {
+    queryAndExpectAutoUpdateToggle().click();
+    await whenStableDetectChanges(fixture);
+    return queryAndExpectAutoUpdateToggle(expectedToggleState);
+  }
+
+  function queryAndExpectUpdateNowLink(expectLinkToExist?: boolean) {
     const liveOutputPanel = queryAndExpectLiveOutput();
     const updateNowLink = queryAndExpectOptional(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions span a');
 
-    if (expectItToExist != null) {
-      expect(!!updateNowLink).withContext('Update Now link exists').toBe(expectItToExist);
+    if (expectLinkToExist != null) {
+      expect(!!updateNowLink).withContext('Update Now link exists').toBe(expectLinkToExist);
     }
 
     return updateNowLink;
