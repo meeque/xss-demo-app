@@ -44,7 +44,7 @@ describe('PayloadOutputComponent', () => {
 
   const mockDescriptors: MockPayloadOutputDescriptors = {
     /**
-     * A Payload Output that removes all x characters.
+     * A payload output that removes all x characters.
      * Useful for testing update behavior where the input payload changes, but the output payload does not.
      */
     foo: {
@@ -366,37 +366,26 @@ describe('PayloadOutputComponent', () => {
           await setDescriptor(mockDescriptor);
           expectComponentView(mockDescriptor, '', null);
 
-          const reloadSpy = spyOn(component._liveOutputComponent.instance, 'reload').and.callThrough();
-
           queryAndExpectUpdateNowLink(true).click();
           await whenStableDetectChanges(fixture);
           expectComponentView(mockDescriptor, '');
-          expect(reloadSpy).toHaveBeenCalled();
-          reloadSpy.calls.reset();
 
           await setPayload('foo');
           expectComponentView(mockDescriptor, '', 0);
-          expect(reloadSpy).not.toHaveBeenCalled();
 
           await setPayload('foo bar');
           expectComponentView(mockDescriptor, '', 0);
-          expect(reloadSpy).not.toHaveBeenCalled();
 
           queryAndExpectUpdateNowLink(true).click();
           await whenStableDetectChanges(fixture);
           expectComponentView(mockDescriptor, 'foo bar');
-          expect(reloadSpy).not.toHaveBeenCalled();
 
           queryAndExpectUpdateNowLink(true).click();
           await whenStableDetectChanges(fixture);
           expectComponentView(mockDescriptor, 'foo bar');
-          expect(reloadSpy).toHaveBeenCalled();
-          reloadSpy.calls.reset();
 
           await clickAndExpectAutoUpdateToggle(true);
           expectComponentView(mockDescriptor, 'foo bar');
-          expect(reloadSpy).toHaveBeenCalled();
-          reloadSpy.calls.reset();
         });
 
       });

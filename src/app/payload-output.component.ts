@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
 import { XssContext } from './xss-demo.common';
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
-import { LiveOutput, NonAngular } from './live-output.component';
+import { NonAngular } from './live-output.component';
 
 @Component({
     selector: 'payload-output',
@@ -26,10 +26,6 @@ export class PayloadOutputComponent implements AfterViewInit {
   payload = input('');
 
   readonly autoUpdate = model(true);
-  private lastEmittedOutputDescriptor = null;
-  private lastEmittedPayload = null;
-  private lastEmittedProcessedPayload = null;
-  private readonly outputPayload = signal('' as any);
   readonly liveSourceCode = signal('');
 
   showPayloadProcessor = true;
@@ -48,36 +44,13 @@ export class PayloadOutputComponent implements AfterViewInit {
   @ViewChild('liveOutputViewContainer', {read: ViewContainerRef})
   private _liveOutputViewContainer : ViewContainerRef;
 
-  _liveOutputComponent : ComponentRef<LiveOutput> = null;
+  lastOutputDescriptor : PayloadOutputDescriptor;
 
   constructor(private readonly _environmentInjector : EnvironmentInjector) {
 
     effect(
       () => {
-        const outputDescriptor = this.outputDescriptor();
-        untracked(() => this.switchLiveOutput(outputDescriptor));
-      }
-    );
-
-    effect(
-      () => this.updateOutputPayload()
-    );
-
-    effect(
-      () => {
-        const outputPayload = this.outputPayload();
-        if (this._liveOutputComponent) {
-          this._liveOutputComponent.setInput('outputPayload', outputPayload);
-        }
-      }
-    );
-
-    effect(
-      () => {
-        const autoUpdate = this.autoUpdate();
-        if (autoUpdate) {
-          untracked(() => this.updateOutputPayload(true));
-        }
+        this.updateOutput();
       }
     );
 
@@ -91,66 +64,49 @@ export class PayloadOutputComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.switchLiveOutput(this.outputDescriptor());
+    this.updateOutput(true);
   }
 
-  private processPayload(): any {
-    const payloadProcessor = this.outputDescriptor()?.payloadProcessor;
-    if (payloadProcessor) {
-      return payloadProcessor(this.payload());
-    }
-    return this.payload();
-  }
+  private updateOutput(force = false): void {
+    const descriptor = this.outputDescriptor();
+    const payload = this.processedPayload();
 
-  private switchLiveOutput(outputDescriptor: PayloadOutputDescriptor): void {
-    if (this._liveOutputViewContainer) {
-      this._liveOutputViewContainer.clear();
-      const liveOutputComponentType = outputDescriptor.templateComponentType || NonAngular;
-      this._liveOutputComponent = this._liveOutputViewContainer.createComponent(
-        liveOutputComponentType,
-        {
-          index: 0,
-          environmentInjector: this._environmentInjector,
-        }
-      );
+    // TODO always update when the descriptor has changed!
 
-      this._liveOutputComponent.setInput('outputDescriptor', this.outputDescriptor());
-      this._liveOutputComponent.setInput('outputPayload', this.outputPayload());
-      if (!this.autoUpdate()) {
-        this.updateOutputPayload(true);
+    if (force || this.autoUpdate() || this.lastOutputDescriptor != descriptor) {
+
+      this.lastOutputDescriptor = descriptor;
+      if (this._liveOutputViewContainer) {
+        this._liveOutputViewContainer.clear();
+        const liveOutputComponentType = descriptor.templateComponentType || NonAngular;
+        const liveOutputComponent = this._liveOutputViewContainer.createComponent(
+          liveOutputComponentType,
+          {
+            index: 0,
+            environmentInjector: this._environmentInjector,
+          }
+        );
+
+        liveOutputComponent.setInput('outputDescriptor', descriptor);
+        liveOutputComponent.setInput('outputPayload', payload);
       }
-    }
-  }
 
-  private updateOutputPayload(force?: boolean): void {
-    if (force === true || this.autoUpdate()) {
-      const descriptor = this.outputDescriptor();
-      const payload = this.payload();
-      const processedPayload = this.processPayload();
-      if (
-        this.lastEmittedOutputDescriptor != descriptor
-        ||
-        this.lastEmittedPayload != payload
-      ) {
-        this.outputPayload.set(processedPayload);
-
-        if (this.lastEmittedProcessedPayload == processedPayload) {
-          this._liveOutputComponent?.instance?.reload();
-        }
-
-        this.lastEmittedOutputDescriptor = descriptor;
-        this.lastEmittedPayload = payload;
-        this.lastEmittedProcessedPayload = processedPayload;
-      }
-      else if (force === true) {
-        this._liveOutputComponent?.instance?.reload();
-      }
       this.change.emit();
     }
   }
 
+  private processedPayload(): any {
+    const payloadProcessor = this.outputDescriptor()?.payloadProcessor;
+    const payload = this.payload();
+
+    if (payloadProcessor) {
+      return payloadProcessor(payload);
+    }
+    return payload;
+  }
+
   updateNow(): boolean {
-    this.updateOutputPayload(true);
+    this.updateOutput(true);
     return false;
   }
 }

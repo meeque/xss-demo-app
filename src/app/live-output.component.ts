@@ -8,7 +8,6 @@ export interface LiveOutput {
   outputDescriptor: InputSignal<PayloadOutputDescriptor>;
   outputPayload: InputSignal<any>;
   readonly payload: any ;
-  reload(): void;
 }
 
 export interface LiveOutputType extends Type<LiveOutput> {
@@ -28,9 +27,6 @@ export abstract class LiveOutputComponent implements LiveOutput {
   get payload() {
     return this.outputPayload();
   }
-
-  reload() {
-  };
 }
 
 
@@ -45,17 +41,9 @@ export class NonAngular extends LiveOutputComponent {
 
   constructor(private readonly _element: ElementRef) {
     super();
-
-    effect(() => {
-      this.doReload();
-    });
   }
 
-  override reload() {
-    this.doReload();
-  };
-
-  private doReload(): void {
+  ngAfterViewInit(): void {
     const payload = this.outputPayload();
     const descriptor = this.outputDescriptor();
     const element = this._element.nativeElement;
