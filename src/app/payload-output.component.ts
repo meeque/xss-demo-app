@@ -36,7 +36,7 @@ export class PayloadOutputComponent implements AfterViewInit {
   showLiveSourceCode = true;
 
   @Output()
-  change = new EventEmitter<void>(true);
+  update = new EventEmitter<void>(true);
 
   @ViewChild('liveOutputElement')
   private _liveOutputElement : ElementRef;
@@ -54,7 +54,7 @@ export class PayloadOutputComponent implements AfterViewInit {
       }
     );
 
-    this.change.subscribe(
+    this.update.subscribe(
       () => {
         this.liveSourceCode.set(
           this._liveOutputElement.nativeElement.querySelector('*').innerHTML
@@ -74,6 +74,7 @@ export class PayloadOutputComponent implements AfterViewInit {
     if (force || this.autoUpdate() || this.lastOutputDescriptor != descriptor) {
 
       this.lastOutputDescriptor = descriptor;
+
       if (this._liveOutputViewContainer) {
         this._liveOutputViewContainer.clear();
         const liveOutputComponentType = descriptor.templateComponentType || NonAngular;
@@ -89,7 +90,7 @@ export class PayloadOutputComponent implements AfterViewInit {
         liveOutputComponent.setInput('outputPayload', payload);
       }
 
-      this.change.emit();
+      this.update.emit();
     }
   }
 

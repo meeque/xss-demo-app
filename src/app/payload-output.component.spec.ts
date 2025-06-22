@@ -124,7 +124,7 @@ describe('PayloadOutputComponent', () => {
     await whenStableDetectChanges(fixture);
 
     changeCallbackSpy = jasmine.createSpy('on change event', () => {});
-    component.change.subscribe(changeCallbackSpy);
+    component.update.subscribe(changeCallbackSpy);
   });
 
   describe('initially', () => {
