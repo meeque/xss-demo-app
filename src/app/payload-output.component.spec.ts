@@ -43,6 +43,10 @@ describe('PayloadOutputComponent', () => {
 
 
   const mockDescriptors: MockPayloadOutputDescriptors = {
+    /**
+     * A Payload Output that removes all x characters.
+     * Useful for testing update behavior where the input payload changes, but the output payload does not.
+     */
     foo: {
       id: 'foo',
       name: 'Foo',
@@ -242,7 +246,6 @@ describe('PayloadOutputComponent', () => {
       expectComponentView(mockDescriptors.foo, '', 0);
 
       await clickAndExpectAutoUpdateToggle(false);
-      await whenStableDetectChanges(fixture);
       expectComponentView(mockDescriptors.foo, '', 0);
 
       await setPayload('f');
@@ -289,7 +292,43 @@ describe('PayloadOutputComponent', () => {
 
       await clickAndExpectAutoUpdateToggle(true);
       await whenStableDetectChanges(fixture);
-      expectComponentView(mockDescriptors.bar, 'We\'re done here! Let\'s go back to auto update...', 2);
+      expectComponentView(mockDescriptors.bar, 'We\'re done here! Let\'s go back to auto update...');
+    });
+
+    it('should reflect manual and automatic changes of input payload that do not change the output payload', async () => {
+      await setPayload('zyx');
+      expectComponentView(mockDescriptors.foo, 'zy');
+
+      await clickAndExpectAutoUpdateToggle(false);
+      expectComponentView(mockDescriptors.foo, 'zy', 0);
+
+      await setPayload('zyxx');
+      expectComponentView(mockDescriptors.foo, 'zy', 0);
+
+      await setPayload('zyxxx');
+      expectComponentView(mockDescriptors.foo, 'zy', 0);
+
+      await clickAndExpectAutoUpdateToggle(true);
+      expectComponentView(mockDescriptors.foo, 'zy');
+
+      await setPayload('zyx');
+      expectComponentView(mockDescriptors.foo, 'zy');
+
+      await clickAndExpectAutoUpdateToggle(false);
+      expectComponentView(mockDescriptors.foo, 'zy', 0);
+
+      await setPayload('xyz');
+      expectComponentView(mockDescriptors.foo, 'zy', 0);
+
+      queryAndExpectUpdateNowLink(true).click();
+      await whenStableDetectChanges(fixture);
+      expectComponentView(mockDescriptors.foo, 'yz');
+
+      await setPayload('xxxyz');
+      expectComponentView(mockDescriptors.foo, 'yz', 0);
+
+      await clickAndExpectAutoUpdateToggle(true);
+      expectComponentView(mockDescriptors.foo, 'yz');
     });
 
     for (const mockDescriptor of Object.values(mockDescriptors)) {
@@ -355,7 +394,7 @@ describe('PayloadOutputComponent', () => {
           reloadSpy.calls.reset();
 
           await clickAndExpectAutoUpdateToggle(true);
-          expectComponentView(mockDescriptor, 'foo bar', 2);
+          expectComponentView(mockDescriptor, 'foo bar');
           expect(reloadSpy).toHaveBeenCalled();
           reloadSpy.calls.reset();
         });
@@ -377,7 +416,6 @@ describe('PayloadOutputComponent', () => {
   }
 
   function expectComponentView(descriptor: MockPayloadOutputDescriptor, expectedOutput?: string, expectedChangeEvents=1) {
-
     let expectedOutputString = null;
     if (expectedOutput != null) {
       if (descriptor.calculateExpectedOutput(expectedOutput)) {
