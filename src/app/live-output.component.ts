@@ -7,7 +7,6 @@ import { PayloadOutputDescriptor } from "./payload-output.service";
 export interface LiveOutput {
   outputDescriptor: InputSignal<PayloadOutputDescriptor>;
   outputPayload: InputSignal<any>;
-  readonly payload: any ;
 }
 
 export interface LiveOutputType extends Type<LiveOutput> {
@@ -20,10 +19,13 @@ export interface LiveOutputType extends Type<LiveOutput> {
   template: ''
 })
 export abstract class LiveOutputComponent implements LiveOutput {
-
   outputDescriptor = input.required<PayloadOutputDescriptor>();
   outputPayload = input.required<any>();
 
+  /**
+   * Getter for the value of the `outputPayload` input.
+   * Makes it easier to read the value in Angular templates by simply referencing the `payload` property.
+   */
   get payload() {
     return this.outputPayload();
   }

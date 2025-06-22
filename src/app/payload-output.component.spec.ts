@@ -26,7 +26,7 @@ interface MockPayloadOutputDescriptors {
   standalone: true
 })
 class MockOutputComponent extends LiveOutputComponent {
-  static templateCode = '<p [innerHTML]="payload"></p>';
+  static readonly templateCode = '<p [innerHTML]="payload"></p>';
 }
 
 

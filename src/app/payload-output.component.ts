@@ -71,8 +71,6 @@ export class PayloadOutputComponent implements AfterViewInit {
     const descriptor = this.outputDescriptor();
     const payload = this.processedPayload();
 
-    // TODO always update when the descriptor has changed!
-
     if (force || this.autoUpdate() || this.lastOutputDescriptor != descriptor) {
 
       this.lastOutputDescriptor = descriptor;
