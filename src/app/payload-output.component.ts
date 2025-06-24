@@ -1,5 +1,5 @@
 import { NgIf, NgClass } from '@angular/common';
-import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, ComponentRef, signal, input, model, effect, untracked } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, signal, input, model, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
@@ -27,13 +27,6 @@ export class PayloadOutputComponent implements AfterViewInit {
 
   readonly autoUpdate = model(true);
   readonly liveSourceCode = signal('');
-
-  showPayloadProcessor = true;
-  showHtmlSourceProvider = true;
-  showDomInjector = true;
-  showJQueryInjector = true;
-  showTemplateCode = true;
-  showLiveSourceCode = true;
 
   @Output()
   update = new EventEmitter<void>(true);
@@ -107,5 +100,10 @@ export class PayloadOutputComponent implements AfterViewInit {
   updateNow(): boolean {
     this.updateOutput(true);
     return false;
+  }
+
+  togglePanel(event: MouseEvent) {
+    const panel = (event.target as Element).closest('.fd-layout-panel');
+    panel.ariaExpanded = (panel.ariaExpanded == 'true') ? 'false' : 'true';
   }
 }
