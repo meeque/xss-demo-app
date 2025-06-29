@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
 import { XssContext } from './xss-demo.common';
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
-import { NonAngular } from './live-output.component';
+import { NonAngularLiveOutputComponent } from './live-output.component';
 
 @Component({
     selector: 'payload-output',
@@ -70,7 +70,7 @@ export class PayloadOutputComponent implements AfterViewInit {
 
       if (this._liveOutputViewContainer) {
         this._liveOutputViewContainer.clear();
-        const liveOutputComponentType = descriptor.templateComponentType || NonAngular;
+        const liveOutputComponentType = descriptor.templateComponentType || NonAngularLiveOutputComponent;
         const liveOutputComponent = this._liveOutputViewContainer.createComponent(
           liveOutputComponentType,
           {

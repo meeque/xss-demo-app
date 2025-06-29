@@ -1,10 +1,10 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { timeout, domTreeAvailable, whenStableDetectChanges} from './lib.spec';
 
-import { xssDemoConfig } from '../app/xss-demo.config';
-import { PayloadPresetService } from '../app/payload-preset.service';
-import { PayloadOutputQuality, PayloadOutputService } from '../app/payload-output.service';
-import { XssDemoComponent } from '../app/xss-demo.component';
+import { xssDemoConfig } from '../xss/xss-demo.config';
+import { PayloadPresetService } from '../xss/payload-preset.service';
+import { PayloadOutputQuality, PayloadOutputService } from '../xss/payload-output.service';
+import { XssDemoComponent } from '../xss/xss-demo.component';
 
 
 

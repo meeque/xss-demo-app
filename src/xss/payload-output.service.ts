@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { XssContext, XssContextCollection } from './xss-demo.common';
-import { LiveOutputType, Encoded, TextContent, InnerText, InnerHtml, ParagraphTitle, LinkUrl, IframeUrl, StyleBlock, StyleAttribute, StructuredStyleAttribute } from './live-output.component';
+import { LiveOutputType, EncodedLiveOutputComponent, TextContentLiveOutputComponent, InnerTextLiveOutputComponent, InnerHtmlLiveOutputComponent, ParagraphTitleLiveOutputComponent, LinkUrlLiveOutputComponent, IframeUrlLiveOutputComponent, StyleBlockLiveOutputComponent, StyleAttributeLiveOutputComponent, StructuredStyleAttributeLiveOutputComponent } from './live-output.component';
 import { PayloadProcessors, HtmlSourceProviders, DomInjectors, JQueryInjectors} from './payload-output.functions';
 
 
@@ -338,7 +338,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'ng {{...}}',
             title: 'Payload as HTML Content through Template Interpolation (Angular {{...}})',
-            templateComponentType: Encoded
+            templateComponentType: EncodedLiveOutputComponent
           },
 
           {
@@ -346,7 +346,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'ng [textContent]',
             title: 'Payload as HTML Text-Content (Angular <div [textContent]="...">)',
-            templateComponentType: TextContent
+            templateComponentType: TextContentLiveOutputComponent
           },
 
           {
@@ -354,7 +354,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'ng [innerText]',
             title: 'Payload as HTML Inner-Text (Angular <div [innerText]="...">)',
-            templateComponentType: InnerText
+            templateComponentType: InnerTextLiveOutputComponent
           },
 
           {
@@ -362,7 +362,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'ng [innerHTML] Sanitized',
             title: 'Payload as Sanitized Inner-HTML (Angular <div [innerHTML]="...">)',
-            templateComponentType: InnerHtml
+            templateComponentType: InnerHtmlLiveOutputComponent
           },
 
           {
@@ -371,7 +371,7 @@ export class PayloadOutputService {
             name: 'ng [innerHTML] Trusted',
             title: 'Payload as Trusted Inner-HTML (Angular <div [innerHTML]="..."> with DomSanitizer.bypassSecurityTrustHtml())',
             payloadProcessor: this._processors.ngTrustAsHtml,
-            templateComponentType: InnerHtml
+            templateComponentType: InnerHtmlLiveOutputComponent
           }
         ]
       },
@@ -436,7 +436,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Recommended,
             name: 'ng <p [title]>',
             title: 'Payload as Title Attribute (Angular <p [title]="...">)',
-            templateComponentType: ParagraphTitle
+            templateComponentType: ParagraphTitleLiveOutputComponent
           },
 
           {
@@ -445,7 +445,7 @@ export class PayloadOutputService {
             name: 'ng <p [title]> Trusted',
             title: 'Payload as Trusted Title Attribute (Angular <p [title]="..."> with DomSanitizer.bypassSecurityTrustHtml())',
             payloadProcessor: this._processors.ngTrustAsHtml,
-            templateComponentType: ParagraphTitle
+            templateComponentType: ParagraphTitleLiveOutputComponent
           }
         ]
       },
@@ -494,7 +494,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'ng <a [href]> Sanitized',
             title: 'Payload as Sanitized Link-URL (Angular <a [href]="...">)',
-            templateComponentType: LinkUrl
+            templateComponentType: LinkUrlLiveOutputComponent
           },
 
           {
@@ -503,7 +503,7 @@ export class PayloadOutputService {
             name: 'ng <a [href]> Trusted',
             title: 'Payload as Trusted Link-URL (Angular <a [href]="..."> with DomSanitizer.bypassSecurityTrustUrl())',
             payloadProcessor: this._processors.ngTrustAsUrl,
-            templateComponentType: LinkUrl
+            templateComponentType: LinkUrlLiveOutputComponent
           },
 
           {
@@ -545,7 +545,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'ng <iframe [src]> Sanitized',
             title: 'Payload as Sanitized IFrame-URL (Angular <iframe [src]="...">)',
-            templateComponentType: IframeUrl
+            templateComponentType: IframeUrlLiveOutputComponent
           },
 
           {
@@ -554,7 +554,7 @@ export class PayloadOutputService {
             name: 'ng <iframe [src]> Trusted',
             title: 'Payload as Trusted Resource IFrame-URL (Angular <iframe [src]="..."> with DomSanitizer.bypassSecurityTrustResourceUrl())',
             payloadProcessor: this._processors.ngTrustAsResourceUrl,
-            templateComponentType: IframeUrl
+            templateComponentType: IframeUrlLiveOutputComponent
           }
         ]
       },
@@ -585,7 +585,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'ng <style [innerHTML]> Sanitized',
             title: 'Payload as Sanitized Style Block HTML (Angular <style [innerHTML]="...">)',
-            templateComponentType: StyleBlock
+            templateComponentType: StyleBlockLiveOutputComponent
           },
 
           {
@@ -594,7 +594,7 @@ export class PayloadOutputService {
             name: 'ng <style [innerHTML]> Trusted',
             title: 'Payload as Trusted Style Block HTML (Angular <style [innerHTML]="..."> with DomSanitizer.bypassSecurityTrusStyle())',
             payloadProcessor: this._processors.ngTrustAsStyle,
-            templateComponentType: StyleBlock
+            templateComponentType: StyleBlockLiveOutputComponent
           },
 
           {
@@ -602,7 +602,7 @@ export class PayloadOutputService {
             quality: PayloadOutputQuality.Questionable,
             name: 'ng [style] Sanitized',
             title: 'Payload as Sanitized Style Attribute Value (Angular <div [style]="...">)',
-            templateComponentType: StyleAttribute
+            templateComponentType: StyleAttributeLiveOutputComponent
           },
 
           {
@@ -611,7 +611,7 @@ export class PayloadOutputService {
             name: 'ng [style] Trusted',
             title: 'Payload as Trusted Style Attribute Value (Angular <div [style]="..."> with DomSanitizer.bypassSecurityTrustStyle()',
             payloadProcessor: this._processors.ngTrustAsStyle,
-            templateComponentType: StyleAttribute
+            templateComponentType: StyleAttributeLiveOutputComponent
           },
 
           {
@@ -620,7 +620,7 @@ export class PayloadOutputService {
             name: 'ng [ngStyle] Sanitized',
             title: 'Payload as Sanitized Style Attribute Properties (Angular <div [ngStyle]="..."> with JSON.parse())',
             payloadProcessor: this._processors.jsonParse,
-            templateComponentType: StructuredStyleAttribute
+            templateComponentType: StructuredStyleAttributeLiveOutputComponent
           }
         ]
       },

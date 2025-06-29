@@ -1,4 +1,4 @@
-import { Component, Type, ElementRef, InputSignal, input, effect } from "@angular/core";
+import { Component, Type, ElementRef, InputSignal, input, AfterViewInit } from "@angular/core";
 import { NgStyle } from '@angular/common';
 
 import { PayloadOutputDescriptor } from "./payload-output.service";
@@ -34,11 +34,11 @@ export abstract class LiveOutputComponent implements LiveOutput {
 
 
 @Component({
-  selector: 'template-output-non-angular',
-  template: NonAngular.templateCode,
+  selector: 'xss-live-output-non-angular',
+  template: NonAngularLiveOutputComponent.templateCode,
   standalone: true
 })
-export class NonAngular extends LiveOutputComponent {
+export class NonAngularLiveOutputComponent extends LiveOutputComponent implements AfterViewInit {
   static readonly templateCode = '';
 
   constructor(private readonly _element: ElementRef) {
@@ -78,92 +78,92 @@ export class NonAngular extends LiveOutputComponent {
 
 
 @Component({
-    selector: 'template-output-encoded',
-    template: Encoded.templateCode,
+    selector: 'xss-live-output-encoded',
+    template: EncodedLiveOutputComponent.templateCode,
     standalone: true
 })
-export class Encoded extends LiveOutputComponent {
+export class EncodedLiveOutputComponent extends LiveOutputComponent {
   static readonly templateCode = '{{ payload }}';
 }
 
 @Component({
-  selector: 'template-output-text-content',
-  template: TextContent.templateCode,
+  selector: 'xss-live-output-text-content',
+  template: TextContentLiveOutputComponent.templateCode,
   standalone: true
 })
-export class TextContent extends LiveOutputComponent {
+export class TextContentLiveOutputComponent extends LiveOutputComponent {
   static readonly templateCode = '<div [textContent]="payload"></div>';
 }
 
 @Component({
-  selector: 'template-output-inner-text',
-  template: InnerText.templateCode,
+  selector: 'xss-live-output-inner-text',
+  template: InnerTextLiveOutputComponent.templateCode,
   standalone: true
 })
-export class InnerText extends LiveOutputComponent {
+export class InnerTextLiveOutputComponent extends LiveOutputComponent {
   static readonly templateCode = '<div [innerText]="payload"></div>';
 }
 
 @Component({
-  selector: 'template-output-inner-html',
-  template: InnerHtml.templateCode,
+  selector: 'xss-live-output-inner-html',
+  template: InnerHtmlLiveOutputComponent.templateCode,
   standalone: true
 })
-export class InnerHtml extends LiveOutputComponent {
+export class InnerHtmlLiveOutputComponent extends LiveOutputComponent {
   static readonly templateCode = '<div [innerHTML]="payload"></div>';
 }
 
 @Component({
-  selector: 'template-output-paragraph-title',
-  template: ParagraphTitle.templateCode,
+  selector: 'xss-live-output-paragraph-title',
+  template: ParagraphTitleLiveOutputComponent.templateCode,
   standalone: true
 })
-export class ParagraphTitle extends LiveOutputComponent {
+export class ParagraphTitleLiveOutputComponent extends LiveOutputComponent {
   static readonly templateCode = '<p [title]="payload">This paragraph has a title.</p>';
 }
 
 @Component({
-  selector: 'template-output-link-url',
-  template: LinkUrl.templateCode,
+  selector: 'xss-live-output-link-url',
+  template: LinkUrlLiveOutputComponent.templateCode,
   standalone: true
 })
-export class LinkUrl extends LiveOutputComponent {
+export class LinkUrlLiveOutputComponent extends LiveOutputComponent {
   static readonly templateCode = '<a [href]="payload" target="xss-demo-xss-probe" rel="opener">Click here to test your payload as a URL!</a>';
 }
 
 @Component({
-  selector: 'template-output-iframe-url',
-  template: IframeUrl.templateCode,
+  selector: 'xss-live-output-iframe-url',
+  template: IframeUrlLiveOutputComponent.templateCode,
   standalone: true
 })
-export class IframeUrl extends LiveOutputComponent {
+export class IframeUrlLiveOutputComponent extends LiveOutputComponent {
   static readonly templateCode = '<iframe [src]="payload"></iframe>';
 }
 
 @Component({
-  selector: 'template-output-style-block',
-  template: StyleBlock.templateCode,
+  selector: 'xss-live-output-style-block',
+  template: StyleBlockLiveOutputComponent.templateCode,
   standalone: true
 })
-export class StyleBlock extends LiveOutputComponent {
+export class StyleBlockLiveOutputComponent extends LiveOutputComponent {
   static readonly templateCode = '<style type="text/css" [innerHTML]="payload"></style>';
 }
 
 @Component({
-  selector: 'template-output-style-attribute',
-  template: StyleAttribute.templateCode,
+  selector: 'xss-live-output-style-attribute',
+  template: StyleAttributeLiveOutputComponent.templateCode,
   standalone: true
 })
-export class StyleAttribute extends LiveOutputComponent {
+export class StyleAttributeLiveOutputComponent extends LiveOutputComponent {
   static readonly templateCode = '<div [style]="payload">Element with custom style</div>';
 }
 
 @Component({
-  selector: 'template-output-structured-style-attribute',
-  template: StructuredStyleAttribute.templateCode,
+  selector: 'xss-live-output-structured-style-attribute',
+  template: StructuredStyleAttributeLiveOutputComponent.templateCode,
   standalone: true,
   imports: [NgStyle]
 })
-export class StructuredStyleAttribute extends LiveOutputComponent {
+export class StructuredStyleAttributeLiveOutputComponent extends LiveOutputComponent {
   static readonly templateCode = '<div [ngStyle]="payload">Element with custom style</div>';
 }
