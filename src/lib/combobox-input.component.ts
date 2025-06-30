@@ -10,7 +10,7 @@ export interface MenuEntry<V> {
 
 
 export interface MenuItem<V> extends MenuEntry<V> {
-  select : (item : MenuItem<V>, $event? : any) => boolean;
+  select : (item : MenuItem<V>, event? : Event) => boolean;
   filter? : (item : MenuItem<V>, query : string) => boolean;
   template? : TemplateRef<MenuItemContext>;
 }
@@ -150,10 +150,10 @@ export class ComboboxInputComponent implements AfterViewChecked {
     return true;
   }
 
-  select(item : MenuItem<unknown>, $event? : any) {
+  select(item : MenuItem<unknown>, event? : Event) {
     this.toggleMenu(false);
     this.query = '';
     this.placeholder = item.name;
-    return item.select(item, $event);
+    return item.select(item, event);
   }
 }
