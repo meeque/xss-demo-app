@@ -43,7 +43,7 @@ describe('XSS Demo Mocks', () => {
 
         it('should manage storage contents through its web UI', async () => {
 
-          const testData = {} as {[key: string]: string};
+          const testData = {} as Record<string, string>;
 
           // check empty storage and table
           expectStorageToContain(testData);
@@ -119,7 +119,7 @@ describe('XSS Demo Mocks', () => {
 
         it('should reflect external storage changes in its web UI', async () => {
 
-          const testData: {[key: string]: string} = {};
+          const testData = {} as Record<string, string>;
 
           // check empty storage and table
           expectStorageToContain(testData);
@@ -246,7 +246,7 @@ describe('XSS Demo Mocks', () => {
         queryAndExpectCount(queryStorageTable(), 'tr', storageTableRows.length - 1);
       }
 
-      function expectStorageToContain(data: {[key: string]: string}) {
+      function expectStorageToContain(data: Record<string, string>) {
         expect(testStorage.length).withContext('number of items in ' + testStorageName).toBe(Object.values(data).length);
         for (const [key, item] of Object.entries(data)) {
           expect(testStorage.getItem(key)).toBe(item);
@@ -260,7 +260,7 @@ describe('XSS Demo Mocks', () => {
         expect(entryItemField.value).toBe(item);
       }
 
-      function expectStorageTable(data: {[key: string]: string}) {
+      function expectStorageTable(data: Record<string, string>) {
         const dataKeys = Object.keys(data).sort();
         const entryCount = dataKeys.length;
         const rowCount = entryCount + 3;

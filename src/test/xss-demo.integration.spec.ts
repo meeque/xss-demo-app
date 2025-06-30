@@ -85,10 +85,6 @@ class DefaultTestConfig implements EnhancedTestConfig {
   }
 }
 
-interface TestConfigFactory<T> {
-  [config: string]: (name: string, expectXss?: boolean) => T;
-}
-
 
 
 interface PresetTestConfig extends TestConfig {
@@ -128,6 +124,15 @@ class DefaultPresetTestConfig extends DefaultTestConfig implements EnhancedPrese
   }
 }
 
+
+
+interface PayloadTestConfig extends TestConfig {
+  readonly payload: string;
+}
+
+interface EnhancedPayloadTestConfig extends PayloadTestConfig, EnhancedTestConfig {
+}
+
 class DefaultPayloadTestConfig extends DefaultTestConfig implements EnhancedPayloadTestConfig {
 
   readonly payload: string;
@@ -145,12 +150,8 @@ class DefaultPayloadTestConfig extends DefaultTestConfig implements EnhancedPayl
 }
 
 
-interface PayloadTestConfig extends TestConfig {
-  readonly payload: string;
-}
 
-interface EnhancedPayloadTestConfig extends PayloadTestConfig, EnhancedTestConfig {
-}
+type TestConfigFactory<T> = Record<string, (name: string, expectXss?: boolean) => T>
 
 
 
@@ -304,7 +305,7 @@ describe('Xss Demo App', async () => {
     }
   }
 
-  const presetsTestConfigsByContextAndOutput: {[context: string]: { [output: string]: (string|EnhancedPresetTestConfig)[] }} = {
+  const presetsTestConfigsByContextAndOutput: Record<string, Record<string, (string|EnhancedPresetTestConfig)[]>> = {
 
     HtmlContent: {
       'HtmlContentRaw':          [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
@@ -362,7 +363,7 @@ describe('Xss Demo App', async () => {
 
   }
 
-  const payloadTestConfigsByContextAndOutput: {[context: string]: { [output: string]: (string|EnhancedPayloadTestConfig)[] }} = {
+  const payloadTestConfigsByContextAndOutput: Record<string, Record<string, (string|EnhancedPayloadTestConfig)[]>> = {
 
     null: {
       DoubleTrouble:  ['&lt;img src="." onerror="xss()"&gt;', cf2.noXss('<img src="." onerror="xss()">')],
