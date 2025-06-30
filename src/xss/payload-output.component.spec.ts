@@ -2,7 +2,7 @@ import { Component, ComponentRef } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 
-import { fn } from 'jquery';
+import $ from 'jquery';
 
 import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/lib.spec';
 
