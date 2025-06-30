@@ -3,7 +3,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({name: 'stripextraindent', pure: true})
 export class StripExtraIndentPipe implements PipeTransform {  
 
-  transform(input: any): string {
+  transform(input: unknown): string {
     const inputString = '' + input;
     const lines = inputString.split(/\r?\n/);
 

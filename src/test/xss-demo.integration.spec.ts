@@ -384,8 +384,8 @@ describe('Xss Demo App', async () => {
     element = fixture.nativeElement;
 
     payloadInputTextArea = element.querySelector('section.input-area textarea.payload');
-    payloadInputCombobox = element.querySelector('section.input-area combobox-input');
-    payloadOutputCombobox = element.querySelector('section.output-area combobox-input');
+    payloadInputCombobox = element.querySelector('section.input-area xss-combobox-input');
+    payloadOutputCombobox = element.querySelector('section.output-area xss-combobox-input');
     alertOverlay = element.querySelector('.fd-shell__overlay.fd-overlay--alert');
 
     // ignore global errors caused by dynamically loaded scripts (e.g. script blocks from xss payloads)
@@ -553,7 +553,7 @@ describe('Xss Demo App', async () => {
   }
 
   function queryPayloadOutputComponent(): HTMLElement {
-    return element.querySelector('section.output-area payload-output');
+    return element.querySelector('section.output-area xss-payload-output');
   }
 
   function queryOutput(): HTMLElement {

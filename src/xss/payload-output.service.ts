@@ -6,6 +6,7 @@ import { LiveOutputType, EncodedLiveOutputComponent, TextContentLiveOutputCompon
 import { PayloadProcessors, HtmlSourceProviders, DomInjectors, JQueryInjectors} from './payload-output.functions';
 
 
+
 export enum PayloadOutputQuality {
   Recommended  = 'Recommended',
   Questionable = 'Questionable',
@@ -14,21 +15,15 @@ export enum PayloadOutputQuality {
 
 
 
-interface PayloadProcessor {
-  (payload: string): any;
-}
+type PayloadProcessor = (payload: string) => unknown;
 
-interface HtmlSourceProvider {
-  (payload: any): string;
-}
+type HtmlSourceProvider = (payload: unknown) => string;
 
-interface Injector {
-  (element: HTMLElement, payload: any): void;
-}
+type Injector = (element: HTMLElement, payload: unknown) => void;
 
-interface DomInjector extends Injector {};
+type DomInjector = Injector;
 
-interface JQueryInjector extends Injector {};
+type JQueryInjector = Injector;
 
 
 

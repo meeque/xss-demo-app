@@ -7,16 +7,16 @@ import { ComponentFixture } from "@angular/core/testing";
 // https://jasmine.github.io/api/edge/AsymmetricEqualityTester.html
 export interface AsymmetricEqualityTester<T> {
   asymmetricMatch(actual: T, matchersUtil: MatchersUtil): boolean;
-  jasmineToString(pp: (value: any) => string): string;
+  jasmineToString(pp: (value: unknown) => string): string;
 }
 
 interface MatchersUtil {
-  contains(haystack: any, needle: any): boolean;
-  equals(haystack: any, needle: any): boolean;
-  pp(actual: any): string
+  contains(haystack: unknown, needle: unknown): boolean;
+  equals(haystack: unknown, needle: unknown): boolean;
+  pp(actual: unknown): string
 }
 
-export function anyOf(expected: any[]): AsymmetricEqualityTester<any> {
+export function anyOf(expected: unknown[]): AsymmetricEqualityTester<unknown> {
   return {
     asymmetricMatch: function(actual, util: MatchersUtil) {
       return util.contains(expected, actual);
@@ -72,7 +72,7 @@ export function queryAndExpectOptional(context: HTMLElement, selector: string): 
   return null;
 }
 
-export function queryAndExpectCount(context: HTMLElement, selector: string, count: number = 1): HTMLElement[] {
+export function queryAndExpectCount(context: HTMLElement, selector: string, count = 1): HTMLElement[] {
   const result = context.querySelectorAll(selector);
   expect(result.length).withContext('number of elements matching query "' + selector + '"').toBe(count);
   return Array.from(result) as HTMLElement[];
@@ -88,7 +88,7 @@ export function queryAndExpectNone(context: HTMLElement, selector: string): void
 
 
 
-export async function whenStableDetectChanges(fixture: ComponentFixture<any>): Promise<void> {
+export async function whenStableDetectChanges(fixture: ComponentFixture<unknown>): Promise<void> {
   try {
     await fixture.whenStable();
     fixture.detectChanges();

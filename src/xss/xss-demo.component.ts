@@ -19,8 +19,8 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   static readonly DEFAULT_XSS_MESSAGE = 'XSS has been triggered!'
 
-  static nextComponentId: number = 0;
-  componentId: number = XssDemoComponent.nextComponentId++;
+  static nextComponentId = 0;
+  componentId = XssDemoComponent.nextComponentId++;
 
   readonly PayloadOutputQuality = PayloadOutputQuality;
 
@@ -55,10 +55,10 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   presetGroups: MenuGroup<XssContextCollection<PayloadPresetDescriptor>, PayloadPresetDescriptor>[];
 
-  payload = model<any>('');
+  payload = model('');
   activePayloadOutput = model<PayloadOutputDescriptor>();
 
-  payloadOutputFilters: MenuItem<any>[] = [];
+  payloadOutputFilters: MenuItem<unknown>[] = [];
 
   payloadOutputGroups: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor>[] = [];
 
@@ -112,13 +112,13 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
         {
           name: 'by technology:',
           value: [],
-          select: () => { return false },
+          select: () => false,
           template: this.payloadOutputMenuTechnologyFiltersTemplate
         },
         {
           name: 'by quality:',
           value: [],
-          select: () => { return false },
+          select: () => false,
           template: this.payloadOutputMenuQualityFiltersTemplate
         }
     ];
@@ -134,9 +134,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
         const item: MenuItem<PayloadOutputDescriptor> = {
           name: payloadOutput.name,
           value: payloadOutput,
-          select: (item: MenuItem<PayloadOutputDescriptor>) => {
-            return this.activateOutput(context.context, payloadOutput.id);
-          },
+          select: () => this.activateOutput(context.context, payloadOutput.id),
           filter: this.payloadOutputMenuItemFilter,
           template: this.payloadOutputMenuItemTemplate
         };

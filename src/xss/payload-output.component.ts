@@ -8,7 +8,7 @@ import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.
 import { NonAngularLiveOutputComponent } from './live-output.component';
 
 @Component({
-    selector: 'payload-output',
+    selector: 'xss-payload-output',
     templateUrl: './payload-output.component.html',
     styleUrls: ['./payload-output.component.css'],
     standalone: true,
@@ -16,8 +16,8 @@ import { NonAngularLiveOutputComponent } from './live-output.component';
 })
 export class PayloadOutputComponent implements AfterViewInit {
 
-  static nextComponentId : number = 0;
-  componentId : number = PayloadOutputComponent.nextComponentId++;
+  static nextComponentId = 0;
+  componentId = PayloadOutputComponent.nextComponentId++;
 
   readonly XssContext = XssContext;
   readonly PayloadOutputQuality = PayloadOutputQuality;
@@ -87,7 +87,7 @@ export class PayloadOutputComponent implements AfterViewInit {
     }
   }
 
-  private processedPayload(): any {
+  private processedPayload() {
     const payloadProcessor = this.outputDescriptor()?.payloadProcessor;
     const payload = this.payload();
 
@@ -97,7 +97,7 @@ export class PayloadOutputComponent implements AfterViewInit {
     return payload;
   }
 
-  updateNow(): boolean {
+  updateNow() {
     this.updateOutput(true);
     return false;
   }

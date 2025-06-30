@@ -24,7 +24,7 @@ export interface MenuGroup<V,W> extends MenuEntry<V> {
 export class MenuListContext {
   constructor(
       public $implicit : ComboboxInputComponent,
-      public items : MenuItem<any>[]) {
+      public items : MenuItem<unknown>[]) {
   }
 }
 
@@ -32,13 +32,13 @@ export class MenuListContext {
 export class MenuItemContext {
   constructor(
       public $implicit : ComboboxInputComponent,
-      public item : MenuItem<any>) {
+      public item : MenuItem<unknown>) {
   }
 }
 
 
 @Component({
-    selector: 'combobox-input',
+    selector: 'xss-combobox-input',
     templateUrl: './combobox-input.component.html',
     styleUrl: './combobox-input.component.css',
     standalone: true,
@@ -46,9 +46,9 @@ export class MenuItemContext {
 })
 export class ComboboxInputComponent implements AfterViewChecked {
 
-  static nextComponentId : number = 0;
+  static nextComponentId = 0;
 
-  componentId : number = ComboboxInputComponent.nextComponentId++;
+  componentId = ComboboxInputComponent.nextComponentId++;
 
   @ViewChildren('menuList', {read: ViewContainerRef})
   menuListContainers : QueryList<ViewContainerRef>;
@@ -66,15 +66,15 @@ export class ComboboxInputComponent implements AfterViewChecked {
   query : string = null;
 
   @Input()
-  items : MenuItem<any>[] = [];
+  items : MenuItem<unknown>[] = [];
 
   @Input()
-  groups : MenuGroup<any, any>[] = [];
+  groups : MenuGroup<unknown, unknown>[] = [];
 
   @Input()
   placeholder : string = null;
 
-  showMenu : boolean = false;
+  showMenu = false;
 
   constructor(
       private readonly _changeDetector : ChangeDetectorRef) {
@@ -83,11 +83,11 @@ export class ComboboxInputComponent implements AfterViewChecked {
   ngAfterViewChecked() {
 
     this.menuListContainers.forEach(
-        (menuListContainer, listIndex) => {
+        (menuListContainer) => {
 
             menuListContainer.clear();
             this.menuItemContainers.forEach(
-                (menuItemContainer, itemIndex) => {
+                (menuItemContainer) => {
                   menuItemContainer.clear();
                 }
             );
@@ -134,7 +134,7 @@ export class ComboboxInputComponent implements AfterViewChecked {
     }
   }
 
-  filter(item : MenuItem<any>) {
+  filter(item : MenuItem<unknown>) {
     if (item.filter) {
       return item.filter(item, this.query);
     }
@@ -143,14 +143,14 @@ export class ComboboxInputComponent implements AfterViewChecked {
     }
   }
 
-  private defaultItemFilter(item : MenuItem<any>, query : string) {
+  private defaultItemFilter(item : MenuItem<unknown>, query : string) {
     if (query) {
       return item.name.toLowerCase().includes(query.toLowerCase());
     }
     return true;
   }
 
-  select(item : MenuItem<any>, $event? : any) {
+  select(item : MenuItem<unknown>, $event? : any) {
     this.toggleMenu(false);
     this.query = '';
     this.placeholder = item.name;

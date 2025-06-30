@@ -6,7 +6,7 @@ import { PayloadOutputDescriptor } from "./payload-output.service";
 
 export interface LiveOutput {
   outputDescriptor: InputSignal<PayloadOutputDescriptor>;
-  outputPayload: InputSignal<any>;
+  outputPayload: InputSignal<unknown>;
 }
 
 export interface LiveOutputType extends Type<LiveOutput> {
@@ -20,7 +20,7 @@ export interface LiveOutputType extends Type<LiveOutput> {
 })
 export abstract class LiveOutputComponent implements LiveOutput {
   outputDescriptor = input.required<PayloadOutputDescriptor>();
-  outputPayload = input.required<any>();
+  outputPayload = input.required();
 
   /**
    * Getter for the value of the `outputPayload` input.

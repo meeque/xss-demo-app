@@ -99,7 +99,7 @@ describe('StripExtraIndentPipe', () => {
     );
   });
 
-  function expectTransform(input: any, expectedOutput: string): void {
+  function expectTransform(input: unknown, expectedOutput: string): void {
     expect(pipe.transform(input)).toBe(expectedOutput);
   }
 

@@ -267,7 +267,7 @@ export class PayloadPresetService {
   }
 
   loadPresetPayload(presetUrl: string): Promise<string> {
-    const { promise, resolve } = (Promise as any).withResolvers();
+    const { promise, resolve } = Promise.withResolvers<string>();
 
     this._http
       .get(

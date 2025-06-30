@@ -21,11 +21,11 @@ interface MockPayloadOutputDescriptors {
 }
 
 @Component({
-  selector: 'mock-template-output',
-  template: MockOutputComponent.templateCode,
+  selector: 'xss-mock-live-output-template',
+  template: MockLiveOutputTemplateComponent.templateCode,
   standalone: true
 })
-class MockOutputComponent extends LiveOutputComponent {
+class MockLiveOutputTemplateComponent extends LiveOutputComponent {
   static readonly templateCode = '<p [innerHTML]="payload"></p>';
 }
 
@@ -70,7 +70,7 @@ describe('PayloadOutputComponent', () => {
         return payload.toUpperCase();
       },
       domInjector: function innerText(element, payload) {
-        element.innerText = payload;
+        element.innerText = '' + payload;
       },
       calculateExpectedOutput: input => {
         return input
@@ -88,7 +88,7 @@ describe('PayloadOutputComponent', () => {
       payloadProcessor: function trustHtml(payload) {
         return domSanitizer.bypassSecurityTrustHtml(payload);
       },
-      templateComponentType: MockOutputComponent,
+      templateComponentType: MockLiveOutputTemplateComponent,
       calculateExpectedOutput: input => `<p>${input}</p>`
     },
 
@@ -98,7 +98,7 @@ describe('PayloadOutputComponent', () => {
       title: 'Mock <strong>PayloadOutputDescriptor</strong> Qux',
       quality: PayloadOutputQuality.Recommended,
       jQueryInjector: function paragraphTitle(element, payload) {
-        $('<p>').attr('title', payload).text('This is a paragraph.').appendTo(element);
+        $('<p>').attr('title', '' + payload).text('This is a paragraph.').appendTo(element);
       },
       calculateExpectedOutput: (input: string) => {
         return `<p title="${input.replaceAll('"', '&quot;')}">This is a paragraph.</p>`;
@@ -123,7 +123,7 @@ describe('PayloadOutputComponent', () => {
     fixture.autoDetectChanges();
     await whenStableDetectChanges(fixture);
 
-    changeCallbackSpy = jasmine.createSpy('on change event', () => {});
+    changeCallbackSpy = jasmine.createSpy('on change event', event => event);
     component.update.subscribe(changeCallbackSpy);
   });
 
@@ -567,7 +567,7 @@ describe('PayloadOutputComponent', () => {
     return updateNowLink;
   }
 
-  function strip(text: any): string {
+  function strip(text: unknown): string {
     return stripExtraIndentPipe.transform(text);
   }
 });
