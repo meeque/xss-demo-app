@@ -261,10 +261,7 @@ describe('ComboboxInputComponent', () => {
 
   function queryMenuListsItems() : {plain: HTMLElement[], grouped: HTMLElement[][]} {
     const menuLists = element.querySelectorAll('ul');
-
-    let plainList : HTMLElement;
-    let groupLists : HTMLElement[];
-    [plainList, ... groupLists] = menuLists.values();
+    const [plainList, ... groupLists] = menuLists.values();
 
     const plainListItems : HTMLElement[] = Array.from(plainList.querySelectorAll('li'));
     const groupListsItems : HTMLElement[][] = groupLists.map((list) => Array.from(list.querySelectorAll('li')));
