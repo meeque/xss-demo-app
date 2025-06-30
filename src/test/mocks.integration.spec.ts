@@ -191,7 +191,8 @@ describe('XSS Demo Mocks', () => {
             if (entryKeyField.value === key) {
               return entryRow;
             }
-          } else {
+          }
+          else {
             const entryItemField = queryAndExpectOne(entryRow, 'td.item input[type=text]') as HTMLInputElement;
             if (entryKeyField.value === key && entryItemField.value === item) {
               return entryRow;
@@ -217,7 +218,7 @@ describe('XSS Demo Mocks', () => {
 
         newKeyField.value = key;
         newItemField.value = item;
-        save ? saveButton.click() : cancelButton.click();
+        (save ? saveButton : cancelButton).click();
       }
 
       function editStorageTableEntry(key: string, item: string, save = true) {
@@ -233,7 +234,7 @@ describe('XSS Demo Mocks', () => {
         const cancelButton = queryAndExpectOne(entryRow, 'td.actions button[name=cancel]') as HTMLButtonElement;
 
         entryItemField.value = item;
-        save ? saveButton.click() : cancelButton.click();
+        (save ? saveButton : cancelButton).click();
       }
 
       function deleteStorageTableEntry(key: string) {
@@ -267,7 +268,8 @@ describe('XSS Demo Mocks', () => {
         const storageTable = queryStorageTable();
         if (entryCount === 0) {
           expect(storageTable.classList).withContext('storage table "empty" class').toContain('empty');
-        } else {
+        }
+        else {
           expect(storageTable.classList).withContext('storage table "empty" class').not.toContain('empty');
         }
 
@@ -311,7 +313,7 @@ describe('XSS Demo Mocks', () => {
     }
 
     interface CookieStore {
-      getAll(options?: any): Promise<Cookie[]>;
+      getAll(options?: object): Promise<Cookie[]>;
       get(cookie: CookieId): Promise<Cookie>;
       set(cookie: Cookie): Promise<undefined>;
       delete(cookie: CookieId): Promise<undefined>;
@@ -551,7 +553,8 @@ describe('XSS Demo Mocks', () => {
 
       xit('cannot be tested in this browser, because it does not support the CookieStore API');
 
-    } else {
+    }
+    else {
 
       describe('should manage cookies', () => {
 
@@ -935,7 +938,8 @@ describe('XSS Demo Mocks', () => {
             if (cookieDomainField.value != cookie.domain && cookieDomainField.value != '') {
               continue;
             }
-          } else {
+          }
+          else {
             if (cookieDomainField.value != cookie.domain) {
               continue;
             }
@@ -1060,7 +1064,7 @@ describe('XSS Demo Mocks', () => {
         expiresField.value = (typeof testCookie.expires === 'number') ? testCookie.expires.toString() : '';
       }
 
-      save ? saveButton.click() : cancelButton.click();
+      (save ? saveButton : cancelButton).click();
       await timeout(100);
       queryAndExpectCount(queryCookiesTable(), 'tr', initialCookiesTableRows.length);
     }
@@ -1101,7 +1105,8 @@ describe('XSS Demo Mocks', () => {
 
       if (cookie.domain === document.location.hostname) {
         expect(domainField.value).toEqual(anyOf([cookie.domain, '']));
-      } else {
+      }
+      else {
         expect(domainField.value).toBe(cookie.domain || '');
       }
       expect(pathField.value).toBe(cookie.path || '/');
@@ -1126,7 +1131,8 @@ describe('XSS Demo Mocks', () => {
 
       if (cookiesCount === 0) {
         expect(cookiesTable.classList).withContext('cookies table classes').toContain('empty');
-      } else {
+      }
+      else {
         expect(cookiesTable.classList).withContext('cookies table classes').not.toContain('empty');
       }
       const newCookieButton = queryAndExpectOne(cookiesTable, 'tr.actions button[name=new]') as HTMLButtonElement;
@@ -1153,39 +1159,52 @@ describe('XSS Demo Mocks', () => {
           if (typeof expected.domain === 'string') {
             if (expected.domain === document.location.hostname) {
               if (actual.domain != expected.domain && actual.domain != null) return false;
-            } else {
+            }
+            else {
               if (actual.domain != expected.domain) return false;
             }
-          } else {
+          }
+          else {
             if (actual.domain != null) return false;
           }
+
           if (typeof expected.path === 'string') {
             if (actual.path != expected.path) return false;
-          } else {
+          }
+          else {
             if (actual.path != '/') return false;
           }
+
           if (typeof expected.name === 'string') {
             if (actual.name != expected.name) return false;
           }
+
           if (typeof expected.value === 'string') {
             if (actual.value != expected.value) return false;
           }
+
           if (typeof expected.secure === 'boolean') {
             if (actual.secure !== expected.secure) return false;
           }
+
           if (typeof expected.sameSite === 'string') {
             if (actual.sameSite != expected.sameSite) return false;
-          } else {
+          }
+          else {
             if (actual.sameSite != 'strict') return false;
           }
+
           if (typeof expected.partitioned === 'boolean') {
             if (actual.partitioned != expected.partitioned) return false;
           }
+
           if (typeof expected.expires === 'number') {
             if (actual.expires != expected.expires) return false;
-          } else {
+          }
+          else {
             if (actual.expires != null) return false;
           }
+
           return true;
         },
         jasmineToString: function(pp) {
@@ -1216,7 +1235,8 @@ describe('XSS Demo Mocks', () => {
       const index = getCookieIndex(cookies, cookie);
       if (index >= 0) {
         cookies[index] = cookie;
-      } else {
+      }
+      else {
         cookies.push(cookie);
       }
       return sortCookies(cookies);
@@ -1281,7 +1301,7 @@ describe('XSS Demo Mocks', () => {
   describe('Post Message Page', () => {
 
     interface TestEvent {
-      data: any;
+      data: unknown;
       expectTrusted?: boolean;
     }
 
@@ -1685,7 +1705,7 @@ describe('XSS Demo Mocks', () => {
     mockPageDoc = pageFixture.contentDocument;
   }
 
-  async function runInPageFixture(... codeLines: string[]): Promise<any> {
+  async function runInPageFixture<R>(... codeLines: string[]): Promise<R> {
 
     const RESULT_ATTRIBUTE = 'data-xss-demo-tests-run-in-page-fixture-result';
     const ERROR_ATTRIBUTE = 'data-xss-demo-tests-run-in-page-fixture-error';

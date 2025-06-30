@@ -156,6 +156,9 @@ interface EnhancedPayloadTestConfig extends PayloadTestConfig, EnhancedTestConfi
 
 describe('Xss Demo App', async () => {
 
+  const payloadPresetServiceStub = new PayloadPresetService(null);
+  const payloadOutputServiceStub = new PayloadOutputService(null);
+
   let fixture: ComponentFixture<XssDemoComponent>;
   let component: XssDemoComponent;
   let element: HTMLElement;
@@ -165,10 +168,7 @@ describe('Xss Demo App', async () => {
   let payloadInputTextArea: HTMLTextAreaElement;
   let alertOverlay: HTMLElement;
 
-  let payloadPresetServiceStub = new PayloadPresetService(null);
-  let payloadOutputServiceStub = new PayloadOutputService(null);
-
-  let xssResolve = () => {};
+  let xssResolve: () => void;
 
 
 
@@ -393,8 +393,8 @@ describe('Xss Demo App', async () => {
       console.error(error);
     };
 
-    const xssOriginal: () => any = (window as any).xss;
-    (window as any).xss = () => {
+    const xssOriginal: () => void = window['xss'];
+    window['xss'] = () => {
       xssOriginal();
       xssResolve();
     };
