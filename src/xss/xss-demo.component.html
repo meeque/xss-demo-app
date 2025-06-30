@@ -111,7 +111,9 @@
                   <li class="fd-list__item">
                     <a
                         (click)="comboboxInput.select(item, $event)"
-                        class="fd-list__title">
+                        (keypress)="comboboxInput.select(item, $event)"
+                        class="fd-list__title"
+                        tabindex="0">
                       <img *ngIf="item.value.htmlSourceProvider" class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
                       <img *ngIf="item.value.domInjector" class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
                       <img *ngIf="item.value.jQueryInjector" class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">

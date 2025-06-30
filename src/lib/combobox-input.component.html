@@ -16,9 +16,9 @@
       <div class="fd-popover__wrapper docs-max-height">
         <ng-template #menuList></ng-template>
         <ng-container *ngFor="let group of groups">
-          <label class="fd-list__group-header">
+          <div class="fd-list__group-header">
             <span class="fd-list__title">{{ group.name }}</span>
-          </label>
+          </div>
           <ng-template #menuList></ng-template>
         </ng-container>
       </div>
@@ -28,7 +28,7 @@
 </div>
 
 <ng-template #defaultMenuList let-items="items">
-  <ul class="fd-list fd-list--dropdown" role="listbox">
+  <ul class="fd-list fd-list--dropdown">
     <ng-container *ngFor="let item of items">
       <ng-template #menuItem></ng-template>
     </ng-container>
@@ -37,8 +37,14 @@
 
 <ng-template #defaultMenuItem let-item="item">
   <ng-container *ngIf="filter(item)">
-    <li class="fd-list__item" role="option">
-      <a (click)="select(item, $event)" class="fd-list__title">{{ item.name }}</a>
+    <li class="fd-list__item">
+      <a
+          (click)="select(item, $event)"
+          (keypress)="select(item, $event)"
+          class="fd-list__title"
+          tabindex="0">
+        {{ item.name }}
+      </a>
     </li>
   </ng-container>
 </ng-template>
