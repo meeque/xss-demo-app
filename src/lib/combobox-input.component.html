@@ -1,7 +1,11 @@
 <div class="fd-form-item">
   <div class="fd-popover">
 
-    <div class="fd-popover__control" [attr.aria-controls]="'combobox-input-' + componentId" [attr.aria-expanded]="showMenu" aria-haspopup="true">
+    <div
+        class="fd-popover__control"
+        [attr.aria-controls]="'xss-combobox-input-component-' + componentId"
+        [attr.aria-expanded]="showMenu"
+        aria-haspopup="true">
       <div class="fd-input-group fd-input-group--control">
         <input type="text" class="fd-input fd-input-group__input" [(ngModel)]="query" [placeholder]="placeholder" (focus)="toggleMenu(true)" (input)="toggleMenu(true)">
         <span class="fd-input-group__addon fd-input-group__addon--button">
@@ -12,7 +16,10 @@
       </div>
     </div>
 
-    <div [id]="'combobox-input-' + componentId" class="fd-popover__body fd-popover__body--no-arrow fd-popover__body--dropdown fd-popover__body--dropdown-fill" [attr.aria-hidden]="!showMenu">
+    <div
+        [id]="'xss-combobox-input-component-' + componentId"
+        class="fd-popover__body fd-popover__body--no-arrow fd-popover__body--dropdown fd-popover__body--dropdown-fill"
+        [attr.aria-hidden]="!showMenu">
       <div class="fd-popover__wrapper docs-max-height">
         <ng-template #menuList></ng-template>
         <ng-container *ngFor="let group of groups">

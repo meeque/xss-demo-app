@@ -98,7 +98,7 @@ describe('ComboboxInputComponent', () => {
       expect(listItems.length).toBe(plainMenuItems.length);
 
       for (const [i, menuItem] of plainMenuItems.entries()) {
-        expect(listItems[i].querySelector('a').textContent).toBe(menuItem.name);
+        expect(listItems[i].querySelector('a').textContent.trim()).toBe(menuItem.name);
       }
     });
 
@@ -205,12 +205,12 @@ describe('ComboboxInputComponent', () => {
     });
 
     it('should display a header for each group', () => {
-      const groupHeaders = element.querySelectorAll('label.fd-list__group-header');
+      const groupHeaders = element.querySelectorAll('div.fd-list__group-header');
 
       expect(groupHeaders.length).toBe(groupedMenuItems.length);
 
       for (const [i, menuGroup] of groupedMenuItems.entries()) {
-        expect(groupHeaders[i].querySelector('span').textContent).toBe(menuGroup.name);
+        expect(groupHeaders[i].querySelector('span').textContent.trim()).toBe(menuGroup.name);
       }
     });
 
@@ -221,7 +221,7 @@ describe('ComboboxInputComponent', () => {
         expect(groupListItems[i].length).toBe(menuGroup.items.length);
 
         for (const [j, menuItem] of menuGroup.items.entries()) {
-          expect(groupListItems[i][j].querySelector('a').textContent).toBe(menuItem.name);
+          expect(groupListItems[i][j].querySelector('a').textContent.trim()).toBe(menuItem.name);
         }
       }
     });

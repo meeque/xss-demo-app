@@ -547,7 +547,7 @@ describe('Xss Demo App', async () => {
 
   function queryMenuLink(combobox: HTMLElement, groupLabelText: string, linkText: string): HTMLLinkElement {
     const groupLabelElement = Array
-      .from(combobox.querySelectorAll('div.fd-popover__body label'))
+      .from(combobox.querySelectorAll('div.fd-popover__body div.fd-list__group-header'))
       .find((label: HTMLLabelElement) => label.textContent.trim() == groupLabelText) as HTMLElement;
     return Array
       .from(groupLabelElement.nextElementSibling.querySelectorAll('li a'))
