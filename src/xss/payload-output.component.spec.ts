@@ -16,10 +16,6 @@ interface MockPayloadOutputDescriptor extends PayloadOutputDescriptor {
   calculateExpectedOutput(input: string): string;
 }
 
-interface MockPayloadOutputDescriptors {
-  [id: string]: MockPayloadOutputDescriptor;
-}
-
 @Component({
   selector: 'xss-mock-live-output-template',
   template: MockLiveOutputTemplateComponent.templateCode,
@@ -42,7 +38,7 @@ describe('PayloadOutputComponent', () => {
   let changeCallbackSpy : jasmine.Spy;
 
 
-  const mockDescriptors: MockPayloadOutputDescriptors = {
+  const mockDescriptors: Record<string, MockPayloadOutputDescriptor> = {
     /**
      * A payload output that removes all x characters.
      * Useful for testing update behavior where the input payload changes, but the output payload does not.

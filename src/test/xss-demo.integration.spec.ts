@@ -112,9 +112,11 @@ class DefaultPresetTestConfig extends DefaultTestConfig implements EnhancedPrese
     super();
     if (typeof config === 'object') {
       Object.assign(this, config);
-    } else if (typeof config === 'string') {
+    }
+    else if (typeof config === 'string') {
       this.presetName = config;
-    } else {
+    }
+    else {
       throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
     }
   }
@@ -141,17 +143,15 @@ class DefaultPayloadTestConfig extends DefaultTestConfig implements EnhancedPayl
     super();
     if (typeof config === 'object') {
       Object.assign(this, config);
-    } else if (typeof config === 'string') {
+    }
+    else if (typeof config === 'string') {
       this.payload = config;
-    } else {
+    }
+    else {
       throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
     }
   }
 }
-
-
-
-type TestConfigFactory<T> = Record<string, (name: string, expectXss?: boolean) => T>
 
 
 
@@ -173,7 +173,7 @@ describe('Xss Demo App', async () => {
 
 
 
-  const cf: TestConfigFactory<EnhancedPresetTestConfig> = {
+  const cf: Record<string, (name: string, expectXss?: boolean) => EnhancedPresetTestConfig> = {
 
     clickLink: (name: string, expectXss = true) => {
       return new DefaultPresetTestConfig({
@@ -352,7 +352,7 @@ describe('Xss Demo App', async () => {
 
 
 
-  const cf2: TestConfigFactory<EnhancedPayloadTestConfig> = {
+  const cf2: Record<string, (name: string, expectXss?: boolean) => EnhancedPayloadTestConfig> = {
 
     noXss: (payload: string) => {
       return new DefaultPayloadTestConfig({
@@ -427,7 +427,8 @@ describe('Xss Demo App', async () => {
               expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
             });
 
-          } else {
+          }
+          else {
 
             it('should not be marked as "Insecure", because no tests trigger XSS', () => {
               expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Insecure);
