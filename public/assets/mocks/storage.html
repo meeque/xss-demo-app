@@ -1,80 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>XSS Demo: Browser Storage Mock</title>
-    <link rel="stylesheet" href="../common.css">
-    <link rel="stylesheet" href="storage.css">
-    <script src="../common.js"></script>
-    <script src="storage.js"></script>
+  <title>XSS Demo: Browser Storage Mock</title>
+  <link rel="stylesheet" href="../common.css">
+  <link rel="stylesheet" href="storage.css">
+  <script src="../common.js"></script>
+  <script src="storage.js"></script>
 </head>
 <body>
 
-    <header>
-        <h1>XSS Demo: Browser Storage Mock</h1>
-        <p>
-            This is a simple HTML document that displays and manipulates the contents of <code>localStorage</code> and <code>sessionStorage</code>.
-        </p>
-    </header>
+  <header>
+    <h1>XSS Demo: Browser Storage Mock</h1>
+    <p>
+      This is a simple HTML document that displays and manipulates the contents of <code>localStorage</code> and <code>sessionStorage</code>.
+    </p>
+  </header>
 
-    <main>
-        <article class="localStorage">
-            <h2>Local Storage</h2>
-        </article>
+  <main>
+    <article class="localStorage">
+      <h2>Local Storage</h2>
+    </article>
 
-        <article class="sessionStorage">
-            <h2>Session Storage</h2>
-        </article>
-    </main>
+    <article class="sessionStorage">
+      <h2>Session Storage</h2>
+    </article>
+  </main>
 
-    <aside class="meta status">
-        <h3>Page Status:</h3>
-        <ul>
-            <li class="info origin">
-                This document's origin:
-                <br>
-                <code class="message info"></code>
-            </li>
-            <li class="info effective-domain">
-                This document's effective domain:
-                <br>
-                <code class="message info"></code>
-            </li>
-        </ul>
-    </aside>
+  <aside class="meta status">
+    <h3>Page Status:</h3>
+    <ul>
+      <li class="info origin">
+        This document's origin:
+        <br>
+        <code class="message info"></code>
+      </li>
+      <li class="info effective-domain">
+        This document's effective domain:
+        <br>
+        <code class="message info"></code>
+      </li>
+    </ul>
+  </aside>
 
-    <template id="storage">
-        <table class="storage">
-            <tr class="head">
-                <th>Key</th>
-                <th>Item</th>
-                <th></th>
-            </tr>
-            <tr class="message empty">
-                <td colspan="3">No items in this storage.</td>
-            </tr>
-            <tr class="actions">
-                <td colspan="2"></td>
-                <td><button type="button" name="new">Add New Item...</button></td>
-            </tr>
-        </table>
-    </template>
+  <template id="storage">
+    <table class="storage">
+      <tr class="head">
+        <th>Key</th>
+        <th>Item</th>
+        <th></th>
+      </tr>
+      <tr class="message empty">
+        <td colspan="3">No items in this storage.</td>
+      </tr>
+      <tr class="actions">
+        <td colspan="2"></td>
+        <td><button type="button" name="new">Add New Item...</button></td>
+      </tr>
+    </table>
+  </template>
 
-    <template id="storageEntry">
-        <tr class="entry">
-            <td class="key">
-                <input type="text" disabled>
-            </td>
-            <td class="item">
-                <input type="text" disabled>
-            </td>
-            <td class="actions">
-                <button type="button" name="edit">Edit</button>
-                <button type="button" name="delete">Delete</button>
-                <button type="button" name="save">Save</button>
-                <button type="button" name="cancel">Cancel</button>
-            </td>
-        </tr>
-    </template>
+  <template id="storageEntry">
+    <tr class="entry">
+      <td class="key">
+        <input type="text" disabled>
+      </td>
+      <td class="item">
+        <input type="text" disabled>
+      </td>
+      <td class="actions">
+        <button type="button" name="edit">Edit</button>
+        <button type="button" name="delete">Delete</button>
+        <button type="button" name="save">Save</button>
+        <button type="button" name="cancel">Cancel</button>
+      </td>
+    </tr>
+  </template>
 
 </body>
 </html>

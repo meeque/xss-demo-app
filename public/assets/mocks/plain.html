@@ -1,66 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>XSS Demo: Plain HTML Mock</title>
-    <link rel="stylesheet" href="../common.css">
-    <link rel="stylesheet" href="plain.css">
+  <title>XSS Demo: Plain HTML Mock</title>
+  <link rel="stylesheet" href="../common.css">
+  <link rel="stylesheet" href="plain.css">
 </head>
 <body>
 
-    <header>
-        <h1>XSS Demo: Plain HTML Mock</h1>
-        <p>
-            This is a plain HTML document with <strong>no JavaScript code</strong>.
-            This page is <strong>not</strong> vulnerable to <strong>XSS</strong>.
-            However, any other HTML document on the same origin (scheme, host, port) can access and manipulate its DOM (Document Object Model).
-        </p>
-        <p>
-            Try it yourself with the following challenges...
-        </p>
-    </header>
+  <header>
+    <h1>XSS Demo: Plain HTML Mock</h1>
+    <p>
+      This is a plain HTML document with <strong>no JavaScript code</strong>.
+      This page is <strong>not</strong> vulnerable to <strong>XSS</strong>.
+      However, any other HTML document on the same origin (scheme, host, port) can access and manipulate its DOM (Document Object Model).
+    </p>
+    <p>
+      Try it yourself with the following challenges...
+    </p>
+  </header>
 
-    <main class="xss-challenges">
+  <main class="xss-challenges">
 
-        <h2>XSS Challenges</h2>
-        <div class="challenge1">
-            <h3>Manipulate the DOM</h3>
-            <p>
-                Try manipulating the contents of the following paragraph.
-                For your convenience, this paragraph is accessible through CSS selector <code class="message info">.xss-challenges .challenge1 .work-area</code>:
-            </p>
-            <p class="work-area">
-                Initial paragraph content.
-            </p>
+    <h2>XSS Challenges</h2>
+    <div class="challenge1">
+      <h3>Manipulate the DOM</h3>
+      <p>
+        Try manipulating the contents of the following paragraph.
+        For your convenience, this paragraph is accessible through CSS selector <code class="message info">.xss-challenges .challenge1 .work-area</code>:
+      </p>
+      <p class="work-area">
+        Initial paragraph content.
+      </p>
+    </div>
+
+    <div class="challenge2">
+      <h3>Exfiltrate Data</h3>
+      <p>
+        Try getting the values from the following form fields.
+        For your convenience, this form is accessible through CSS selector <code class="message info">.xss-challenges .challenge2 .work-area</code>:
+      </p>
+      <form action="#" class="work-area">
+        <div>
+          <label>
+            <p>A text input field:</p>
+            <input type="text" name="free-text" value="initial field content">
+          </label>
         </div>
+        <div>
+          <label>
+            <p>A menu:</p>
+            <select name="menu">
+              <option selected>First</option>
+              <option>Second</option>
+              <option>Third</option>
+            </select>
+          </label>
+        <div>
+      </form>
+    </div>
 
-        <div class="challenge2">
-            <h3>Exfiltrate Data</h3>
-            <p>
-                Try getting the values from the following form fields.
-                For your convenience, this form is accessible through CSS selector <code class="message info">.xss-challenges .challenge2 .work-area</code>:
-            </p>
-            <form action="#" class="work-area">
-                <div>
-                    <label>
-                        <p>A text input field:</p>
-                        <input type="text" name="free-text" value="initial field content">
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        <p>A menu:</p>
-                        <select name="menu">
-                            <option selected>First</option>
-                            <option>Second</option>
-                            <option>Third</option>
-                        </select>
-                    </label>
-                </div>
-                <div>
-            </form>
-        </div>
-
-    </main>
+  </main>
 
 </body>
 </html>
