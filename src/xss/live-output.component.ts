@@ -1,4 +1,4 @@
-import { Component, Type, ElementRef, InputSignal, input, AfterViewInit } from "@angular/core";
+import { Component, Type, ElementRef, InputSignal, input, AfterViewInit, inject } from "@angular/core";
 import { NgStyle } from '@angular/common';
 
 import { PayloadOutputDescriptor } from "./payload-output.service";
@@ -39,11 +39,9 @@ export abstract class LiveOutputComponent implements LiveOutput {
   standalone: true
 })
 export class NonAngularLiveOutputComponent extends LiveOutputComponent implements AfterViewInit {
-  static readonly templateCode = '';
+  private readonly _element = inject(ElementRef);
 
-  constructor(private readonly _element: ElementRef) {
-    super();
-  }
+  static readonly templateCode = '';
 
   ngAfterViewInit(): void {
     const payload = this.outputPayload();

@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, TemplateRef, model } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, TemplateRef, model, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from '../lib/combobox-input.component';
@@ -16,6 +16,10 @@ import { PayloadOutputComponent } from './payload-output.component';
     imports: [NgIf, FormsModule, ComboboxInputComponent, PayloadOutputComponent]
 })
 export class XssDemoComponent implements OnInit, AfterViewInit {
+  private readonly _payloadPresetService = inject(PayloadPresetService);
+  private readonly _payloadOutputService = inject(PayloadOutputService);
+  private readonly _changeDetector = inject(ChangeDetectorRef);
+
 
   static readonly DEFAULT_XSS_MESSAGE = 'XSS has been triggered!'
 
@@ -69,11 +73,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   payloadOutputQualityFilters: PayloadOutputQuality[] = [];
 
-  constructor(
-    private readonly _payloadPresetService: PayloadPresetService,
-    private readonly _payloadOutputService: PayloadOutputService,
-    private readonly _changeDetector: ChangeDetectorRef
-  ) {
+  constructor() {
     this.activateOutput(XssContext.HtmlContent, 'HtmlContentEncoded');
   }
 

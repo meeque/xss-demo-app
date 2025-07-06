@@ -1,5 +1,5 @@
 import { NgFor, NgIf } from '@angular/common';
-import { Component, Input, ViewChild, ViewChildren, QueryList, ViewContainerRef, ChangeDetectorRef, TemplateRef, AfterViewChecked } from '@angular/core';
+import { Component, Input, ViewChild, ViewChildren, QueryList, ViewContainerRef, ChangeDetectorRef, TemplateRef, AfterViewChecked, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 
@@ -45,6 +45,8 @@ export class MenuItemContext {
     imports: [FormsModule, NgFor, NgIf]
 })
 export class ComboboxInputComponent implements AfterViewChecked {
+  private readonly _changeDetector = inject(ChangeDetectorRef);
+
 
   static nextComponentId = 0;
 
@@ -75,10 +77,6 @@ export class ComboboxInputComponent implements AfterViewChecked {
   placeholder : string = null;
 
   showMenu = false;
-
-  constructor(
-      private readonly _changeDetector : ChangeDetectorRef) {
-  }
 
   ngAfterViewChecked() {
 

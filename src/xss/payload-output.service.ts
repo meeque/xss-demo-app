@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { XssContext, XssContextCollection } from './xss-demo.common';
@@ -54,8 +54,9 @@ export class PayloadOutputService {
 
   readonly descriptors: XssContextCollection<PayloadOutputDescriptor>[];
 
-  constructor(sanitizer: DomSanitizer) {
-    this._processors = new PayloadProcessors(sanitizer);
+  constructor(domSanitizer?: DomSanitizer) {
+
+    this._processors = new PayloadProcessors(domSanitizer);
     this._providers = new HtmlSourceProviders();
     this._domInjectors = new DomInjectors();
     this._jQueryInjectors = new JQueryInjectors();

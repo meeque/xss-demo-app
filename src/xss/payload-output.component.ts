@@ -1,5 +1,5 @@
 import { NgIf, NgClass } from '@angular/common';
-import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, signal, input, model, effect } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, signal, input, model, effect, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
@@ -15,6 +15,8 @@ import { NonAngularLiveOutputComponent } from './live-output.component';
     imports: [NgIf, NgClass, FormsModule, StripExtraIndentPipe]
 })
 export class PayloadOutputComponent implements AfterViewInit {
+  private readonly _environmentInjector = inject(EnvironmentInjector);
+
 
   static nextComponentId = 0;
   componentId = PayloadOutputComponent.nextComponentId++;
@@ -39,8 +41,7 @@ export class PayloadOutputComponent implements AfterViewInit {
 
   lastOutputDescriptor : PayloadOutputDescriptor;
 
-  constructor(private readonly _environmentInjector : EnvironmentInjector) {
-
+  constructor() {
     effect(
       () => {
         this.updateOutput();
