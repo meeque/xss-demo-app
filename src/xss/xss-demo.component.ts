@@ -1,5 +1,5 @@
 
-import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef, TemplateRef, model, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef, TemplateRef, model, inject, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from '../lib/combobox-input.component';
@@ -28,14 +28,11 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   readonly PayloadOutputQuality = PayloadOutputQuality;
 
-  @ViewChild('payloadOutputMenuItem')
-  payloadOutputMenuItemTemplate: TemplateRef<MenuItemContext>;
+  readonly payloadOutputMenuItemTemplate = viewChild<TemplateRef<MenuItemContext>>('payloadOutputMenuItem');
 
-  @ViewChild('payloadOutputMenuTechnologyFilters')
-  payloadOutputMenuTechnologyFiltersTemplate: TemplateRef<MenuItemContext>;
+  readonly payloadOutputMenuTechnologyFiltersTemplate = viewChild<TemplateRef<MenuItemContext>>('payloadOutputMenuTechnologyFilters');
 
-  @ViewChild('payloadOutputMenuQualityFilters')
-  payloadOutputMenuQualityFiltersTemplate: TemplateRef<MenuItemContext>;
+  readonly payloadOutputMenuQualityFiltersTemplate = viewChild<TemplateRef<MenuItemContext>>('payloadOutputMenuQualityFilters');
 
   private selectPreset = (presetItem: MenuItem<PayloadPresetDescriptor>) => {
     this.loadPresetPayload(presetItem.value.url);
@@ -113,13 +110,13 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
           name: 'by technology:',
           value: [],
           select: () => false,
-          template: this.payloadOutputMenuTechnologyFiltersTemplate
+          template: this.payloadOutputMenuTechnologyFiltersTemplate()
         },
         {
           name: 'by quality:',
           value: [],
           select: () => false,
-          template: this.payloadOutputMenuQualityFiltersTemplate
+          template: this.payloadOutputMenuQualityFiltersTemplate()
         }
     ];
 
@@ -136,7 +133,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
           value: payloadOutput,
           select: () => this.activateOutput(context.context, payloadOutput.id),
           filter: this.payloadOutputMenuItemFilter,
-          template: this.payloadOutputMenuItemTemplate
+          template: this.payloadOutputMenuItemTemplate()
         };
         group.items.push(item);
       }

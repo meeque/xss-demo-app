@@ -1,5 +1,5 @@
 import { NgFor, NgIf } from '@angular/common';
-import { Component, ViewChild, ViewChildren, QueryList, ViewContainerRef, ChangeDetectorRef, TemplateRef, AfterViewChecked, inject, input, model } from '@angular/core';
+import { Component, ViewContainerRef, ChangeDetectorRef, TemplateRef, AfterViewChecked, inject, input, model, viewChildren, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 
@@ -52,17 +52,13 @@ export class ComboboxInputComponent implements AfterViewChecked {
 
   componentId = ComboboxInputComponent.nextComponentId++;
 
-  @ViewChildren('menuList', {read: ViewContainerRef})
-  menuListContainers : QueryList<ViewContainerRef>;
+  readonly menuListContainers = viewChildren('menuList', { read: ViewContainerRef });
 
-  @ViewChildren('menuItem', {read: ViewContainerRef})
-  menuItemContainers : QueryList<ViewContainerRef>;
+  readonly menuItemContainers = viewChildren('menuItem', { read: ViewContainerRef });
 
-  @ViewChild('defaultMenuList')
-  defaultMenuListTemplate : TemplateRef<MenuListContext>;
+  readonly defaultMenuListTemplate = viewChild<TemplateRef<MenuListContext>>('defaultMenuList');
 
-  @ViewChild('defaultMenuItem')
-  defaultMenuItemTemplate : TemplateRef<MenuItemContext>;
+  readonly defaultMenuItemTemplate = viewChild<TemplateRef<MenuItemContext>>('defaultMenuItem');
 
   readonly query = model<string>(null);
 
@@ -76,11 +72,11 @@ export class ComboboxInputComponent implements AfterViewChecked {
 
   ngAfterViewChecked() {
 
-    this.menuListContainers.forEach(
+    this.menuListContainers().forEach(
         (menuListContainer) => {
 
             menuListContainer.clear();
-            this.menuItemContainers.forEach(
+            this.menuItemContainers().forEach(
                 (menuItemContainer) => {
                   menuItemContainer.clear();
                 }
@@ -90,22 +86,22 @@ export class ComboboxInputComponent implements AfterViewChecked {
 
     let nextMenuItem = 0;
 
-    this.menuListContainers.forEach(
+    this.menuListContainers().forEach(
         (menuListContainer, listIndex) => {
 
           const listItems = (listIndex == 0) ? this.items() : this.groups()[listIndex -1].items;
           menuListContainer.createEmbeddedView<MenuListContext>(
-              this.defaultMenuListTemplate,
+              this.defaultMenuListTemplate(),
               new MenuListContext(this, listItems));
 
           this._changeDetector.detectChanges();
 
-          this.menuItemContainers.forEach(
+          this.menuItemContainers().forEach(
               (menuItemContainer, itemIndex) => {
 
                 if (itemIndex >= nextMenuItem) {
                   const menuItem = listItems[itemIndex - nextMenuItem];
-                  const template = menuItem.template || this.defaultMenuItemTemplate;
+                  const template = menuItem.template || this.defaultMenuItemTemplate();
                   menuItemContainer.createEmbeddedView<MenuItemContext>(
                       template,
                       new MenuItemContext(this, menuItem));
@@ -113,7 +109,7 @@ export class ComboboxInputComponent implements AfterViewChecked {
               }
           );
 
-          nextMenuItem = this.menuItemContainers.length;
+          nextMenuItem = this.menuItemContainers().length;
         }
     );
     this._changeDetector.detectChanges();

@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, AfterViewInit, ViewChild, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, signal, input, model, effect, inject } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, signal, input, model, effect, inject, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
@@ -33,11 +33,9 @@ export class PayloadOutputComponent implements AfterViewInit {
   @Output()
   update = new EventEmitter<void>(true);
 
-  @ViewChild('liveOutputElement')
-  private _liveOutputElement : ElementRef;
+  private readonly _liveOutputElement = viewChild<ElementRef>('liveOutputElement');
 
-  @ViewChild('liveOutputViewContainer', {read: ViewContainerRef})
-  private _liveOutputViewContainer : ViewContainerRef;
+  private readonly _liveOutputViewContainer = viewChild('liveOutputViewContainer', { read: ViewContainerRef });
 
   lastOutputDescriptor : PayloadOutputDescriptor;
 
@@ -51,7 +49,7 @@ export class PayloadOutputComponent implements AfterViewInit {
     this.update.subscribe(
       () => {
         this.liveSourceCode.set(
-          this._liveOutputElement.nativeElement.querySelector('*').innerHTML
+          this._liveOutputElement().nativeElement.querySelector('*').innerHTML
         );
       }
     );
@@ -69,10 +67,11 @@ export class PayloadOutputComponent implements AfterViewInit {
 
       this.lastOutputDescriptor = descriptor;
 
-      if (this._liveOutputViewContainer) {
-        this._liveOutputViewContainer.clear();
+      const _liveOutputViewContainer = this._liveOutputViewContainer();
+      if (_liveOutputViewContainer) {
+        _liveOutputViewContainer.clear();
         const liveOutputComponentType = descriptor.templateComponentType || NonAngularLiveOutputComponent;
-        const liveOutputComponent = this._liveOutputViewContainer.createComponent(
+        const liveOutputComponent = _liveOutputViewContainer.createComponent(
           liveOutputComponentType,
           {
             index: 0,
