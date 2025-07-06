@@ -38,8 +38,8 @@ describe('ComboboxInputComponent', () => {
     });
 
     it('should have no menu items or groups', () => {
-      expect(component.items).toEqual([]);
-      expect(component.groups).toEqual([]);
+      expect(component.items()).toEqual([]);
+      expect(component.groups()).toEqual([]);
     });
 
     it('should have empty value', () => {
@@ -72,7 +72,7 @@ describe('ComboboxInputComponent', () => {
     ];
 
     beforeEach(() => {
-      component.items = plainMenuItems;
+      fixture.componentRef.setInput('items', plainMenuItems);
       fixture.detectChanges();
     });
 
@@ -196,7 +196,7 @@ describe('ComboboxInputComponent', () => {
     ];
 
     beforeEach(() => {
-      component.groups = groupedMenuItems;
+      fixture.componentRef.setInput('groups', groupedMenuItems);
       fixture.detectChanges();
     });
 

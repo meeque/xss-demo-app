@@ -1,5 +1,5 @@
 import { NgFor, NgIf } from '@angular/common';
-import { Component, Input, ViewChild, ViewChildren, QueryList, ViewContainerRef, ChangeDetectorRef, TemplateRef, AfterViewChecked, inject } from '@angular/core';
+import { Component, ViewChild, ViewChildren, QueryList, ViewContainerRef, ChangeDetectorRef, TemplateRef, AfterViewChecked, inject, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 
@@ -64,17 +64,13 @@ export class ComboboxInputComponent implements AfterViewChecked {
   @ViewChild('defaultMenuItem')
   defaultMenuItemTemplate : TemplateRef<MenuItemContext>;
 
-  @Input()
-  query : string = null;
+  readonly query = model<string>(null);
 
-  @Input()
-  items : MenuItem<unknown>[] = [];
+  readonly items = input<MenuItem<unknown>[]>([]);
 
-  @Input()
-  groups : MenuGroup<unknown, unknown>[] = [];
+  readonly groups = input<MenuGroup<unknown, unknown>[]>([]);
 
-  @Input()
-  placeholder : string = null;
+  readonly placeholder = model<string>(null);
 
   showMenu = false;
 
@@ -97,7 +93,7 @@ export class ComboboxInputComponent implements AfterViewChecked {
     this.menuListContainers.forEach(
         (menuListContainer, listIndex) => {
 
-          const listItems = (listIndex == 0) ? this.items : this.groups[listIndex -1].items;
+          const listItems = (listIndex == 0) ? this.items() : this.groups()[listIndex -1].items;
           menuListContainer.createEmbeddedView<MenuListContext>(
               this.defaultMenuListTemplate,
               new MenuListContext(this, listItems));
@@ -134,10 +130,10 @@ export class ComboboxInputComponent implements AfterViewChecked {
 
   filter(item : MenuItem<unknown>) {
     if (item.filter) {
-      return item.filter(item, this.query);
+      return item.filter(item, this.query());
     }
     else {
-      return this.defaultItemFilter(item, this.query)
+      return this.defaultItemFilter(item, this.query())
     }
   }
 
@@ -150,8 +146,8 @@ export class ComboboxInputComponent implements AfterViewChecked {
 
   select(item : MenuItem<unknown>, event? : Event) {
     this.toggleMenu(false);
-    this.query = '';
-    this.placeholder = item.name;
+    this.query.set('');
+    this.placeholder.set(item.name);
     return item.select(item, event);
   }
 }

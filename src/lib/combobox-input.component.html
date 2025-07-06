@@ -7,7 +7,7 @@
         [attr.aria-expanded]="showMenu"
         aria-haspopup="true">
       <div class="fd-input-group fd-input-group--control">
-        <input type="text" class="fd-input fd-input-group__input" [(ngModel)]="query" [placeholder]="placeholder" (focus)="toggleMenu(true)" (input)="toggleMenu(true)">
+        <input type="text" class="fd-input fd-input-group__input" [(ngModel)]="query" [placeholder]="placeholder()" (focus)="toggleMenu(true)" (input)="toggleMenu(true)">
         <span class="fd-input-group__addon fd-input-group__addon--button">
           <button (click)="toggleMenu()" class="fd-input-group__button fd-button fd-button--transparent">
             <i class="sap-icon--navigation-down-arrow"></i>
@@ -22,7 +22,7 @@
         [attr.aria-hidden]="!showMenu">
       <div class="fd-popover__wrapper docs-max-height">
         <ng-template #menuList></ng-template>
-        @for (group of groups; track group) {
+        @for (group of groups(); track group) {
           <div class="fd-list__group-header">
             <span class="fd-list__title">{{ group.name }}</span>
           </div>
