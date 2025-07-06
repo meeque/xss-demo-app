@@ -48,8 +48,9 @@ export class PayloadProcessors {
   }
 
   urlValidate(payload) {
+    let url;
     try {
-      var url = new URL(payload, document.baseURI);
+      url = new URL(payload, document.baseURI);
     } catch(e) {
       return '';
     }
@@ -189,14 +190,14 @@ export class DomInjectors {
   }
 
   titleAttribute(element, payload) {
-    let paragraph = document.createElement('p');
+    const paragraph = document.createElement('p');
     paragraph.textContent = 'This paragraph has a title.'
     paragraph.setAttribute('title', payload);
     element.insertAdjacentElement('beforeend', paragraph);
   }
 
   linkHref(element, payload) {
-    let link = document.createElement('a');
+    const link = document.createElement('a');
     link.textContent = 'Click here to test your payload as a URL!'
     link.href = payload;
     link.rel = 'opener';
@@ -205,20 +206,20 @@ export class DomInjectors {
   }
 
   iframeSrc(element, payload) {
-    let iframe = document.createElement('iframe');
+    const iframe = document.createElement('iframe');
     iframe.src = payload;
     element.insertAdjacentElement('beforeend', iframe);
   }
 
   trustedStyleBlock(element, payload) {
-    let styleBlock = document.createElement('style');
+    const styleBlock = document.createElement('style');
     styleBlock.setAttribute('type', 'text/css');
     styleBlock.textContent = payload;
     element.insertAdjacentElement('beforeend', styleBlock);
   }
 
   trustedStyleAttribute(element, payload) {
-    let styledElement = document.createElement('div');
+    const styledElement = document.createElement('div');
     styledElement.textContent = 'Element with custom style';
     styledElement.setAttribute('style', payload);
     element.insertAdjacentElement('beforeend', styledElement);
@@ -227,7 +228,7 @@ export class DomInjectors {
   trustedScriptBlock(element, payload) {
     setTimeout(
       () => {
-        let scriptBlock = document.createElement('script');
+        const scriptBlock = document.createElement('script');
         scriptBlock.type = 'text/javascript';
         scriptBlock.textContent = '\n' + payload + '\n';
         element.insertAdjacentElement('beforeend', scriptBlock);
