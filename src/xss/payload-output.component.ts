@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import { Component, AfterViewInit, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, signal, input, model, effect, inject, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -12,7 +11,7 @@ import { NonAngularLiveOutputComponent } from './live-output.component';
     templateUrl: './payload-output.component.html',
     styleUrls: ['./payload-output.component.css'],
     standalone: true,
-    imports: [NgClass, FormsModule, StripExtraIndentPipe]
+    imports: [FormsModule, StripExtraIndentPipe]
 })
 export class PayloadOutputComponent implements AfterViewInit {
   private readonly _environmentInjector = inject(EnvironmentInjector);

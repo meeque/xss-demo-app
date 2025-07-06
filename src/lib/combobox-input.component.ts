@@ -1,4 +1,3 @@
-import { NgFor, NgIf } from '@angular/common';
 import { Component, ViewContainerRef, ChangeDetectorRef, TemplateRef, AfterViewChecked, inject, input, model, viewChildren, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -42,7 +41,7 @@ export class MenuItemContext {
     templateUrl: './combobox-input.component.html',
     styleUrl: './combobox-input.component.css',
     standalone: true,
-    imports: [FormsModule, NgFor, NgIf]
+    imports: [FormsModule]
 })
 export class ComboboxInputComponent implements AfterViewChecked {
   private readonly _changeDetector = inject(ChangeDetectorRef);
