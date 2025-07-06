@@ -1,3 +1,5 @@
+/* global pageStatus, $enable, $disable, $remove */
+
 function validateOrigin(origin) {
   const originRegex = /^([a-z][-+.a-z0-9]*:\/\/)([a-z0-9][-._~a-z0-9]*)(:[0-9]+)?$/;
   return originRegex.test(origin);
@@ -148,7 +150,7 @@ function messagePage() {
     const $$event = document.getElementById('event').content;
     const $tableEvents = document.querySelector('table.events');
 
-    messageError = null;
+    let messageError = null;
 
     const $rowActions = $tableEvents.querySelector('tr.actions');
     const $cellMessageError = $rowActions.querySelector('td.message');

@@ -1,3 +1,5 @@
+/* global pageStatus */
+
 let parentWindow = null;
 let parentXssError = null;
 let openerWindow = null;

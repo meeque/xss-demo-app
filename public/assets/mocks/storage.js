@@ -1,3 +1,5 @@
+/* global pageStatus, $enable, $disable, $remove */
+
 function storagePage() {
   const $$storage = document.getElementById('storage').content;
   const $$storageEntry = document.getElementById('storageEntry').content;

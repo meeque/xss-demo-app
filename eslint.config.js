@@ -1,19 +1,48 @@
 // @ts-check
+const globals = require('globals');
 const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 const angulareslint = require('angular-eslint');
 
 module.exports = tseslint.config(
   {
-    files: ['**/*.ts', '**/*.js'],
+    files: ['public/**/*.js'],
     extends: [
-      eslint.configs.recommended,
-      ...tseslint.configs.recommended,
-      ...tseslint.configs.stylistic,
-      ...angulareslint.configs.tsRecommended,
+      eslint.configs.recommended
     ],
     processor: angulareslint.processInlineTemplates,
     rules: {
+      'no-unused-vars': [
+        'error',
+        {
+          caughtErrors: 'none',
+        }
+      ],
+    },
+    languageOptions: {
+      sourceType: 'script',
+			globals: {
+        ... globals.browser,
+        cookieStore: 'readonly',
+			},
+		},
+  },
+  {
+    files: ['**/*.ts', 'src/**/*.js'],
+    extends: [
+      eslint.configs.recommended,
+      ... tseslint.configs.recommended,
+      ... tseslint.configs.stylistic,
+      ... angulareslint.configs.tsRecommended,
+    ],
+    processor: angulareslint.processInlineTemplates,
+    rules: {
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          caughtErrors: 'none',
+        }
+      ],
       '@angular-eslint/directive-selector': [
         'error',
         {
@@ -35,8 +64,8 @@ module.exports = tseslint.config(
   {
     files: ['**/*.html'],
     extends: [
-      ...angulareslint.configs.templateRecommended,
-      ...angulareslint.configs.templateAccessibility,
+      ... angulareslint.configs.templateRecommended,
+      ... angulareslint.configs.templateAccessibility,
     ],
     rules: {},
   }

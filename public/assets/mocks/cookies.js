@@ -1,3 +1,5 @@
+/* global pageStatus, $enable, $disable, $remove */
+
 function sortCookies(cookies) {
   cookies.sort((c1, c2) => c1.name == c2.name ? 0 : (c1.name < c2.name ? -1 : 1));
   cookies.sort((c1, c2) => c1.path == c2.path ? 0 : (c1.path < c2.path ? -1 : 1));

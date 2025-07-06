@@ -1,10 +1,12 @@
+/* exported pageStatus, $enable, $disable, $remove */
+
 function pageStatus($container) {
   if ($container) {
-    $elementOrigin = $container.querySelector('.origin code');
+    const $elementOrigin = $container.querySelector('.origin code');
     if ($elementOrigin) {
       $elementOrigin.textContent = window.origin;
     }
-    $elementEffectiveDomain = $container.querySelector('.effective-domain code');
+    const $elementEffectiveDomain = $container.querySelector('.effective-domain code');
     if ($elementEffectiveDomain) {
       $elementEffectiveDomain.textContent = window.document.domain;
     }
