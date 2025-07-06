@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { XssContext, XssContextCollection } from './xss-demo.common';
