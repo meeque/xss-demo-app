@@ -22,12 +22,12 @@
         [attr.aria-hidden]="!showMenu">
       <div class="fd-popover__wrapper docs-max-height">
         <ng-template #menuList></ng-template>
-        <ng-container *ngFor="let group of groups">
+        @for (group of groups; track group) {
           <div class="fd-list__group-header">
             <span class="fd-list__title">{{ group.name }}</span>
           </div>
           <ng-template #menuList></ng-template>
-        </ng-container>
+        }
       </div>
     </div>
 
@@ -36,14 +36,14 @@
 
 <ng-template #defaultMenuList let-items="items">
   <ul class="fd-list fd-list--dropdown">
-    <ng-container *ngFor="let item of items">
+    @for (item of items; track item) {
       <ng-template #menuItem></ng-template>
-    </ng-container>
+    }
   </ul>
 </ng-template>
 
 <ng-template #defaultMenuItem let-item="item">
-  <ng-container *ngIf="filter(item)">
+  @if (filter(item)) {
     <li class="fd-list__item">
       <a
           (click)="select(item, $event)"
@@ -53,5 +53,5 @@
         {{ item.name }}
       </a>
     </li>
-  </ng-container>
+  }
 </ng-template>

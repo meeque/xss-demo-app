@@ -22,10 +22,10 @@
               <div class="fd-layout-panel fd-margin-top-bottom--sm">
                 <div class="fd-layout-panel__body">
                   <textarea
-                      name="payload"
-                      class="payload"
-                      [(ngModel)]="payload"
-                      placeholder="Enter your XSS attack code in this Paylaod Input field, or, select one of the Payload Presets from the above menu...">
+                    name="payload"
+                    class="payload"
+                    [(ngModel)]="payload"
+                    placeholder="Enter your XSS attack code in this Paylaod Input field, or, select one of the Payload Presets from the above menu...">
                   </textarea>
                 </div>
               </div>
@@ -50,30 +50,30 @@
                     <span class="sap-icon--filter"></span>
                     <span> {{ item.name }} </span>
                     <button
-                        class="fd-button"
-                        (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
-                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
+                      class="fd-button"
+                      (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
+                      [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
                       <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
                       <span> HTML </span>
                     </button>
                     <button
-                        class="fd-button"
-                        (click)="togglePayloadOutputTechnologyFilter('domInjector')"
-                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')">
+                      class="fd-button"
+                      (click)="togglePayloadOutputTechnologyFilter('domInjector')"
+                      [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')">
                       <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
                       <span> DOM </span>
                     </button>
                     <button
-                        class="fd-button"
-                        (click)="togglePayloadOutputTechnologyFilter('jQueryInjector')"
-                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('jQueryInjector')">
+                      class="fd-button"
+                      (click)="togglePayloadOutputTechnologyFilter('jQueryInjector')"
+                      [attr.aria-selected]="payloadOutputTechnologyFilters.includes('jQueryInjector')">
                       <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
                       <span> jQuery </span>
                     </button>
                     <button
-                        class="fd-button"
-                        (click)="togglePayloadOutputTechnologyFilter('templateComponentType')"
-                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateComponentType')">
+                      class="fd-button"
+                      (click)="togglePayloadOutputTechnologyFilter('templateComponentType')"
+                      [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateComponentType')">
                       <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
                       <span> Angular </span>
                     </button>
@@ -87,23 +87,23 @@
                     <span class="sap-icon--filter"></span>
                     {{ item.name }}
                     <button
-                        class="fd-button"
-                        (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Recommended)"
-                        [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)">
+                      class="fd-button"
+                      (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Recommended)"
+                      [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)">
                       <span>Recommended </span>
                       <span class="sap-icon--accept"></span>
                     </button>
                     <button
-                        class="fd-button"
-                        (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Questionable)"
-                        [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)">
+                      class="fd-button"
+                      (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Questionable)"
+                      [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)">
                       <span> Questionable </span>
                       <span class="sap-icon--question-mark"></span>
                     </button>
                     <button
-                        class="fd-button"
-                        (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Insecure)"
-                        [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)">
+                      class="fd-button"
+                      (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Insecure)"
+                      [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)">
                       <span> Insecure </span>
                       <span class="sap-icon--alert"></span>
                     </button>
@@ -112,24 +112,38 @@
               </ng-template>
 
               <ng-template #payloadOutputMenuItem let-item="item" let-comboboxInput>
-                <ng-container *ngIf="comboboxInput.filter(item)">
+                @if (comboboxInput.filter(item)) {
                   <li class="fd-list__item">
                     <a
-                        (click)="comboboxInput.select(item, $event)"
-                        (keypress)="comboboxInput.select(item, $event)"
-                        class="fd-list__title"
-                        tabindex="0">
-                      <img *ngIf="item.value.htmlSourceProvider" class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
-                      <img *ngIf="item.value.domInjector" class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
-                      <img *ngIf="item.value.jQueryInjector" class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
-                      <img *ngIf="item.value.templateComponentType" class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
+                      (click)="comboboxInput.select(item, $event)"
+                      (keypress)="comboboxInput.select(item, $event)"
+                      class="fd-list__title"
+                      tabindex="0">
+                      @if (item.value.htmlSourceProvider) {
+                        <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
+                      }
+                      @if (item.value.domInjector) {
+                        <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
+                      }
+                      @if (item.value.jQueryInjector) {
+                        <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
+                      }
+                      @if (item.value.templateComponentType) {
+                        <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
+                      }
                       {{ item.name }}
-                      <span *ngIf="item.value.quality === PayloadOutputQuality.Recommended" class="sap-icon--accept"></span>
-                      <span *ngIf="item.value.quality === PayloadOutputQuality.Questionable" class="sap-icon--question-mark"></span>
-                      <span *ngIf="item.value.quality === PayloadOutputQuality.Insecure" class="sap-icon--alert"></span>
+                      @if (item.value.quality === PayloadOutputQuality.Recommended) {
+                        <span class="sap-icon--accept"></span>
+                      }
+                      @if (item.value.quality === PayloadOutputQuality.Questionable) {
+                        <span class="sap-icon--question-mark"></span>
+                      }
+                      @if (item.value.quality === PayloadOutputQuality.Insecure) {
+                        <span class="sap-icon--alert"></span>
+                      }
                     </a>
                   </li>
-                </ng-container>
+                }
               </ng-template>
 
               <div>
@@ -151,19 +165,23 @@
   </article>
 
   <div class="fd-shell__overlay fd-overlay fd-overlay--alert">
-    <div *ngIf="xssTriggered" [id]="'xss-demo-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered" role="note">
-      <p class="fd-message-strip__text">
-        <span *ngIf="xssTriggered > 1" class="fd-counter">{{ xssTriggered }} </span>
-        <span> {{ xssMessage }}</span>
-      </p>
-      <button
+    @if (xssTriggered) {
+      <div [id]="'xss-demo-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered" role="note">
+        <p class="fd-message-strip__text">
+          @if (xssTriggered > 1) {
+            <span class="fd-counter">{{ xssTriggered }} </span>
+          }
+          <span> {{ xssMessage }}</span>
+        </p>
+        <button
           (click)="resetXss()"
           [attr.aria-controls]="'xss-demo-component-' + componentId + '-xss-alert'"
           class="fd-button fd-button--transparent"
           title="Close">
-        <i class="sap-icon--decline"></i>
-      </button>
-    </div>
+          <i class="sap-icon--decline"></i>
+        </button>
+      </div>
+    }
   </div>
 
 </div>

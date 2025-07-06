@@ -1,173 +1,194 @@
 
-  <div class="title fd-layout-panel fd-margin-top-bottom--sm">
-    <div class="fd-layout-panel__header">
-      <h3 class="fd-layout-panel__title">
-        <img *ngIf="outputDescriptor().htmlSourceProvider" class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
-        <img *ngIf="outputDescriptor().domInjector" class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
-        <img *ngIf="outputDescriptor().jQueryInjector" class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
-        <img *ngIf="outputDescriptor().templateComponentType" class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
-        <span> {{ outputDescriptor().title }} </span>
-        <span *ngIf="outputDescriptor().quality === PayloadOutputQuality.Recommended" class="sap-icon--accept"></span>
-        <span *ngIf="outputDescriptor().quality === PayloadOutputQuality.Questionable" class="sap-icon--question-mark"></span>
-        <span *ngIf="outputDescriptor().quality === PayloadOutputQuality.Insecure" class="sap-icon--alert"></span>
-      </h3>
-    </div>
+<div class="title fd-layout-panel fd-margin-top-bottom--sm">
+  <div class="fd-layout-panel__header">
+    <h3 class="fd-layout-panel__title">
+      @if (outputDescriptor().htmlSourceProvider) {
+        <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
+      }
+      @if (outputDescriptor().domInjector) {
+        <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
+      }
+      @if (outputDescriptor().jQueryInjector) {
+        <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
+      }
+      @if (outputDescriptor().templateComponentType) {
+        <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
+      }
+      <span> {{ outputDescriptor().title }} </span>
+      @if (outputDescriptor().quality === PayloadOutputQuality.Recommended) {
+        <span class="sap-icon--accept"></span>
+      }
+      @if (outputDescriptor().quality === PayloadOutputQuality.Questionable) {
+        <span class="sap-icon--question-mark"></span>
+      }
+      @if (outputDescriptor().quality === PayloadOutputQuality.Insecure) {
+        <span class="sap-icon--alert"></span>
+      }
+    </h3>
   </div>
+</div>
 
+@if (outputDescriptor().payloadProcessor) {
   <div
-      *ngIf="outputDescriptor().payloadProcessor"
-      [id]="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
-      class="payload-processor fd-layout-panel fd-margin-top-bottom--sm"
-      aria-expanded="true">
+    [id]="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
+    class="payload-processor fd-layout-panel fd-margin-top-bottom--sm"
+    aria-expanded="true">
     <div class="fd-layout-panel__header">
       <div class="fd-layout-panel__expand">
         <button
-            class="fd-button fd-button--transparent fd-layout-panel__button"
-            aria-controls="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
-            (click)="togglePanel($event)">
+          class="fd-button fd-button--transparent fd-layout-panel__button"
+          aria-controls="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
+          (click)="togglePanel($event)">
           <i></i>
         </button>
       </div>
       <h4 class="fd-layout-panel__title">Payload Processor Function</h4>
     </div>
     <div
-        role="region"
-        class="fd-layout-panel__body"
-        [textContent]="outputDescriptor().payloadProcessor | stripextraindent">
+      role="region"
+      class="fd-layout-panel__body"
+      [textContent]="outputDescriptor().payloadProcessor | stripextraindent">
     </div>
   </div>
+}
 
+@if (outputDescriptor().htmlSourceProvider) {
   <div
-      *ngIf="outputDescriptor().htmlSourceProvider"
-      [id]="'xss-payload-output-component-' + componentId + '-html-source-provider-panel'"
-      class="html-source-provider fd-layout-panel fd-margin-top-bottom--sm"
-      aria-expanded="true">
+    [id]="'xss-payload-output-component-' + componentId + '-html-source-provider-panel'"
+    class="html-source-provider fd-layout-panel fd-margin-top-bottom--sm"
+    aria-expanded="true">
     <div class="fd-layout-panel__header">
       <div class="fd-layout-panel__expand">
         <button
-            class="fd-button fd-button--transparent fd-layout-panel__button"
-            aria-controls="'xss-payload-output-component-' + componentId + '-html-source-provider-panel'"
-            (click)="togglePanel($event)">
+          class="fd-button fd-button--transparent fd-layout-panel__button"
+          aria-controls="'xss-payload-output-component-' + componentId + '-html-source-provider-panel'"
+          (click)="togglePanel($event)">
           <i></i>
         </button>
       </div>
       <h4 class="fd-layout-panel__title">HTML Source Provider Function</h4>
     </div>
     <div
-        role="region"
-        class="fd-layout-panel__body"
-        [textContent]="outputDescriptor().htmlSourceProvider | stripextraindent">
+      role="region"
+      class="fd-layout-panel__body"
+      [textContent]="outputDescriptor().htmlSourceProvider | stripextraindent">
     </div>
   </div>
+}
 
+@if (outputDescriptor().domInjector) {
   <div
-      *ngIf="outputDescriptor().domInjector"
-      [id]="'xss-payload-output-component-' + componentId + '-dom-injector-panel'"
-      class="dom-injector fd-layout-panel fd-margin-top-bottom--sm"
-      aria-expanded="true">
+    [id]="'xss-payload-output-component-' + componentId + '-dom-injector-panel'"
+    class="dom-injector fd-layout-panel fd-margin-top-bottom--sm"
+    aria-expanded="true">
     <div class="fd-layout-panel__header">
       <div class="fd-layout-panel__expand">
         <button
-            class="fd-button fd-button--transparent fd-layout-panel__button"
-            aria-controls="'xss-payload-output-component-' + componentId + '-dom-injector-panel'"
-            (click)="togglePanel($event)">
+          class="fd-button fd-button--transparent fd-layout-panel__button"
+          aria-controls="'xss-payload-output-component-' + componentId + '-dom-injector-panel'"
+          (click)="togglePanel($event)">
           <i></i>
         </button>
       </div>
       <h4 class="fd-layout-panel__title">DOM Injector Function</h4>
     </div>
     <div
-        role="region"
-        class="fd-layout-panel__body"
-        [textContent]="outputDescriptor().domInjector | stripextraindent">
+      role="region"
+      class="fd-layout-panel__body"
+      [textContent]="outputDescriptor().domInjector | stripextraindent">
     </div>
   </div>
+}
 
+@if (outputDescriptor().jQueryInjector) {
   <div
-      *ngIf="outputDescriptor().jQueryInjector"
-      [id]="'xss-payload-output-component-' + componentId + '-jquery-injector-panel'"
-      class="jquery-injector fd-layout-panel fd-margin-top-bottom--sm"
-      aria-expanded="true">
+    [id]="'xss-payload-output-component-' + componentId + '-jquery-injector-panel'"
+    class="jquery-injector fd-layout-panel fd-margin-top-bottom--sm"
+    aria-expanded="true">
     <div class="fd-layout-panel__header">
       <div class="fd-layout-panel__expand">
         <button
-            class="fd-button fd-button--transparent fd-layout-panel__button"
-            aria-controls="'xss-payload-output-component-' + componentId + '-jquery-injector-panel'"
-            (click)="togglePanel($event)">
-            <i></i>
+          class="fd-button fd-button--transparent fd-layout-panel__button"
+          aria-controls="'xss-payload-output-component-' + componentId + '-jquery-injector-panel'"
+          (click)="togglePanel($event)">
+          <i></i>
         </button>
       </div>
       <h4 class="fd-layout-panel__title">jQuery Injector Function</h4>
     </div>
     <div
-        role="region"
-        class="fd-layout-panel__body"
-        [textContent]="outputDescriptor().jQueryInjector | stripextraindent">
+      role="region"
+      class="fd-layout-panel__body"
+      [textContent]="outputDescriptor().jQueryInjector | stripextraindent">
     </div>
   </div>
+}
 
+@if (outputDescriptor().templateComponentType) {
   <div
-      *ngIf="outputDescriptor().templateComponentType"
-      [id]="'xss-payload-output-component-' + componentId + '-template-code-panel'"
-      class="template-code fd-layout-panel fd-margin-top-bottom--sm"
-      aria-expanded="true">
+    [id]="'xss-payload-output-component-' + componentId + '-template-code-panel'"
+    class="template-code fd-layout-panel fd-margin-top-bottom--sm"
+    aria-expanded="true">
     <div class="fd-layout-panel__header">
       <div class="fd-layout-panel__expand">
         <button
-            class="fd-button fd-button--transparent fd-layout-panel__button"
-            aria-controls="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
-            (click)="togglePanel($event)">
+          class="fd-button fd-button--transparent fd-layout-panel__button"
+          aria-controls="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
+          (click)="togglePanel($event)">
           <i></i>
         </button>
       </div>
       <h4 class="fd-layout-panel__title">Angular Template Code</h4>
     </div>
     <div
-        role="region"
-        class="fd-layout-panel__body"
-        [textContent]="outputDescriptor().templateComponentType.templateCode | stripextraindent">
+      role="region"
+      class="fd-layout-panel__body"
+      [textContent]="outputDescriptor().templateComponentType.templateCode | stripextraindent">
     </div>
   </div>
+}
 
-  <div
-      class="live-output fd-layout-panel fd-margin-top-bottom--sm"
-      aria-expanded="true">
-    <div class="fd-layout-panel__header">
-      <h4 class="fd-layout-panel__title">Live HTML Output</h4>
-      <div class="fd-layout-panel__actions">
-        <span *ngIf="!autoUpdate()">
+<div
+  class="live-output fd-layout-panel fd-margin-top-bottom--sm"
+  aria-expanded="true">
+  <div class="fd-layout-panel__header">
+    <h4 class="fd-layout-panel__title">Live HTML Output</h4>
+    <div class="fd-layout-panel__actions">
+      @if (!autoUpdate()) {
+        <span>
           <a href="#" (click)="updateNow()">Update now</a>
           –
         </span>
-        <label>
-          <input  type="checkbox" [(ngModel)]="autoUpdate">
-          Auto update
-        </label>
-      </div>
-    </div>
-    <div #liveOutputElement role="region" class="fd-layout-panel__body">
-      <ng-template #liveOutputViewContainer></ng-template>
+      }
+      <label>
+        <input  type="checkbox" [(ngModel)]="autoUpdate">
+        Auto update
+      </label>
     </div>
   </div>
+  <div #liveOutputElement role="region" class="fd-layout-panel__body">
+    <ng-template #liveOutputViewContainer></ng-template>
+  </div>
+</div>
 
-  <div
-      [id]="'xss-payload-output-component-' + componentId + '-live-source-code-panel'"
-      class="fd-layout-panel live-source-code fd-margin-top-bottom--sm"
-      aria-expanded="true">
-    <div class="fd-layout-panel__header">
-      <div class="fd-layout-panel__expand">
-        <button
-            class="fd-button fd-button--transparent fd-layout-panel__button"
-            aria-controls="'xss-payload-output-component-' + componentId + '-live-source-code-panel'"
-            (click)="togglePanel($event)">
-          <i></i>
-        </button>
-      </div>
-      <h4 class="fd-layout-panel__title">Live HTML Source Code</h4>
+<div
+  [id]="'xss-payload-output-component-' + componentId + '-live-source-code-panel'"
+  class="fd-layout-panel live-source-code fd-margin-top-bottom--sm"
+  aria-expanded="true">
+  <div class="fd-layout-panel__header">
+    <div class="fd-layout-panel__expand">
+      <button
+        class="fd-button fd-button--transparent fd-layout-panel__button"
+        aria-controls="'xss-payload-output-component-' + componentId + '-live-source-code-panel'"
+        (click)="togglePanel($event)">
+        <i></i>
+      </button>
     </div>
-    <div
-        role="region"
-        class="fd-layout-panel__body"
-        [textContent]="liveSourceCode() | stripextraindent">
-    </div>
+    <h4 class="fd-layout-panel__title">Live HTML Source Code</h4>
   </div>
+  <div
+    role="region"
+    class="fd-layout-panel__body"
+    [textContent]="liveSourceCode() | stripextraindent">
+  </div>
+</div>
