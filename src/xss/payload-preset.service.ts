@@ -263,13 +263,13 @@ export class PayloadPresetService {
     }
   ]
 
-  constructor(private readonly _http: HttpClient) {
+  constructor(private readonly httpClient: HttpClient) {
   }
 
   loadPresetPayload(presetUrl: string): Promise<string> {
     const { promise, resolve } = Promise.withResolvers<string>();
 
-    this._http
+    this.httpClient
       .get(
         presetUrl,
         {responseType: 'text'}

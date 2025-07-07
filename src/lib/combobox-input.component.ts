@@ -2,6 +2,7 @@ import { Component, ViewContainerRef, ChangeDetectorRef, TemplateRef, AfterViewC
 import { FormsModule } from '@angular/forms';
 
 
+
 export interface MenuEntry<V> {
   name : string;
   value : V;
@@ -36,6 +37,7 @@ export class MenuItemContext {
 }
 
 
+
 @Component({
     selector: 'xss-combobox-input',
     templateUrl: './combobox-input.component.html',
@@ -44,30 +46,25 @@ export class MenuItemContext {
     imports: [FormsModule]
 })
 export class ComboboxInputComponent implements AfterViewChecked {
-  private readonly _changeDetector = inject(ChangeDetectorRef);
+
+  private static nextComponentId = 0;
+  protected readonly componentId = ComboboxInputComponent.nextComponentId++;
 
 
-  static nextComponentId = 0;
-
-  componentId = ComboboxInputComponent.nextComponentId++;
-
-  readonly menuListContainers = viewChildren('menuList', { read: ViewContainerRef });
-
-  readonly menuItemContainers = viewChildren('menuItem', { read: ViewContainerRef });
-
-  readonly defaultMenuListTemplate = viewChild<TemplateRef<MenuListContext>>('defaultMenuList');
-
-  readonly defaultMenuItemTemplate = viewChild<TemplateRef<MenuItemContext>>('defaultMenuItem');
-
-  readonly query = model<string>(null);
+  private readonly changeDetector = inject(ChangeDetectorRef);
 
   readonly items = input<MenuItem<unknown>[]>([]);
-
   readonly groups = input<MenuGroup<unknown, unknown>[]>([]);
-
   readonly placeholder = model<string>(null);
 
-  showMenu = false;
+  protected readonly query = model<string>(null);
+  protected readonly showMenu = model(false);
+
+  private readonly menuListContainers = viewChildren('menuList', { read: ViewContainerRef });
+  private readonly menuItemContainers = viewChildren('menuItem', { read: ViewContainerRef });
+  private readonly defaultMenuListTemplate = viewChild<TemplateRef<MenuListContext>>('defaultMenuList');
+  private readonly defaultMenuItemTemplate = viewChild<TemplateRef<MenuItemContext>>('defaultMenuItem');
+
 
   ngAfterViewChecked() {
 
@@ -93,7 +90,7 @@ export class ComboboxInputComponent implements AfterViewChecked {
               this.defaultMenuListTemplate(),
               new MenuListContext(this, listItems));
 
-          this._changeDetector.detectChanges();
+          this.changeDetector.detectChanges();
 
           this.menuItemContainers().forEach(
               (menuItemContainer, itemIndex) => {
@@ -111,15 +108,15 @@ export class ComboboxInputComponent implements AfterViewChecked {
           nextMenuItem = this.menuItemContainers().length;
         }
     );
-    this._changeDetector.detectChanges();
+    this.changeDetector.detectChanges();
   }
 
   toggleMenu(show?: boolean) {
     if (typeof show === 'undefined') {
-      this.showMenu = !this.showMenu;
+      this.showMenu.set(!this.showMenu());
     }
     else {
-      this.showMenu = show;
+      this.showMenu.set(show);
     }
   }
 

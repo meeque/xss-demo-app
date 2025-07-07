@@ -6,6 +6,8 @@ import { XssContext } from './xss-demo.common';
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { NonAngularLiveOutputComponent } from './live-output.component';
 
+
+
 @Component({
     selector: 'xss-payload-output',
     templateUrl: './payload-output.component.html',
@@ -14,29 +16,31 @@ import { NonAngularLiveOutputComponent } from './live-output.component';
     imports: [FormsModule, StripExtraIndentPipe]
 })
 export class PayloadOutputComponent implements AfterViewInit {
-  private readonly _environmentInjector = inject(EnvironmentInjector);
+
+  private static nextComponentId = 0;
+  protected readonly componentId = PayloadOutputComponent.nextComponentId++;
+
+  protected readonly XssContext = XssContext;
+  protected readonly PayloadOutputQuality = PayloadOutputQuality;
 
 
-  static nextComponentId = 0;
-  componentId = PayloadOutputComponent.nextComponentId++;
+  private readonly environmentInjector = inject(EnvironmentInjector);
 
-  readonly XssContext = XssContext;
-  readonly PayloadOutputQuality = PayloadOutputQuality;
-
-  outputDescriptor = input<PayloadOutputDescriptor>();
-  payload = input('');
+  readonly outputDescriptor = input<PayloadOutputDescriptor>();
+  readonly payload = input('');
 
   readonly autoUpdate = model(true);
-  readonly liveSourceCode = signal('');
+
+  protected readonly liveSourceCode = signal('');
 
   @Output()
-  update = new EventEmitter<void>(true);
+  readonly update = new EventEmitter<void>(true);
 
-  private readonly _liveOutputElement = viewChild<ElementRef>('liveOutputElement');
+  private readonly liveOutputElement = viewChild<ElementRef>('liveOutputElement');
+  private readonly liveOutputViewContainer = viewChild('liveOutputViewContainer', { read: ViewContainerRef });
 
-  private readonly _liveOutputViewContainer = viewChild('liveOutputViewContainer', { read: ViewContainerRef });
+  private lastOutputDescriptor : PayloadOutputDescriptor;
 
-  lastOutputDescriptor : PayloadOutputDescriptor;
 
   constructor() {
     effect(
@@ -48,7 +52,7 @@ export class PayloadOutputComponent implements AfterViewInit {
     this.update.subscribe(
       () => {
         this.liveSourceCode.set(
-          this._liveOutputElement().nativeElement.querySelector('*').innerHTML
+          this.liveOutputElement().nativeElement.querySelector('*').innerHTML
         );
       }
     );
@@ -66,15 +70,15 @@ export class PayloadOutputComponent implements AfterViewInit {
 
       this.lastOutputDescriptor = descriptor;
 
-      const _liveOutputViewContainer = this._liveOutputViewContainer();
-      if (_liveOutputViewContainer) {
-        _liveOutputViewContainer.clear();
+      const liveOutputViewContainer = this.liveOutputViewContainer();
+      if (liveOutputViewContainer) {
+        liveOutputViewContainer.clear();
         const liveOutputComponentType = descriptor.templateComponentType || NonAngularLiveOutputComponent;
-        const liveOutputComponent = _liveOutputViewContainer.createComponent(
+        const liveOutputComponent = liveOutputViewContainer.createComponent(
           liveOutputComponentType,
           {
             index: 0,
-            environmentInjector: this._environmentInjector,
+            environmentInjector: this.environmentInjector,
           }
         );
 

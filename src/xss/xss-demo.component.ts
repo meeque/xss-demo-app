@@ -8,6 +8,8 @@ import { PayloadPresetService, PayloadPresetDescriptor } from './payload-preset.
 import { PayloadOutputService, PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
 
+
+
 @Component({
     selector: 'xss-demo-root',
     templateUrl: './xss-demo.component.html',
@@ -16,63 +18,43 @@ import { PayloadOutputComponent } from './payload-output.component';
     imports: [FormsModule, ComboboxInputComponent, PayloadOutputComponent]
 })
 export class XssDemoComponent implements OnInit, AfterViewInit {
-  private readonly _payloadPresetService = inject(PayloadPresetService);
-  private readonly _payloadOutputService = inject(PayloadOutputService);
-  private readonly _changeDetector = inject(ChangeDetectorRef);
+
+  private static nextComponentId = 0;
+  protected readonly componentId = XssDemoComponent.nextComponentId++;
+
+  private static readonly DEFAULT_XSS_MESSAGE = 'XSS has been triggered!';
+
+  protected readonly PayloadOutputQuality = PayloadOutputQuality;
 
 
-  static readonly DEFAULT_XSS_MESSAGE = 'XSS has been triggered!'
+  private readonly payloadPresetService = inject(PayloadPresetService);
+  private readonly payloadOutputService = inject(PayloadOutputService);
+  private readonly changeDetector = inject(ChangeDetectorRef);
 
-  static nextComponentId = 0;
-  componentId = XssDemoComponent.nextComponentId++;
+  readonly payload = model('');
+  readonly activePayloadOutput = model<PayloadOutputDescriptor>();
 
-  readonly PayloadOutputQuality = PayloadOutputQuality;
+  private readonly payloadOutputMenuItemTemplate = viewChild<TemplateRef<MenuItemContext>>('payloadOutputMenuItem');
+  private readonly payloadOutputMenuTechnologyFiltersTemplate = viewChild<TemplateRef<MenuItemContext>>('payloadOutputMenuTechnologyFilters');
+  private readonly payloadOutputMenuQualityFiltersTemplate = viewChild<TemplateRef<MenuItemContext>>('payloadOutputMenuQualityFilters');
 
-  readonly payloadOutputMenuItemTemplate = viewChild<TemplateRef<MenuItemContext>>('payloadOutputMenuItem');
+  protected presetItems: MenuItem<PayloadPresetDescriptor>[];
+  protected presetGroups: MenuGroup<XssContextCollection<PayloadPresetDescriptor>, PayloadPresetDescriptor>[];
 
-  readonly payloadOutputMenuTechnologyFiltersTemplate = viewChild<TemplateRef<MenuItemContext>>('payloadOutputMenuTechnologyFilters');
+  protected payloadOutputFilters: MenuItem<unknown>[] = [];
+  protected payloadOutputGroups: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor>[] = [];
 
-  readonly payloadOutputMenuQualityFiltersTemplate = viewChild<TemplateRef<MenuItemContext>>('payloadOutputMenuQualityFilters');
+  protected payloadOutputTechnologyFilters: string[] = [];
+  protected payloadOutputQualityFilters: PayloadOutputQuality[] = [];
 
-  private selectPreset = (presetItem: MenuItem<PayloadPresetDescriptor>) => {
-    this.loadPresetPayload(presetItem.value.url);
-    return true;
-  }
+  protected xssTriggered = 0;
+  protected xssMessage = XssDemoComponent.DEFAULT_XSS_MESSAGE;
 
-  private payloadOutputMenuItemFilter = (item: MenuItem<PayloadOutputDescriptor>, query: string) => {
-    if (query && !item.name.toLowerCase().includes(query.toLowerCase())) {
-      return false;
-    }
-    if (this.payloadOutputTechnologyFilters.length > 0 && !this.payloadOutputTechnologyFilters.some(technology => item.value[technology])) {
-      return false;
-    }
-    if (this.payloadOutputQualityFilters.length > 0 && !this.payloadOutputQualityFilters.includes(item.value.quality)) {
-      return false;
-    }
-    return true;
-  }
-
-  presetItems: MenuItem<PayloadPresetDescriptor>[];
-
-  presetGroups: MenuGroup<XssContextCollection<PayloadPresetDescriptor>, PayloadPresetDescriptor>[];
-
-  payload = model('');
-  activePayloadOutput = model<PayloadOutputDescriptor>();
-
-  payloadOutputFilters: MenuItem<unknown>[] = [];
-
-  payloadOutputGroups: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor>[] = [];
-
-  xssTriggered = 0;
-  xssMessage = XssDemoComponent.DEFAULT_XSS_MESSAGE;
-
-  payloadOutputTechnologyFilters: string[] = [];
-
-  payloadOutputQualityFilters: PayloadOutputQuality[] = [];
 
   constructor() {
     this.activateOutput(XssContext.HtmlContent, 'HtmlContentEncoded');
   }
+
 
   ngOnInit() {
     window['xss'] = this.doXss.bind(this);
@@ -82,7 +64,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.presetItems = [];
     this.presetGroups = [];
-    for (const context of this._payloadPresetService.descriptors) {
+    for (const context of this.payloadPresetService.descriptors) {
       const group: MenuGroup<XssContextCollection<PayloadPresetDescriptor>, PayloadPresetDescriptor> = {
         name: context.name,
         value: context,
@@ -121,7 +103,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     ];
 
     this.payloadOutputGroups = [];
-    for (const context of this._payloadOutputService.descriptors) {
+    for (const context of this.payloadOutputService.descriptors) {
       const group: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor> = {
         name: context.name,
         value: context,
@@ -139,27 +121,23 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
       }
       this.payloadOutputGroups.push(group);
     }
-    this._changeDetector.detectChanges();
+    this.changeDetector.detectChanges();
   }
 
-  get payloadOutputService() {
-    return this._payloadOutputService;
+
+  private selectPreset = (presetItem: MenuItem<PayloadPresetDescriptor>) => {
+    this.loadPresetPayload(presetItem.value.url);
+    return true;
   }
 
-  async loadPresetPayload(presetUrl: string) {
+  private async loadPresetPayload(presetUrl: string) {
     this.payload.set(
-      await this._payloadPresetService.loadPresetPayload(presetUrl)
+      await this.payloadPresetService.loadPresetPayload(presetUrl)
     );
   }
 
-  activateOutput(context: XssContext, output: string) {
-    this.activePayloadOutput.set(
-      this._payloadOutputService.outputDescriptorById(context, output)
-    );
-    return false;
-  }
 
-  togglePayloadOutputTechnologyFilter(value: string) {
+  protected togglePayloadOutputTechnologyFilter(value: string) {
     const newFilters = [];
     for (const currentValue of this.payloadOutputTechnologyFilters) {
       if (currentValue != value) {
@@ -172,7 +150,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     this.payloadOutputTechnologyFilters = newFilters;
   }
 
-  togglePayloadOutputQualityFilter(value: PayloadOutputQuality) {
+  protected togglePayloadOutputQualityFilter(value: PayloadOutputQuality) {
     const newFilters = [];
     for (const currentValue of this.payloadOutputQualityFilters) {
       if (currentValue != value) {
@@ -185,17 +163,38 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     this.payloadOutputQualityFilters = newFilters;
   }
 
-  doXss(message?: string) {
+  private payloadOutputMenuItemFilter = (item: MenuItem<PayloadOutputDescriptor>, query: string) => {
+    if (query && !item.name.toLowerCase().includes(query.toLowerCase())) {
+      return false;
+    }
+    if (this.payloadOutputTechnologyFilters.length > 0 && !this.payloadOutputTechnologyFilters.some(technology => item.value[technology])) {
+      return false;
+    }
+    if (this.payloadOutputQualityFilters.length > 0 && !this.payloadOutputQualityFilters.includes(item.value.quality)) {
+      return false;
+    }
+    return true;
+  }
+
+  private activateOutput(context: XssContext, output: string) {
+    this.activePayloadOutput.set(
+      this.payloadOutputService.outputDescriptorById(context, output)
+    );
+    return false;
+  }
+
+
+  protected doXss(message?: string) {
     this.xssMessage = message != undefined ? 'XSS: ' + message : XssDemoComponent.DEFAULT_XSS_MESSAGE;
     console.error(this.xssMessage);
     this.xssTriggered++;
-    this._changeDetector.detectChanges();
+    this.changeDetector.detectChanges();
   }
 
-  resetXss() {
+  protected resetXss() {
     if (this.xssTriggered > 0) {
       this.xssTriggered = 0;
-      this._changeDetector.detectChanges();
+      this.changeDetector.detectChanges();
     }
   }
 }

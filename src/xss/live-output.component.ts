@@ -39,14 +39,14 @@ export abstract class LiveOutputComponent implements LiveOutput {
   standalone: true
 })
 export class NonAngularLiveOutputComponent extends LiveOutputComponent implements AfterViewInit {
-  private readonly _element = inject(ElementRef);
+  private readonly containerElement = inject(ElementRef);
 
   static readonly templateCode = '';
 
   ngAfterViewInit(): void {
     const payload = this.outputPayload();
     const descriptor = this.outputDescriptor();
-    const element = this._element.nativeElement;
+    const element = this.containerElement.nativeElement;
     if (descriptor?.htmlSourceProvider) {
       try {
         element.innerHTML = descriptor.htmlSourceProvider(payload);
