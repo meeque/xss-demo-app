@@ -35,7 +35,7 @@ describe('PayloadOutputComponent', () => {
   let componentRef: ComponentRef<PayloadOutputComponent>;
   let component : PayloadOutputComponent;
   let element : HTMLElement;
-  let changeCallbackSpy : jasmine.Spy;
+  let onupdateCallbackSpy : jasmine.Spy;
 
 
   const mockDescriptors: Record<string, MockPayloadOutputDescriptor> = {
@@ -119,8 +119,8 @@ describe('PayloadOutputComponent', () => {
     fixture.autoDetectChanges();
     await whenStableDetectChanges(fixture);
 
-    changeCallbackSpy = jasmine.createSpy('on change event', event => event);
-    component.update.subscribe(changeCallbackSpy);
+    onupdateCallbackSpy = jasmine.createSpy('on change event', event => event);
+    component.onupdate.subscribe(onupdateCallbackSpy);
   });
 
   describe('initially', () => {
@@ -134,7 +134,7 @@ describe('PayloadOutputComponent', () => {
     });
 
     it('should have auto-update enabled', () => {
-      expect(component.autoUpdate()).toBeTrue();
+      expect(component.autoUpdateEnabled()).toBeTrue();
     });
 
     it('should have a view with empty payload', () => {
@@ -211,13 +211,13 @@ describe('PayloadOutputComponent', () => {
   describe('view with manual update', () => {
 
     it('should toggle auto-update', async () => {
-      queryAndExpectAutoUpdateToggle(true);
+      queryAndExpectAutoUpdateEnabled(true);
       queryAndExpectUpdateNowLink(false);
 
-      await clickAndExpectAutoUpdateToggle(false);
+      await clickAndExpectAutoUpdateEnabled(false);
       queryAndExpectUpdateNowLink(true);
 
-      await clickAndExpectAutoUpdateToggle(true);
+      await clickAndExpectAutoUpdateEnabled(true);
       queryAndExpectUpdateNowLink(false);
     });
 
@@ -225,7 +225,7 @@ describe('PayloadOutputComponent', () => {
       await setPayload('ye olde payload');
       expectComponentView(mockDescriptors.foo, 'ye olde payload');
 
-      await clickAndExpectAutoUpdateToggle(false);
+      await clickAndExpectAutoUpdateEnabled(false);
       expectComponentView(mockDescriptors.foo, 'ye olde payload', 0);
 
       await setDescriptor(mockDescriptors.bar);
@@ -241,7 +241,7 @@ describe('PayloadOutputComponent', () => {
     it('should reflect a mix of automatic changes of output and manual changes of payload', async () => {
       expectComponentView(mockDescriptors.foo, '', 0);
 
-      await clickAndExpectAutoUpdateToggle(false);
+      await clickAndExpectAutoUpdateEnabled(false);
       expectComponentView(mockDescriptors.foo, '', 0);
 
       await setPayload('f');
@@ -286,7 +286,7 @@ describe('PayloadOutputComponent', () => {
       await setPayload('We\'re done here! Let\'s go back to auto update...');
       expectComponentView(mockDescriptors.bar, 'Here be <img src="sdgt" onerror="console.log(\'xss\')">', 0);
 
-      await clickAndExpectAutoUpdateToggle(true);
+      await clickAndExpectAutoUpdateEnabled(true);
       await whenStableDetectChanges(fixture);
       expectComponentView(mockDescriptors.bar, 'We\'re done here! Let\'s go back to auto update...');
     });
@@ -295,7 +295,7 @@ describe('PayloadOutputComponent', () => {
       await setPayload('zyx');
       expectComponentView(mockDescriptors.foo, 'zy');
 
-      await clickAndExpectAutoUpdateToggle(false);
+      await clickAndExpectAutoUpdateEnabled(false);
       expectComponentView(mockDescriptors.foo, 'zy', 0);
 
       await setPayload('zyxx');
@@ -304,13 +304,13 @@ describe('PayloadOutputComponent', () => {
       await setPayload('zyxxx');
       expectComponentView(mockDescriptors.foo, 'zy', 0);
 
-      await clickAndExpectAutoUpdateToggle(true);
+      await clickAndExpectAutoUpdateEnabled(true);
       expectComponentView(mockDescriptors.foo, 'zy');
 
       await setPayload('zyx');
       expectComponentView(mockDescriptors.foo, 'zy');
 
-      await clickAndExpectAutoUpdateToggle(false);
+      await clickAndExpectAutoUpdateEnabled(false);
       expectComponentView(mockDescriptors.foo, 'zy', 0);
 
       await setPayload('xyz');
@@ -323,7 +323,7 @@ describe('PayloadOutputComponent', () => {
       await setPayload('xxxyz');
       expectComponentView(mockDescriptors.foo, 'yz', 0);
 
-      await clickAndExpectAutoUpdateToggle(true);
+      await clickAndExpectAutoUpdateEnabled(true);
       expectComponentView(mockDescriptors.foo, 'yz');
     });
 
@@ -332,7 +332,7 @@ describe('PayloadOutputComponent', () => {
       describe('with descriptor "' + mockDescriptor.id + '"', () => {
 
         it('should only reflect payload changes after manual update', async () => {
-          await clickAndExpectAutoUpdateToggle(false);
+          await clickAndExpectAutoUpdateEnabled(false);
           await setDescriptor(mockDescriptor);
           expectComponentView(mockDescriptor, '', null);
 
@@ -358,7 +358,7 @@ describe('PayloadOutputComponent', () => {
         });
 
         it('should reload live output on manual update, even when payload has not changed', async () => {
-          await clickAndExpectAutoUpdateToggle(false);
+          await clickAndExpectAutoUpdateEnabled(false);
           await setDescriptor(mockDescriptor);
           expectComponentView(mockDescriptor, '', null);
 
@@ -380,7 +380,7 @@ describe('PayloadOutputComponent', () => {
           await whenStableDetectChanges(fixture);
           expectComponentView(mockDescriptor, 'foo bar');
 
-          await clickAndExpectAutoUpdateToggle(true);
+          await clickAndExpectAutoUpdateEnabled(true);
           expectComponentView(mockDescriptor, 'foo bar');
         });
 
@@ -421,9 +421,9 @@ describe('PayloadOutputComponent', () => {
     queryAndExpectLiveSourceCode(expectedOutputString);
 
     if (expectedChangeEvents != null) {
-      expect(changeCallbackSpy).toHaveBeenCalledTimes(expectedChangeEvents);
+      expect(onupdateCallbackSpy).toHaveBeenCalledTimes(expectedChangeEvents);
     }
-    changeCallbackSpy.calls.reset();
+    onupdateCallbackSpy.calls.reset();
   }
 
   function queryAndExpectTitle(descriptor: PayloadOutputDescriptor) {
@@ -535,21 +535,21 @@ describe('PayloadOutputComponent', () => {
     return panel;
   }
 
-  function queryAndExpectAutoUpdateToggle(expectedToggleState?: boolean) {
+  function queryAndExpectAutoUpdateEnabled(expectedToggleState?: boolean) {
     const liveOutputPanel = queryAndExpectLiveOutput();
     const toggle = queryAndExpectOne(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions label input[type=checkbox]') as HTMLInputElement;
     expect(toggle.type).toBe('checkbox');
-    expect(toggle.checked).toBe(component.autoUpdate());
+    expect(toggle.checked).toBe(component.autoUpdateEnabled());
     if (expectedToggleState != null) {
       expect(toggle.checked).toBe(expectedToggleState);
     }
     return toggle;
   }
 
-  async function clickAndExpectAutoUpdateToggle(expectedToggleState?: boolean) {
-    queryAndExpectAutoUpdateToggle(expectedToggleState == null ? null : !expectedToggleState).click();
+  async function clickAndExpectAutoUpdateEnabled(expectedToggleState?: boolean) {
+    queryAndExpectAutoUpdateEnabled(expectedToggleState == null ? null : !expectedToggleState).click();
     await whenStableDetectChanges(fixture);
-    return queryAndExpectAutoUpdateToggle(expectedToggleState);
+    return queryAndExpectAutoUpdateEnabled(expectedToggleState);
   }
 
   function queryAndExpectUpdateNowLink(expectLinkToExist?: boolean) {

@@ -5,7 +5,7 @@
   </header>
 
   <article class="fd-shell__app fd-dynamic-page">
-    <main class="fd-dynamic-page__content" [class.xss-triggered]="xssTriggered">
+    <main class="fd-dynamic-page__content" [class.xss-triggered]="xssTriggeredCounter">
       <div class="fd-container">
         <div class="fd-row">
 
@@ -150,7 +150,7 @@
                 <xss-payload-output
                   [outputDescriptor]="activePayloadOutput()"
                   [payload]="payload()"
-                  (update)="resetXss()">
+                  (onupdate)="resetXss()">
                 </xss-payload-output>
               </div>
             </div>
@@ -165,11 +165,11 @@
   </article>
 
   <div class="fd-shell__overlay fd-overlay fd-overlay--alert">
-    @if (xssTriggered) {
+    @if (xssTriggeredCounter) {
       <div [id]="'xss-demo-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered" role="note">
         <p class="fd-message-strip__text">
-          @if (xssTriggered > 1) {
-            <span class="fd-counter">{{ xssTriggered }} </span>
+          @if (xssTriggeredCounter > 1) {
+            <span class="fd-counter">{{ xssTriggeredCounter }} </span>
           }
           <span> {{ xssMessage }}</span>
         </p>

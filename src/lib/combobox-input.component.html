@@ -4,7 +4,7 @@
     <div
         class="fd-popover__control"
         [attr.aria-controls]="'xss-combobox-input-component-' + componentId"
-        [attr.aria-expanded]="showMenu()"
+        [attr.aria-expanded]="menuExpanded()"
         aria-haspopup="true">
       <div class="fd-input-group fd-input-group--control">
         <input type="text" class="fd-input fd-input-group__input" [(ngModel)]="query" [placeholder]="placeholder()" (focus)="toggleMenu(true)" (input)="toggleMenu(true)">
@@ -19,7 +19,7 @@
     <div
         [id]="'xss-combobox-input-component-' + componentId"
         class="fd-popover__body fd-popover__body--no-arrow fd-popover__body--dropdown fd-popover__body--dropdown-fill"
-        [attr.aria-hidden]="!showMenu()">
+        [attr.aria-hidden]="!menuExpanded()">
       <div class="fd-popover__wrapper docs-max-height">
         <ng-template #menuList></ng-template>
         @for (group of groups(); track group) {

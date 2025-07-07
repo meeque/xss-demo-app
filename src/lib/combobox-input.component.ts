@@ -58,7 +58,7 @@ export class ComboboxInputComponent implements AfterViewChecked {
   readonly placeholder = model<string>(null);
 
   protected readonly query = model<string>(null);
-  protected readonly showMenu = model(false);
+  protected readonly menuExpanded = model(false);
 
   private readonly menuListContainers = viewChildren('menuList', { read: ViewContainerRef });
   private readonly menuItemContainers = viewChildren('menuItem', { read: ViewContainerRef });
@@ -111,16 +111,17 @@ export class ComboboxInputComponent implements AfterViewChecked {
     this.changeDetector.detectChanges();
   }
 
-  toggleMenu(show?: boolean) {
+
+  protected toggleMenu(show?: boolean) {
     if (typeof show === 'undefined') {
-      this.showMenu.set(!this.showMenu());
+      this.menuExpanded.set(!this.menuExpanded());
     }
     else {
-      this.showMenu.set(show);
+      this.menuExpanded.set(show);
     }
   }
 
-  filter(item : MenuItem<unknown>) {
+  protected filter(item : MenuItem<unknown>) {
     if (item.filter) {
       return item.filter(item, this.query());
     }
@@ -136,7 +137,7 @@ export class ComboboxInputComponent implements AfterViewChecked {
     return true;
   }
 
-  select(item : MenuItem<unknown>, event? : Event) {
+  protected select(item : MenuItem<unknown>, event? : Event) {
     this.toggleMenu(false);
     this.query.set('');
     this.placeholder.set(item.name);

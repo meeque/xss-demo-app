@@ -47,7 +47,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   protected payloadOutputTechnologyFilters: string[] = [];
   protected payloadOutputQualityFilters: PayloadOutputQuality[] = [];
 
-  protected xssTriggered = 0;
+  protected xssTriggeredCounter = 0;
   protected xssMessage = XssDemoComponent.DEFAULT_XSS_MESSAGE;
 
 
@@ -185,8 +185,8 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
 
   protected resetXss() {
-    if (this.xssTriggered > 0) {
-      this.xssTriggered = 0;
+    if (this.xssTriggeredCounter > 0) {
+      this.xssTriggeredCounter = 0;
       this.changeDetector.detectChanges();
     }
   }
@@ -194,7 +194,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   private doXss = (message?: string) => {
     this.xssMessage = message != undefined ? 'XSS: ' + message : XssDemoComponent.DEFAULT_XSS_MESSAGE;
     console.error(this.xssMessage);
-    this.xssTriggered++;
+    this.xssTriggeredCounter++;
     this.changeDetector.detectChanges();
   }
 }

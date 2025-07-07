@@ -29,12 +29,12 @@ export class PayloadOutputComponent implements AfterViewInit {
   readonly outputDescriptor = input<PayloadOutputDescriptor>();
   readonly payload = input('');
 
-  readonly autoUpdate = model(true);
+  readonly autoUpdateEnabled = model(true);
 
   protected readonly liveSourceCode = signal('');
 
   @Output()
-  readonly update = new EventEmitter<void>(true);
+  readonly onupdate = new EventEmitter<void>(true);
 
   private readonly liveOutputElement = viewChild<ElementRef>('liveOutputElement');
   private readonly liveOutputViewContainer = viewChild('liveOutputViewContainer', { read: ViewContainerRef });
@@ -49,7 +49,7 @@ export class PayloadOutputComponent implements AfterViewInit {
       }
     );
 
-    this.update.subscribe(
+    this.onupdate.subscribe(
       () => {
         this.liveSourceCode.set(
           this.liveOutputElement().nativeElement.querySelector('*').innerHTML
@@ -58,15 +58,17 @@ export class PayloadOutputComponent implements AfterViewInit {
     );
   }
 
+
   ngAfterViewInit(): void {
     this.updateOutput(true);
   }
 
+
   private updateOutput(force = false): void {
     const descriptor = this.outputDescriptor();
-    const payload = this.processedPayload();
+    const payload = this.getProcessedPayload();
 
-    if (force || this.autoUpdate() || this.lastOutputDescriptor != descriptor) {
+    if (force || this.autoUpdateEnabled() || this.lastOutputDescriptor != descriptor) {
 
       this.lastOutputDescriptor = descriptor;
 
@@ -86,26 +88,27 @@ export class PayloadOutputComponent implements AfterViewInit {
         liveOutputComponent.setInput('outputPayload', payload);
       }
 
-      this.update.emit();
+      this.onupdate.emit();
     }
   }
 
-  private processedPayload() {
+  private getProcessedPayload() {
     const payloadProcessor = this.outputDescriptor()?.payloadProcessor;
-    const payload = this.payload();
 
     if (payloadProcessor) {
-      return payloadProcessor(payload);
+      return payloadProcessor(this.payload());
     }
-    return payload;
+
+    return this.payload();
   }
 
-  updateNow() {
+
+  protected updateNow() {
     this.updateOutput(true);
     return false;
   }
 
-  togglePanel(event: MouseEvent) {
+  protected togglePanel(event: MouseEvent) {
     const panel = (event.target as Element).closest('.fd-layout-panel');
     panel.ariaExpanded = (panel.ariaExpanded == 'true') ? 'false' : 'true';
   }

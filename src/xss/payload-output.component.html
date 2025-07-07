@@ -154,14 +154,14 @@
   <div class="fd-layout-panel__header">
     <h4 class="fd-layout-panel__title">Live HTML Output</h4>
     <div class="fd-layout-panel__actions">
-      @if (!autoUpdate()) {
+      @if (!autoUpdateEnabled()) {
         <span>
           <a href="#" (click)="updateNow()">Update now</a>
           –
         </span>
       }
       <label>
-        <input  type="checkbox" [(ngModel)]="autoUpdate">
+        <input  type="checkbox" [(ngModel)]="autoUpdateEnabled">
         Auto update
       </label>
     </div>
