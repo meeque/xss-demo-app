@@ -57,7 +57,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit() {
-    window['xss'] = this.doXss.bind(this);
+    window['xss'] = this.doXss;
     this.loadPresetPayload('assets/presets/intro.txt');
   }
 
@@ -184,17 +184,17 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   }
 
 
-  protected doXss(message?: string) {
-    this.xssMessage = message != undefined ? 'XSS: ' + message : XssDemoComponent.DEFAULT_XSS_MESSAGE;
-    console.error(this.xssMessage);
-    this.xssTriggered++;
-    this.changeDetector.detectChanges();
-  }
-
   protected resetXss() {
     if (this.xssTriggered > 0) {
       this.xssTriggered = 0;
       this.changeDetector.detectChanges();
     }
+  }
+
+  private doXss = (message?: string) => {
+    this.xssMessage = message != undefined ? 'XSS: ' + message : XssDemoComponent.DEFAULT_XSS_MESSAGE;
+    console.error(this.xssMessage);
+    this.xssTriggered++;
+    this.changeDetector.detectChanges();
   }
 }
