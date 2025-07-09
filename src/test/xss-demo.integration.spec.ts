@@ -81,7 +81,7 @@ class DefaultTestConfig implements EnhancedTestConfig {
   }
 
   public getTimeout(): number {
-    return (this.timeout != null) ? this.timeout : DefaultPresetTestConfig.defaultTimeout;
+    return this.timeout ?? DefaultPresetTestConfig.defaultTimeout;
   }
 }
 
