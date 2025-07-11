@@ -366,10 +366,11 @@ describe('Xss Demo App', async () => {
   const payloadTestConfigsByContextAndOutput: Record<string, Record<string, (string|EnhancedPayloadTestConfig)[]>> = {
 
     null: {
-      DoubleTrouble:  ['&lt;img src="." onerror="xss()"&gt;', cf2.noXss('<img src="." onerror="xss()">')],
-      WhatsLeft:      ['<im<br>g src="." onerror="xss()">',   cf2.noXss('<img src="." onerror="xss()">')],
-      LikeLiterally:  ['${xss()}',                            cf2.noXss('xss()')                        ],
-      TheGreatEscape: ['\\"; xss(); //;',                     cf2.noXss('"; xss(); //;')                ],
+      DoubleTrouble:        ['&lt;img src="." onerror="xss()"&gt;', cf2.noXss('<img src="." onerror="xss()">')],
+      WhatsLeft:            ['<im<br>g src="." onerror="xss()">',   cf2.noXss('<img src="." onerror="xss()">')],
+      LookMomNoParentheses: ['xss``',                               cf2.noXss('xss()')                        ],
+      LikeLiterally:        ['${xss()}',                            cf2.noXss('xss()')                        ],
+      TheGreatEscape:       ['\\"; xss(); //;',                     cf2.noXss('"; xss(); //;')                ],
     },
   }
 

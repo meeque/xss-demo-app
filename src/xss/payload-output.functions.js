@@ -87,6 +87,15 @@ export class PayloadProcessors {
         + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
   }
 
+  jsChallengeLookMomNoParentheses(payload) {
+    const jsEscapedPayload = payload
+      .replaceAll('(', '')
+      .replaceAll(')', '');
+    return 'var outputElement = document.createElement(\'div\');\n'
+        + 'outputElement.textContent = ' + jsEscapedPayload + ';\n'
+        + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
+  }
+
   jsChallengeLikeLiterally(payload) {
     const jsEscapedPayload =
       [...payload]

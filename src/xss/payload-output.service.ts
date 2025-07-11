@@ -680,6 +680,14 @@ export class PayloadOutputService {
             htmlSourceProvider: this.htmlSourceProviders.content
           },
           {
+            id: 'LookMomNoParentheses',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'Look mom! No parentheses!',
+            title: 'Look mom! No parentheses! Challenge',
+            payloadProcessor: this.payloadProcessors.jsChallengeLookMomNoParentheses,
+            domInjector: this.domInjectors.trustedScriptBlock
+          },
+          {
             id: 'LikeLiterally',
             quality: PayloadOutputQuality.Insecure,
             name: 'Like Literally',
