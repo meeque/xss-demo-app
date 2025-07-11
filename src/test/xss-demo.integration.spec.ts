@@ -173,7 +173,7 @@ describe('Xss Demo App', async () => {
 
 
 
-  const cf: Record<string, (name: string, expectXss?: boolean) => EnhancedPresetTestConfig> = {
+  const presetTestConfigFactory: Record<string, (name: string, expectXss?: boolean) => EnhancedPresetTestConfig> = {
 
     clickLink: (name: string, expectXss = true) => {
       return new DefaultPresetTestConfig({
@@ -305,6 +305,8 @@ describe('Xss Demo App', async () => {
     }
   }
 
+  const cf = presetTestConfigFactory;
+
   const presetsTestConfigsByContextAndOutput: Record<string, Record<string, (string|EnhancedPresetTestConfig)[]>> = {
 
     HtmlContent: {
@@ -352,7 +354,7 @@ describe('Xss Demo App', async () => {
 
 
 
-  const cf2: Record<string, (name: string, expectXss?: boolean) => EnhancedPayloadTestConfig> = {
+  const payloadTestConfigFactory: Record<string, (name: string, expectXss?: boolean) => EnhancedPayloadTestConfig> = {
 
     noXss: (payload: string) => {
       return new DefaultPayloadTestConfig({
@@ -362,6 +364,8 @@ describe('Xss Demo App', async () => {
     }
 
   }
+
+  const cf2 = payloadTestConfigFactory;
 
   const payloadTestConfigsByContextAndOutput: Record<string, Record<string, (string|EnhancedPayloadTestConfig)[]>> = {
 
