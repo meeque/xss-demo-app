@@ -35,7 +35,7 @@ describe('PayloadOutputComponent', () => {
   let componentRef: ComponentRef<PayloadOutputComponent>;
   let component : PayloadOutputComponent;
   let element : HTMLElement;
-  let onupdateCallbackSpy : jasmine.Spy;
+  let onbeforeupdateSpy : jasmine.Spy;
 
 
   const mockDescriptors: Record<string, MockPayloadOutputDescriptor> = {
@@ -119,8 +119,8 @@ describe('PayloadOutputComponent', () => {
     fixture.autoDetectChanges();
     await whenStableDetectChanges(fixture);
 
-    onupdateCallbackSpy = jasmine.createSpy('on change event', event => event);
-    component.onupdate.subscribe(onupdateCallbackSpy);
+    onbeforeupdateSpy = jasmine.createSpy('on update event', event => event);
+    component.onbeforeupdate.subscribe(onbeforeupdateSpy);
   });
 
   describe('initially', () => {
@@ -421,9 +421,9 @@ describe('PayloadOutputComponent', () => {
     queryAndExpectLiveSourceCode(expectedOutputString);
 
     if (expectedChangeEvents != null) {
-      expect(onupdateCallbackSpy).toHaveBeenCalledTimes(expectedChangeEvents);
+      expect(onbeforeupdateSpy).toHaveBeenCalledTimes(expectedChangeEvents);
     }
-    onupdateCallbackSpy.calls.reset();
+    onbeforeupdateSpy.calls.reset();
   }
 
   function queryAndExpectTitle(descriptor: PayloadOutputDescriptor) {

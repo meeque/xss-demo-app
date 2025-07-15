@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ElementRef, ViewContainerRef, Output, EventEmitter, EnvironmentInjector, signal, input, model, effect, inject, viewChild } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, ViewContainerRef, EnvironmentInjector, signal, input, model, effect, inject, viewChild, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
@@ -33,8 +33,7 @@ export class PayloadOutputComponent implements AfterViewInit {
 
   protected readonly liveSourceCode = signal('');
 
-  @Output()
-  readonly onupdate = new EventEmitter<void>(true);
+  readonly onbeforeupdate = output();
 
   private readonly liveOutputElement = viewChild<ElementRef>('liveOutputElement');
   private readonly liveOutputViewContainer = viewChild('liveOutputViewContainer', { read: ViewContainerRef });
@@ -46,14 +45,6 @@ export class PayloadOutputComponent implements AfterViewInit {
     effect(
       () => {
         this.updateOutput();
-      }
-    );
-
-    this.onupdate.subscribe(
-      () => {
-        this.liveSourceCode.set(
-          this.liveOutputElement().nativeElement.querySelector('*').innerHTML
-        );
       }
     );
   }
@@ -69,6 +60,8 @@ export class PayloadOutputComponent implements AfterViewInit {
     const payload = this.getProcessedPayload();
 
     if (force || this.autoUpdateEnabled() || this.lastOutputDescriptor != descriptor) {
+
+      this.onbeforeupdate.emit();
 
       this.lastOutputDescriptor = descriptor;
 
@@ -88,7 +81,13 @@ export class PayloadOutputComponent implements AfterViewInit {
         liveOutputComponent.setInput('outputPayload', payload);
       }
 
-      this.onupdate.emit();
+      setTimeout(
+        () => {
+          this.liveSourceCode.set(
+            this.liveOutputElement().nativeElement.querySelector('*').innerHTML
+          );
+        }
+      );
     }
   }
 

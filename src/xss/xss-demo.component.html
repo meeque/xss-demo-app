@@ -150,7 +150,7 @@
                 <xss-payload-output
                   [outputDescriptor]="activePayloadOutput()"
                   [payload]="payload()"
-                  (onupdate)="resetXss()">
+                  (onbeforeupdate)="resetXss()">
                 </xss-payload-output>
               </div>
             </div>

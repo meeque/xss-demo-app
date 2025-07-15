@@ -235,14 +235,10 @@ export class DomInjectors {
   }
 
   trustedScriptBlock(element, payload) {
-    setTimeout(
-      () => {
-        const scriptBlock = document.createElement('script');
-        scriptBlock.type = 'text/javascript';
-        scriptBlock.textContent = '\n' + payload + '\n';
-        element.insertAdjacentElement('beforeend', scriptBlock);
-      }
-    );
+    const scriptBlock = document.createElement('script');
+    scriptBlock.type = 'text/javascript';
+    scriptBlock.textContent = '\n' + payload + '\n';
+    element.insertAdjacentElement('beforeend', scriptBlock);
   }
 
   challengeDoubleTrouble(element, payload) {
