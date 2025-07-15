@@ -44,18 +44,18 @@ export class PayloadOutputComponent implements AfterViewInit {
   constructor() {
     effect(
       () => {
-        this.updateOutput();
+        this.updateLiveOutput();
       }
     );
   }
 
 
   ngAfterViewInit(): void {
-    this.updateOutput(true);
+    this.updateLiveOutput(true);
   }
 
 
-  private updateOutput(force = false): void {
+  private updateLiveOutput(force = false): void {
     const descriptor = this.outputDescriptor();
     const payload = this.getProcessedPayload();
 
@@ -81,14 +81,14 @@ export class PayloadOutputComponent implements AfterViewInit {
         liveOutputComponent.setInput('outputPayload', payload);
       }
 
-      setTimeout(
-        () => {
-          this.liveSourceCode.set(
-            this.liveOutputElement().nativeElement.querySelector('*').innerHTML
-          );
-        }
-      );
+      setTimeout(this.updateLiveSourceCode);
     }
+  }
+
+  private updateLiveSourceCode = () => {
+    this.liveSourceCode.set(
+      this.liveOutputElement().nativeElement.querySelector('*').innerHTML
+    );
   }
 
   private getProcessedPayload() {
@@ -103,7 +103,7 @@ export class PayloadOutputComponent implements AfterViewInit {
 
 
   protected updateNow() {
-    this.updateOutput(true);
+    this.updateLiveOutput(true);
     return false;
   }
 
