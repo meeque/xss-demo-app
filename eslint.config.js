@@ -28,11 +28,34 @@ module.exports = tseslint.config(
 		},
   },
   {
-    files: ['**/*.ts', 'src/**/*.js'],
+    files: ['src/**/*.js'],
+    extends: [
+      eslint.configs.recommended
+    ],
+    processor: angulareslint.processInlineTemplates,
+    rules: {
+      'no-unused-vars': [
+        'error',
+        {
+          caughtErrors: 'none',
+        }
+      ],
+    },
+    languageOptions: {
+      sourceType: 'module',
+			globals: {
+        ... globals.browser,
+        $: 'readonly',
+        DOMPurify: 'readonly',
+			},
+		},
+  },
+  {
+    files: ['src/**/*.ts'],
     extends: [
       eslint.configs.recommended,
       ... tseslint.configs.recommended,
-      ... tseslint.configs.stylistic,
+      ... tseslint.configs.stylisticTypeChecked,
       ... angulareslint.configs.tsRecommended,
     ],
     processor: angulareslint.processInlineTemplates,
@@ -42,6 +65,9 @@ module.exports = tseslint.config(
         {
           caughtErrors: 'none',
         }
+      ],
+      '@typescript-eslint/prefer-nullish-coalescing': [
+        'off',
       ],
       '@angular-eslint/directive-selector': [
         'error',
@@ -59,6 +85,11 @@ module.exports = tseslint.config(
           style: 'kebab-case',
         },
       ],
+    },
+    languageOptions: {
+      parserOptions: {
+        projectService: {},
+      },
     },
   },
   {
