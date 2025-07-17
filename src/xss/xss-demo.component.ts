@@ -57,7 +57,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit() {
-    window['xss'] = this.doXss;
+    globalThis.xss = this.doXss;
     this.loadPresetPayload('assets/presets/intro.txt');
   }
 

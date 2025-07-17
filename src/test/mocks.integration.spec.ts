@@ -319,7 +319,7 @@ describe('XSS Demo Mocks', () => {
       delete(cookie: CookieId): Promise<undefined>;
     }
 
-    const cookieStore: CookieStore = window['cookieStore'];
+    const cookieStore: CookieStore = globalThis.cookieStore;
 
     beforeEach(async () => await setUpPageFixture('/assets/mocks/cookies.html'));
 

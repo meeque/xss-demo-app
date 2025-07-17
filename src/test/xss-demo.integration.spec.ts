@@ -399,8 +399,8 @@ describe('Xss Demo App', async () => {
       console.error(error);
     };
 
-    const xssOriginal: () => void = window['xss'];
-    window['xss'] = () => {
+    const xssOriginal: () => void = globalThis.xss;
+    globalThis.xss = () => {
       xssOriginal();
       xssResolve();
     };
