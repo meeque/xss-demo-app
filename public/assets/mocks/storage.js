@@ -9,7 +9,6 @@ function storagePage() {
   pageStatus(document.querySelector('.meta.status'));
 
   function storageController($container, storage) {
-
     const $tableStorage = $$storage.cloneNode(true).querySelector('table.storage');
     $container.insertAdjacentElement('beforeend', $tableStorage);
 
@@ -26,7 +25,7 @@ function storagePage() {
         if (event.storageArea === storage) {
           init();
         }
-      }
+      },
     );
 
     function init() {
@@ -51,7 +50,6 @@ function storagePage() {
     }
 
     function entryController(key) {
-
       let item = null;
 
       const $entry = $$storageEntry.cloneNode(true).querySelector('tr');
@@ -134,7 +132,7 @@ function storagePage() {
       }
 
       function isExistingEntry() {
-        return typeof key == "string";
+        return typeof key == 'string';
       }
     }
 

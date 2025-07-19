@@ -9,14 +9,13 @@ import { NonAngularLiveOutputComponent } from './live-output.component';
 
 
 @Component({
-    selector: 'xss-payload-output',
-    templateUrl: './payload-output.component.html',
-    styleUrls: ['./payload-output.component.css'],
-    standalone: true,
-    imports: [FormsModule, StripExtraIndentPipe]
+  selector: 'xss-payload-output',
+  templateUrl: './payload-output.component.html',
+  styleUrls: ['./payload-output.component.css'],
+  standalone: true,
+  imports: [FormsModule, StripExtraIndentPipe],
 })
 export class PayloadOutputComponent implements AfterViewInit {
-
   private static nextComponentId = 0;
   protected readonly componentId = PayloadOutputComponent.nextComponentId++;
 
@@ -38,14 +37,14 @@ export class PayloadOutputComponent implements AfterViewInit {
   private readonly liveOutputElement = viewChild<ElementRef>('liveOutputElement');
   private readonly liveOutputViewContainer = viewChild('liveOutputViewContainer', { read: ViewContainerRef });
 
-  private lastOutputDescriptor : PayloadOutputDescriptor;
+  private lastOutputDescriptor: PayloadOutputDescriptor;
 
 
   constructor() {
     effect(
       () => {
         this.updateLiveOutput();
-      }
+      },
     );
   }
 
@@ -60,9 +59,7 @@ export class PayloadOutputComponent implements AfterViewInit {
     const payload = this.getProcessedPayload();
 
     if (force || this.autoUpdateEnabled() || this.lastOutputDescriptor != descriptor) {
-
       this.onbeforeupdate.emit();
-
       this.lastOutputDescriptor = descriptor;
 
       const liveOutputViewContainer = this.liveOutputViewContainer();
@@ -74,7 +71,7 @@ export class PayloadOutputComponent implements AfterViewInit {
           {
             index: 0,
             environmentInjector: this.environmentInjector,
-          }
+          },
         );
 
         liveOutputComponent.setInput('outputDescriptor', descriptor);
@@ -87,9 +84,9 @@ export class PayloadOutputComponent implements AfterViewInit {
 
   private updateLiveSourceCode = () => {
     this.liveSourceCode.set(
-      this.liveOutputElement().nativeElement.querySelector('*').innerHTML
+      this.liveOutputElement().nativeElement.querySelector('*').innerHTML,
     );
-  }
+  };
 
   private getProcessedPayload() {
     const payloadProcessor = this.outputDescriptor()?.payloadProcessor;

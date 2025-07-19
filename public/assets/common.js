@@ -13,13 +13,13 @@ function pageStatus($container) {
   }
 }
 
-function $enable(... $elements) {
+function $enable(...$elements) {
   for (const $element of $elements) {
     $element.disabled = false;
   }
 }
 
-function $disable(... $elements) {
+function $disable(...$elements) {
   for (const $element of $elements) {
     $element.disabled = true;
   }

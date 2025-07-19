@@ -1,4 +1,3 @@
-
 import { Component, OnInit, AfterViewInit, ChangeDetectorRef, TemplateRef, model, inject, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -11,14 +10,13 @@ import { PayloadOutputComponent } from './payload-output.component';
 
 
 @Component({
-    selector: 'xss-demo-root',
-    templateUrl: './xss-demo.component.html',
-    styleUrls: ['./xss-demo.component.css'],
-    standalone: true,
-    imports: [FormsModule, ComboboxInputComponent, PayloadOutputComponent]
+  selector: 'xss-demo-root',
+  templateUrl: './xss-demo.component.html',
+  styleUrls: ['./xss-demo.component.css'],
+  standalone: true,
+  imports: [FormsModule, ComboboxInputComponent, PayloadOutputComponent],
 })
 export class XssDemoComponent implements OnInit, AfterViewInit {
-
   private static nextComponentId = 0;
   protected readonly componentId = XssDemoComponent.nextComponentId++;
 
@@ -68,38 +66,39 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
       const group: MenuGroup<XssContextCollection<PayloadPresetDescriptor>, PayloadPresetDescriptor> = {
         name: context.name,
         value: context,
-        items: []
+        items: [],
       };
       const items: MenuItem<PayloadPresetDescriptor>[] = [];
       for (const payloadPreset of context.items) {
         const item: MenuItem<PayloadPresetDescriptor> = {
           name: payloadPreset.name,
           value: payloadPreset,
-          select: this.selectPreset
+          select: this.selectPreset,
         };
         items.push(item);
       }
       if (group.value.context == null) {
         this.presetItems = items;
-      } else {
+      }
+      else {
         group.items = items;
         this.presetGroups.push(group);
       }
     }
 
     this.payloadOutputFilters = [
-        {
-          name: 'by technology:',
-          value: [],
-          select: () => false,
-          template: this.payloadOutputMenuTechnologyFiltersTemplate()
-        },
-        {
-          name: 'by quality:',
-          value: [],
-          select: () => false,
-          template: this.payloadOutputMenuQualityFiltersTemplate()
-        }
+      {
+        name: 'by technology:',
+        value: [],
+        select: () => false,
+        template: this.payloadOutputMenuTechnologyFiltersTemplate(),
+      },
+      {
+        name: 'by quality:',
+        value: [],
+        select: () => false,
+        template: this.payloadOutputMenuQualityFiltersTemplate(),
+      },
     ];
 
     this.payloadOutputGroups = [];
@@ -107,7 +106,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
       const group: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor> = {
         name: context.name,
         value: context,
-        items: []
+        items: [],
       };
       for (const payloadOutput of context.items) {
         const item: MenuItem<PayloadOutputDescriptor> = {
@@ -115,7 +114,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
           value: payloadOutput,
           select: () => this.activateOutput(context.context, payloadOutput.id),
           filter: this.payloadOutputMenuItemFilter,
-          template: this.payloadOutputMenuItemTemplate()
+          template: this.payloadOutputMenuItemTemplate(),
         };
         group.items.push(item);
       }
@@ -128,11 +127,11 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   private selectPreset = (presetItem: MenuItem<PayloadPresetDescriptor>) => {
     this.loadPresetPayload(presetItem.value.url);
     return true;
-  }
+  };
 
   private async loadPresetPayload(presetUrl: string) {
     this.payload.set(
-      await this.payloadPresetService.loadPresetPayload(presetUrl)
+      await this.payloadPresetService.loadPresetPayload(presetUrl),
     );
   }
 
@@ -145,8 +144,8 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
       }
     }
     if (newFilters.length == this.payloadOutputTechnologyFilters.length) {
-        newFilters.push(value);
-      }
+      newFilters.push(value);
+    }
     this.payloadOutputTechnologyFilters = newFilters;
   }
 
@@ -174,11 +173,11 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
       return false;
     }
     return true;
-  }
+  };
 
   private activateOutput(context: XssContext, output: string) {
     this.activePayloadOutput.set(
-      this.payloadOutputService.outputDescriptorById(context, output)
+      this.payloadOutputService.outputDescriptorById(context, output),
     );
     return false;
   }
@@ -196,5 +195,5 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     console.error(this.xssMessage);
     this.xssTriggeredCounter++;
     this.changeDetector.detectChanges();
-  }
+  };
 }

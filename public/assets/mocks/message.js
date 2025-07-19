@@ -10,7 +10,6 @@ function sortOrigins(origins) {
 }
 
 function messagePage() {
-
   const trustedOrigins = new Set();
   if (window.origin) {
     trustedOrigins.add(window.origin);
@@ -21,7 +20,6 @@ function messagePage() {
   pageStatus(document.querySelector('.meta.status'));
 
   function originsController() {
-
     const $$origin = document.getElementById('origin').content;
     const $tableOrigins = document.querySelector('table.origins');
 
@@ -36,7 +34,6 @@ function messagePage() {
     $buttonNew.addEventListener('click', () => originController());
 
     async function init() {
-
       for (const $rowOrigin of $tableOrigins.querySelectorAll('tr.origin')) {
         $remove($rowOrigin);
       }
@@ -71,7 +68,6 @@ function messagePage() {
     }
 
     function originController(origin) {
-
       const $rowOrigin = $$origin.cloneNode(true).querySelector('tr');
       $rowActions.insertAdjacentElement('beforebegin', $rowOrigin);
 
@@ -121,7 +117,7 @@ function messagePage() {
         }
         else {
           messageWarning = 'Warning: "' + origin + '" does not look like a valid origin. Origins are expressed as hierarchical URIs with only a scheme, host, and optional port component. E.g. "https://example.net:42".\n'
-            + 'Adding "' + origin + '" to the trust list anyway, but it is unlikely to ever match the origin of a post-message event!'
+            + 'Adding "' + origin + '" to the trust list anyway, but it is unlikely to ever match the origin of a post-message event!';
         }
         trustedOrigins.add(origin);
         init();
@@ -146,7 +142,6 @@ function messagePage() {
 
 
   function eventsController() {
-
     const $$event = document.getElementById('event').content;
     const $tableEvents = document.querySelector('table.events');
 
@@ -181,7 +176,6 @@ function messagePage() {
     }
 
     function eventController(event) {
-
       $tableEvents.classList.remove('empty');
 
       const $rowEvent = $$event.cloneNode(true).querySelector('tr');

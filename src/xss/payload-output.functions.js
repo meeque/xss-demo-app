@@ -7,18 +7,17 @@
 
 
 export class PayloadProcessors {
-
   constructor(sanitizer) {
     this.sanitizer = sanitizer;
   }
 
   htmlEncode(payload) {
     return payload
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#x27;');
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#x27;');
   }
 
   htmlSanitizeDomPurifyDefault(payload) {
@@ -30,8 +29,9 @@ export class PayloadProcessors {
       payload,
       {
         ALLOWED_TAGS: ['span', 'em', 'strong'],
-        ALLOWED_ATTR: ['class']
-      });
+        ALLOWED_ATTR: ['class'],
+      },
+    );
   }
 
   htmlSanitizeDomPurifyInlineBlockLinks(payload) {
@@ -39,8 +39,9 @@ export class PayloadProcessors {
       payload,
       {
         ALLOWED_TAGS: ['span', 'em', 'strong', 'div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a'],
-        ALLOWED_ATTR: ['class', 'href', 'target']
-      });
+        ALLOWED_ATTR: ['class', 'href', 'target'],
+      },
+    );
   }
 
   htmlChallengeStripTags(payload) {
@@ -51,10 +52,11 @@ export class PayloadProcessors {
     let url;
     try {
       url = new URL(payload, document.baseURI);
-    } catch(e) {
+    }
+    catch (e) {
       return '';
     }
-    if (!["http:", "https:"].includes(url.protocol)) {
+    if (!['http:', 'https:'].includes(url.protocol)) {
       return '';
     }
     return payload;
@@ -63,28 +65,29 @@ export class PayloadProcessors {
   jsonParse(payload) {
     try {
       return JSON.parse(payload);
-    } catch (e) {
-      console.warn('Expected JSON as payload, but failed to parse it!')
+    }
+    catch (e) {
+      console.warn('Expected JSON as payload, but failed to parse it!');
       return {};
     }
   }
 
   jsEncode(payload) {
     return 'var outputElement = document.createElement(\'div\');\n'
-        + 'outputElement.textContent = ' + JSON.stringify(payload) + ';\n'
-        + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
+      + 'outputElement.textContent = ' + JSON.stringify(payload) + ';\n'
+      + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
   }
 
   jsDoubleQuote(payload) {
     return 'var outputElement = document.createElement(\'div\');\n'
-        + 'outputElement.textContent = "' + payload + '";\n'
-        + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
+      + 'outputElement.textContent = "' + payload + '";\n'
+      + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
   }
 
   jsSingleQuote(payload) {
     return 'var outputElement = document.createElement(\'div\');\n'
-        + 'outputElement.textContent = \'' + payload + '\';\n'
-        + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
+      + 'outputElement.textContent = \'' + payload + '\';\n'
+      + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
   }
 
   jsChallengeLookMomNoParentheses(payload) {
@@ -92,14 +95,13 @@ export class PayloadProcessors {
       .replaceAll('(', '')
       .replaceAll(')', '');
     return 'var outputElement = document.createElement(\'div\');\n'
-        + 'outputElement.textContent = ' + jsEscapedPayload + ';\n'
-        + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
+      + 'outputElement.textContent = ' + jsEscapedPayload + ';\n'
+      + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
   }
 
   jsChallengeLikeLiterally(payload) {
-    const jsEscapedPayload =
-      [...payload]
-      .map(char => {
+    const jsEscapedPayload = [...payload]
+      .map((char) => {
         switch (char) {
           case '\\':
             return '\\\\';
@@ -114,14 +116,13 @@ export class PayloadProcessors {
       })
       .join('');
     return 'var outputElement = document.createElement(\'div\');\n'
-        + 'outputElement.textContent = `' + jsEscapedPayload + '`;\n'
-        + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
+      + 'outputElement.textContent = `' + jsEscapedPayload + '`;\n'
+      + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
   }
 
   jsChallengeTheGreatEscape(payload) {
-    const jsEscapedPayload =
-      [...payload]
-      .map(char => {
+    const jsEscapedPayload = [...payload]
+      .map((char) => {
         switch (char) {
           case '"':
             return '\\"';
@@ -129,15 +130,15 @@ export class PayloadProcessors {
             return '\\\'';
           case '`':
             return '\\`';
-            case '$':
-              return '\\$';
+          case '$':
+            return '\\$';
         }
         return char;
       })
       .join('');
     return 'var outputElement = document.createElement(\'div\');\n'
-        + 'outputElement.textContent = "' + jsEscapedPayload + '";\n'
-        + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
+      + 'outputElement.textContent = "' + jsEscapedPayload + '";\n'
+      + 'document.currentScript.insertAdjacentElement(\'afterend\', outputElement);';
   }
 
   domTextNode(payload) {
@@ -146,25 +147,24 @@ export class PayloadProcessors {
 
   ngTrustAsHtml = (payload) => {
     return this.sanitizer.bypassSecurityTrustHtml(payload);
-  }
+  };
 
   ngTrustAsUrl = (payload) => {
     return this.sanitizer.bypassSecurityTrustUrl(payload);
-  }
+  };
 
   ngTrustAsResourceUrl = (payload) => {
     return this.sanitizer.bypassSecurityTrustResourceUrl(payload);
-  }
+  };
 
   ngTrustAsStyle(payload) {
     return this.sanitizer.bypassSecurityTrustStyle(payload);
-  }
+  };
 }
 
 
 
 export class HtmlSourceProviders {
-
   content(payload) {
     return payload;
   }
@@ -181,7 +181,6 @@ export class HtmlSourceProviders {
 
 
 export class DomInjectors {
-
   textContent(element, payload) {
     element.textContent = payload;
   }
@@ -200,14 +199,14 @@ export class DomInjectors {
 
   titleAttribute(element, payload) {
     const paragraph = document.createElement('p');
-    paragraph.textContent = 'This paragraph has a title.'
+    paragraph.textContent = 'This paragraph has a title.';
     paragraph.setAttribute('title', payload);
     element.insertAdjacentElement('beforeend', paragraph);
   }
 
   linkHref(element, payload) {
     const link = document.createElement('a');
-    link.textContent = 'Click here to test your payload as a URL!'
+    link.textContent = 'Click here to test your payload as a URL!';
     link.href = payload;
     link.rel = 'opener';
     link.target = 'xss-demo-xss-probe';
@@ -243,10 +242,10 @@ export class DomInjectors {
 
   challengeDoubleTrouble(element, payload) {
     const headline = document.createElement('h3');
-    headline.innerHTML = DOMPurify.sanitize(payload, {ALLOWED_TAGS:[], ALLOWED_ATTR:[]});
+    headline.innerHTML = DOMPurify.sanitize(payload, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
     element.insertAdjacentElement('beforeend', headline);
     const paragraph = document.createElement('p');
-    paragraph.innerHTML = 'The above headline says:<br><em>' + headline.innerText + '</em>'
+    paragraph.innerHTML = 'The above headline says:<br><em>' + headline.innerText + '</em>';
     element.insertAdjacentElement('beforeend', paragraph);
   }
 }
@@ -254,7 +253,6 @@ export class DomInjectors {
 
 
 export class JQueryInjectors {
-
   text(element, payload) {
     $(element).text(payload);
   }
@@ -294,7 +292,7 @@ export class JQueryInjectors {
   wrapInner(element, payload) {
     $(element)
       .html(
-        $('<p>').text('This is a static paragraph. Wrapping around its contents...').wrapInner(payload)
+        $('<p>').text('This is a static paragraph. Wrapping around its contents...').wrapInner(payload),
       );
   }
 
@@ -313,21 +311,21 @@ export class JQueryInjectors {
   titleAttribute(element, payload) {
     $(element)
       .html(
-        $('<p>').text('This paragraph has a title.').attr('title', payload)
+        $('<p>').text('This paragraph has a title.').attr('title', payload),
       );
   }
 
   linkHref(element, payload) {
     $(element)
       .html(
-        $('<a target="xss-demo-xss-probe" rel="opener">').text('Click here to test your payload as a URL!').attr('href', payload)
+        $('<a target="xss-demo-xss-probe" rel="opener">').text('Click here to test your payload as a URL!').attr('href', payload),
       );
   }
 
   iframeSrc(element, payload) {
     $(element)
       .html(
-        $('<iframe>').attr('src', payload)
+        $('<iframe>').attr('src', payload),
       );
   }
 }

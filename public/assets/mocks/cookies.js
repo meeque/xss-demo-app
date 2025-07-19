@@ -47,8 +47,7 @@ function hasNativeCookieStore() {
 }
 
 function getCookieDomainsHierarchy(domain) {
-
-  const domainLabels = domain.split('.').filter((label) => label !== '');
+  const domainLabels = domain.split('.').filter(label => label !== '');
 
   // unqualified host name or IPv6 address
   if (domainLabels.length === 1) {
@@ -92,7 +91,6 @@ function parseDate(date) {
 }
 
 function cookiesPage() {
-
   const $$cookies = document.getElementById('cookies').content;
   const $$cookie = document.getElementById('cookie').content;
 
@@ -116,7 +114,6 @@ function cookiesPage() {
   pageStatus(document.querySelector('.meta.status'));
 
   async function cookiesController($container) {
-
     let messageError = null;
 
     const $tableCookies = $$cookies.cloneNode(true).querySelector('table.cookies');
@@ -135,7 +132,6 @@ function cookiesPage() {
     $buttonNew.addEventListener('click', cookieController);
 
     async function init() {
-
       for (const $rowCookie of $tableCookies.querySelectorAll('tr.cookie')) {
         $remove($rowCookie);
       }
@@ -170,7 +166,6 @@ function cookiesPage() {
     }
 
     function cookieController(cookie) {
-
       const $rowCookie = $$cookie.cloneNode(true).querySelector('tr');
       $rowActions.insertAdjacentElement('beforebegin', $rowCookie);
 
@@ -243,7 +238,8 @@ function cookiesPage() {
       async function deleteCookie() {
         try {
           await unsetCookie(cookie);
-        } catch (error) {
+        }
+        catch (error) {
           messageError = error.toString();
         }
 
@@ -264,7 +260,8 @@ function cookiesPage() {
             sameSite: $selectSameSite.value,
             expires: $inputExpires.value,
           });
-        } catch (error) {
+        }
+        catch (error) {
           messageError = error.toString();
         }
 
@@ -297,7 +294,7 @@ function cookiesPage() {
       }
 
       function isExistingCookie() {
-        return (typeof cookie == "object") && !(cookie instanceof Event);
+        return (typeof cookie == 'object') && !(cookie instanceof Event);
       }
     }
 

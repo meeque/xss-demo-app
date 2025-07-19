@@ -4,49 +4,50 @@ import { FormsModule } from '@angular/forms';
 
 
 export interface MenuEntry<V> {
-  name : string;
-  value : V;
+  name: string
+  value: V
 }
 
 
 export interface MenuItem<V> extends MenuEntry<V> {
-  select : (item : MenuItem<V>, event? : Event) => boolean;
-  filter? : (item : MenuItem<V>, query : string) => boolean;
-  template? : TemplateRef<MenuItemContext>;
+  select: (item: MenuItem<V>, event?: Event) => boolean
+  filter?: (item: MenuItem<V>, query: string) => boolean
+  template?: TemplateRef<MenuItemContext>
 }
 
 
-export interface MenuGroup<V,W> extends MenuEntry<V> {
-  items : MenuItem<W>[];
+export interface MenuGroup<V, W> extends MenuEntry<V> {
+  items: MenuItem<W>[]
 }
 
 
 export class MenuListContext {
   constructor(
-      public $implicit : ComboboxInputComponent,
-      public items : MenuItem<unknown>[]) {
+    public $implicit: ComboboxInputComponent,
+    public items: MenuItem<unknown>[],
+  ) {
   }
 }
 
 
 export class MenuItemContext {
   constructor(
-      public $implicit : ComboboxInputComponent,
-      public item : MenuItem<unknown>) {
+    public $implicit: ComboboxInputComponent,
+    public item: MenuItem<unknown>,
+  ) {
   }
 }
 
 
 
 @Component({
-    selector: 'xss-combobox-input',
-    templateUrl: './combobox-input.component.html',
-    styleUrl: './combobox-input.component.css',
-    standalone: true,
-    imports: [FormsModule]
+  selector: 'xss-combobox-input',
+  templateUrl: './combobox-input.component.html',
+  styleUrl: './combobox-input.component.css',
+  standalone: true,
+  imports: [FormsModule],
 })
 export class ComboboxInputComponent implements AfterViewChecked {
-
   private static nextComponentId = 0;
   protected readonly componentId = ComboboxInputComponent.nextComponentId++;
 
@@ -67,46 +68,44 @@ export class ComboboxInputComponent implements AfterViewChecked {
 
 
   ngAfterViewChecked() {
-
     this.menuListContainers().forEach(
-        (menuListContainer) => {
-
-            menuListContainer.clear();
-            this.menuItemContainers().forEach(
-                (menuItemContainer) => {
-                  menuItemContainer.clear();
-                }
-            );
-        }
+      (menuListContainer) => {
+        menuListContainer.clear();
+        this.menuItemContainers().forEach(
+          (menuItemContainer) => {
+            menuItemContainer.clear();
+          },
+        );
+      },
     );
 
     let nextMenuItem = 0;
 
     this.menuListContainers().forEach(
-        (menuListContainer, listIndex) => {
+      (menuListContainer, listIndex) => {
+        const listItems = (listIndex == 0) ? this.items() : this.groups()[listIndex - 1].items;
+        menuListContainer.createEmbeddedView<MenuListContext>(
+          this.defaultMenuListTemplate(),
+          new MenuListContext(this, listItems),
+        );
 
-          const listItems = (listIndex == 0) ? this.items() : this.groups()[listIndex -1].items;
-          menuListContainer.createEmbeddedView<MenuListContext>(
-              this.defaultMenuListTemplate(),
-              new MenuListContext(this, listItems));
+        this.changeDetector.detectChanges();
 
-          this.changeDetector.detectChanges();
+        this.menuItemContainers().forEach(
+          (menuItemContainer, itemIndex) => {
+            if (itemIndex >= nextMenuItem) {
+              const menuItem = listItems[itemIndex - nextMenuItem];
+              const template = menuItem.template || this.defaultMenuItemTemplate();
+              menuItemContainer.createEmbeddedView<MenuItemContext>(
+                template,
+                new MenuItemContext(this, menuItem),
+              );
+            }
+          },
+        );
 
-          this.menuItemContainers().forEach(
-              (menuItemContainer, itemIndex) => {
-
-                if (itemIndex >= nextMenuItem) {
-                  const menuItem = listItems[itemIndex - nextMenuItem];
-                  const template = menuItem.template || this.defaultMenuItemTemplate();
-                  menuItemContainer.createEmbeddedView<MenuItemContext>(
-                      template,
-                      new MenuItemContext(this, menuItem));
-                }
-              }
-          );
-
-          nextMenuItem = this.menuItemContainers().length;
-        }
+        nextMenuItem = this.menuItemContainers().length;
+      },
     );
     this.changeDetector.detectChanges();
   }
@@ -121,23 +120,23 @@ export class ComboboxInputComponent implements AfterViewChecked {
     }
   }
 
-  protected filter(item : MenuItem<unknown>) {
+  protected filter(item: MenuItem<unknown>) {
     if (item.filter) {
       return item.filter(item, this.query());
     }
     else {
-      return this.defaultItemFilter(item, this.query())
+      return this.defaultItemFilter(item, this.query());
     }
   }
 
-  private defaultItemFilter(item : MenuItem<unknown>, query : string) {
+  private defaultItemFilter(item: MenuItem<unknown>, query: string) {
     if (query) {
       return item.name.toLowerCase().includes(query.toLowerCase());
     }
     return true;
   }
 
-  protected select(item : MenuItem<unknown>, event? : Event) {
+  protected select(item: MenuItem<unknown>, event?: Event) {
     this.toggleMenu(false);
     this.query.set('');
     this.placeholder.set(item.name);

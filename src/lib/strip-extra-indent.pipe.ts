@@ -1,8 +1,10 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({name: 'stripextraindent', pure: true})
-export class StripExtraIndentPipe implements PipeTransform {  
-
+@Pipe({
+  name: 'stripextraindent',
+  pure: true,
+})
+export class StripExtraIndentPipe implements PipeTransform {
   transform(input: unknown): string {
     const inputString = '' + input;
     const lines = inputString.split(/\r?\n/);
@@ -15,9 +17,7 @@ export class StripExtraIndentPipe implements PipeTransform {
       if (firstNonSpace !== null) {
         const lineIndent = firstNonSpace.index;
         if (
-          (isFirstLine && lineIndent > 0)
-          ||
-          (!isFirstLine && lineIndent < minIndent)
+          (isFirstLine && lineIndent > 0) || (!isFirstLine && lineIndent < minIndent)
         ) {
           minIndent = lineIndent;
         }
@@ -34,11 +34,11 @@ export class StripExtraIndentPipe implements PipeTransform {
       const firstNonSpace = /\S/.exec(line);
       if (firstNonSpace?.index >= minIndent) {
         strippedLines.push(line.substring(minIndent));
-      } else {
+      }
+      else {
         strippedLines.push(line);
       }
     }
     return strippedLines.join('\n');
   }
-
 }

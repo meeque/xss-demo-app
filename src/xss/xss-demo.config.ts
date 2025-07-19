@@ -7,10 +7,10 @@ import { PayloadPresetService } from './payload-preset.service';
 import { PayloadOutputService } from './payload-output.service';
 
 export const xssDemoConfig: ApplicationConfig = {
-    providers: [
-        importProvidersFrom(BrowserModule, FormsModule),
-        PayloadPresetService,
-        PayloadOutputService,
-        provideHttpClient(withNoXsrfProtection())
-    ]
+  providers: [
+    importProvidersFrom(BrowserModule, FormsModule),
+    PayloadPresetService,
+    PayloadOutputService,
+    provideHttpClient(withNoXsrfProtection()),
+  ],
 };
