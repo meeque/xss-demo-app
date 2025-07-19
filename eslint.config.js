@@ -3,12 +3,30 @@ const globals = require('globals');
 const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 const angulareslint = require('angular-eslint');
+const stylistic = require('@stylistic/eslint-plugin');
+
+
+const stylisticRules = {
+  '@stylistic/semi': [
+    'error',
+    'always',
+  ],
+  '@stylistic/no-multiple-empty-lines': [
+    'error',
+    {
+      'maxBOF': 0,
+      'max': 3,
+      'maxEOF': 0,
+    }
+  ],
+}
 
 module.exports = tseslint.config(
   {
     files: ['public/**/*.js'],
     extends: [
-      eslint.configs.recommended
+      eslint.configs.recommended,
+      stylistic.configs.recommended,
     ],
     processor: angulareslint.processInlineTemplates,
     rules: {
@@ -18,6 +36,7 @@ module.exports = tseslint.config(
           caughtErrors: 'none',
         }
       ],
+      ... stylisticRules,
     },
     languageOptions: {
       sourceType: 'script',
@@ -30,7 +49,8 @@ module.exports = tseslint.config(
   {
     files: ['src/**/*.js'],
     extends: [
-      eslint.configs.recommended
+      eslint.configs.recommended,
+      stylistic.configs.recommended,
     ],
     processor: angulareslint.processInlineTemplates,
     rules: {
@@ -40,6 +60,7 @@ module.exports = tseslint.config(
           caughtErrors: 'none',
         }
       ],
+      ... stylisticRules,
     },
     languageOptions: {
       sourceType: 'module',
@@ -54,6 +75,7 @@ module.exports = tseslint.config(
     files: ['src/**/*.ts'],
     extends: [
       eslint.configs.recommended,
+      stylistic.configs.recommended,
       ... tseslint.configs.recommended,
       ... tseslint.configs.stylisticTypeChecked,
       ... angulareslint.configs.tsRecommended,
@@ -85,6 +107,7 @@ module.exports = tseslint.config(
           style: 'kebab-case',
         },
       ],
+      ... stylisticRules,
     },
     languageOptions: {
       parserOptions: {
