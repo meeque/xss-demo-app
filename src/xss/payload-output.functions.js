@@ -219,21 +219,21 @@ export class DomInjectors {
     element.insertAdjacentElement('beforeend', iframe);
   }
 
-  trustedStyleBlock(element, payload) {
+  styleBlock(element, payload) {
     const styleBlock = document.createElement('style');
     styleBlock.setAttribute('type', 'text/css');
     styleBlock.textContent = payload;
     element.insertAdjacentElement('beforeend', styleBlock);
   }
 
-  trustedStyleAttribute(element, payload) {
+  styleAttribute(element, payload) {
     const styledElement = document.createElement('div');
     styledElement.textContent = 'Element with custom style';
     styledElement.setAttribute('style', payload);
     element.insertAdjacentElement('beforeend', styledElement);
   }
 
-  trustedScriptBlock(element, payload) {
+  scriptBlock(element, payload) {
     const scriptBlock = document.createElement('script');
     scriptBlock.type = 'text/javascript';
     scriptBlock.textContent = '\n' + payload + '\n';
