@@ -1,4 +1,3 @@
-// @ts-check
 const globals = require('globals');
 const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
@@ -6,26 +5,37 @@ const angulareslint = require('angular-eslint');
 const stylistic = require('@stylistic/eslint-plugin');
 
 
-const stylisticRules = {
-  '@stylistic/semi': [
-    'error',
-    'always',
-  ],
-  '@stylistic/no-multiple-empty-lines': [
-    'error',
-    {
-      maxBOF: 0,
-      max: 3,
-      maxEOF: 0,
-    },
-  ],
-  '@stylistic/key-spacing': [
-    'error',
-    {
-      mode: 'minimum',
-    },
-  ],
+
+const xssDemoAppEslintConfigs = {
+  rules: {
+    'no-unused-vars': [
+      'error',
+      {
+        caughtErrors: 'none',
+      },
+    ],
+    '@stylistic/semi': [
+      'error',
+      'always',
+    ],
+    '@stylistic/no-multiple-empty-lines': [
+      'error',
+      {
+        maxBOF: 0,
+        max: 3,
+        maxEOF: 0,
+      },
+    ],
+    '@stylistic/key-spacing': [
+      'error',
+      {
+        mode: 'minimum',
+      },
+    ],
+  },
 };
+
+
 
 module.exports = tseslint.config(
   {
@@ -33,17 +43,8 @@ module.exports = tseslint.config(
     extends: [
       eslint.configs.recommended,
       stylistic.configs.recommended,
+      xssDemoAppEslintConfigs,
     ],
-    processor: angulareslint.processInlineTemplates,
-    rules: {
-      'no-unused-vars': [
-        'error',
-        {
-          caughtErrors: 'none',
-        },
-      ],
-      ...stylisticRules,
-    },
     languageOptions: {
       sourceType: 'script',
       globals: {
@@ -57,17 +58,8 @@ module.exports = tseslint.config(
     extends: [
       eslint.configs.recommended,
       stylistic.configs.recommended,
+      xssDemoAppEslintConfigs,
     ],
-    processor: angulareslint.processInlineTemplates,
-    rules: {
-      'no-unused-vars': [
-        'error',
-        {
-          caughtErrors: 'none',
-        },
-      ],
-      ...stylisticRules,
-    },
     languageOptions: {
       sourceType: 'script',
       globals: {
@@ -81,17 +73,8 @@ module.exports = tseslint.config(
     extends: [
       eslint.configs.recommended,
       stylistic.configs.recommended,
+      xssDemoAppEslintConfigs,
     ],
-    processor: angulareslint.processInlineTemplates,
-    rules: {
-      'no-unused-vars': [
-        'error',
-        {
-          caughtErrors: 'none',
-        },
-      ],
-      ...stylisticRules,
-    },
     languageOptions: {
       sourceType: 'module',
       globals: {
@@ -106,6 +89,7 @@ module.exports = tseslint.config(
     extends: [
       eslint.configs.recommended,
       stylistic.configs.recommended,
+      xssDemoAppEslintConfigs,
       ...tseslint.configs.recommended,
       ...tseslint.configs.stylisticTypeChecked,
       ...angulareslint.configs.tsRecommended,
@@ -137,7 +121,6 @@ module.exports = tseslint.config(
           style: 'kebab-case',
         },
       ],
-      ...stylisticRules,
     },
     languageOptions: {
       parserOptions: {
