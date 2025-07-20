@@ -1,3 +1,7 @@
+/* eslint @stylistic/no-multi-spaces: ['off'] */
+/* eslint @stylistic/array-bracket-spacing: ['off'] */
+/* eslint @stylistic/key-spacing: ['off'] */
+
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { timeout, domTreeAvailable, whenStableDetectChanges } from './lib.spec';
 
@@ -319,9 +323,9 @@ describe('Xss Demo App', async () => {
     },
 
     HtmlAttribute: {
-      HtmlTitleAttributeRawQuoted:        ['IFrame src', 'IFrame content', 'Image onerror', cf.mouseenter('onmouseenter attribute'),                                                     'Mixed HTML Content'],
-      HtmlTitleAttributeRawUnquoted:      [                                                                                          cf.mouseenter('onmouseenter attribute (unquoted)'),                     ],
-      HtmlTitleAttributeEncodedUnquoted : [                                                                                          cf.mouseenter('onmouseenter attribute (unquoted)'),                     ],
+      HtmlTitleAttributeRawQuoted:       ['IFrame src', 'IFrame content', 'Image onerror', cf.mouseenter('onmouseenter attribute'),                                                     'Mixed HTML Content'],
+      HtmlTitleAttributeRawUnquoted:     [                                                                                          cf.mouseenter('onmouseenter attribute (unquoted)')                      ],
+      HtmlTitleAttributeEncodedUnquoted: [                                                                                          cf.mouseenter('onmouseenter attribute (unquoted)')                      ],
     },
 
     Url: {
@@ -344,7 +348,6 @@ describe('Xss Demo App', async () => {
       DomScriptBlockRaw:             ['pure JS code', 'pure JS code for parent and opener',                                                                            cf.injectJsFrame('Inject JS into document (frame)'), cf.injectJsWindow('Inject JS into document (window)'), cf.newWindow('Interact with Plain HTML mock (window)'), cf.newWindow('Interact with Browser Storage mock (window)'), cf.newWindow('Interact with Cookies mock (window)'), cf.newWindow('Interact with Post Message mock (window)'), 'JSFuck', cf.deface('pure JS defacement attack') ],
     },
   };
-
 
   const payloadTestConfigFactory: Record<string, (name: string, expectXss?: boolean) => EnhancedPayloadTestConfig> = {
     noXss: (payload: string) => {

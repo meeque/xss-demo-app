@@ -19,6 +19,12 @@ const stylisticRules = {
       'maxEOF': 0,
     }
   ],
+  '@stylistic/key-spacing': [
+    'error',
+    {
+      'mode': 'minimum',
+    }
+  ],
 }
 
 module.exports = tseslint.config(

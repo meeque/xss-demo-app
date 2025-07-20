@@ -8,9 +8,9 @@ import { PayloadProcessors, HtmlSourceProviders, DomInjectors, JQueryInjectors }
 
 
 export enum PayloadOutputQuality {
-  Recommended  = 'Recommended',
+  Recommended = 'Recommended',
   Questionable = 'Questionable',
-  Insecure     = 'Insecure',
+  Insecure = 'Insecure',
 }
 
 

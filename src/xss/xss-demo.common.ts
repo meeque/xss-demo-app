@@ -1,9 +1,9 @@
 export enum XssContext {
-  HtmlContent   = 'HtmlContent',
+  HtmlContent = 'HtmlContent',
   HtmlAttribute = 'HtmlAttribute',
-  Url           = 'Url',
-  Css           = 'Css',
-  JavaScript    = 'JavaScript',
+  Url = 'Url',
+  Css = 'Css',
+  JavaScript = 'JavaScript',
 }
 
 export interface XssContextCollection<P> {
