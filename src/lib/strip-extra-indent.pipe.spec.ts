@@ -1,7 +1,6 @@
-import { StripExtraIndentPipe } from "./strip-extra-indent.pipe";
+import { StripExtraIndentPipe } from './strip-extra-indent.pipe';
 
-describe('StripExtraIndentPipe', () => {  
-
+describe('StripExtraIndentPipe', () => {
   const pipe = new StripExtraIndentPipe();
 
   it('should pass through single-line string without indent unchanged', () => {
@@ -17,59 +16,59 @@ describe('StripExtraIndentPipe', () => {
 
   it('should unindent multi-line string', () => {
     expectTransform(
-      '  foo\n' +
-      '    bar\n' +
-      '      test\n' +
-      '    xxx\n',
-      'foo\n' +
-      '  bar\n' +
-      '    test\n' +
-      '  xxx\n'
+      '  foo\n'
+      + '    bar\n'
+      + '      test\n'
+      + '    xxx\n',
+      'foo\n'
+      + '  bar\n'
+      + '    test\n'
+      + '  xxx\n',
     );
     expectTransform(
-      '      foo\n' +
-      '    bar\n' +
-      '      test\n' +
-      '  xxx',
-      '    foo\n' +
-      '  bar\n' +
-      '    test\n' +
-      'xxx'
+      '      foo\n'
+      + '    bar\n'
+      + '      test\n'
+      + '  xxx',
+      '    foo\n'
+      + '  bar\n'
+      + '    test\n'
+      + 'xxx',
     );
     expectTransform(
-      '  foo\n' +
-      '\n' +
-      '  bar\n' +
-      '  \n' +
-      '    test\n',
-      'foo\n' +
-      '\n' +
-      'bar\n' +
-      '  \n' +
-      '  test\n'
+      '  foo\n'
+      + '\n'
+      + '  bar\n'
+      + '  \n'
+      + '    test\n',
+      'foo\n'
+      + '\n'
+      + 'bar\n'
+      + '  \n'
+      + '  test\n',
     );
   });
 
   it('should unindent remaining multi-line string, even when first line has no indent', () => {
     expectTransform(
-      'foo\n' +
-      '    bar\n' +
-      '      test\n' +
-      '    xxx\n',
-      'foo\n' +
-      'bar\n' +
-      '  test\n' +
-      'xxx\n'
+      'foo\n'
+      + '    bar\n'
+      + '      test\n'
+      + '    xxx\n',
+      'foo\n'
+      + 'bar\n'
+      + '  test\n'
+      + 'xxx\n',
     );
     expectTransform(
-      'foo\n' +
-      '    bar\n' +
-      '      test\n' +
-      '  xxx',
-      'foo\n' +
-      '  bar\n' +
-      '    test\n' +
-      'xxx'
+      'foo\n'
+      + '    bar\n'
+      + '      test\n'
+      + '  xxx',
+      'foo\n'
+      + '  bar\n'
+      + '    test\n'
+      + 'xxx',
     );
   });
 
@@ -88,14 +87,14 @@ describe('StripExtraIndentPipe', () => {
   it('should format function source code nicely', () => {
     expectTransform(
       mockFunction,
-      'function mockFunction(numbers) {\n' +
-      '  const theAnswer = 42;\n' +
-      '  const result = [];\n' +
-      '  for (const num of numbers) {\n' +
-      '    result.push(num + theAnswer);\n' +
-      '  }\n' +
-      '  return result;\n' +
-      '}'
+      'function mockFunction(numbers) {\n'
+      + '  const theAnswer = 42;\n'
+      + '  const result = [];\n'
+      + '  for (const num of numbers) {\n'
+      + '    result.push(num + theAnswer);\n'
+      + '  }\n'
+      + '  return result;\n'
+      + '}',
     );
   });
 
@@ -113,5 +112,4 @@ describe('StripExtraIndentPipe', () => {
 
     return result;
   }
-
 });

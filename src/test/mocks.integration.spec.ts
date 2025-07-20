@@ -1,24 +1,20 @@
 import { AsymmetricEqualityTester, anyOf, timeout, domTreeAvailable, queryAndExpectCount, queryAndExpectOne } from './lib.spec';
 
 describe('XSS Demo Mocks', () => {
-
   let pageFixture: HTMLIFrameElement = null;
   let mockPageDoc: Document = null;
 
   afterEach(tearDownPageFixture);
 
   describe('Plain Page', () => {
-
     beforeEach(async () => await setUpPageFixture('/assets/mocks/plain.html'));
 
     it('is loaded', () => {
       expect(mockPageDoc).toEqual(jasmine.anything());
     });
-
   });
 
   describe('Storage Page', () => {
-
     beforeEach(() => {
       localStorage.clear();
       sessionStorage.clear();
@@ -36,13 +32,10 @@ describe('XSS Demo Mocks', () => {
     });
 
     for (const testStorageName of ['localStorage', 'sessionStorage']) {
-
       const testStorage = window[testStorageName] as Storage;
 
       describe('for ' + testStorageName, () => {
-
         it('should manage storage contents through its web UI', async () => {
-
           const testData = {} as Record<string, string>;
 
           // check empty storage and table
@@ -118,7 +111,6 @@ describe('XSS Demo Mocks', () => {
         });
 
         it('should reflect external storage changes in its web UI', async () => {
-
           const testData = {} as Record<string, string>;
 
           // check empty storage and table
@@ -276,7 +268,7 @@ describe('XSS Demo Mocks', () => {
         const storageRows = queryAndExpectCount(storageTable, 'tr', rowCount);
         expect(storageRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
         expect(storageRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'empty']));
-        expect(storageRows[rowCount-1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
+        expect(storageRows[rowCount - 1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
 
         let index = 2;
         for (const dataKey of dataKeys) {
@@ -291,7 +283,6 @@ describe('XSS Demo Mocks', () => {
   });
 
   describe('Cookies Page', () => {
-
     const enum SameSite {
       strict = 'strict',
       lax    = 'lax',
@@ -299,24 +290,24 @@ describe('XSS Demo Mocks', () => {
     }
 
     interface CookieId {
-      domain?: string;
-      path?: string;
-      name: string;
-      partitioned?: boolean;
+      domain?: string
+      path?: string
+      name: string
+      partitioned?: boolean
     }
 
     interface Cookie extends CookieId {
-      value: string;
-      secure?: boolean;
-      sameSite?: SameSite;
-      expires?: number;
+      value: string
+      secure?: boolean
+      sameSite?: SameSite
+      expires?: number
     }
 
     interface CookieStore {
-      getAll(options?: object): Promise<Cookie[]>;
-      get(cookie: CookieId): Promise<Cookie>;
-      set(cookie: Cookie): Promise<undefined>;
-      delete(cookie: CookieId): Promise<undefined>;
+      getAll(options?: object): Promise<Cookie[]>
+      get(cookie: CookieId): Promise<Cookie>
+      set(cookie: Cookie): Promise<undefined>
+      delete(cookie: CookieId): Promise<undefined>
     }
 
     const cookieStore: CookieStore = globalThis.cookieStore;
@@ -332,7 +323,6 @@ describe('XSS Demo Mocks', () => {
     });
 
     describe('sortCookies() function', () => {
-
       it('should pass through empty cookies array', async () => {
         return expectSortedCookies([], []);
       });
@@ -350,7 +340,7 @@ describe('XSS Demo Mocks', () => {
             {name: 'bar'  },
             {name: 'fooo' },
             {name: '!'    },
-            {name: 'fOo'  }
+            {name: 'fOo'  },
           ],
           [
             {name: ''     },
@@ -363,8 +353,8 @@ describe('XSS Demo Mocks', () => {
             {name: 'bar'  },
             {name: 'fOo'  },
             {name: 'foo'  },
-            {name: 'fooo' }
-          ]
+            {name: 'fooo' },
+          ],
         );
       });
 
@@ -416,8 +406,8 @@ describe('XSS Demo Mocks', () => {
             {path: '/test',      name: 'bar'},
             {path: '/test',      name: 'foo'},
             {path: '/test/path', name: 'foo'},
-            {path: '/test/path', name: 'foo'}
-          ]
+            {path: '/test/path', name: 'foo'},
+          ],
         );
       });
 
@@ -445,7 +435,7 @@ describe('XSS Demo Mocks', () => {
             {domain: 'xss.example', path: '/test/', name: '42'},
             {domain: 'yss.example', path: '/',      name: 'foo'},
             {domain: 'xss',         path: '/path/', name: 'bar'},
-            {domain: '',            path: '/',      name: 'foo'}
+            {domain: '',            path: '/',      name: 'foo'},
           ],
           [
             {domain: '',            path: '/',      name: ''   },
@@ -470,7 +460,7 @@ describe('XSS Demo Mocks', () => {
             {domain: 'yss.example', path: '/',      name: 'foo'},
             {domain: 'yss.example', path: '/path/', name: '42' },
             {domain: 'yss.example', path: '/path/', name: 'BAR'},
-          ]
+          ],
         );
       });
 
@@ -482,12 +472,11 @@ describe('XSS Demo Mocks', () => {
     });
 
     describe('getCookieDomainsHierarchy() function', () => {
-
       it('should pass through simple host names', async () => {
         await expectCookieDomainsHierarchy('localhost', ['localhost']);
         await expectCookieDomainsHierarchy('container-js-dev', ['container-js-dev']);
         await expectCookieDomainsHierarchy('xss', ['xss']);
-        await expectCookieDomainsHierarchy('local.',['local.']);
+        await expectCookieDomainsHierarchy('local.', ['local.']);
       });
 
       it('should pass through IPv4 addresses', async () => {
@@ -517,14 +506,14 @@ describe('XSS Demo Mocks', () => {
             'xss.dev.meeque.local',
             'dev.meeque.local',
             'meeque.local',
-          ]
+          ],
         );
         await expectCookieDomainsHierarchy(
           'yss.meeque.de',
           [
             'yss.meeque.de',
-            'meeque.de'
-          ]
+            'meeque.de',
+          ],
         );
         await expectCookieDomainsHierarchy(
           'do.not.treat.public.suffixes.specially.for.now.co.uk',
@@ -537,8 +526,8 @@ describe('XSS Demo Mocks', () => {
             'specially.for.now.co.uk',
             'for.now.co.uk',
             'now.co.uk',
-            'co.uk'
-          ]
+            'co.uk',
+          ],
         );
       });
 
@@ -550,19 +539,13 @@ describe('XSS Demo Mocks', () => {
     });
 
     if (cookieStore === undefined) {
-
       xit('cannot be tested in this browser, because it does not support the CookieStore API');
-
     }
     else {
-
       describe('should manage cookies', () => {
-
         for (const testDomain of getCookieDomainsHierarchySyncCopy(document.location.hostname)) {
           for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
-
             it('with domain "' + testDomain + '" and path "' + testPath + '"', async () => {
-
               const testCookies = [] as Cookie[];
 
               // check no cookies
@@ -575,7 +558,7 @@ describe('XSS Demo Mocks', () => {
                   domain: testDomain,
                   path: testPath,
                   name: 'foo',
-                  value: 'value of cookie with name "foo"'
+                  value: 'value of cookie with name "foo"',
                 };
                 await addCookie(testCookies, testCookie);
                 await fillNewCookieForm(testCookie);
@@ -589,7 +572,7 @@ describe('XSS Demo Mocks', () => {
                   domain: testDomain,
                   path: testPath,
                   name: 'bar',
-                  value: 'value of cookie with name "bar"'
+                  value: 'value of cookie with name "bar"',
                 };
                 await fillNewCookieForm(testCookie, false);
                 await expectCookies(testCookies);
@@ -603,7 +586,7 @@ describe('XSS Demo Mocks', () => {
                   path: testPath,
                   name: 'xxx',
                   value: 'value of cookie with name "xxx"',
-                  sameSite: SameSite.lax
+                  sameSite: SameSite.lax,
                 };
                 await addCookie(testCookies, testCookie);
                 await fillNewCookieForm(testCookie);
@@ -616,7 +599,7 @@ describe('XSS Demo Mocks', () => {
                 const testCookie = {
                   domain: testDomain,
                   path: testPath,
-                  name: 'foo'
+                  name: 'foo',
                 };
                 removeCookie(testCookies, testCookie);
                 await deleteCookieTableCookie(testCookie);
@@ -632,7 +615,7 @@ describe('XSS Demo Mocks', () => {
                   name: 'bar',
                   value: 'value of cookie with name "bar"',
                   sameSite: SameSite.none,
-                  expires: Date.now() + (60 * 1000)
+                  expires: Date.now() + (60 * 1000),
                 };
                 await addCookie(testCookies, testCookie);
                 await fillNewCookieForm(testCookie);
@@ -663,7 +646,7 @@ describe('XSS Demo Mocks', () => {
                   name: 'bar',
                   value: 'new value for cookie with name "bar"',
                   sameSite: SameSite.strict,
-                  expires: Date.now() + (60 * 1000)
+                  expires: Date.now() + (60 * 1000),
                 };
                 await addCookie(testCookies, testCookie);
                 await editCookieTableCookie(testCookie);
@@ -679,7 +662,7 @@ describe('XSS Demo Mocks', () => {
                   name: 'xxx',
                   value: 'unsaved value for item with key "xxx"',
                   sameSite: SameSite.lax,
-                  expires: null
+                  expires: null,
                 };
                 await editCookieTableCookie(testCookie, false);
                 await expectCookies(testCookies);
@@ -694,7 +677,7 @@ describe('XSS Demo Mocks', () => {
                   name: 'foo',
                   value: 'new value for cookie with name "foo"',
                   sameSite: SameSite.strict,
-                  expires: Date.now() + (10 * 60 * 1000)
+                  expires: Date.now() + (10 * 60 * 1000),
                 };
                 await addCookie(testCookies, testCookie);
                 await editCookieTableCookie(testCookie);
@@ -707,7 +690,7 @@ describe('XSS Demo Mocks', () => {
                 const testCookie = {
                   domain: testDomain,
                   path: testPath,
-                  name: 'xxx'
+                  name: 'xxx',
                 };
                 removeCookie(testCookies, testCookie);
                 await deleteCookieTableCookie(testCookie);
@@ -723,7 +706,7 @@ describe('XSS Demo Mocks', () => {
                   name: 'bar',
                   value: 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for cookie with name "bar"',
                   sameSite: SameSite.strict,
-                  expires: null
+                  expires: null,
                 };
                 await addCookie(testCookies, testCookie);
                 await editCookieTableCookie(testCookie);
@@ -782,7 +765,7 @@ describe('XSS Demo Mocks', () => {
                   name: 'foo',
                   value: 'unsaved value for cookie with name "foo"',
                   sameSite: SameSite.none,
-                  expires: Date.now() + (60 * 1000)
+                  expires: Date.now() + (60 * 1000),
                 };
                 await editCookieTableCookie(testCookie, false);
                 await expectCookies(testCookies);
@@ -792,137 +775,129 @@ describe('XSS Demo Mocks', () => {
               // wait a bit for async failures
               await timeout(200);
             });
-
           }
         }
-
       });
 
       describe('should reflect external cookie changes', () => {
-
         for (const testDomain of getCookieDomainsHierarchySyncCopy(document.location.hostname)) {
           for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
-
             it('with domain "' + testDomain + '" and path "' + testPath + '"', async () => {
-
               const testCookies = [] as Cookie[];
 
               // check no cookies
               await expectCookies(testCookies);
               await expectCookiesTable(testCookies);
-      
+
               {
                 // add "FOO"
                 const testCookie = {
                   domain: testDomain,
                   path: testPath,
                   name: 'FOO',
-                  value: 'cookie with name "FOO"'
+                  value: 'cookie with name "FOO"',
                 };
                 await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
                 await expectCookiesTable(testCookies);
               }
-      
+
               {
                 // add "BAR"
                 const testCookie = {
                   domain: testDomain,
                   path: testPath,
                   name: 'BAR',
-                  value: 'cookie with name "BAR"'
+                  value: 'cookie with name "BAR"',
                 };
                 await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
                 await expectCookiesTable(testCookies);
               }
-      
+
               {
                 // delete "FOO"
                 const testCookie = {
                   domain: testDomain,
                   path: testPath,
-                  name: 'FOO'
+                  name: 'FOO',
                 };
                 removeCookie(testCookies, testCookie);
                 await cookieStore.delete(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) === null && queryCookiesTableCookie(testCookies[0]) !== null);
                 await expectCookiesTable(testCookies);
               }
-      
+
               {
                 // add ""
                 const testCookie = {
                   domain: testDomain,
                   path: testPath,
                   name: '',
-                  value: 'cookie with empty name'
+                  value: 'cookie with empty name',
                 };
                 await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
                 await expectCookiesTable(testCookies);
               }
-      
+
               {
                 // change "BAR"
                 const testCookie = {
                   domain: testDomain,
                   path: testPath,
                   name: 'BAR',
-                  value: 'adjusted cookie with name "BAR"'
+                  value: 'adjusted cookie with name "BAR"',
                 };
                 await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie, testCookie.value) !== null);
                 await expectCookiesTable(testCookies);
               }
-      
+
               {
                 // re-add "FOO"
                 const testCookie = {
                   domain: testDomain,
                   path: testPath,
                   name: 'FOO',
-                  value: 'another cookie with key "FOO"'
+                  value: 'another cookie with key "FOO"',
                 };
                 await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
                 await expectCookiesTable(testCookies);
               }
-      
+
               {
                 // add item with funky key
                 const testCookie = {
                   domain: testDomain,
                   path: testPath,
                   name: encodeURIComponent('<img src="." onerror="parent.fail(\'a storage item has triggered xss!\')">'),
-                  value: 'the name of this cookie contains xss payload (when url-decoded)'
+                  value: 'the name of this cookie contains xss payload (when url-decoded)',
                 };
                 await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) !== null);
                 await expectCookiesTable(testCookies);
-      
+
                 // delete item with funky key
                 removeCookie(testCookies, testCookie);
                 await cookieStore.delete(testCookie);
                 await domTreeAvailable(queryCookiesTable(), () => queryCookiesTableCookie(testCookie) === null && queryCookiesTableCookie(testCookies[0]) !== null);
                 await expectCookiesTable(testCookies);
               }
-      
+
               // wait a bit for async failures
               await timeout(500);
             });
-
           }
         }
-
       });
-
     }
 
     function queryCookiesTable(): HTMLTableElement {
@@ -969,7 +944,6 @@ describe('XSS Demo Mocks', () => {
     }
 
     async function fillNewCookieForm(testCookie: Cookie, save = true, expectError = false): Promise<void> {
-
       const cookiesTable = queryCookiesTable();
       const initialCookiesTableRows = cookiesTable.querySelectorAll('tr');
 
@@ -1024,7 +998,6 @@ describe('XSS Demo Mocks', () => {
     }
 
     async function editCookieTableCookie(testCookie: Cookie, save = true): Promise<void> {
-
       const cookiesTable = queryCookiesTable();
       const initialCookiesTableRows = cookiesTable.querySelectorAll('tr');
       const cookieRow = queryCookiesTableCookie(testCookie);
@@ -1122,7 +1095,7 @@ describe('XSS Demo Mocks', () => {
       expect(cancelButton.disabled).toBeTrue();
     }
 
-    async function expectCookiesTable(cookies: Cookie[], expectError=false) {
+    async function expectCookiesTable(cookies: Cookie[], expectError = false) {
       const cookiesTable = queryCookiesTable();
 
       await sortCookies(cookies);
@@ -1143,7 +1116,7 @@ describe('XSS Demo Mocks', () => {
       const cookieRows = queryAndExpectCount(cookiesTable, 'tr', rowCount);
       expect(cookieRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
       expect(cookieRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'info', 'empty']));
-      expect(cookieRows[rowCount-1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
+      expect(cookieRows[rowCount - 1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
 
       let index = 2;
       for (const cookie of cookies) {
@@ -1155,7 +1128,7 @@ describe('XSS Demo Mocks', () => {
 
     function cookieProps(expected: Cookie): AsymmetricEqualityTester<Cookie> {
       return {
-        asymmetricMatch: function(actual) {
+        asymmetricMatch: function (actual) {
           if (typeof expected.domain === 'string') {
             if (expected.domain === document.location.hostname) {
               if (actual.domain != expected.domain && actual.domain != null) return false;
@@ -1207,17 +1180,17 @@ describe('XSS Demo Mocks', () => {
 
           return true;
         },
-        jasmineToString: function(pp) {
+        jasmineToString: function (pp) {
           return 'a cookie with properties ' + pp(expected);
-        }
+        },
       };
     }
 
     async function sortCookies(cookies: Cookie[]): Promise<Cookie[]> {
       const sortedCookies = await runInPageFixture(
-        'return sortCookies(' + JSON.stringify(cookies) +');'
+        'return sortCookies(' + JSON.stringify(cookies) + ');',
       ) as Cookie[];
-      cookies.splice(0, cookies.length, ... sortedCookies);
+      cookies.splice(0, cookies.length, ...sortedCookies);
       return cookies;
     }
 
@@ -1253,8 +1226,8 @@ describe('XSS Demo Mocks', () => {
     async function getAllCookies(): Promise<Cookie[]> {
       return sortCookies(
         await runInPageFixture(
-          'return cookieStore.getAll();'
-        )
+          'return cookieStore.getAll();',
+        ),
       );
     }
 
@@ -1264,13 +1237,13 @@ describe('XSS Demo Mocks', () => {
         'for (const cookie of await cookieStore.getAll()) {',
         '  cookieDeletePromises.push(cookieStore.delete(cookie));',
         '}',
-        'return Promise.all(cookieDeletePromises);'
+        'return Promise.all(cookieDeletePromises);',
       );
     }
 
     function getCookieDomainsHierarchy(domain: string): Promise<string[]> {
       return runInPageFixture(
-        'return getCookieDomainsHierarchy(' + JSON.stringify(domain) +');'
+        'return getCookieDomainsHierarchy(' + JSON.stringify(domain) + ');',
       ) as Promise<string[]>;
     }
 
@@ -1278,7 +1251,7 @@ describe('XSS Demo Mocks', () => {
     // this copy is necessary, because the async original cannot be used during test generation
     // this test suite has tests that assert that both flawors work in an equal manner
     function getCookieDomainsHierarchySyncCopy(domain: string): string[] {
-      const domainLabels = domain.split('.').filter((label) => label !== '');
+      const domainLabels = domain.split('.').filter(label => label !== '');
 
       if (domainLabels.length === 1) {
         return [domain];
@@ -1289,8 +1262,7 @@ describe('XSS Demo Mocks', () => {
       }
 
       const domains = [] as string[];
-      for (let i = 0; i < domainLabels.length; i++)
-      {
+      for (let i = 0; i < domainLabels.length; i++) {
         domains.push(domainLabels.slice(i, domainLabels.length).join('.'));
       }
       domains.pop();
@@ -1299,15 +1271,14 @@ describe('XSS Demo Mocks', () => {
   });
 
   describe('Post Message Page', () => {
-
     interface TestEvent {
-      data: unknown;
-      expectTrusted?: boolean;
+      data: unknown
+      expectTrusted?: boolean
     }
 
     interface TestOriginConfig {
-      origins: string[];
-      expectTrusted?: boolean;
+      origins: string[]
+      expectTrusted?: boolean
     }
 
     beforeEach(async () => await setUpPageFixture('/assets/mocks/message.html'));
@@ -1350,13 +1321,11 @@ describe('XSS Demo Mocks', () => {
     });
 
     describe('"Trusted Origins" table', () => {
-
       it('should initially contain own origin', () => {
         return expectOriginsTable([window.origin]);
       });
 
       it('should manage trusted origins', async () => {
-
         const origins = new Set<string>([window.origin]);
         await expectOriginsTable(origins);
 
@@ -1443,35 +1412,33 @@ describe('XSS Demo Mocks', () => {
 
         await expectOriginsTable([]);
       });
-
     });
 
     describe('"Received Post-Message Events" table', () => {
-
       const testOriginConfigs: TestOriginConfig[] = [
         {
           origins: [window.origin],
-          expectTrusted: true
+          expectTrusted: true,
         },
         {
           origins: ['https://xss.example', window.origin],
-          expectTrusted: true
+          expectTrusted: true,
         },
         {
           origins: [window.origin, 'http://yss.example'],
-          expectTrusted: true
+          expectTrusted: true,
         },
         {
           origins: [],
-          expectTrusted: false
+          expectTrusted: false,
         },
         {
           origins: ['https://xss.example'],
-          expectTrusted: false
+          expectTrusted: false,
         },
         {
           origins: ['http://yss.example', 'http://zss.example'],
-          expectTrusted: false
+          expectTrusted: false,
         },
       ];
 
@@ -1480,7 +1447,6 @@ describe('XSS Demo Mocks', () => {
       });
 
       for (const testOriginConfig of testOriginConfigs) {
-
         it(
           'should '
           + (testOriginConfig.expectTrusted ? '' : 'NOT ')
@@ -1507,11 +1473,9 @@ describe('XSS Demo Mocks', () => {
             await postMessageAndExpectEventsTable('bar', postedEvents, testOriginConfig);
             await postMessageAndExpectEventsTable('baz', postedEvents, testOriginConfig);
             await postMessageAndExpectEventsTable('qux', postedEvents, testOriginConfig);
-          }
+          },
         );
-
       }
-
     });
 
     function queryOriginsTable(): HTMLTableElement {
@@ -1530,7 +1494,6 @@ describe('XSS Demo Mocks', () => {
     }
 
     async function fillNewOriginForm(origin: string, save = true): Promise<void> {
-
       const isExistingOrigin = queryOriginsTableOrigin(origin) != null;
 
       const originsTable = queryOriginsTable();
@@ -1564,7 +1527,6 @@ describe('XSS Demo Mocks', () => {
     }
 
     async function untrustOrigin(origin: string): Promise<void> {
-
       const originsTable = queryOriginsTable();
       const initialOriginsTableRows = originsTable.querySelectorAll('tr');
 
@@ -1578,7 +1540,7 @@ describe('XSS Demo Mocks', () => {
     async function configureTrustedOrigins(origins: string[]): Promise<void> {
       await untrustOrigin(window.origin);
       for (const trustedOrigin of origins) {
-        await fillNewOriginForm(trustedOrigin)
+        await fillNewOriginForm(trustedOrigin);
       }
     }
 
@@ -1592,9 +1554,9 @@ describe('XSS Demo Mocks', () => {
       const originRows = queryAndExpectCount(originsTable, 'tr', rowCount);
       expect(originRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
       expect(originRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'info', 'empty']));
-      expect(originRows[rowCount-1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
+      expect(originRows[rowCount - 1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
 
-      const newOriginButton = queryAndExpectOne(originRows[rowCount-1], 'button[name=new]') as HTMLButtonElement;
+      const newOriginButton = queryAndExpectOne(originRows[rowCount - 1], 'button[name=new]') as HTMLButtonElement;
       expect(newOriginButton.disabled).withContext('"new trusted origin" button disabled').toBeFalse();
 
       const warningMessageCell = queryAndExpectOne(originsTable, 'tr.actions td.message.warning');
@@ -1623,9 +1585,9 @@ describe('XSS Demo Mocks', () => {
       }
     }
 
-    function sortOrigins(origins: Iterable<string> ): Promise<string[]> {
+    function sortOrigins(origins: Iterable<string>): Promise<string[]> {
       return runInPageFixture(
-        'return sortOrigins(' + JSON.stringify(Array.from(origins)) +');'
+        'return sortOrigins(' + JSON.stringify(Array.from(origins)) + ');',
       );
     }
 
@@ -1634,25 +1596,24 @@ describe('XSS Demo Mocks', () => {
     }
 
     async function postMessageAndExpectEventsTable(newEventData: string, postedEvents: TestEvent[], testOriginConfig: TestOriginConfig) {
-
       pageFixture.contentWindow.postMessage(newEventData, window.origin);
 
       postedEvents.push({
         data: newEventData,
-        expectTrusted: testOriginConfig.expectTrusted
+        expectTrusted: testOriginConfig.expectTrusted,
       });
       await domTreeAvailable(
         queryEventsTable(),
-        ':nth-child(' + postedEvents.length + ' of tr.event)'
+        ':nth-child(' + postedEvents.length + ' of tr.event)',
       );
       await expectEventsTable(
         postedEvents,
-        !testOriginConfig.expectTrusted
+        !testOriginConfig.expectTrusted,
       );
     }
 
     async function expectEventsTable(events = [] as TestEvent[], expectError = false) {
-      const eventsTable = queryEventsTable()
+      const eventsTable = queryEventsTable();
       const rowCount = events.length + 3;
 
       expect(eventsTable.classList).withContext('events table classes').toEqual(jasmine.arrayWithExactContents(events.length > 0 ? ['events'] : ['events', 'empty']));
@@ -1660,9 +1621,9 @@ describe('XSS Demo Mocks', () => {
       const eventRows = queryAndExpectCount(eventsTable, 'tr', rowCount);
       expect(eventRows[0].classList).toEqual(jasmine.arrayWithExactContents(['head']));
       expect(eventRows[1].classList).toEqual(jasmine.arrayWithExactContents(['message', 'info', 'empty']));
-      expect(eventRows[rowCount-1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
+      expect(eventRows[rowCount - 1].classList).toEqual(jasmine.arrayWithExactContents(['actions']));
 
-      const clearButton = queryAndExpectOne(eventRows[rowCount-1], 'button[name=clear]') as HTMLButtonElement;
+      const clearButton = queryAndExpectOne(eventRows[rowCount - 1], 'button[name=clear]') as HTMLButtonElement;
       expect(clearButton.disabled).withContext('"clear events" button disabled').toBeFalse();
 
       const errorMessageCell = queryAndExpectOne(eventsTable, 'tr.actions td.message.error');
@@ -1692,7 +1653,7 @@ describe('XSS Demo Mocks', () => {
   });
 
   async function setUpPageFixture(url: string): Promise<void> {
-    const {promise: loadPromise, resolve: loadHandler} = Promise.withResolvers();
+    const { promise: loadPromise, resolve: loadHandler } = Promise.withResolvers();
     pageFixture = document.createElement('iframe');
     pageFixture.style.width = '100%';
     pageFixture.style.height = '30em';
@@ -1705,8 +1666,7 @@ describe('XSS Demo Mocks', () => {
     mockPageDoc = pageFixture.contentDocument;
   }
 
-  async function runInPageFixture<R>(... codeLines: string[]): Promise<R> {
-
+  async function runInPageFixture<R>(...codeLines: string[]): Promise<R> {
     const RESULT_ATTRIBUTE = 'data-xss-demo-tests-run-in-page-fixture-result';
     const ERROR_ATTRIBUTE = 'data-xss-demo-tests-run-in-page-fixture-error';
 
@@ -1714,7 +1674,7 @@ describe('XSS Demo Mocks', () => {
       '(async function() {',
       '  const scriptBlock = document.currentScript;',
       '  (async function() {',
-      ... codeLines.map(line => '    ' + line),
+      ...codeLines.map(line => '    ' + line),
       '  })()',
       '  .then(',
       '    (result) => {',
@@ -1724,7 +1684,7 @@ describe('XSS Demo Mocks', () => {
       '      scriptBlock.setAttribute("' + ERROR_ATTRIBUTE + '", error?.stack || error);',
       '    }',
       '  );',
-      '})();'
+      '})();',
     ];
 
     const scriptBlock = mockPageDoc.createElement('script');

@@ -13,13 +13,13 @@ import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
 
 
 interface MockPayloadOutputDescriptor extends PayloadOutputDescriptor {
-  calculateExpectedOutput(input: string): string;
+  calculateExpectedOutput(input: string): string
 }
 
 @Component({
   selector: 'xss-mock-live-output-template',
   template: MockLiveOutputTemplateComponent.templateCode,
-  standalone: true
+  standalone: true,
 })
 class MockLiveOutputTemplateComponent extends LiveOutputComponent {
   static readonly templateCode = '<p [innerHTML]="payload"></p>';
@@ -27,15 +27,14 @@ class MockLiveOutputTemplateComponent extends LiveOutputComponent {
 
 
 describe('PayloadOutputComponent', () => {
-
   const stripExtraIndentPipe = new StripExtraIndentPipe();
-  let domSanitizer : DomSanitizer;
+  let domSanitizer: DomSanitizer;
 
-  let fixture : ComponentFixture<PayloadOutputComponent>;
+  let fixture: ComponentFixture<PayloadOutputComponent>;
   let componentRef: ComponentRef<PayloadOutputComponent>;
-  let component : PayloadOutputComponent;
-  let element : HTMLElement;
-  let onbeforeupdateSpy : jasmine.Spy;
+  let component: PayloadOutputComponent;
+  let element: HTMLElement;
+  let onbeforeupdateSpy: jasmine.Spy;
 
 
   const mockDescriptors: Record<string, MockPayloadOutputDescriptor> = {
@@ -54,7 +53,7 @@ describe('PayloadOutputComponent', () => {
       htmlSourceProvider: function divContent(payload) {
         return '<div>' + payload + '</div>';
       },
-      calculateExpectedOutput: input => `<div>${input.replaceAll('x', '').replaceAll('X', '')}</div>`
+      calculateExpectedOutput: input => `<div>${input.replaceAll('x', '').replaceAll('X', '')}</div>`,
     },
 
     bar: {
@@ -68,12 +67,12 @@ describe('PayloadOutputComponent', () => {
       domInjector: function innerText(element, payload) {
         element.innerText = '' + payload;
       },
-      calculateExpectedOutput: input => {
+      calculateExpectedOutput: (input) => {
         return input
           .toUpperCase()
           .replaceAll('<', '&lt;')
           .replaceAll('>', '&gt;');
-      }
+      },
     },
 
     baz: {
@@ -85,7 +84,7 @@ describe('PayloadOutputComponent', () => {
         return domSanitizer.bypassSecurityTrustHtml(payload);
       },
       templateComponentType: MockLiveOutputTemplateComponent,
-      calculateExpectedOutput: input => `<p>${input}</p>`
+      calculateExpectedOutput: input => `<p>${input}</p>`,
     },
 
     qux: {
@@ -98,14 +97,12 @@ describe('PayloadOutputComponent', () => {
       },
       calculateExpectedOutput: (input: string) => {
         return `<p title="${input.replaceAll('"', '&quot;')}">This is a paragraph.</p>`;
-      }
-    }
-  }
+      },
+    },
+  };
 
   beforeEach(async () => {
-    TestBed.configureTestingModule({
-      imports: [PayloadOutputComponent]
-    });
+    TestBed.configureTestingModule({ imports: [PayloadOutputComponent] });
     await TestBed.compileComponents();
 
     domSanitizer = TestBed.inject(DomSanitizer);
@@ -124,7 +121,6 @@ describe('PayloadOutputComponent', () => {
   });
 
   describe('initially', () => {
-
     it('should be created', () => {
       expect(component).toBeDefined();
     });
@@ -143,7 +139,6 @@ describe('PayloadOutputComponent', () => {
   });
 
   describe('view with auto-update', () => {
-
     it('should reflect output changes', async () => {
       await setDescriptor(mockDescriptors.bar);
       expectComponentView(mockDescriptors.bar, '');
@@ -182,9 +177,7 @@ describe('PayloadOutputComponent', () => {
     });
 
     for (const mockDescriptor of Object.values(mockDescriptors)) {
-
       describe('with descriptor "' + mockDescriptor.id + '"', () => {
-
         it('should reflect payload changes', async () => {
           await setDescriptor(mockDescriptor);
           expectComponentView(mockDescriptor, '', null);
@@ -201,15 +194,11 @@ describe('PayloadOutputComponent', () => {
           await setPayload('');
           expectComponentView(mockDescriptor, '');
         });
-
       });
-
     }
-
   });
 
   describe('view with manual update', () => {
-
     it('should toggle auto-update', async () => {
       queryAndExpectAutoUpdateEnabled(true);
       queryAndExpectUpdateNowLink(false);
@@ -328,9 +317,7 @@ describe('PayloadOutputComponent', () => {
     });
 
     for (const mockDescriptor of Object.values(mockDescriptors)) {
-
       describe('with descriptor "' + mockDescriptor.id + '"', () => {
-
         it('should only reflect payload changes after manual update', async () => {
           await clickAndExpectAutoUpdateEnabled(false);
           await setDescriptor(mockDescriptor);
@@ -383,11 +370,8 @@ describe('PayloadOutputComponent', () => {
           await clickAndExpectAutoUpdateEnabled(true);
           expectComponentView(mockDescriptor, 'foo bar');
         });
-
       });
-
     }
-
   });
 
   async function setDescriptor(descriptor: PayloadOutputDescriptor): Promise<void> {
@@ -400,14 +384,14 @@ describe('PayloadOutputComponent', () => {
     await whenStableDetectChanges(fixture);
   }
 
-  function expectComponentView(descriptor: MockPayloadOutputDescriptor, expectedOutput?: string, expectedChangeEvents=1) {
+  function expectComponentView(descriptor: MockPayloadOutputDescriptor, expectedOutput?: string, expectedChangeEvents = 1) {
     let expectedOutputString = null;
     if (expectedOutput != null) {
       if (descriptor.calculateExpectedOutput(expectedOutput)) {
         expectedOutputString = descriptor.calculateExpectedOutput(expectedOutput);
       }
       else {
-        expectedOutputString = expectedOutput
+        expectedOutputString = expectedOutput;
       }
     }
 

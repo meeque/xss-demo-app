@@ -2,19 +2,18 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { ComboboxInputComponent, MenuGroup, MenuItem } from './combobox-input.component';
 
 describe('ComboboxInputComponent', () => {
+  let fixture: ComponentFixture<ComboboxInputComponent>;
+  let component: ComboboxInputComponent;
+  let element: HTMLElement;
+  let textInput: HTMLInputElement;
+  let menuPopover: HTMLElement;
+  let menuButton: HTMLButtonElement;
 
-  let fixture : ComponentFixture<ComboboxInputComponent>;
-  let component : ComboboxInputComponent;
-  let element : HTMLElement;
-  let textInput : HTMLInputElement;
-  let menuPopover : HTMLElement;
-  let menuButton : HTMLButtonElement;
-
-  let selectedValue : string;
+  let selectedValue: string;
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      imports: [ComboboxInputComponent]
+      imports: [ComboboxInputComponent],
     });
     await TestBed.compileComponents();
     fixture = TestBed.createComponent(ComboboxInputComponent);
@@ -28,7 +27,6 @@ describe('ComboboxInputComponent', () => {
   });
 
   describe('initially', () => {
-
     it('should be created', () => {
       expect(component).toBeDefined();
     });
@@ -52,23 +50,22 @@ describe('ComboboxInputComponent', () => {
   });
 
   describe('with plain menu items', () => {
-
-    const plainMenuItems : MenuItem<string>[] = [
+    const plainMenuItems: MenuItem<string>[] = [
       {
-        name : 'First Menu Item: One',
-        value : 'value one',
-        select : selectValue
+        name: 'First Menu Item: One',
+        value: 'value one',
+        select: selectValue,
       },
       {
-        name : 'Another Menu Item: Two',
-        value : 'value two',
-        select : selectValue
+        name: 'Another Menu Item: Two',
+        value: 'value two',
+        select: selectValue,
       },
       {
-        name : 'Another Menu Item: Three',
-        value : 'value three',
-        select : selectValue
-      }
+        name: 'Another Menu Item: Three',
+        value: 'value three',
+        select: selectValue,
+      },
     ];
 
     beforeEach(() => {
@@ -94,7 +91,7 @@ describe('ComboboxInputComponent', () => {
 
     it('should display a list item for each menu item', () => {
       const listItems = queryMenuListsItems().plain;
-  
+
       expect(listItems.length).toBe(plainMenuItems.length);
 
       for (const [i, menuItem] of plainMenuItems.entries()) {
@@ -116,8 +113,7 @@ describe('ComboboxInputComponent', () => {
     });
 
     it('should adjust placeholder when menu items are clicked', () => {
-
-      for (const [i, menuItem] of plainMenuItems.entries() ) {
+      for (const [i, menuItem] of plainMenuItems.entries()) {
         queryMenuListsItems().plain[i].querySelector('a').dispatchEvent(new Event('click'));
         fixture.detectChanges();
         expect(textInput.placeholder).toBe(menuItem.name);
@@ -125,7 +121,6 @@ describe('ComboboxInputComponent', () => {
     });
 
     describe('and default name-based menu item filter', () => {
-
       it('should display full menu when query is empty', () => {
         enterQuery('');
         expect(queryMenuListsItems().plain).toHaveSize(plainMenuItems.length);
@@ -149,50 +144,49 @@ describe('ComboboxInputComponent', () => {
   });
 
   describe('with grouped menu items', () => {
-
-    const groupedMenuItems : MenuGroup<string, string>[] = [
+    const groupedMenuItems: MenuGroup<string, string>[] = [
       {
-        name : 'Menu Group A',
-        value : 'value a',
-        items : [
+        name: 'Menu Group A',
+        value: 'value a',
+        items: [
           {
-            name : 'Menu Item A One',
-            value : 'value a1',
-            select : selectValue
+            name: 'Menu Item A One',
+            value: 'value a1',
+            select: selectValue,
           },
           {
-            name : 'Menu Item A Two',
-            value : 'value a2',
-            select : selectValue
-          }
-        ]
+            name: 'Menu Item A Two',
+            value: 'value a2',
+            select: selectValue,
+          },
+        ],
       },
       {
-        name : 'Menu Group B',
-        value : 'value b',
-        items : [
+        name: 'Menu Group B',
+        value: 'value b',
+        items: [
           {
-            name : 'Menu Item B One',
-            value : 'value b1',
-            select : selectValue
+            name: 'Menu Item B One',
+            value: 'value b1',
+            select: selectValue,
           },
           {
-            name : 'Menu Item B Two',
-            value : 'value b2',
-            select : selectValue
+            name: 'Menu Item B Two',
+            value: 'value b2',
+            select: selectValue,
           },
           {
-            name : 'Menu Item B Three',
-            value : 'value b3',
-            select : selectValue
-          }
-        ]
+            name: 'Menu Item B Three',
+            value: 'value b3',
+            select: selectValue,
+          },
+        ],
       },
       {
-        name : 'Menu Group C',
-        value : 'group c',
-        items : []
-      }
+        name: 'Menu Group C',
+        value: 'group c',
+        items: [],
+      },
     ];
 
     beforeEach(() => {
@@ -248,24 +242,24 @@ describe('ComboboxInputComponent', () => {
     });
   });
 
-  function selectValue(item : MenuItem<string>) : boolean {
+  function selectValue(item: MenuItem<string>): boolean {
     selectedValue = item.value;
     return true;
   }
 
-  function enterQuery(text : string) : void {
-      textInput.value = text;
-      textInput.dispatchEvent(new Event('input'));
-      fixture.detectChanges();
+  function enterQuery(text: string): void {
+    textInput.value = text;
+    textInput.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
   }
 
-  function queryMenuListsItems() : {plain: HTMLElement[], grouped: HTMLElement[][]} {
+  function queryMenuListsItems(): { plain: HTMLElement[], grouped: HTMLElement[][] } {
     const menuLists = element.querySelectorAll('ul');
-    const [plainList, ... groupLists] = menuLists.values();
+    const [plainList, ...groupLists] = menuLists.values();
 
-    const plainListItems : HTMLElement[] = Array.from(plainList.querySelectorAll('li'));
-    const groupListsItems : HTMLElement[][] = groupLists.map((list) => Array.from(list.querySelectorAll('li')));
+    const plainListItems: HTMLElement[] = Array.from(plainList.querySelectorAll('li'));
+    const groupListsItems: HTMLElement[][] = groupLists.map(list => Array.from(list.querySelectorAll('li')));
 
-    return {plain: plainListItems, grouped: groupListsItems};
+    return { plain: plainListItems, grouped: groupListsItems };
   }
 });

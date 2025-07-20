@@ -1,4 +1,4 @@
-import { ComponentFixture } from "@angular/core/testing";
+import { ComponentFixture } from '@angular/core/testing';
 
 
 
@@ -6,31 +6,31 @@ import { ComponentFixture } from "@angular/core/testing";
 // not sure where to import it from
 // https://jasmine.github.io/api/edge/AsymmetricEqualityTester.html
 export interface AsymmetricEqualityTester<T> {
-  asymmetricMatch(actual: T, matchersUtil: MatchersUtil): boolean;
-  jasmineToString(pp: (value: unknown) => string): string;
+  asymmetricMatch(actual: T, matchersUtil: MatchersUtil): boolean
+  jasmineToString(pp: (value: unknown) => string): string
 }
 
 interface MatchersUtil {
-  contains(haystack: unknown, needle: unknown): boolean;
-  equals(haystack: unknown, needle: unknown): boolean;
+  contains(haystack: unknown, needle: unknown): boolean
+  equals(haystack: unknown, needle: unknown): boolean
   pp(actual: unknown): string
 }
 
 export function anyOf(expected: unknown[]): AsymmetricEqualityTester<unknown> {
   return {
-    asymmetricMatch: function(actual, util: MatchersUtil) {
+    asymmetricMatch: function (actual, util: MatchersUtil) {
       return util.contains(expected, actual);
     },
-    jasmineToString: function(pp) {
+    jasmineToString: function (pp) {
       return 'any of ' + pp(expected);
-    }
+    },
   };
 }
 
 
 
 export function timeout<D>(millis: number, data?: D): Promise<D> {
-  const {promise, resolve} = Promise.withResolvers<D>();
+  const { promise, resolve } = Promise.withResolvers<D>();
   setTimeout(() => resolve(data), millis);
   return promise;
 }
@@ -41,7 +41,7 @@ export function domTreeAvailable<T>(context: HTMLElement, selectorOrCondition: s
     return Promise.resolve(preflightResult);
   }
 
-  const {promise, resolve} = Promise.withResolvers<T>();
+  const { promise, resolve } = Promise.withResolvers<T>();
   const observer = new MutationObserver(() => {
     const result = querySelectorOrCondition(context, selectorOrCondition);
     if (result) {
@@ -49,7 +49,7 @@ export function domTreeAvailable<T>(context: HTMLElement, selectorOrCondition: s
       resolve(result);
     }
   });
-  observer.observe(context, {attributes: true, childList: true, characterData: true, subtree: true});
+  observer.observe(context, { attributes: true, childList: true, characterData: true, subtree: true });
 
   return promise;
 }
@@ -92,7 +92,8 @@ export async function whenStableDetectChanges(fixture: ComponentFixture<unknown>
   try {
     await fixture.whenStable();
     fixture.detectChanges();
-  } catch(err) {
+  }
+  catch (err) {
     console.error(err);
   }
 }
