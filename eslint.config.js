@@ -14,20 +14,44 @@ const stylisticRules = {
   '@stylistic/no-multiple-empty-lines': [
     'error',
     {
-      'maxBOF': 0,
-      'max': 3,
-      'maxEOF': 0,
-    }
+      maxBOF: 0,
+      max: 3,
+      maxEOF: 0,
+    },
   ],
   '@stylistic/key-spacing': [
     'error',
     {
-      'mode': 'minimum',
-    }
+      mode: 'minimum',
+    },
   ],
-}
+};
 
 module.exports = tseslint.config(
+  {
+    files: ['*.js'],
+    extends: [
+      eslint.configs.recommended,
+      stylistic.configs.recommended,
+    ],
+    processor: angulareslint.processInlineTemplates,
+    rules: {
+      'no-unused-vars': [
+        'error',
+        {
+          caughtErrors: 'none',
+        },
+      ],
+      ...stylisticRules,
+    },
+    languageOptions: {
+      sourceType: 'script',
+      globals: {
+        ...globals.commonjs,
+        ...globals.node,
+      },
+    },
+  },
   {
     files: ['public/**/*.js'],
     extends: [
@@ -40,17 +64,17 @@ module.exports = tseslint.config(
         'error',
         {
           caughtErrors: 'none',
-        }
+        },
       ],
-      ... stylisticRules,
+      ...stylisticRules,
     },
     languageOptions: {
       sourceType: 'script',
-			globals: {
-        ... globals.browser,
+      globals: {
+        ...globals.browser,
         cookieStore: 'readonly',
-			},
-		},
+      },
+    },
   },
   {
     files: ['src/**/*.js'],
@@ -64,27 +88,27 @@ module.exports = tseslint.config(
         'error',
         {
           caughtErrors: 'none',
-        }
+        },
       ],
-      ... stylisticRules,
+      ...stylisticRules,
     },
     languageOptions: {
       sourceType: 'module',
-			globals: {
-        ... globals.browser,
+      globals: {
+        ...globals.browser,
         $: 'readonly',
         DOMPurify: 'readonly',
-			},
-		},
+      },
+    },
   },
   {
     files: ['src/**/*.ts'],
     extends: [
       eslint.configs.recommended,
       stylistic.configs.recommended,
-      ... tseslint.configs.recommended,
-      ... tseslint.configs.stylisticTypeChecked,
-      ... angulareslint.configs.tsRecommended,
+      ...tseslint.configs.recommended,
+      ...tseslint.configs.stylisticTypeChecked,
+      ...angulareslint.configs.tsRecommended,
     ],
     processor: angulareslint.processInlineTemplates,
     rules: {
@@ -92,7 +116,7 @@ module.exports = tseslint.config(
         'error',
         {
           caughtErrors: 'none',
-        }
+        },
       ],
       '@typescript-eslint/prefer-nullish-coalescing': [
         'off',
@@ -113,7 +137,7 @@ module.exports = tseslint.config(
           style: 'kebab-case',
         },
       ],
-      ... stylisticRules,
+      ...stylisticRules,
     },
     languageOptions: {
       parserOptions: {
@@ -124,9 +148,9 @@ module.exports = tseslint.config(
   {
     files: ['**/*.html'],
     extends: [
-      ... angulareslint.configs.templateRecommended,
-      ... angulareslint.configs.templateAccessibility,
+      ...angulareslint.configs.templateRecommended,
+      ...angulareslint.configs.templateAccessibility,
     ],
     rules: {},
-  }
+  },
 );

@@ -1,7 +1,6 @@
 const fs = require('fs');
 
-module.exports = function(config) {
-
+module.exports = function (config) {
   // static config
   const cfg = {
     basePath: '',
@@ -12,7 +11,7 @@ module.exports = function(config) {
       require('karma-jasmine-html-reporter'),
       require('karma-spec-reporter'),
       require('karma-coverage'),
-      require('@angular-devkit/build-angular/plugins/karma')
+      require('@angular-devkit/build-angular/plugins/karma'),
     ],
     client: {
       jasmine: {
@@ -21,15 +20,15 @@ module.exports = function(config) {
       },
     },
     jasmineHtmlReporter: {
-      suppressAll: true // removes the duplicated traces
+      suppressAll: true, // removes the duplicated traces
     },
     coverageReporter: {
       dir: require('path').join(__dirname, './coverage/xss-demo-app'),
       subdir: '.',
       reporters: [
         { type: 'html' },
-        { type: 'text-summary' }
-      ]
+        { type: 'text-summary' },
+      ],
     },
     reporters: ['kjhtml', 'spec'],
     customLaunchers: {
@@ -38,12 +37,12 @@ module.exports = function(config) {
       // on the other hand, additional sandboxing is less necessary when already running in a container
       ChromiumHeadlessContainerized: {
         base: 'ChromiumHeadless',
-        flags: ['--no-sandbox', '--ignore-certificate-errors']
-      }
+        flags: ['--no-sandbox', '--ignore-certificate-errors'],
+      },
     },
     browsers: ['ChromiumHeadlessContainerized'],
     autoWatch: false,
-    restartOnFileChange: false
+    restartOnFileChange: false,
   };
 
   // dynamic https config
@@ -53,9 +52,10 @@ module.exports = function(config) {
     try {
       secureContextOptions = {
         cert: fs.readFileSync('tls/xss-dev.cert.pem', 'utf8'),
-        key: fs.readFileSync('tls/private/xss-dev.key.pem', 'utf8')
-      }
-    } catch(e) {
+        key: fs.readFileSync('tls/private/xss-dev.key.pem', 'utf8'),
+      };
+    }
+    catch (e) {
       console.error('XSS Demo App: Failed to read xss-dev certificate files at expected location in the project\'s "tls" directory:', e);
     }
 
@@ -63,7 +63,8 @@ module.exports = function(config) {
       console.warn('XSS Demo App: Launching Karma test server with TLS config from the project\'s "tls" directory...');
       cfg.protocol = 'https:';
       cfg.httpsServerOptions = secureContextOptions;
-    } else {
+    }
+    else {
       console.warn('XSS Demo App: Launching Karma test server without TLS. Some integration tests may fail!');
     }
   }
