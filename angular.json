@@ -121,7 +121,7 @@
               "src/**/*.ts",
               "src/**/*.html",
               "public/**/*.js",
-              "public/**/*.html",
+              "public/**/*.html"
             ]
           }
         }
