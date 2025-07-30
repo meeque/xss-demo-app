@@ -123,22 +123,22 @@ describe('ComboboxInputComponent', () => {
     describe('and default name-based menu item filter', () => {
       it('should display full menu when query is empty', () => {
         enterQuery('');
-        expect(queryMenuListsItems().plain).toHaveSize(plainMenuItems.length);
+        expect(queryMenuListsItems().plain).toHaveLength(plainMenuItems.length);
       });
 
       it('should display empty menu when query is mismatched', () => {
         enterQuery('foo');
-        expect(queryMenuListsItems().plain).toHaveSize(0);
+        expect(queryMenuListsItems().plain).toHaveLength(0);
       });
 
       it('should only display menu items that match query', () => {
-        expect(queryMenuListsItems().plain).toHaveSize(plainMenuItems.length);
+        expect(queryMenuListsItems().plain).toHaveLength(plainMenuItems.length);
         enterQuery('Menu Item');
-        expect(queryMenuListsItems().plain).toHaveSize(3);
+        expect(queryMenuListsItems().plain).toHaveLength(3);
         enterQuery('First');
-        expect(queryMenuListsItems().plain).toHaveSize(1);
+        expect(queryMenuListsItems().plain).toHaveLength(1);
         enterQuery('Another');
-        expect(queryMenuListsItems().plain).toHaveSize(2);
+        expect(queryMenuListsItems().plain).toHaveLength(2);
       });
     });
   });
