@@ -4,7 +4,7 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 
 import $ from 'jquery';
 
-import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/lib.spec';
+import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/test-lib';
 
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';

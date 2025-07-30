@@ -3,7 +3,7 @@
 /* eslint @stylistic/key-spacing: ['off'] */
 
 import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { timeout, domTreeAvailable, whenStableDetectChanges } from './lib.spec';
+import { timeout, domTreeAvailable, whenStableDetectChanges } from './test-lib';
 
 import { xssDemoConfig } from '../xss/xss-demo.config';
 import { PayloadPresetService } from '../xss/payload-preset.service';

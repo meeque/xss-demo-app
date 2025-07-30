@@ -2,7 +2,7 @@
 /* eslint @stylistic/array-bracket-spacing: ['off'] */
 /* eslint @stylistic/key-spacing: ['off'] */
 
-import { AsymmetricEqualityTester, anyOf, timeout, domTreeAvailable, queryAndExpectCount, queryAndExpectOne } from './lib.spec';
+import { AsymmetricEqualityTester, anyOf, timeout, domTreeAvailable, queryAndExpectCount, queryAndExpectOne } from './test-lib';
 
 
 
