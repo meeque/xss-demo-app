@@ -36,6 +36,7 @@
     "@types/jasmine": "^5.1.0",
     "@types/jest": "^30.0.0",
     "@types/jquery": "^3.5.0",
+    "@types/selenium-webdriver": "^4.1.28",
     "angular-eslint": "^20.1.1",
     "chromedriver": "^138.0.4",
     "jasmine-core": "^5.2.0",
