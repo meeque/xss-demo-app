@@ -2,13 +2,21 @@
 /* eslint @stylistic/array-bracket-spacing: ['off'] */
 /* eslint @stylistic/key-spacing: ['off'] */
 
-import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { timeout, domTreeAvailable, whenStableDetectChanges } from './test-lib';
 
-import { xssDemoConfig } from '../xss/xss-demo.config';
+
+import { Browser, WebDriver, Builder, By, WebElement, until } from 'selenium-webdriver';
+import { Options as ChromeOptions } from 'selenium-webdriver/chrome';
+
+import '@angular/compiler';
+
 import { PayloadPresetService } from '../xss/payload-preset.service';
 import { PayloadOutputQuality, PayloadOutputService } from '../xss/payload-output.service';
-import { XssDemoComponent } from '../xss/xss-demo.component';
+
+import { timeout } from './test-lib';
+
+
+
+const XSS_DEMO_APP_URL = 'https://lc-js-dev:4200/';
 
 
 
@@ -156,28 +164,26 @@ class DefaultPayloadTestConfig extends DefaultTestConfig implements EnhancedPayl
 
 
 
-describe('Xss Demo App', async () => {
+describe('Xss Demo App', () => {
+
+  let driver: WebDriver;
+
   const payloadPresetServiceStub = new PayloadPresetService(null);
   const payloadOutputServiceStub = new PayloadOutputService(null);
 
-  let fixture: ComponentFixture<XssDemoComponent>;
-  let component: XssDemoComponent;
-  let element: HTMLElement;
+  let element: WebElement;
 
-  let payloadInputCombobox: HTMLElement;
-  let payloadOutputCombobox: HTMLElement;
-  let payloadInputTextArea: HTMLTextAreaElement;
-  let alertOverlay: HTMLElement;
-
-  let xssResolve: () => void;
-
+  let payloadInputCombobox: WebElement;
+  let payloadOutputCombobox: WebElement;
+  let payloadInputTextArea: WebElement;
+  let alertOverlay: WebElement;
 
   const presetTestConfigFactory: Record<string, (name: string, expectXss?: boolean) => EnhancedPresetTestConfig> = {
     clickLink: (name: string, expectXss = true) => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const link = await domTreeAvailable<HTMLElement>(queryOutput(), 'a');
+          const link = (await queryOutput()).findElement((By.css('a')));
           link.click();
         },
         expectXss,
@@ -187,20 +193,20 @@ describe('Xss Demo App', async () => {
 
     clickLinkNew: (name: string, expectXss = true) => {
       const MOCK_LINK_TARGET = 'xss-demo_integration-test_click-link-to-new-window';
-      let link = null as HTMLLinkElement;
+      let link = null as WebElement;
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          link = await domTreeAvailable<HTMLLinkElement>(queryOutput(), 'a');
-          if (link.target === '_blank') {
+          link = (await queryOutput()).findElement((By.css('a')));
+          if (await link.getAttribute('target') === '_blank') {
             console.log('Tweaking link with target "_blank" to use target "' + MOCK_LINK_TARGET + '" instead.');
-            link.target = MOCK_LINK_TARGET;
+            // XXX not supported yet:   link.target = MOCK_LINK_TARGET;
           }
           link.click();
         },
         expectXss,
         cleanup: async () => {
-          window.open('javascript:window.close();', link.target);
+          window.open('javascript:window.close();', await link.getAttribute('target'));
         },
         timeout: 1000,
       });
@@ -210,8 +216,8 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const input = await domTreeAvailable<HTMLElement>(queryOutput(), 'input');
-          input.dispatchEvent(new Event('focus'));
+          const input = (await queryOutput()).findElement((By.css('input')));
+          (await input).click();
         },
         timeout: 500,
       });
@@ -221,8 +227,9 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const element = await domTreeAvailable<HTMLElement>(queryOutput(), '[onmouseenter]');
-          element.dispatchEvent(new Event('mouseenter'));
+          const element = (await queryOutput()).findElement((By.css('[onmouseenter]')));
+          const actions = driver.actions({async: true});
+          await actions.move({origin: element}).perform();
         },
         timeout: 500,
       });
@@ -232,10 +239,11 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await domTreeAvailable<HTMLElement>(queryOutput(), 'iframe.xss-demo-guest');
-          const codeField = await domTreeAvailable<HTMLElement>(queryOutput(), 'textarea[name=code]') as HTMLTextAreaElement;
-          const runButton = await domTreeAvailable<HTMLElement>(queryOutput(), 'button[name=run]') as HTMLButtonElement;
-          codeField.value = 'parent.xss()';
+          await (await queryOutput()).findElement((By.css('iframe.xss-demo-guest')));
+          const codeField = await (await queryOutput()).findElement((By.css('textarea[name=code]')));
+          const runButton = await (await queryOutput()).findElement((By.css('button[name=run]')));
+          codeField.clear();
+          codeField.sendKeys('parent.xss()');
           runButton.click();
         },
         timeout: 500,
@@ -250,9 +258,10 @@ describe('Xss Demo App', async () => {
           windowOpenSpy = spyOn(window, 'open').and.callThrough();
         },
         trigger: async () => {
-          const codeField = await domTreeAvailable<HTMLElement>(queryOutput(), 'textarea[name=code]') as HTMLTextAreaElement;
-          const runButton = await domTreeAvailable<HTMLElement>(queryOutput(), 'button[name=run]') as HTMLButtonElement;
-          codeField.value = 'opener.xss()';
+          const codeField = await (await queryOutput()).findElement((By.css('textarea[name=code]')));
+          const runButton = await (await queryOutput()).findElement((By.css('button[name=run]')));
+          codeField.clear();
+          codeField.sendKeys('opener.xss()');
           runButton.click();
         },
         expect: async () => {
@@ -371,34 +380,44 @@ describe('Xss Demo App', async () => {
   };
 
 
+
+  beforeAll(
+    async () => {
+      const chromeOptions = new ChromeOptions();
+      chromeOptions.setChromeBinaryPath('/usr/bin/chromium');
+      //chromeOptions.addArguments('--headless');
+      chromeOptions.addArguments('--no-sandbox');
+      chromeOptions.addArguments('--ignore-certificate-errors');
+
+      driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
+      driver.manage().setTimeouts({ implicit: 1000 });
+    },
+    10000
+  );
+
+  afterAll(
+    async () => {
+      if (driver) {
+        await driver.quit();
+      }
+    },
+    5000
+  );
+
   beforeEach(async () => {
-    TestBed.configureTestingModule(xssDemoConfig);
-    await TestBed.compileComponents();
-    fixture = TestBed.createComponent(XssDemoComponent);
-    fixture.detectChanges();
+    await driver.get(XSS_DEMO_APP_URL);
 
-    component = fixture.componentInstance;
-    element = fixture.nativeElement;
+    const body = await driver.wait(until.elementLocated(By.css('body')), 2500);
+    element = await body.findElement(By.css('xss-demo-root'));
 
-    payloadInputTextArea = element.querySelector('section.input-area textarea.payload');
-    payloadInputCombobox = element.querySelector('section.input-area xss-combobox-input');
-    payloadOutputCombobox = element.querySelector('section.output-area xss-combobox-input');
-    alertOverlay = element.querySelector('.fd-shell__overlay.fd-overlay--alert');
-
-    // ignore global errors caused by dynamically loaded scripts (e.g. script blocks from xss payloads)
-    window.onerror = (message, source, lineno, colno, error) => {
-      console.error(error);
-    };
-
-    const xssOriginal: () => void = globalThis.xss;
-    globalThis.xss = () => {
-      xssOriginal();
-      xssResolve();
-    };
+    payloadInputTextArea = await element.findElement(By.css('section.input-area textarea.payload'));
+    payloadInputCombobox = await element.findElement(By.css('section.input-area xss-combobox-input'));
+    payloadOutputCombobox = await element.findElement(By.css('section.output-area xss-combobox-input'));
+    alertOverlay = await element.findElement(By.css('.fd-shell__overlay.fd-overlay--alert'));
   });
 
-  it('should be created', async () => {
-    expect(component).toBeDefined();
+  test('should be created', async () => {
+    expect(element).toBeDefined();
   });
 
   for (const outputCollection of payloadOutputServiceStub.descriptors) {
@@ -414,12 +433,12 @@ describe('Xss Demo App', async () => {
 
         describe('and payload output "' + outputDescriptor.name + '"', () => {
           if (DefaultTestConfig.hasAnyXss([...presetTestConfigs, ...payloadTestConfigs])) {
-            it('should not be marked as "Recommended", because some tests trigger XSS', () => {
+            test('should not be marked as "Recommended", because some tests trigger XSS', () => {
               expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
             });
           }
           else {
-            it('should not be marked as "Insecure", because no tests trigger XSS', () => {
+            test('should not be marked as "Insecure", because no tests trigger XSS', () => {
               expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Insecure);
             });
           }
@@ -453,14 +472,11 @@ describe('Xss Demo App', async () => {
               runTestConfig(
                 payloadTestConfig,
                 async () => {
-                  payloadInputTextArea.value = '';
+                  payloadInputTextArea.clear();
                   await selectInputOutput(null, null, outputCollection.name, outputDescriptor.name);
-                  expect(alertOverlay.querySelector('.alert-xss-triggered'))
-                    .withContext('show XSS alert message')
-                    .toEqual(null);
-                  payloadInputTextArea.value = payloadTestConfig.payload;
-                  payloadInputTextArea.dispatchEvent(new Event('input'));
-                  await whenStableDetectChanges(fixture);
+                  await expect(alertOverlay.findElement(By.css('.alert-xss-triggered')))
+                    .rejects.toEqual(expect.anything());
+                  await payloadInputTextArea.sendKeys(payloadTestConfig.payload);
                 },
               );
             });
@@ -473,7 +489,7 @@ describe('Xss Demo App', async () => {
   function runTestConfig(testConfig: EnhancedTestConfig, deployTestPayload: () => Promise<void>) {
     const expectXss = testConfig.isExpectXss();
 
-    it(
+    test(
       'should '
       + (expectXss ? '' : 'NOT ')
       + 'trigger XSS'
@@ -481,68 +497,94 @@ describe('Xss Demo App', async () => {
       + (testConfig.expect ? ' with custom expectation' : ''),
       async () => {
         await testConfig.doSetup();
-        const xssPromise = nextXssPromise();
-
         await deployTestPayload();
 
         const triggerPromise = testConfig.doTrigger();
+        const xssAlertPromise = alertOverlay.findElement(By.css('.alert-xss-triggered'));
         const timeoutPromise = timeout(testConfig.getTimeout(), false);
-        await expectAsync(Promise.race([xssPromise, timeoutPromise]))
-          .withContext('call xss() probe before timeout')
-          .toBeResolvedTo(expectXss);
 
-        expect(alertOverlay.querySelector('.alert-xss-triggered'))
-          .withContext('show XSS alert message')
-          .toEqual(expectXss ? jasmine.anything() : null);
+        await expect(Promise.race([xssAlertPromise, timeoutPromise])).resolves.toEqual(expect.anything());
 
-        await expectAsync(testConfig.doExpect())
-          .withContext('custom expectations')
-          .toBeResolved();
+        if (expectXss) {
+          await expect(xssAlertPromise).resolves.toEqual(expect.anything());
+        }
+        else {
+          await expect(xssAlertPromise).rejects.toThrow();
+        }
+        await testConfig.doExpect();
 
         const cleanupPromise = testConfig.doCleanup();
-        await Promise.all([timeoutPromise, triggerPromise, cleanupPromise, whenStableDetectChanges(fixture)]);
+        await Promise.all([timeoutPromise, triggerPromise, cleanupPromise /* XXX , whenStableDetectChanges(fixture) */]);
       },
+      testConfig.getTimeout() + 5000,
     );
   }
 
   async function selectInputOutput(inputContext: string, inputName: string, outputContext: string, outputName: string): Promise<void> {
-    try {
-      queryMenuLink(payloadInputCombobox, inputContext, inputName).dispatchEvent(new Event('click'));
-    }
-    catch (err) {
-      console.error(err);
+    if (inputContext != null && inputName != null) {
+      await clickMenuItem(payloadInputCombobox, inputContext, inputName);
     }
 
-    try {
-      queryMenuLink(payloadOutputCombobox, outputContext, outputName).dispatchEvent(new Event('click'));
+    if (outputContext != null && outputName != null) {
+      await clickMenuItem(payloadOutputCombobox, outputContext, outputName);
     }
-    catch (err) {
-      console.error(err);
+  }
+
+  async function queryMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<WebElement> {
+    const groups = await combobox.findElements(By.css('div.fd-popover__body div.fd-list__group-header'));
+
+    let group: WebElement;
+    for (const g of groups) {
+      const text = await g.getText();
+      if (text.trim() == groupLabel) {
+        group = g;
+        break;
+      }
+    }
+    if (group == null) {
+      return null;
     }
 
-    await whenStableDetectChanges(fixture);
+    const itemList = await group.findElement(By.xpath('following-sibling::ul[1]'));
+    if (itemList == null) {
+      return null;
+    }
+
+    const items = await itemList.findElements(By.css('li.fd-list__item'));
+
+    let item = null as WebElement;
+    for (const i of items) {
+      const text = await i.getText();
+      if (text.trim() == itemLabel) {
+        item = i;
+        break;
+      }
+    }
+
+    return item;
   }
 
-  function queryMenuLink(combobox: HTMLElement, groupLabelText: string, linkText: string): HTMLLinkElement {
-    const groupLabelElement = Array
-      .from(combobox.querySelectorAll('div.fd-popover__body div.fd-list__group-header'))
-      .find((label: HTMLLabelElement) => label.textContent.trim() == groupLabelText) as HTMLElement;
-    return Array
-      .from(groupLabelElement.nextElementSibling.querySelectorAll('li a'))
-      .find((a: HTMLLinkElement) => a.textContent.trim() == linkText) as HTMLLinkElement;
+  async function clickMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<void> {
+    const comboboxControlInput = await combobox.findElement(By.css('.fd-popover__control input'));
+    await comboboxControlInput.click();
+
+    // we need multiple click attempts due to a weird UI glitch in the ComboboxInputComponent
+    while (true) {
+      const item = await queryMenuItem(combobox, groupLabel, itemLabel);
+      if (await item?.isDisplayed()) {
+        await item.click();
+      }
+      else {
+        return;
+      }
+    }
   }
 
-  function queryPayloadOutputComponent(): HTMLElement {
-    return element.querySelector('section.output-area xss-payload-output');
+  function queryPayloadOutputComponent(): Promise<WebElement> {
+    return element.findElement(By.css('section.output-area xss-payload-output'));
   }
 
-  function queryOutput(): HTMLElement {
-    return queryPayloadOutputComponent().querySelector('.live-output.fd-layout-panel .fd-layout-panel__body');
-  }
-
-  function nextXssPromise(): Promise<boolean> {
-    return new Promise((resolve) => {
-      xssResolve = () => resolve(true);
-    });
+  function queryOutput(): Promise<WebElement> {
+    return queryPayloadOutputComponent().then(el => el.findElement(By.css('.live-output.fd-layout-panel .fd-layout-panel__body')));
   }
 });
