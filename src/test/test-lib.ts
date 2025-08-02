@@ -30,7 +30,8 @@ export function anyOf(expected: unknown[]): AsymmetricEqualityTester<unknown> {
 
 
 export function timeout<D>(millis: number, data?: D): Promise<D> {
-  const { promise, resolve } = Promise.withResolvers<D>();
+  let resolve: (value: D) => void;
+  const promise = new Promise<D>(r => resolve = r);
   setTimeout(() => resolve(data), millis);
   return promise;
 }
