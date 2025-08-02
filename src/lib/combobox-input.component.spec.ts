@@ -95,7 +95,7 @@ describe('ComboboxInputComponent', () => {
       expect(listItems.length).toBe(plainMenuItems.length);
 
       for (const [i, menuItem] of plainMenuItems.entries()) {
-        expect(listItems[i].querySelector('a').textContent.trim()).toBe(menuItem.name);
+        expect(listItems[i].textContent.trim()).toBe(menuItem.name);
       }
     });
 
@@ -107,14 +107,14 @@ describe('ComboboxInputComponent', () => {
       const listItems = queryMenuListsItems().plain;
 
       for (const [i, menuItem] of plainMenuItems.entries()) {
-        listItems[i].querySelector('a').dispatchEvent(new Event('click'));
+        listItems[i].dispatchEvent(new Event('click'));
         expect(selectedValue).toBe(menuItem.value);
       }
     });
 
     it('should adjust placeholder when menu items are clicked', () => {
       for (const [i, menuItem] of plainMenuItems.entries()) {
-        queryMenuListsItems().plain[i].querySelector('a').dispatchEvent(new Event('click'));
+        queryMenuListsItems().plain[i].dispatchEvent(new Event('click'));
         fixture.detectChanges();
         expect(textInput.placeholder).toBe(menuItem.name);
       }
@@ -215,7 +215,7 @@ describe('ComboboxInputComponent', () => {
         expect(groupListItems[i].length).toBe(menuGroup.items.length);
 
         for (const [j, menuItem] of menuGroup.items.entries()) {
-          expect(groupListItems[i][j].querySelector('a').textContent.trim()).toBe(menuItem.name);
+          expect(groupListItems[i][j].textContent.trim()).toBe(menuItem.name);
         }
       }
     });
@@ -225,7 +225,7 @@ describe('ComboboxInputComponent', () => {
 
       for (const [i, menuGroup] of groupedMenuItems.entries()) {
         for (const [j, menuItem] of menuGroup.items.entries()) {
-          groupListItems[i][j].querySelector('a').dispatchEvent(new Event('click'));
+          groupListItems[i][j].dispatchEvent(new Event('click'));
           expect(selectedValue).toBe(menuItem.value);
         }
       }
@@ -234,7 +234,7 @@ describe('ComboboxInputComponent', () => {
     it('should adjust placeholder when menu item are clicked', () => {
       for (const [i, menuGroup] of groupedMenuItems.entries()) {
         for (const [j, menuItem] of menuGroup.items.entries()) {
-          queryMenuListsItems().grouped[i][j].querySelector('a').dispatchEvent(new Event('click'));
+          queryMenuListsItems().grouped[i][j].dispatchEvent(new Event('click'));
           fixture.detectChanges();
           expect(textInput.placeholder).toBe(menuItem.name);
         }

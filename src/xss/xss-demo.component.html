@@ -113,12 +113,13 @@
 
               <ng-template #payloadOutputMenuItem let-item="item" let-comboboxInput>
                 @if (comboboxInput.filter(item)) {
-                  <li class="fd-list__item">
-                    <a
-                      (click)="comboboxInput.select(item, $event)"
-                      (keypress)="comboboxInput.select(item, $event)"
-                      class="fd-list__title"
-                      tabindex="0">
+                  <li
+                    class="fd-list__item"
+                    (click)="comboboxInput.select(item, $event)"
+                    (keypress)="comboboxInput.select(item, $event)"
+                    tabindex="0">
+
+                    <span class="fd-list__title">
                       @if (item.value.htmlSourceProvider) {
                         <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
                       }
@@ -141,7 +142,7 @@
                       @if (item.value.quality === PayloadOutputQuality.Insecure) {
                         <span class="sap-icon--alert"></span>
                       }
-                    </a>
+                    </span>
                   </li>
                 }
               </ng-template>

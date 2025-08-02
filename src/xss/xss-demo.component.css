@@ -33,8 +33,7 @@
   cursor: inherit;
 }
 
-.output-area .fd-list__item .filters span,
-.output-area .fd-list__item .fd-list__title span,
+.output-area .fd-list__item span,
 .output-area .fd-list__item img.technology-icon {
   vertical-align: middle;
 }
