@@ -264,9 +264,6 @@ describe('Xss Demo App', () => {
         expect: async () => {
           await expect(windowTracker.getNewWindows()).resolves.toHaveLength(1);
         },
-        cleanup: async () => {
-          await windowTracker.closeAllNewWindows();
-        },
         timeout: 500,
       });
     },
@@ -277,9 +274,6 @@ describe('Xss Demo App', () => {
         expectXss: false,
         expect: async () => {
           await expect(windowTracker.getNewWindows()).resolves.toHaveLength(1);
-        },
-        cleanup: async () => {
-          await windowTracker.closeAllNewWindows();
         },
         timeout: 500,
       });
@@ -403,6 +397,10 @@ describe('Xss Demo App', () => {
     payloadInputCombobox = await element.findElement(By.css('section.input-area xss-combobox-input'));
     payloadOutputCombobox = await element.findElement(By.css('section.output-area xss-combobox-input'));
     alertOverlay = await element.findElement(By.css('.fd-shell__overlay.fd-overlay--alert'));
+  });
+
+  afterEach(async () => {
+    await windowTracker.closeAllNewWindows();
   });
 
   test('should be created', async () => {
