@@ -4,7 +4,7 @@
 
 
 
-import { Browser, WebDriver, Builder, By, WebElement, until } from 'selenium-webdriver';
+import { Browser, WebDriver, Builder, By, WebElement, until, WebElementPromise } from 'selenium-webdriver';
 import { Options as ChromeOptions } from 'selenium-webdriver/chrome';
 
 import '@angular/compiler';
@@ -183,8 +183,8 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const link = (await queryOutput()).findElement((By.css('a')));
-          link.click();
+          const link = await queryOutput().findElement((By.css('a')));
+          await link.click();
         },
         expectXss,
         timeout: 500,
@@ -197,7 +197,7 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          link = (await queryOutput()).findElement((By.css('a')));
+          link = await queryOutput().findElement((By.css('a')));
           if (await link.getAttribute('target') === '_blank') {
             console.log('Tweaking link with target "_blank" to use target "' + MOCK_LINK_TARGET + '" instead.');
             // XXX not supported yet:   link.target = MOCK_LINK_TARGET;
@@ -216,8 +216,8 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const input = (await queryOutput()).findElement((By.css('input')));
-          (await input).click();
+          const input = await queryOutput().findElement((By.css('input')));
+          await input.click();
         },
         timeout: 500,
       });
@@ -227,7 +227,7 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const element = (await queryOutput()).findElement((By.css('[onmouseenter]')));
+          const element = await queryOutput().findElement((By.css('[onmouseenter]')));
           const actions = driver.actions({async: true});
           await actions.move({origin: element}).perform();
         },
@@ -239,57 +239,69 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await (await queryOutput()).findElement((By.css('iframe.xss-demo-guest')));
-          const codeField = await (await queryOutput()).findElement((By.css('textarea[name=code]')));
-          const runButton = await (await queryOutput()).findElement((By.css('button[name=run]')));
-          codeField.clear();
-          codeField.sendKeys('parent.xss()');
-          runButton.click();
+          await queryOutput().findElement((By.css('iframe.xss-demo-guest')));
+          const codeField = await queryOutput().findElement((By.css('textarea[name=code]')));
+          const runButton = await queryOutput().findElement((By.css('button[name=run]')));
+          await codeField.clear();
+          await codeField.sendKeys('parent.xss()');
+          await runButton.click();
         },
         timeout: 500,
       });
     },
 
     injectJsWindow: (name: string) => {
-      let windowOpenSpy: jasmine.Spy;
+      let ownWindowHandle: string;
       return new DefaultPresetTestConfig({
         presetName: name,
         setup: async () => {
-          windowOpenSpy = spyOn(window, 'open').and.callThrough();
+          ownWindowHandle = await driver.getWindowHandle();
         },
         trigger: async () => {
-          const codeField = await (await queryOutput()).findElement((By.css('textarea[name=code]')));
-          const runButton = await (await queryOutput()).findElement((By.css('button[name=run]')));
+          const codeField = await queryOutput().findElement((By.css('textarea[name=code]')));
+          const runButton = await queryOutput().findElement((By.css('button[name=run]')));
           codeField.clear();
           codeField.sendKeys('opener.xss()');
           runButton.click();
         },
         expect: async () => {
-          expect(windowOpenSpy).toHaveBeenCalled();
+          const getAllWindowHandles = await driver.getAllWindowHandles();
+          expect(getAllWindowHandles.length).toBe(2);
         },
         cleanup: async () => {
-          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
-          openedWindow?.close();
+          await driver.switchTo().window('');
+          await driver.close();
+          driver.switchTo().window(ownWindowHandle);
         },
         timeout: 500,
       });
     },
 
     newWindow: (name: string) => {
-      let windowOpenSpy: jasmine.Spy;
+      let testWindow: string;
+      let priorWindows: string[];
       return new DefaultPresetTestConfig({
         presetName: name,
         setup: async () => {
-          windowOpenSpy = spyOn(window, 'open').and.callThrough();
+          testWindow = await driver.getWindowHandle();
+          priorWindows = await driver.getAllWindowHandles();
         },
         expectXss: false,
         expect: async () => {
-          expect(windowOpenSpy).toHaveBeenCalled();
+          const currentWindows = await driver.getAllWindowHandles();
+          expect(currentWindows.length).toBe(priorWindows.length + 1);
         },
         cleanup: async () => {
-          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
-          openedWindow?.close();
+          const currentWindows = await driver.getAllWindowHandles();
+          for (const window of currentWindows) {
+            if (!priorWindows.includes(window)) {
+              await driver.switchTo().window(window);
+              await driver.close();
+            }
+          }
+          await driver.switchTo().window(testWindow);
         },
+        timeout: 500,
       });
     },
 
@@ -298,14 +310,10 @@ describe('Xss Demo App', () => {
         presetName: name,
         expectXss: false,
         expect: async () => {
-          const element = document.querySelector('article.fd-shell__app');
-          expect(element.childElementCount).toBe(1);
-          expect(element.querySelector('div.xss-demo-defacement')).not.toBeNull();
-        },
-        cleanup: async () => {
-          const element = document.querySelector('div.xss-demo-defacement');
-          element.parentNode.removeChild(element);
-          document.body.style.background = null;
+          const appElement = await driver.wait(until.elementLocated(By.css('article.fd-shell__app')), 2500);
+          const appChildElements = await appElement.findElements(By.css(':scope > *'));
+          expect(appChildElements.length).toBe(1);
+          await expect(appElement.findElement(By.css('div.xss-demo-defacement'))).resolves.not.toEqual(null);
         },
         timeout: 1000,
       });
@@ -392,7 +400,7 @@ describe('Xss Demo App', () => {
       driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
       driver.manage().setTimeouts({ implicit: 1000 });
     },
-    10000
+    5000
   );
 
   afterAll(
@@ -454,11 +462,15 @@ describe('Xss Demo App', () => {
                 }
 
                 describe('and payload preset "' + presetDescriptor.name + '"', () => {
+
+                  // XXX limit to selected tests
+                  //if (presetTestConfig.presetName != 'Interact with Post Message mock (window)' || outputDescriptor.name != 'DOM <script>-Block Content Raw') {
+                  //  return;
+                  //}
+
                   runTestConfig(
                     presetTestConfig,
-                    async () => {
-                      await selectInputOutput(presetCollection.name, presetTestConfig.presetName, outputCollection.name, outputDescriptor.name);
-                    },
+                    () => selectInputOutput(presetCollection.name, presetTestConfig.presetName, outputCollection.name, outputDescriptor.name),
                   );
                 });
               }
@@ -472,10 +484,9 @@ describe('Xss Demo App', () => {
               runTestConfig(
                 payloadTestConfig,
                 async () => {
-                  payloadInputTextArea.clear();
+                  await payloadInputTextArea.clear();
                   await selectInputOutput(null, null, outputCollection.name, outputDescriptor.name);
-                  await expect(alertOverlay.findElement(By.css('.alert-xss-triggered')))
-                    .rejects.toEqual(expect.anything());
+                  await expect(alertOverlay.findElement(By.css('.alert-xss-triggered'))).rejects.toEqual(expect.anything());
                   await payloadInputTextArea.sendKeys(payloadTestConfig.payload);
                 },
               );
@@ -498,23 +509,18 @@ describe('Xss Demo App', () => {
       async () => {
         await testConfig.doSetup();
         await deployTestPayload();
+        await testConfig.doTrigger();
 
-        const triggerPromise = testConfig.doTrigger();
-        const xssAlertPromise = alertOverlay.findElement(By.css('.alert-xss-triggered'));
-        const timeoutPromise = timeout(testConfig.getTimeout(), false);
-
-        await expect(Promise.race([xssAlertPromise, timeoutPromise])).resolves.toEqual(expect.anything());
-
+        const xssAlertPromise = driver.wait(until.elementLocated(By.css('.alert-xss-triggered')), testConfig.getTimeout());
         if (expectXss) {
           await expect(xssAlertPromise).resolves.toEqual(expect.anything());
         }
         else {
           await expect(xssAlertPromise).rejects.toThrow();
         }
-        await testConfig.doExpect();
 
-        const cleanupPromise = testConfig.doCleanup();
-        await Promise.all([timeoutPromise, triggerPromise, cleanupPromise /* XXX , whenStableDetectChanges(fixture) */]);
+        await testConfig.doExpect();
+        await testConfig.doCleanup();
       },
       testConfig.getTimeout() + 5000,
     );
@@ -565,14 +571,21 @@ describe('Xss Demo App', () => {
   }
 
   async function clickMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<void> {
+    const originalWindow = await driver.getWindowHandle();
     const comboboxControlInput = await combobox.findElement(By.css('.fd-popover__control input'));
     await comboboxControlInput.click();
 
     // we need multiple click attempts due to a weird UI glitch in the ComboboxInputComponent
     while (true) {
+      await driver.switchTo().window(originalWindow);
       const item = await queryMenuItem(combobox, groupLabel, itemLabel);
       if (await item?.isDisplayed()) {
-        await item.click();
+        try {
+          await item.click();
+        }
+        catch (err) {
+          return;
+        }
       }
       else {
         return;
@@ -580,11 +593,11 @@ describe('Xss Demo App', () => {
     }
   }
 
-  function queryPayloadOutputComponent(): Promise<WebElement> {
+  function queryPayloadOutputComponent(): WebElementPromise {
     return element.findElement(By.css('section.output-area xss-payload-output'));
   }
 
-  function queryOutput(): Promise<WebElement> {
-    return queryPayloadOutputComponent().then(el => el.findElement(By.css('.live-output.fd-layout-panel .fd-layout-panel__body')));
+  function queryOutput(): WebElementPromise {
+    return queryPayloadOutputComponent().findElement(By.css('.live-output.fd-layout-panel .fd-layout-panel__body'));
   }
 });
