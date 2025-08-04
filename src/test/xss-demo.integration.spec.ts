@@ -172,7 +172,7 @@ describe('Xss Demo App', () => {
   const payloadOutputServiceStub = new PayloadOutputService(null);
 
   let windowTracker: WindowTracker;
-  let element: WebElement;
+  let app: WebElement;
 
   let payloadInputCombobox: WebElement;
   let payloadOutputCombobox: WebElement;
@@ -390,13 +390,12 @@ describe('Xss Demo App', () => {
     await driver.get(XSS_DEMO_APP_URL);
     windowTracker = await WindowTracker.track(driver);
 
-    const body = await driver.wait(until.elementLocated(By.css('body')), 2500);
-    element = await body.findElement(By.css('xss-demo-root'));
+    app = await driver.wait(until.elementLocated(By.css('xss-demo-root')), 2500);
 
-    payloadInputTextArea = await element.findElement(By.css('section.input-area textarea.payload'));
-    payloadInputCombobox = await element.findElement(By.css('section.input-area xss-combobox-input'));
-    payloadOutputCombobox = await element.findElement(By.css('section.output-area xss-combobox-input'));
-    alertOverlay = await element.findElement(By.css('.fd-shell__overlay.fd-overlay--alert'));
+    payloadInputTextArea = await app.findElement(By.css('section.input-area textarea.payload'));
+    payloadInputCombobox = await app.findElement(By.css('section.input-area xss-combobox-input'));
+    payloadOutputCombobox = await app.findElement(By.css('section.output-area xss-combobox-input'));
+    alertOverlay = await app.findElement(By.css('.fd-shell__overlay.fd-overlay--alert'));
   });
 
   afterEach(async () => {
@@ -404,7 +403,7 @@ describe('Xss Demo App', () => {
   });
 
   test('should be created', async () => {
-    expect(element).toBeDefined();
+    expect(app).toBeDefined();
   });
 
   for (const outputCollection of payloadOutputServiceStub.descriptors) {
@@ -572,7 +571,7 @@ describe('Xss Demo App', () => {
   }
 
   function queryPayloadOutputComponent(): WebElementPromise {
-    return element.findElement(By.css('section.output-area xss-payload-output'));
+    return app.findElement(By.css('section.output-area xss-payload-output'));
   }
 
   function queryOutput(): WebElementPromise {
