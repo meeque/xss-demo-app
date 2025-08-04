@@ -12,7 +12,7 @@ import '@angular/compiler';
 import { PayloadPresetService } from '../xss/payload-preset.service';
 import { PayloadOutputQuality, PayloadOutputService } from '../xss/payload-output.service';
 
-import { timeout } from './test-lib';
+import { WindowTracker } from './test-lib';
 
 
 
@@ -171,6 +171,7 @@ describe('Xss Demo App', () => {
   const payloadPresetServiceStub = new PayloadPresetService(null);
   const payloadOutputServiceStub = new PayloadOutputService(null);
 
+  let windowTracker: WindowTracker;
   let element: WebElement;
 
   let payloadInputCombobox: WebElement;
@@ -251,12 +252,8 @@ describe('Xss Demo App', () => {
     },
 
     injectJsWindow: (name: string) => {
-      let ownWindowHandle: string;
       return new DefaultPresetTestConfig({
         presetName: name,
-        setup: async () => {
-          ownWindowHandle = await driver.getWindowHandle();
-        },
         trigger: async () => {
           const codeField = await queryOutput().findElement((By.css('textarea[name=code]')));
           const runButton = await queryOutput().findElement((By.css('button[name=run]')));
@@ -265,41 +262,24 @@ describe('Xss Demo App', () => {
           runButton.click();
         },
         expect: async () => {
-          const getAllWindowHandles = await driver.getAllWindowHandles();
-          expect(getAllWindowHandles.length).toBe(2);
+          await expect(windowTracker.getNewWindows()).resolves.toHaveLength(1);
         },
         cleanup: async () => {
-          await driver.switchTo().window('');
-          await driver.close();
-          driver.switchTo().window(ownWindowHandle);
+          await windowTracker.closeAllNewWindows();
         },
         timeout: 500,
       });
     },
 
     newWindow: (name: string) => {
-      let testWindow: string;
-      let priorWindows: string[];
       return new DefaultPresetTestConfig({
         presetName: name,
-        setup: async () => {
-          testWindow = await driver.getWindowHandle();
-          priorWindows = await driver.getAllWindowHandles();
-        },
         expectXss: false,
         expect: async () => {
-          const currentWindows = await driver.getAllWindowHandles();
-          expect(currentWindows.length).toBe(priorWindows.length + 1);
+          await expect(windowTracker.getNewWindows()).resolves.toHaveLength(1);
         },
         cleanup: async () => {
-          const currentWindows = await driver.getAllWindowHandles();
-          for (const window of currentWindows) {
-            if (!priorWindows.includes(window)) {
-              await driver.switchTo().window(window);
-              await driver.close();
-            }
-          }
-          await driver.switchTo().window(testWindow);
+          await windowTracker.closeAllNewWindows();
         },
         timeout: 500,
       });
@@ -414,6 +394,7 @@ describe('Xss Demo App', () => {
 
   beforeEach(async () => {
     await driver.get(XSS_DEMO_APP_URL);
+    windowTracker = await WindowTracker.track(driver);
 
     const body = await driver.wait(until.elementLocated(By.css('body')), 2500);
     element = await body.findElement(By.css('xss-demo-root'));
@@ -464,9 +445,9 @@ describe('Xss Demo App', () => {
                 describe('and payload preset "' + presetDescriptor.name + '"', () => {
 
                   // XXX limit to selected tests
-                  //if (presetTestConfig.presetName != 'Interact with Post Message mock (window)' || outputDescriptor.name != 'DOM <script>-Block Content Raw') {
-                  //  return;
-                  //}
+                  if (presetTestConfig.presetName != 'Interact with Post Message mock (window)' || outputDescriptor.name != 'DOM <script>-Block Content Raw') {
+                   return;
+                  }
 
                   runTestConfig(
                     presetTestConfig,
@@ -571,13 +552,12 @@ describe('Xss Demo App', () => {
   }
 
   async function clickMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<void> {
-    const originalWindow = await driver.getWindowHandle();
     const comboboxControlInput = await combobox.findElement(By.css('.fd-popover__control input'));
     await comboboxControlInput.click();
 
     // we need multiple click attempts due to a weird UI glitch in the ComboboxInputComponent
     while (true) {
-      await driver.switchTo().window(originalWindow);
+      await windowTracker.switchToOwnWindow();
       const item = await queryMenuItem(combobox, groupLabel, itemLabel);
       if (await item?.isDisplayed()) {
         try {

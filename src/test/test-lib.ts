@@ -1,4 +1,5 @@
 import { ComponentFixture } from '@angular/core/testing';
+import { WebDriver } from 'selenium-webdriver';
 
 
 
@@ -96,5 +97,48 @@ export async function whenStableDetectChanges(fixture: ComponentFixture<unknown>
   }
   catch (err) {
     console.error(err);
+  }
+}
+
+
+
+export class WindowTracker {
+
+  private ownWindow: string;
+
+  private priorWindows: string[];
+
+  private constructor(private readonly driver: WebDriver) {
+  }
+
+  static async track(driver: WebDriver): Promise<WindowTracker> {
+    const windowTracker = new WindowTracker(driver);
+    windowTracker.ownWindow = await driver.getWindowHandle();
+    windowTracker.priorWindows = await driver.getAllWindowHandles();
+    return windowTracker;
+  }
+
+  public async getNewWindows(): Promise<string[]> {
+    const currentWindows = await this.driver.getAllWindowHandles();
+    const newWindows = [] as string[];
+    for (const window of currentWindows) {
+      if (!this.priorWindows.includes(window)) {
+        newWindows.push(window);
+      }
+    }
+    return newWindows;
+  }
+
+  public async switchToOwnWindow(): Promise<string> {
+    await this.driver.switchTo().window(this.ownWindow);
+    return this.ownWindow;
+  }
+
+  public async closeAllNewWindows(): Promise<string> {
+    for (const window of await this.getNewWindows()) {
+      await this.driver.switchTo().window(window);
+      await this.driver.close();
+    }
+    return this.switchToOwnWindow();
   }
 }
