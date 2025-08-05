@@ -184,31 +184,21 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const link = await queryOutput().findElement((By.css('a')));
-          await link.click();
+          await queryOutput().findElement((By.css('a'))).click();
         },
         expectXss,
         timeout: 500,
       });
     },
 
+    // XXX do we still need this one, now that window tracking is done before/after each
     clickLinkNew: (name: string, expectXss = true) => {
-      const MOCK_LINK_TARGET = 'xss-demo_integration-test_click-link-to-new-window';
-      let link = null as WebElement;
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          link = await queryOutput().findElement((By.css('a')));
-          if (await link.getAttribute('target') === '_blank') {
-            console.log('Tweaking link with target "_blank" to use target "' + MOCK_LINK_TARGET + '" instead.');
-            // XXX not supported yet:   link.target = MOCK_LINK_TARGET;
-          }
-          link.click();
+          await queryOutput().findElement((By.css('a'))).click();
         },
         expectXss,
-        cleanup: async () => {
-          window.open('javascript:window.close();', await link.getAttribute('target'));
-        },
         timeout: 1000,
       });
     },
@@ -257,9 +247,9 @@ describe('Xss Demo App', () => {
         trigger: async () => {
           const codeField = await queryOutput().findElement((By.css('textarea[name=code]')));
           const runButton = await queryOutput().findElement((By.css('button[name=run]')));
-          codeField.clear();
-          codeField.sendKeys('opener.xss()');
-          runButton.click();
+          await codeField.clear();
+          await codeField.sendKeys('opener.xss()');
+          await runButton.click();
         },
         expect: async () => {
           await expect(windowTracker.getNewWindows()).resolves.toHaveLength(1);
@@ -440,12 +430,6 @@ describe('Xss Demo App', () => {
                 }
 
                 describe('and payload preset "' + presetDescriptor.name + '"', () => {
-
-                  // XXX limit to selected tests
-                  if (presetTestConfig.presetName != 'Interact with Post Message mock (window)' || outputDescriptor.name != 'DOM <script>-Block Content Raw') {
-                   return;
-                  }
-
                   runTestConfig(
                     presetTestConfig,
                     () => selectInputOutput(presetCollection.name, presetTestConfig.presetName, outputCollection.name, outputDescriptor.name),
@@ -554,8 +538,15 @@ describe('Xss Demo App', () => {
 
     // we need multiple click attempts due to a weird UI glitch in the ComboboxInputComponent
     while (true) {
+      let item: WebElement;
       await windowTracker.switchToOwnWindow();
-      const item = await queryMenuItem(combobox, groupLabel, itemLabel);
+      try {
+        item = await queryMenuItem(combobox, groupLabel, itemLabel);
+      }
+      catch(err) {
+        return;
+      }
+
       if (await item?.isDisplayed()) {
         try {
           await item.click();
