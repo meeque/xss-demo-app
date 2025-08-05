@@ -4,19 +4,14 @@
 
 
 
-import { Browser, WebDriver, Builder, By, WebElement, until, WebElementPromise } from 'selenium-webdriver';
-import { Options as ChromeOptions } from 'selenium-webdriver/chrome';
+import { By, WebElement, until, WebElementPromise } from 'selenium-webdriver';
 
 import '@angular/compiler';
 
-import { PayloadPresetService } from '../xss/payload-preset.service';
-import { PayloadOutputQuality, PayloadOutputService } from '../xss/payload-output.service';
-
 import { WindowTracker } from './test-lib';
 
-
-
-const XSS_DEMO_APP_URL = 'https://lc-js-dev:4200/';
+import { PayloadPresetService } from '../xss/payload-preset.service';
+import { PayloadOutputQuality, PayloadOutputService } from '../xss/payload-output.service';
 
 
 
@@ -165,8 +160,6 @@ class DefaultPayloadTestConfig extends DefaultTestConfig implements EnhancedPayl
 
 
 describe('Xss Demo App', () => {
-
-  let driver: WebDriver;
 
   const payloadPresetServiceStub = new PayloadPresetService(null);
   const payloadOutputServiceStub = new PayloadOutputService(null);
@@ -339,33 +332,8 @@ describe('Xss Demo App', () => {
     },
   };
 
-
-
-  beforeAll(
-    async () => {
-      const chromeOptions = new ChromeOptions();
-      chromeOptions.setChromeBinaryPath('/usr/bin/chromium');
-      //chromeOptions.addArguments('--headless');
-      chromeOptions.addArguments('--no-sandbox');
-      chromeOptions.addArguments('--ignore-certificate-errors');
-
-      driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
-      driver.manage().setTimeouts({ implicit: 1000 });
-    },
-    5000
-  );
-
-  afterAll(
-    async () => {
-      if (driver) {
-        await driver.quit();
-      }
-    },
-    5000
-  );
-
   beforeEach(async () => {
-    await driver.get(XSS_DEMO_APP_URL);
+    await driver.get(xssDemoAppUrl);
     windowTracker = await WindowTracker.track(driver);
 
     app = await driver.wait(until.elementLocated(By.css('xss-demo-root')), 2500);
