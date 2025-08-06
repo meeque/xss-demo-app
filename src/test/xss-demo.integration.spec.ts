@@ -4,11 +4,11 @@
 
 
 
-import { By, WebElement, until, WebElementPromise } from 'selenium-webdriver';
-
-import '@angular/compiler';
+import { By, WebElement, WebElementPromise, until } from 'selenium-webdriver';
 
 import { WindowTracker } from './test-lib';
+
+import '@angular/compiler';
 
 import { PayloadPresetService } from '../xss/payload-preset.service';
 import { PayloadOutputQuality, PayloadOutputService } from '../xss/payload-output.service';
