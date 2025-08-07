@@ -69,154 +69,154 @@ describe('Storage Mock', () => {
     expect(mockPageBody).not.toBeNull();
   });
 
-  for (const type of [StorageType.local, StorageType.session]) {
-    describe('for ' + type, () => {
-      beforeEach(() => {
-        storageType = type;
-        testStorage = new StorageProxy(driver, type);
-        return testStorage.clear();
-      });
+  const storageTypes = [StorageType.local, StorageType.session];
 
-      afterEach(() => {
-        return testStorage.clear();
-      });
-
-      test('should manage storage contents through its web UI', async () => {
-        const testData = {} as Record<string, string>;
-
-        // check empty storage and table
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // add "foo"
-        testData.foo = 'storage item with key "foo"';
-        await fillAddNewItemForm('foo', testData.foo);
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // start adding "bar", but cancel
-        await fillAddNewItemForm('bar', 'wannabe storage item with key "bar"', false);
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // add "xxx"
-        testData.xxx = 'storage item with key "xxx"';
-        await fillAddNewItemForm('xxx', testData.xxx);
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // delete "foo"
-        delete testData.foo;
-        await deleteStorageTableEntry('foo');
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // add "bar"
-        testData.bar = 'storage item with key "bar"';
-        await fillAddNewItemForm('bar', testData.bar);
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // re-add "foo"
-        testData.foo = 'another storage item with key "foo"';
-        await fillAddNewItemForm('foo', testData.foo);
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // edit "bar"
-        testData.bar = 'new value for item with key "bar"';
-        await editStorageTableEntry('bar', testData.bar);
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // start editing "xxx", but cancel
-        await editStorageTableEntry('xxx', 'unsaved value for item with key "xxx"', false);
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // edit "foo"
-        testData.foo = 'new value for item with key "foo"';
-        await editStorageTableEntry('foo', testData.foo);
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // delete "xxx"
-        delete testData.xxx;
-        await deleteStorageTableEntry('xxx');
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // edit "bar" again, with funky value
-        testData.bar = 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for item with key "bar"';
-        await editStorageTableEntry('bar', testData.bar);
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // wait a bit for async failures
-        await timeout(500);
-      });
-
-      test('should reflect external storage changes in its web UI', async () => {
-        const testData = {} as Record<string, string>;
-
-        // check empty storage and table
-        await expectStorageToContain(testData);
-        await expectStorageTable(testData);
-
-        // add "FOO"
-        testData.FOO = 'storage item with key "FOO"';
-        await testStorage.setItem('FOO', testData.FOO);
-        await waitForStorageTableEntry('FOO');
-        await expectStorageTable(testData);
-
-        // add "BAR"
-        testData.BAR = 'storage item with key "BAR"';
-        await testStorage.setItem('BAR', testData.BAR);
-        await findStorageTableEntry('BAR');
-        await expectStorageTable(testData);
-
-        // delete "FOO"
-        delete testData.FOO;
-        await testStorage.removeItem('FOO');
-        await findStorageTableEntry('FOO');
-        await expectStorageTable(testData);
-
-        // add ""
-        testData[''] = 'storage item with empty key';
-        await testStorage.setItem('', testData['']);
-        await findStorageTable(), () => findStorageTableEntry('');
-        await expectStorageTable(testData);
-
-        // change "BAR"
-        testData.BAR = 'adjusted storage item with key "BAR"';
-        await testStorage.setItem('BAR', testData.BAR);
-        await findStorageTableEntry('BAR', testData.BAR);
-        await expectStorageTable(testData);
-
-        // re-add "FOO"
-        testData.FOO = 'another storage item with key "FOO"';
-        await testStorage.setItem('FOO', testData.FOO);
-        await findStorageTableEntry('FOO');
-        await expectStorageTable(testData);
-
-        // add item with funky key
-        const testKey = '<img src="." onerror="parent.fail(\'a storage item has triggered xss!\')">';
-        testData[testKey] = 'the key of this storage item contains xss payload';
-        await testStorage.setItem(testKey, testData[testKey]);
-        await findStorageTableEntry(testKey);
-        await expectStorageTable(testData);
-
-        // delete item with funky key
-        delete testData[testKey];
-        await testStorage.removeItem(testKey);
-        await findStorageTableEntry(testKey);
-        await expectStorageTable(testData);
-
-        // wait a bit for async failures
-        await timeout(500);
-      });
+  describe.each(storageTypes)('for %s', (type) => {
+    beforeEach(() => {
+      storageType = type;
+      testStorage = new StorageProxy(driver, type);
+      return testStorage.clear();
     });
-  }
+
+    afterEach(() => {
+      return testStorage.clear();
+    });
+
+    test('should manage storage contents through its web UI', async () => {
+      const testData = {} as Record<string, string>;
+
+      // check empty storage and table
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // add "foo"
+      testData.foo = 'storage item with key "foo"';
+      await fillAddNewItemForm('foo', testData.foo);
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // start adding "bar", but cancel
+      await fillAddNewItemForm('bar', 'wannabe storage item with key "bar"', false);
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // add "xxx"
+      testData.xxx = 'storage item with key "xxx"';
+      await fillAddNewItemForm('xxx', testData.xxx);
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // delete "foo"
+      delete testData.foo;
+      await deleteStorageTableEntry('foo');
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // add "bar"
+      testData.bar = 'storage item with key "bar"';
+      await fillAddNewItemForm('bar', testData.bar);
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // re-add "foo"
+      testData.foo = 'another storage item with key "foo"';
+      await fillAddNewItemForm('foo', testData.foo);
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // edit "bar"
+      testData.bar = 'new value for item with key "bar"';
+      await editStorageTableEntry('bar', testData.bar);
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // start editing "xxx", but cancel
+      await editStorageTableEntry('xxx', 'unsaved value for item with key "xxx"', false);
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // edit "foo"
+      testData.foo = 'new value for item with key "foo"';
+      await editStorageTableEntry('foo', testData.foo);
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // delete "xxx"
+      delete testData.xxx;
+      await deleteStorageTableEntry('xxx');
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // edit "bar" again, with funky value
+      testData.bar = 'payload <img src="." onerror="parent.fail(\'a storage item has triggered xss!\')"> for item with key "bar"';
+      await editStorageTableEntry('bar', testData.bar);
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // wait a bit for async failures
+      await timeout(500);
+    });
+
+    test('should reflect external storage changes in its web UI', async () => {
+      const testData = {} as Record<string, string>;
+
+      // check empty storage and table
+      await expectStorageToContain(testData);
+      await expectStorageTable(testData);
+
+      // add "FOO"
+      testData.FOO = 'storage item with key "FOO"';
+      await testStorage.setItem('FOO', testData.FOO);
+      await waitForStorageTableEntry('FOO');
+      await expectStorageTable(testData);
+
+      // add "BAR"
+      testData.BAR = 'storage item with key "BAR"';
+      await testStorage.setItem('BAR', testData.BAR);
+      await findStorageTableEntry('BAR');
+      await expectStorageTable(testData);
+
+      // delete "FOO"
+      delete testData.FOO;
+      await testStorage.removeItem('FOO');
+      await findStorageTableEntry('FOO');
+      await expectStorageTable(testData);
+
+      // add ""
+      testData[''] = 'storage item with empty key';
+      await testStorage.setItem('', testData['']);
+      await findStorageTable(), () => findStorageTableEntry('');
+      await expectStorageTable(testData);
+
+      // change "BAR"
+      testData.BAR = 'adjusted storage item with key "BAR"';
+      await testStorage.setItem('BAR', testData.BAR);
+      await findStorageTableEntry('BAR', testData.BAR);
+      await expectStorageTable(testData);
+
+      // re-add "FOO"
+      testData.FOO = 'another storage item with key "FOO"';
+      await testStorage.setItem('FOO', testData.FOO);
+      await findStorageTableEntry('FOO');
+      await expectStorageTable(testData);
+
+      // add item with funky key
+      const testKey = '<img src="." onerror="parent.fail(\'a storage item has triggered xss!\')">';
+      testData[testKey] = 'the key of this storage item contains xss payload';
+      await testStorage.setItem(testKey, testData[testKey]);
+      await findStorageTableEntry(testKey);
+      await expectStorageTable(testData);
+
+      // delete item with funky key
+      delete testData[testKey];
+      await testStorage.removeItem(testKey);
+      await findStorageTableEntry(testKey);
+      await expectStorageTable(testData);
+
+      // wait a bit for async failures
+      await timeout(500);
+    });
+  });
 
 
 
