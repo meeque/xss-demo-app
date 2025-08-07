@@ -1,5 +1,5 @@
 import { By, ThenableWebDriver, WebElement, until } from 'selenium-webdriver';
-import { timeout, findAndExpectOne, findAndExpectCount, getClasses } from './test-lib';
+import { timeout, findAndExpectOne, findAndExpectCount, getClasses, getValue } from './test-lib';
 
 
 
@@ -238,16 +238,16 @@ describe('Storage Mock', () => {
     for (const entryRow of storageTableEntryRows) {
       const entryKeyField = await findAndExpectOne(entryRow, 'td.key input[type=text]');
       if (item === undefined) {
-        if (key === await entryKeyField.getAttribute('value')) {
+        if (key === await getValue(entryKeyField)) {
           return entryRow;
         }
       }
       else {
         const entryItemField = await findAndExpectOne(entryRow, 'td.item input[type=text]');
         if (
-          (key === await entryKeyField.getAttribute('value'))
+          (key === await getValue(entryKeyField))
           &&
-          (item === await entryItemField.getAttribute('value'))
+          (item === await getValue(entryItemField))
         ) {
           return entryRow;
         }
@@ -345,7 +345,7 @@ describe('Storage Mock', () => {
   async function expectEntryRowValues(row: WebElement, key: string, item: string): Promise<void> {
     const entryKeyField = await findAndExpectOne(row, 'td.key input[type=text]');
     const entryItemField = await findAndExpectOne(row, 'td.item input[type=text]');
-    await expect(entryKeyField.getAttribute('value')).resolves.toBe(key);
-    await expect(entryItemField.getAttribute('value')).resolves.toBe(item);
+    await expect(getValue(entryKeyField)).resolves.toBe(key);
+    await expect(getValue(entryItemField)).resolves.toBe(item);
   }
 });

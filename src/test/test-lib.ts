@@ -101,16 +101,16 @@ export async function whenStableDetectChanges(fixture: ComponentFixture<unknown>
 }
 
 
-export function queryAndExpectOptional(context: HTMLElement, selector: string): HTMLElement {
-  const result = context.querySelectorAll(selector);
-  expect(result.length).toBeLessThanOrEqual(1);
-  if (result.length === 1) {
-    return result[0] as HTMLElement;
+
+export async function findAndExpectOptional(context: WebElement, selector: string): Promise<WebElement> {
+  const elements = await context.findElements(By.css(selector));
+
+  expect(elements.length).toBeLessThanOrEqual(1);
+  if (elements.length === 1) {
+    return elements[0];
   }
   return null;
 }
-
-
 
 export async function findAndExpectCount(context: WebElement, selector: string, count = 1): Promise<WebElement[]> {
   const elements = await context.findElements(By.css(selector));
@@ -132,6 +132,10 @@ export async function findAndExpectNone(context: WebElement, selector: string): 
 export async function getClasses(element: WebElement): Promise<string[]> {
   const classAttribute = await element.getAttribute('class');
   return classAttribute.split(' ');
+}
+
+export function getValue(element: WebElement): Promise<string> {
+  return element.getAttribute('value');
 }
 
 
