@@ -1,5 +1,5 @@
 import { ComponentFixture } from '@angular/core/testing';
-import { WebDriver } from 'selenium-webdriver';
+import { By, WebDriver, WebElement } from 'selenium-webdriver';
 
 
 
@@ -98,6 +98,40 @@ export async function whenStableDetectChanges(fixture: ComponentFixture<unknown>
   catch (err) {
     console.error(err);
   }
+}
+
+
+export function queryAndExpectOptional(context: HTMLElement, selector: string): HTMLElement {
+  const result = context.querySelectorAll(selector);
+  expect(result.length).toBeLessThanOrEqual(1);
+  if (result.length === 1) {
+    return result[0] as HTMLElement;
+  }
+  return null;
+}
+
+
+
+export async function findAndExpectCount(context: WebElement, selector: string, count = 1): Promise<WebElement[]> {
+  const elements = await context.findElements(By.css(selector));
+  expect(elements.length).toBe(count);
+  return elements;
+}
+
+export async function findAndExpectOne(context: WebElement, selector: string): Promise<WebElement> {
+  const elements = await findAndExpectCount(context, selector, 1);
+  return elements[0];
+}
+
+export async function findAndExpectNone(context: WebElement, selector: string): Promise<void> {
+  findAndExpectCount(context, selector, 0);
+}
+
+
+
+export async function getClasses(element: WebElement): Promise<string[]> {
+  const classAttribute = await element.getAttribute('class');
+  return classAttribute.split(' ');
 }
 
 
