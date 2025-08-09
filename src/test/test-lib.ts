@@ -1,32 +1,31 @@
 import { ComponentFixture } from '@angular/core/testing';
+import type { MatcherFunction } from 'expect';
 import { By, WebDriver, WebElement } from 'selenium-webdriver';
 
 
 
-// defining Jasmine's AsymmetricEqualityTester interface
-// not sure where to import it from
-// https://jasmine.github.io/api/edge/AsymmetricEqualityTester.html
-export interface AsymmetricEqualityTester<T> {
-  asymmetricMatch(actual: T, matchersUtil: MatchersUtil): boolean
-  jasmineToString(pp: (value: unknown) => string): string
-}
+export const anyOf: MatcherFunction<[any[]]> =
+  function (actual, expectedOptions) {
+    for (const expectedOption of expectedOptions) {
+      if (this.equals(actual, expectedOption)) {
+        return {
+          message: () => {
+            return 'expected ' + this.utils.printReceived(actual) + ' to equal any of ' + this.utils.printExpected(expectedOptions);
+          },
+          pass: true,
+        }
+      }
+    }
 
-interface MatchersUtil {
-  contains(haystack: unknown, needle: unknown): boolean
-  equals(haystack: unknown, needle: unknown): boolean
-  pp(actual: unknown): string
-}
+    return {
+      message: () => {
+        return 'expected ' + this.utils.printReceived(actual) + ' not to equal any of ' + this.utils.printExpected(expectedOptions);
+      },
+      pass: false,
+    }
+  }
 
-export function anyOf(expected: unknown[]): AsymmetricEqualityTester<unknown> {
-  return {
-    asymmetricMatch: function (actual, util: MatchersUtil) {
-      return util.contains(expected, actual);
-    },
-    jasmineToString: function (pp) {
-      return 'any of ' + pp(expected);
-    },
-  };
-}
+expect.extend({anyOf})
 
 
 
@@ -134,10 +133,29 @@ export async function getClasses(element: WebElement): Promise<string[]> {
   return classAttribute.split(' ');
 }
 
-export function getValue(element: WebElement): Promise<string> {
-  return element.getAttribute('value');
+export function getValue(formElement: WebElement): Promise<string> {
+  return formElement.getAttribute('value');
 }
 
+export async function setValue(formElement: WebElement, value: string): Promise<void> {
+  await formElement.clear();
+  await formElement.sendKeys(value);
+}
+
+export async function isChecked(formElement: WebElement): Promise<boolean> {
+  return null !== await formElement.getAttribute('checked');
+}
+
+export async function selectOption(selectElement: WebElement, selectValue: string): Promise<void> {
+  const optionElements = await selectElement.findElements(By.css('option'));
+  for (const optionElement of optionElements) {
+    const optionValue = await getValue(optionElement);
+    if (optionValue === selectValue) {
+      await optionElement.click();
+      return;
+    }
+  }
+}
 
 
 export class WindowTracker {
