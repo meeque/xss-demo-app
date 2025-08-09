@@ -1,31 +1,5 @@
 import { ComponentFixture } from '@angular/core/testing';
-import type { MatcherFunction } from 'expect';
 import { By, WebDriver, WebElement } from 'selenium-webdriver';
-
-
-
-export const anyOf: MatcherFunction<[any[]]> =
-  function (actual, expectedOptions) {
-    for (const expectedOption of expectedOptions) {
-      if (this.equals(actual, expectedOption)) {
-        return {
-          message: () => {
-            return 'expected ' + this.utils.printReceived(actual) + ' to equal any of ' + this.utils.printExpected(expectedOptions);
-          },
-          pass: true,
-        }
-      }
-    }
-
-    return {
-      message: () => {
-        return 'expected ' + this.utils.printReceived(actual) + ' not to equal any of ' + this.utils.printExpected(expectedOptions);
-      },
-      pass: false,
-    }
-  }
-
-expect.extend({anyOf})
 
 
 

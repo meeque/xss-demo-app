@@ -1,5 +1,33 @@
+import type { MatcherFunction } from 'expect';
 import { Builder, Browser } from 'selenium-webdriver';
 import { Options as ChromeOptions } from 'selenium-webdriver/chrome';
+
+
+
+{
+  const anyOf: MatcherFunction<[any[]]> =
+    function anyOf(actual, expectedOptions) {
+      for (const expectedOption of expectedOptions) {
+        if (this.equals(actual, expectedOption)) {
+          return {
+            message: () => {
+              return 'expected ' + this.utils.printReceived(actual) + ' to equal any of ' + this.utils.printExpected(expectedOptions);
+            },
+            pass: true,
+          }
+        }
+      }
+
+      return {
+        message: () => {
+          return 'expected ' + this.utils.printReceived(actual) + ' not to equal any of ' + this.utils.printExpected(expectedOptions);
+        },
+        pass: false,
+      }
+    };
+
+  expect.extend({anyOf});
+}
 
 
 
@@ -31,5 +59,7 @@ afterAll(
   },
   5000
 );
+
+
 
 globalThis.xssDemoAppUrl = process.env.XSS_DEMO_APP_URL ?? 'https://localhost:4200/';
