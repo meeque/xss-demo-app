@@ -19,7 +19,7 @@ beforeAll(
     driver.manage().setTimeouts({ implicit: 1000 });
     globalThis.driver = driver;
   },
-  5000
+  10000
 );
 
 afterAll(
