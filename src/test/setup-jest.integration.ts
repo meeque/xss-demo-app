@@ -63,3 +63,5 @@ afterAll(
 
 
 globalThis.xssDemoAppUrl = process.env.XSS_DEMO_APP_URL ?? 'https://localhost:4200/';
+globalThis.xssDemoAppHostname = new URL(globalThis.xssDemoAppUrl).hostname;
+globalThis.xssDemoAppOrigin = new URL(globalThis.xssDemoAppUrl).origin;

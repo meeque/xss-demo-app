@@ -59,11 +59,11 @@ describe('Post Message Mock', () => {
 
   describe('"Trusted Origins" table', () => {
     test('should initially contain own origin', () => {
-      return expectOriginsTable([getXssDemoAppOrigin()]);
+      return expectOriginsTable([xssDemoAppOrigin]);
     });
 
     test('should manage trusted origins', async () => {
-      const origins = new Set<string>([getXssDemoAppOrigin()]);
+      const origins = new Set<string>([xssDemoAppOrigin]);
       await expectOriginsTable(origins);
 
       {
@@ -81,7 +81,7 @@ describe('Post Message Mock', () => {
       }
 
       {
-        const origin = getXssDemoAppOrigin();
+        const origin = xssDemoAppOrigin;
         origins.delete(origin);
         await untrustOrigin(origin);
         await expectOriginsTable(origins);
@@ -113,7 +113,7 @@ describe('Post Message Mock', () => {
       }
 
       {
-        const origin = getXssDemoAppOrigin();
+        const origin = xssDemoAppOrigin;
         origins.add(origin);
         await fillNewOriginForm(origin);
         await expectOriginsTable(origins);
@@ -134,7 +134,7 @@ describe('Post Message Mock', () => {
       }
 
       {
-        const origin = getXssDemoAppOrigin();
+        const origin = xssDemoAppOrigin;
         origins.delete(origin);
         await untrustOrigin(origin);
         await expectOriginsTable(origins);
@@ -147,15 +147,15 @@ describe('Post Message Mock', () => {
   describe('"Received Post-Message Events" table', () => {
     const testOriginConfigs: TestOriginConfig[] = [
       {
-        origins: [getXssDemoAppOrigin()],
+        origins: [xssDemoAppOrigin],
         expectTrusted: true,
       },
       {
-        origins: ['https://xss.example', getXssDemoAppOrigin()],
+        origins: ['https://xss.example', xssDemoAppOrigin],
         expectTrusted: true,
       },
       {
-        origins: [getXssDemoAppOrigin(), 'http://yss.example'],
+        origins: [xssDemoAppOrigin, 'http://yss.example'],
         expectTrusted: true,
       },
       {
@@ -181,7 +181,7 @@ describe('Post Message Mock', () => {
         'should '
         + (testOriginConfig.expectTrusted ? '' : 'NOT ')
         + 'trust events from '
-        + getXssDemoAppOrigin()
+        + xssDemoAppOrigin
         + ' when trusted origns are [ '
         + testOriginConfig.origins.join(', ')
         + ' ]',
@@ -278,7 +278,7 @@ describe('Post Message Mock', () => {
   }
 
   async function configureTrustedOrigins(origins: string[]): Promise<void> {
-    await untrustOrigin(getXssDemoAppOrigin());
+    await untrustOrigin(xssDemoAppOrigin);
     for (const trustedOrigin of origins) {
       await fillNewOriginForm(trustedOrigin);
     }
@@ -386,14 +386,9 @@ describe('Post Message Mock', () => {
 
       await expect(getClasses(eventRow)).resolves.toContain(event.expectTrusted ? 'trusted' : 'untrusted');
       await expect(trustElement.getAttribute('title')).resolves.not.toBe('');
-      await expect(originElement.getText()).resolves.toBe(getXssDemoAppOrigin());
+      await expect(originElement.getText()).resolves.toBe(xssDemoAppOrigin);
       await expect(timeStampElement.getText().then(ts => Number.parseFloat(ts))).resolves.not.toBeNaN();
       await expect(dataElement.getText()).resolves.toBe(JSON.stringify(event.data));
     }
-  }
-
-  function getXssDemoAppOrigin() {
-    const url = new URL(xssDemoAppUrl);
-    return url.origin;
   }
 });
