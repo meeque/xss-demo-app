@@ -44,7 +44,7 @@ beforeAll(
     }
 
     const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
-    driver.manage().setTimeouts({ implicit: 1000 });
+    await driver.manage().setTimeouts({ implicit: 1000 });
     globalThis.driver = driver;
   },
   10000
