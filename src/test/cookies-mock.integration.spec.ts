@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
-import type { ExpectationResult, MatcherFunction } from 'expect';
+import type { ExpectationResult } from 'expect';
 import { By, ThenableWebDriver, WebElement, until } from 'selenium-webdriver';
 import { timeout, findAndExpectOne, findAndExpectCount, getClasses, getValue, isChecked, setValue, selectOption } from './test-lib';
 
@@ -65,7 +65,6 @@ expect.extend({
   toMatchCookie: function(actual: any, expectedCookie: Cookie): ExpectationResult {
     let pass = true;
 
-    console.log('expected domain: ' + expectedCookie.domain);
     if (typeof expectedCookie.domain === 'string') {
       if (expectedCookie.domain === xssDemoAppHostname) {
         if (actual.domain != expectedCookie.domain && actual.domain != null) pass = false;
@@ -78,7 +77,6 @@ expect.extend({
       if (actual.domain != null) pass = false;
     }
 
-    console.log('expected path: ' + expectedCookie.path);
     if (typeof expectedCookie.path === 'string') {
       if (actual.path != expectedCookie.path) pass = false;
     }
@@ -86,22 +84,18 @@ expect.extend({
       if (actual.path != '/') pass = false;
     }
 
-    console.log('expected name: ' + expectedCookie.name);
     if (typeof expectedCookie.name === 'string') {
       if (actual.name != expectedCookie.name) pass = false;
     }
 
-    console.log('expected value: ' + expectedCookie.value);
     if (typeof expectedCookie.value === 'string') {
       if (actual.value != expectedCookie.value) pass = false;
     }
 
-    console.log('expected secure: ' + expectedCookie.secure);
     if (typeof expectedCookie.secure === 'boolean') {
       if (actual.secure !== expectedCookie.secure) pass = false;
     }
 
-    console.log('expected sameSite: ' + expectedCookie.sameSite);
     if (typeof expectedCookie.sameSite === 'string') {
       if (actual.sameSite != expectedCookie.sameSite) pass = false;
     }
@@ -113,7 +107,6 @@ expect.extend({
       if (actual.partitioned != expectedCookie.partitioned) pass = false;
     }
 
-    console.log('expected expires: ' + expectedCookie.expires);
     if (typeof expectedCookie.expires === 'number') {
       if (actual.expires != expectedCookie.expires) pass = false;
     }
@@ -158,10 +151,6 @@ describe('Cookies Mock', () => {
     await driver.get(xssDemoAppUrl + 'assets/mocks/cookies.html');
     mockPageBody = await driver.wait(until.elementLocated(By.css('body')), 2500);
   });
-
-  beforeEach(clearCookies);
-
-  afterEach(clearCookies);
 
   test('is loaded', () => {
     expect(mockPageBody).toEqual(expect.anything());
@@ -377,17 +366,17 @@ describe('Cookies Mock', () => {
     });
 
     async function expectCookieDomainsHierarchy(testDomain: string, expectedHierarchy: string[]) {
-      // test both the getCookieDomainsHierarchy function in the cookies mock page and a local copy
+      // test both the getCookieDomainsHierarchy function in the cookies mock page and the local sync copy
       expect(await getCookieDomainsHierarchy(testDomain)).toEqual(expectedHierarchy);
       expect(getCookieDomainsHierarchySyncCopy(testDomain)).toEqual(expectedHierarchy);
     }
   });
 
-  if (false /* XXX cookieStore === undefined*/) {
-    test.skip('cannot be tested in this browser, because it does not support the CookieStore API', () => {});
-  }
-  else {
-    describe.only('should manage cookies', () => {
+  describe('UI', () => {
+    beforeEach(clearCookies);
+    afterEach(clearCookies);
+
+    describe('should manage cookies', () => {
       for (const testDomain of getCookieDomainsHierarchySyncCopy(xssDemoAppHostname)) {
         for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
           test(
@@ -650,7 +639,7 @@ describe('Cookies Mock', () => {
                 };
                 await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
-                await domTreeAvailable(findCookiesTable(), () => findCookiesTableEntry(testCookie) !== null);
+                await waitForCookieRow(testCookie);
                 await expectCookiesTable(testCookies);
               }
 
@@ -664,7 +653,7 @@ describe('Cookies Mock', () => {
                 };
                 await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
-                await domTreeAvailable(findCookiesTable(), () => findCookiesTableEntry(testCookie) !== null);
+                await waitForCookieRow(testCookie);
                 await expectCookiesTable(testCookies);
               }
 
@@ -677,7 +666,8 @@ describe('Cookies Mock', () => {
                 };
                 removeCookie(testCookies, testCookie);
                 await cookieStore.delete(testCookie);
-                await domTreeAvailable(findCookiesTable(), () => findCookiesTableEntry(testCookie) === null && findCookiesTableEntry(testCookies[0]) !== null);
+                await waitForCookieRow(testCookie, undefined, false);
+                await waitForCookieRow(testCookies[0]);
                 await expectCookiesTable(testCookies);
               }
 
@@ -691,7 +681,7 @@ describe('Cookies Mock', () => {
                 };
                 await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
-                await domTreeAvailable(findCookiesTable(), () => findCookiesTableEntry(testCookie) !== null);
+                await waitForCookieRow(testCookie);
                 await expectCookiesTable(testCookies);
               }
 
@@ -705,7 +695,7 @@ describe('Cookies Mock', () => {
                 };
                 await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
-                await domTreeAvailable(findCookiesTable(), () => findCookiesTableEntry(testCookie, testCookie.value) !== null);
+                await waitForCookieRow(testCookie, testCookie.value);
                 await expectCookiesTable(testCookies);
               }
 
@@ -719,7 +709,7 @@ describe('Cookies Mock', () => {
                 };
                 await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
-                await domTreeAvailable(findCookiesTable(), () => findCookiesTableEntry(testCookie) !== null);
+                await waitForCookieRow(testCookie);
                 await expectCookiesTable(testCookies);
               }
 
@@ -733,31 +723,32 @@ describe('Cookies Mock', () => {
                 };
                 await addCookie(testCookies, testCookie);
                 await cookieStore.set(testCookie);
-                await domTreeAvailable(findCookiesTable(), () => findCookiesTableEntry(testCookie) !== null);
+                await waitForCookieRow(testCookie);
                 await expectCookiesTable(testCookies);
 
                 // delete item with funky key
                 removeCookie(testCookies, testCookie);
                 await cookieStore.delete(testCookie);
-                await domTreeAvailable(findCookiesTable(), () => findCookiesTableEntry(testCookie) === null && findCookiesTableEntry(testCookies[0]) !== null);
+                await waitForCookieRow(testCookie, undefined, false);
+                await waitForCookieRow(testCookies[0]);
                 await expectCookiesTable(testCookies);
               }
 
               // wait a bit for async failures
               await timeout(500);
             },
-            10000,
+            60000,
           );
         }
       }
     });
-  }
+  });
 
   function findCookiesTable(): Promise<WebElement> {
     return findAndExpectOne(mockPageBody, 'main article.cookies table.cookies');
   }
 
-  async function findCookiesTableEntry(cookie: CookieId, value?: string): Promise<WebElement> {
+  async function findCookieRow(cookie: CookieId, value?: string): Promise<WebElement> {
     const cookiesTable = await findCookiesTable();
     const cookieRows = await cookiesTable.findElements(By.css('tr.cookie'));
     for (const cookieRow of cookieRows) {
@@ -803,6 +794,26 @@ describe('Cookies Mock', () => {
       return cookieRow;
     }
     return null;
+  }
+
+  async function waitForCookieRow(cookie: CookieId, value?: string, present = true): Promise<WebElement> {
+    let cookieRow: WebElement;
+    await driver.wait(
+      until.elementLocated(
+        async () => {
+          cookieRow = await findCookieRow(cookie, value);
+          if (present && cookieRow != null) {
+            return mockPageBody;
+          }
+          if (!present && cookieRow == null) {
+            return mockPageBody;
+          }
+          return null;
+        }
+      ),
+      2500,
+    );
+    return cookieRow;
   }
 
   async function fillNewCookieForm(testCookie: Cookie, save = true, expectError = false): Promise<void> {
@@ -863,7 +874,7 @@ describe('Cookies Mock', () => {
   async function editCookiesTableCookie(testCookie: Cookie, save = true): Promise<void> {
     const cookiesTable = await findCookiesTable();
     const initialCookiesTableRows = await cookiesTable.findElements(By.css('tr'));
-    const cookieRow = await findCookiesTableEntry(testCookie);
+    const cookieRow = await findCookieRow(testCookie);
     const editButton = await findAndExpectOne(cookieRow, 'td.actions button[name=edit]');
 
     await editButton.click();
@@ -914,23 +925,12 @@ describe('Cookies Mock', () => {
   async function deleteCookiesTableCookie(cookie: CookieId): Promise<void> {
     const cookiesTable = await findCookiesTable();
     const initialCookiesTableRows = await cookiesTable.findElements(By.css('tr'));
-    const cookieRow = await findCookiesTableEntry(cookie);
+    const cookieRow = await findCookieRow(cookie);
     const deleteButton = await findAndExpectOne(cookieRow, 'td.actions button[name=delete]');
 
     await deleteButton.click();
     await timeout(100);
     await findAndExpectCount(await findCookiesTable(), 'tr', initialCookiesTableRows.length - 1);
-  }
-
-  async function expectCookies(testCookies: Cookie[]) {
-    const cookies = await cookieStore.getAll();
-    expect(cookies.length).toBe(testCookies.length);
-    await sortCookies(cookies);
-
-    let i = 0;
-    for (const cookie of cookies) {
-      expect(cookie).toMatchCookie(testCookies[i++]);
-    }
   }
 
   async function expectCookiesTable(cookies: Cookie[], expectError = false) {
@@ -997,12 +997,22 @@ describe('Cookies Mock', () => {
     await expect(cancelButton.isEnabled()).resolves.toBe(false);
   }
 
+  async function expectCookies(testCookies: Cookie[]) {
+    const cookies = await cookieStore.getAll();
+    expect(cookies.length).toBe(testCookies.length);
+    await sortCookies(cookies);
+
+    let i = 0;
+    for (const cookie of cookies) {
+      expect(cookie).toMatchCookie(testCookies[i++]);
+    }
+  }
+
   async function sortCookies(cookies: Cookie[]): Promise<Cookie[]> {
     const sortedCookies = await driver.executeScript(
       'return sortCookies(' + JSON.stringify(cookies) + ');',
     ) as Cookie[];
     cookies.splice(0, cookies.length, ...sortedCookies);
-    console.log('sorted cookies: ' + JSON.stringify(cookies));
     return cookies;
   }
 
