@@ -1,7 +1,7 @@
-import { By, WebElement, until } from 'selenium-webdriver';
-import { timeout, findAndExpectOne, findAndExpectCount, getClasses, getValue, isChecked, setValue, anyOf, selectOption } from './test-lib';
-
-
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
+import type { ExpectationResult, MatcherFunction } from 'expect';
+import { By, ThenableWebDriver, WebElement, until } from 'selenium-webdriver';
+import { timeout, findAndExpectOne, findAndExpectCount, getClasses, getValue, isChecked, setValue, selectOption } from './test-lib';
 
 const enum SameSite {
   strict = 'strict',
@@ -25,16 +25,134 @@ interface Cookie extends CookieId {
 
 interface CookieStore {
   getAll(options?: object): Promise<Cookie[]>
-  get(cookie: CookieId): Promise<Cookie>
+  get(cookieId: CookieId): Promise<Cookie>
   set(cookie: Cookie): Promise<undefined>
-  delete(cookie: CookieId): Promise<undefined>
+  delete(cookieId: CookieId): Promise<undefined>
+}
+
+class CookieStoreProxy implements CookieStore {
+  constructor(private readonly driver: ThenableWebDriver) {
+  }
+
+  getAll(options?: object): Promise<Cookie[]> {
+    return this.invokeCookieStore(
+      options
+      ? 'getAll(' + JSON.stringify(options) + ')'
+      : 'getAll()'
+    );
+  }
+
+  get(cookieId: CookieId): Promise<Cookie> {
+    return this.invokeCookieStore('get(' + JSON.stringify(cookieId) + ')');
+  }
+
+  set(cookie: Cookie): Promise<undefined> {
+    return this.invokeCookieStore('set(' + JSON.stringify(cookie) + ')');
+  }
+
+  delete(cookieId: CookieId): Promise<undefined> {
+    return this.invokeCookieStore('delete(' + JSON.stringify(cookieId) + ')');
+  }
+
+  private invokeCookieStore<R>(invocation: string): Promise<R> {
+    return this.driver.executeScript('return cookieStore.' + invocation + ';\n');
+  }
+}
+
+
+
+expect.extend({
+  toMatchCookie: function(actual: any, expectedCookie: Cookie): ExpectationResult {
+    let pass = true;
+
+    console.log('expected domain: ' + expectedCookie.domain);
+    if (typeof expectedCookie.domain === 'string') {
+      if (expectedCookie.domain === xssDemoAppHostname) {
+        if (actual.domain != expectedCookie.domain && actual.domain != null) pass = false;
+      }
+      else {
+        if (actual.domain != expectedCookie.domain) pass = false;
+      }
+    }
+    else {
+      if (actual.domain != null) pass = false;
+    }
+
+    console.log('expected path: ' + expectedCookie.path);
+    if (typeof expectedCookie.path === 'string') {
+      if (actual.path != expectedCookie.path) pass = false;
+    }
+    else {
+      if (actual.path != '/') pass = false;
+    }
+
+    console.log('expected name: ' + expectedCookie.name);
+    if (typeof expectedCookie.name === 'string') {
+      if (actual.name != expectedCookie.name) pass = false;
+    }
+
+    console.log('expected value: ' + expectedCookie.value);
+    if (typeof expectedCookie.value === 'string') {
+      if (actual.value != expectedCookie.value) pass = false;
+    }
+
+    console.log('expected secure: ' + expectedCookie.secure);
+    if (typeof expectedCookie.secure === 'boolean') {
+      if (actual.secure !== expectedCookie.secure) pass = false;
+    }
+
+    console.log('expected sameSite: ' + expectedCookie.sameSite);
+    if (typeof expectedCookie.sameSite === 'string') {
+      if (actual.sameSite != expectedCookie.sameSite) pass = false;
+    }
+    else {
+      if (actual.sameSite != 'strict') pass = false;
+    }
+
+    if (typeof expectedCookie.partitioned === 'boolean') {
+      if (actual.partitioned != expectedCookie.partitioned) pass = false;
+    }
+
+    console.log('expected expires: ' + expectedCookie.expires);
+    if (typeof expectedCookie.expires === 'number') {
+      if (actual.expires != expectedCookie.expires) pass = false;
+    }
+    else {
+      if (actual.expires != null) pass = false;
+    }
+
+    const matcherHintOptions = {
+      comment: 'equality of cookie fields, taking into account default values and cookie domain "' + xssDemoAppHostname + '"',
+      isNot: this.isNot,
+      promise: this.promise,
+    };
+
+    return {
+      pass,
+      message: () => {
+        return this.utils.matcherHint('toMatchCookie', 'Received Cookie', 'Expected Cookie', matcherHintOptions) + '\n\n'
+        + 'Expected Cookie: ' + (pass ? 'not ' : '') + this.utils.printExpected(expectedCookie) + '\n'
+        + 'Received Cookie: ' + this.utils.printReceived(actual);
+      },
+    }
+  }
+});
+
+declare module 'expect' {
+  interface Matchers<R> {
+    toMatchCookie(cookie: Cookie): R;
+  }
 }
 
 
 
 describe('Cookies Mock', () => {
+  let cookieStore: CookieStore;
   let mockPageBody: WebElement = null;
-  const cookieStore: CookieStore = globalThis.cookieStore;
+
+  beforeAll(() => {
+    cookieStore = new CookieStoreProxy(driver);
+  });
 
   beforeEach(async () => {
     await driver.get(xssDemoAppUrl + 'assets/mocks/cookies.html');
@@ -270,7 +388,7 @@ describe('Cookies Mock', () => {
   }
   else {
     describe.only('should manage cookies', () => {
-      for (const testDomain of getCookieDomainsHierarchySyncCopy(getXssDemoAppHostname())) {
+      for (const testDomain of getCookieDomainsHierarchySyncCopy(xssDemoAppHostname)) {
         for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
           test(
             'with domain "' + testDomain + '" and path "' + testPath + '"',
@@ -511,7 +629,7 @@ describe('Cookies Mock', () => {
     });
 
     describe('should reflect external cookie changes', () => {
-      for (const testDomain of getCookieDomainsHierarchySyncCopy(getXssDemoAppHostname())) {
+      for (const testDomain of getCookieDomainsHierarchySyncCopy(xssDemoAppHostname)) {
         for (const testPath of [undefined, '/', '/assets/', '/assets/mocks/']) {
           test(
             'with domain "' + testDomain + '" and path "' + testPath + '"',
@@ -646,7 +764,7 @@ describe('Cookies Mock', () => {
       if (typeof cookie.domain === 'string') {
         const cookieDomainField = await findAndExpectOne(cookieRow, 'td.domain input[type=text]');
         const cookieDomainFieldValue = await getValue(cookieDomainField);
-        if (cookie.domain === getXssDemoAppHostname()) {
+        if (cookie.domain === xssDemoAppHostname) {
           if (
             cookieDomainFieldValue != cookie.domain
             &&
@@ -769,7 +887,7 @@ describe('Cookies Mock', () => {
     const saveButton = await findAndExpectOne(cookieRow, 'td.actions button[name=save]');
     const cancelButton = await findAndExpectOne(cookieRow, 'td.actions button[name=cancel]');
 
-    if (testCookie.domain === getXssDemoAppHostname()) {
+    if (testCookie.domain === xssDemoAppHostname) {
       await expect(getValue(domainField)).resolves.toEqual(expect.anyOf([testCookie.domain, '']));
     }
     else {
@@ -805,73 +923,14 @@ describe('Cookies Mock', () => {
   }
 
   async function expectCookies(testCookies: Cookie[]) {
-    const cookies = await getAllCookies();
+    const cookies = await cookieStore.getAll();
     expect(cookies.length).toBe(testCookies.length);
+    await sortCookies(cookies);
 
     let i = 0;
     for (const cookie of cookies) {
-      expect(cookie).toEqual(cookieProps(testCookies[i++]));
+      expect(cookie).toMatchCookie(testCookies[i++]);
     }
-  }
-
-  function cookieProps(expected: Cookie): AsymmetricEqualityTester<Cookie> {
-    return {
-      asymmetricMatch: function (actual) {
-        if (typeof expected.domain === 'string') {
-          if (expected.domain === getXssDemoAppHostname()) {
-            if (actual.domain != expected.domain && actual.domain != null) return false;
-          }
-          else {
-            if (actual.domain != expected.domain) return false;
-          }
-        }
-        else {
-          if (actual.domain != null) return false;
-        }
-
-        if (typeof expected.path === 'string') {
-          if (actual.path != expected.path) return false;
-        }
-        else {
-          if (actual.path != '/') return false;
-        }
-
-        if (typeof expected.name === 'string') {
-          if (actual.name != expected.name) return false;
-        }
-
-        if (typeof expected.value === 'string') {
-          if (actual.value != expected.value) return false;
-        }
-
-        if (typeof expected.secure === 'boolean') {
-          if (actual.secure !== expected.secure) return false;
-        }
-
-        if (typeof expected.sameSite === 'string') {
-          if (actual.sameSite != expected.sameSite) return false;
-        }
-        else {
-          if (actual.sameSite != 'strict') return false;
-        }
-
-        if (typeof expected.partitioned === 'boolean') {
-          if (actual.partitioned != expected.partitioned) return false;
-        }
-
-        if (typeof expected.expires === 'number') {
-          if (actual.expires != expected.expires) return false;
-        }
-        else {
-          if (actual.expires != null) return false;
-        }
-
-        return true;
-      },
-      jasmineToString: function (pp) {
-        return 'a cookie with properties ' + pp(expected);
-      },
-    };
   }
 
   async function expectCookiesTable(cookies: Cookie[], expectError = false) {
@@ -919,7 +978,7 @@ describe('Cookies Mock', () => {
     const saveButton = await findAndExpectOne(cookieRow, 'td.actions button[name=save]');
     const cancelButton = await findAndExpectOne(cookieRow, 'td.actions button[name=cancel]');
 
-    if (cookie.domain === getXssDemoAppHostname()) {
+    if (cookie.domain === xssDemoAppHostname) {
       await expect(getValue(domainField)).resolves.toEqual(expect.anyOf([cookie.domain, '']));
     }
     else {
@@ -943,6 +1002,7 @@ describe('Cookies Mock', () => {
       'return sortCookies(' + JSON.stringify(cookies) + ');',
     ) as Cookie[];
     cookies.splice(0, cookies.length, ...sortedCookies);
+    console.log('sorted cookies: ' + JSON.stringify(cookies));
     return cookies;
   }
 
@@ -975,22 +1035,12 @@ describe('Cookies Mock', () => {
     return cookies;
   }
 
-  async function getAllCookies(): Promise<Cookie[]> {
-    return sortCookies(
-      await driver.executeScript(
-        'return cookieStore.getAll();',
-      ),
-    );
-  }
-
-  function clearCookies(): Promise<void> {
-    return driver.executeScript(
-      'const cookieDeletePromises = [];\n'
-      + 'for (const cookie of await cookieStore.getAll()) {\n'
-      + '  cookieDeletePromises.push(cookieStore.delete(cookie));\n'
-      + '}'
-      + 'return Promise.all(cookieDeletePromises);\n',
-    );
+  async function clearCookies(): Promise<void> {
+    const cookieDeletePromises = [];
+    for (const cookie of await cookieStore.getAll()) {
+      cookieDeletePromises.push(cookieStore.delete(cookie));
+    }
+    await Promise.all(cookieDeletePromises);
   }
 
   function getCookieDomainsHierarchy(domain: string): Promise<string[]> {
@@ -1019,10 +1069,5 @@ describe('Cookies Mock', () => {
     }
     domains.pop();
     return domains;
-  }
-
-  function getXssDemoAppHostname() {
-    const url = new URL(xssDemoAppUrl);
-    return url.hostname; // xxx or host?
   }
 });
