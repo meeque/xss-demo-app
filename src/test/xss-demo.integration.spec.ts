@@ -160,7 +160,6 @@ class DefaultPayloadTestConfig extends DefaultTestConfig implements EnhancedPayl
 
 
 describe('Xss Demo App', () => {
-
   const payloadPresetServiceStub = new PayloadPresetService(null);
   const payloadOutputServiceStub = new PayloadOutputService(null);
 
@@ -200,8 +199,8 @@ describe('Xss Demo App', () => {
         presetName: name,
         trigger: async () => {
           const element = await queryOutput().findElement((By.css('[onmouseenter]')));
-          const actions = driver.actions({async: true});
-          await actions.move({origin: element}).perform();
+          const actions = driver.actions({ async: true });
+          await actions.move({ origin: element }).perform();
         },
         timeout: 500,
       });
@@ -499,7 +498,7 @@ describe('Xss Demo App', () => {
       try {
         item = await queryMenuItem(combobox, groupLabel, itemLabel);
       }
-      catch(err) {
+      catch (err) {
         return;
       }
 

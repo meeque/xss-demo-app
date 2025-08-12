@@ -60,10 +60,9 @@ export async function whenStableDetectChanges(fixture: ComponentFixture<unknown>
 type FlexibleLocator = string | By | (() => (WebElement[] | Promise<WebElement[]>));
 
 export function findAndExpectCount(context: WebElement, locator: FlexibleLocator, count = 1): Promise<WebElement[]> {
-  const processedLocator =
-    typeof locator === 'string'
-    ? By.css(locator)
-    : locator;
+  const processedLocator
+    = (typeof locator === 'string') ? By.css(locator) : locator;
+
   return context.getDriver().wait<WebElement[]>(
     async () => {
       const elements = await context.findElements(processedLocator);
@@ -120,9 +119,7 @@ export async function selectOption(selectElement: WebElement, selectValue: strin
 // Selenium Webdriver window tracker
 
 export class WindowTracker {
-
   private ownWindow: string;
-
   private priorWindows: string[];
 
   private constructor(private readonly driver: WebDriver) {

@@ -1,7 +1,13 @@
+/* eslint @stylistic/no-multi-spaces: ['off'] */
+/* eslint @stylistic/array-bracket-spacing: ['off'] */
+/* eslint @stylistic/key-spacing: ['off'] */
+
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from '@jest/globals';
 import type { ExpectationResult } from 'expect';
 import { By, ThenableWebDriver, WebElement, until } from 'selenium-webdriver';
 import { timeout, findAndExpectOne, findAndExpectCount, getClasses, getValue, isChecked, setValue, selectOption } from './test-lib';
+
+
 
 const enum SameSite {
   strict = 'strict',
@@ -35,11 +41,7 @@ class CookieStoreProxy implements CookieStore {
   }
 
   getAll(options?: object): Promise<Cookie[]> {
-    return this.invokeCookieStore(
-      options
-      ? 'getAll(' + JSON.stringify(options) + ')'
-      : 'getAll()'
-    );
+    return this.invokeCookieStore('getAll(' + (options ? JSON.stringify(options) : '') + ')');
   }
 
   get(cookieId: CookieId): Promise<Cookie> {
@@ -62,7 +64,7 @@ class CookieStoreProxy implements CookieStore {
 
 
 expect.extend({
-  toMatchCookie: function(actual: any, expectedCookie: Cookie): ExpectationResult {
+  toMatchCookie: function (actual: Cookie, expectedCookie: Cookie): ExpectationResult {
     let pass = true;
 
     if (typeof expectedCookie.domain === 'string') {
@@ -124,16 +126,16 @@ expect.extend({
       pass,
       message: () => {
         return this.utils.matcherHint('toMatchCookie', 'Received Cookie', 'Expected Cookie', matcherHintOptions) + '\n\n'
-        + 'Expected Cookie: ' + (pass ? 'not ' : '') + this.utils.printExpected(expectedCookie) + '\n'
-        + 'Received Cookie: ' + this.utils.printReceived(actual);
+          + 'Expected Cookie: ' + (pass ? 'not ' : '') + this.utils.printExpected(expectedCookie) + '\n'
+          + 'Received Cookie: ' + this.utils.printReceived(actual);
       },
-    }
-  }
+    };
+  },
 });
 
 declare module 'expect' {
   interface Matchers<R> {
-    toMatchCookie(cookie: Cookie): R;
+    toMatchCookie(cookie: Cookie): R
   }
 }
 
@@ -758,8 +760,7 @@ describe('Cookies Mock', () => {
         if (cookie.domain === xssDemoAppHostname) {
           if (
             cookieDomainFieldValue != cookie.domain
-            &&
-            cookieDomainFieldValue != ''
+            && cookieDomainFieldValue != ''
           ) {
             continue;
           }
@@ -809,7 +810,7 @@ describe('Cookies Mock', () => {
             return mockPageBody;
           }
           return null;
-        }
+        },
       ),
       2500,
     );

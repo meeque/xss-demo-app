@@ -41,12 +41,11 @@ class StorageProxy {
     );
   }
 
-  private invokeStorage(invocation: string, change = false): Promise<any> {
+  private invokeStorage<R>(invocation: string, change = false): Promise<R> {
     return this.driver.executeScript(
       change
-        ? this.storage + '.' + invocation + ';\n'
-          + 'window.dispatchEvent(new StorageEvent("storage", { storageArea: ' + this.storage + ' }));\n'
-        : 'return ' + this.storage + '.' + invocation + ';\n'
+        ? this.storage + '.' + invocation + ';\n' + 'window.dispatchEvent(new StorageEvent("storage", { storageArea: ' + this.storage + ' }));\n'
+        : 'return ' + this.storage + '.' + invocation + ';\n',
     );
   }
 }
@@ -185,7 +184,7 @@ describe('Storage Mock', () => {
       // add ""
       testData[''] = 'storage item with empty key';
       await testStorage.setItem('', testData['']);
-      await findStorageTable(), () => findStorageTableEntry('');
+      await findStorageTableEntry('', testData['']);
       await expectStorageTable(testData);
 
       // change "BAR"
@@ -246,8 +245,7 @@ describe('Storage Mock', () => {
         const entryItemField = await findAndExpectOne(entryRow, 'td.item input[type=text]');
         if (
           (key === await getValue(entryKeyField))
-          &&
-          (item === await getValue(entryItemField))
+          && (item === await getValue(entryItemField))
         ) {
           return entryRow;
         }
