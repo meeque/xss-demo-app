@@ -3,6 +3,8 @@ import { By, WebDriver, WebElement } from 'selenium-webdriver';
 
 
 
+// general utils
+
 export function timeout<D>(millis: number, data?: D): Promise<D> {
   let resolve: (value: D) => void;
   const promise = new Promise<D>(r => resolve = r);
@@ -10,33 +12,9 @@ export function timeout<D>(millis: number, data?: D): Promise<D> {
   return promise;
 }
 
-export function domTreeAvailable<T>(context: HTMLElement, selectorOrCondition: string | (() => T)): Promise<T> {
-  const preflightResult = querySelectorOrCondition(context, selectorOrCondition);
-  if (preflightResult) {
-    return Promise.resolve(preflightResult);
-  }
-
-  const { promise, resolve } = Promise.withResolvers<T>();
-  const observer = new MutationObserver(() => {
-    const result = querySelectorOrCondition(context, selectorOrCondition);
-    if (result) {
-      observer.disconnect();
-      resolve(result);
-    }
-  });
-  observer.observe(context, { attributes: true, childList: true, characterData: true, subtree: true });
-
-  return promise;
-}
-
-function querySelectorOrCondition<T>(context: HTMLElement, selectorOrCondition: string | (() => T)): T {
-  if (typeof selectorOrCondition === 'string') {
-    return context.querySelector(selectorOrCondition) as T;
-  }
-  return selectorOrCondition();
-}
 
 
+// DOM query utils
 
 export function queryAndExpectOptional(context: HTMLElement, selector: string): HTMLElement {
   const result = context.querySelectorAll(selector);
@@ -63,6 +41,8 @@ export function queryAndExpectNone(context: HTMLElement, selector: string): void
 
 
 
+// Angular utils
+
 export async function whenStableDetectChanges(fixture: ComponentFixture<unknown>): Promise<void> {
   try {
     await fixture.whenStable();
@@ -75,32 +55,36 @@ export async function whenStableDetectChanges(fixture: ComponentFixture<unknown>
 
 
 
-export async function findAndExpectOptional(context: WebElement, selector: string): Promise<WebElement> {
-  const elements = await context.findElements(By.css(selector));
+// Selenium Webdriver finder utils
 
-  expect(elements.length).toBeLessThanOrEqual(1);
-  if (elements.length === 1) {
-    return elements[0];
-  }
-  return null;
+type FlexibleLocator = string | By | (() => (WebElement[] | Promise<WebElement[]>));
+
+export function findAndExpectCount(context: WebElement, locator: FlexibleLocator, count = 1): Promise<WebElement[]> {
+  const processedLocator =
+    typeof locator === 'string'
+    ? By.css(locator)
+    : locator;
+  return context.getDriver().wait<WebElement[]>(
+    async () => {
+      const elements = await context.findElements(processedLocator);
+      return (elements.length === count) ? elements : null;
+    },
+    2500,
+  );
 }
 
-export async function findAndExpectCount(context: WebElement, selector: string, count = 1): Promise<WebElement[]> {
-  const elements = await context.findElements(By.css(selector));
-  expect(elements.length).toBe(count);
-  return elements;
-}
-
-export async function findAndExpectOne(context: WebElement, selector: string): Promise<WebElement> {
-  const elements = await findAndExpectCount(context, selector, 1);
+export async function findAndExpectOne(context: WebElement, locator: FlexibleLocator): Promise<WebElement> {
+  const elements = await findAndExpectCount(context, locator, 1);
   return elements[0];
 }
 
-export async function findAndExpectNone(context: WebElement, selector: string): Promise<void> {
-  findAndExpectCount(context, selector, 0);
+export async function findAndExpectNone(context: WebElement, locator: FlexibleLocator): Promise<void> {
+  findAndExpectCount(context, locator, 0);
 }
 
 
+
+// Selenium Webdriver element utils
 
 export async function getClasses(element: WebElement): Promise<string[]> {
   const classAttribute = await element.getAttribute('class');
@@ -131,6 +115,9 @@ export async function selectOption(selectElement: WebElement, selectValue: strin
   }
 }
 
+
+
+// Selenium Webdriver window tracker
 
 export class WindowTracker {
 
