@@ -1,32 +1,36 @@
-import type { MatcherFunction } from 'expect';
+import { expect } from '@jest/globals';
+import type { ExpectationResult } from 'expect';
 import { Builder, Browser } from 'selenium-webdriver';
 import { Options as ChromeOptions } from 'selenium-webdriver/chrome';
 
 
 
-{
-  const anyOf: MatcherFunction<[any[]]> =
-    function anyOf(actual, expectedOptions) {
-      for (const expectedOption of expectedOptions) {
-        if (this.equals(actual, expectedOption)) {
-          return {
-            message: () => {
-              return 'expected ' + this.utils.printReceived(actual) + ' to equal any of ' + this.utils.printExpected(expectedOptions);
-            },
-            pass: true,
-          }
-        }
+expect.extend({
+  anyOf: function (actual: unknown, expectedOptions: unknown[]): ExpectationResult {
+    for (const expectedOption of expectedOptions) {
+      if (this.equals(actual, expectedOption)) {
+        return {
+          message: () => {
+            return 'expected ' + this.utils.printReceived(actual) + ' to equal any of ' + this.utils.printExpected(expectedOptions);
+          },
+          pass: true,
+        };
       }
+    }
 
-      return {
-        message: () => {
-          return 'expected ' + this.utils.printReceived(actual) + ' not to equal any of ' + this.utils.printExpected(expectedOptions);
-        },
-        pass: false,
-      }
+    return {
+      message: () => {
+        return 'expected ' + this.utils.printReceived(actual) + ' not to equal any of ' + this.utils.printExpected(expectedOptions);
+      },
+      pass: false,
     };
+  },
+});
 
-  expect.extend({anyOf});
+declare module 'expect' {
+  interface AsymmetricMatchers {
+    anyOf(options: unknown[]): void
+  }
 }
 
 
@@ -47,7 +51,7 @@ beforeAll(
     await driver.manage().setTimeouts({ implicit: 1000 });
     globalThis.driver = driver;
   },
-  10000
+  10000,
 );
 
 afterAll(
@@ -57,7 +61,7 @@ afterAll(
       await driver.quit();
     }
   },
-  5000
+  5000,
 );
 
 
