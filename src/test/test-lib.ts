@@ -59,26 +59,26 @@ export async function whenStableDetectChanges(fixture: ComponentFixture<unknown>
 
 type FlexibleLocator = string | By | (() => (WebElement[] | Promise<WebElement[]>));
 
-export function findAndExpectCount(context: WebElement, locator: FlexibleLocator, count = 1): Promise<WebElement[]> {
+export function findAndExpectCount(context: WebElement, locator: FlexibleLocator, count = 1, timeout = 2500): Promise<WebElement[]> {
   const processedLocator
-    = (typeof locator === 'string') ? By.css(locator) : locator;
+    = (typeof locator == 'string') ? By.css(locator) : locator;
 
   return context.getDriver().wait<WebElement[]>(
     async () => {
       const elements = await context.findElements(processedLocator);
-      return (elements.length === count) ? elements : null;
+      return (elements.length == count) ? elements : null;
     },
-    2500,
+    timeout,
   );
 }
 
-export async function findAndExpectOne(context: WebElement, locator: FlexibleLocator): Promise<WebElement> {
-  const elements = await findAndExpectCount(context, locator, 1);
+export async function findAndExpectOne(context: WebElement, locator: FlexibleLocator, timeout = 2500): Promise<WebElement> {
+  const elements = await findAndExpectCount(context, locator, 1, timeout);
   return elements[0];
 }
 
-export async function findAndExpectNone(context: WebElement, locator: FlexibleLocator): Promise<void> {
-  findAndExpectCount(context, locator, 0);
+export async function findAndExpectNone(context: WebElement, locator: FlexibleLocator, , timeout = 2500): Promise<void> {
+  await findAndExpectCount(context, locator, 0, timeout);
 }
 
 
