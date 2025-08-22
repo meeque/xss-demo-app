@@ -77,10 +77,6 @@ export async function findAndExpectOne(context: WebElement, locator: FlexibleLoc
   return elements[0];
 }
 
-export async function findAndExpectNone(context: WebElement, locator: FlexibleLocator, , timeout = 2500): Promise<void> {
-  await findAndExpectCount(context, locator, 0, timeout);
-}
-
 
 
 // Selenium Webdriver element utils

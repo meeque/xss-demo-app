@@ -16,21 +16,17 @@ import { PayloadOutputQuality, PayloadOutputService } from '../xss/payload-outpu
 
 
 interface TestConfig {
-  readonly setup?: () => Promise<void>
   readonly trigger?: () => Promise<void>
   readonly expectXss?: boolean
   readonly expect?: () => Promise<void>
-  readonly cleanup?: () => Promise<void>
   readonly timeout?: number
 }
 
 interface EnhancedTestConfig extends TestConfig {
   isSkip(): boolean
-  doSetup(): Promise<void>
   doTrigger(): Promise<void>
   isExpectXss(): boolean
   doExpect(): Promise<void>
-  doCleanup(): Promise<void>
   getTimeout(): number
 }
 
@@ -45,21 +41,13 @@ class DefaultTestConfig implements EnhancedTestConfig {
     return null != (configs || []).find(config => config.isExpectXss());
   }
 
-  readonly setup?: () => Promise<void>;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
   readonly expect?: () => Promise<void>;
-  readonly cleanup?: () => Promise<void>;
   readonly timeout?: number;
 
   public isSkip(): boolean {
     return false;
-  }
-
-  public async doSetup(): Promise<void> {
-    if (this.setup) {
-      return this.setup();
-    }
   }
 
   public async doTrigger(): Promise<void> {
@@ -75,14 +63,6 @@ class DefaultTestConfig implements EnhancedTestConfig {
   public async doExpect(): Promise<void> {
     if (this.expect) {
       return this.expect();
-    }
-  }
-
-  public async doCleanup(): Promise<void> {
-    if (this.cleanup) {
-      return this
-        .cleanup()
-        .catch(err => console.error('Ignoring error in custom cleanup function: ' + err));
     }
   }
 
@@ -424,7 +404,6 @@ describe('Xss Demo App', () => {
       + (testConfig.trigger ? ' with custom trigger' : '')
       + (testConfig.expect ? ' with custom expectation' : ''),
       async () => {
-        await testConfig.doSetup();
         await deployTestPayload();
         await testConfig.doTrigger();
 
@@ -437,7 +416,6 @@ describe('Xss Demo App', () => {
         }
 
         await testConfig.doExpect();
-        await testConfig.doCleanup();
       },
       testConfig.getTimeout() + 5000,
     );
