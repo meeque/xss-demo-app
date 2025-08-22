@@ -6,7 +6,7 @@
 
 import { By, WebElement, WebElementPromise, until } from 'selenium-webdriver';
 
-import { WindowTracker } from './test-lib';
+import { findAndExpectOne, WindowTracker } from './test-lib';
 
 import '@angular/compiler';
 
@@ -176,7 +176,7 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await queryOutput().findElement((By.css('a'))).click();
+          await findOutput().findElement((By.css('a'))).click();
         },
         expectXss,
         timeout: 500,
@@ -187,7 +187,7 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const input = await queryOutput().findElement((By.css('input')));
+          const input = await findOutput().findElement((By.css('input')));
           await input.click();
         },
         timeout: 500,
@@ -198,7 +198,7 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const element = await queryOutput().findElement((By.css('[onmouseenter]')));
+          const element = await findOutput().findElement((By.css('[onmouseenter]')));
           const actions = driver.actions({ async: true });
           await actions.move({ origin: element }).perform();
         },
@@ -210,9 +210,9 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await queryOutput().findElement((By.css('iframe.xss-demo-guest')));
-          const codeField = await queryOutput().findElement((By.css('textarea[name=code]')));
-          const runButton = await queryOutput().findElement((By.css('button[name=run]')));
+          await findOutput().findElement((By.css('iframe.xss-demo-guest')));
+          const codeField = await findOutput().findElement((By.css('textarea[name=code]')));
+          const runButton = await findOutput().findElement((By.css('button[name=run]')));
           await codeField.clear();
           await codeField.sendKeys('parent.xss()');
           await runButton.click();
@@ -225,8 +225,8 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const codeField = await queryOutput().findElement((By.css('textarea[name=code]')));
-          const runButton = await queryOutput().findElement((By.css('button[name=run]')));
+          const codeField = await findOutput().findElement((By.css('textarea[name=code]')));
+          const runButton = await findOutput().findElement((By.css('button[name=run]')));
           await codeField.clear();
           await codeField.sendKeys('opener.xss()');
           await runButton.click();
@@ -428,7 +428,7 @@ describe('Xss Demo App', () => {
         await deployTestPayload();
         await testConfig.doTrigger();
 
-        const xssAlertPromise = driver.wait(until.elementLocated(By.css('.alert-xss-triggered')), testConfig.getTimeout());
+        const xssAlertPromise = findAndExpectOne(app, '.alert-xss-triggered', testConfig.getTimeout());
         if (expectXss) {
           await expect(xssAlertPromise).resolves.toEqual(expect.anything());
         }
@@ -453,7 +453,7 @@ describe('Xss Demo App', () => {
     }
   }
 
-  async function queryMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<WebElement> {
+  async function findMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<WebElement> {
     const groups = await combobox.findElements(By.css('div.fd-popover__body div.fd-list__group-header'));
 
     let group: WebElement;
@@ -496,7 +496,7 @@ describe('Xss Demo App', () => {
       let item: WebElement;
       await windowTracker.switchToOwnWindow();
       try {
-        item = await queryMenuItem(combobox, groupLabel, itemLabel);
+        item = await findMenuItem(combobox, groupLabel, itemLabel);
       }
       catch (err) {
         return;
@@ -516,11 +516,11 @@ describe('Xss Demo App', () => {
     }
   }
 
-  function queryPayloadOutputComponent(): WebElementPromise {
+  function findPayloadOutputComponent(): WebElementPromise {
     return app.findElement(By.css('section.output-area xss-payload-output'));
   }
 
-  function queryOutput(): WebElementPromise {
-    return queryPayloadOutputComponent().findElement(By.css('.live-output.fd-layout-panel .fd-layout-panel__body'));
+  function findOutput(): WebElementPromise {
+    return findPayloadOutputComponent().findElement(By.css('.live-output.fd-layout-panel .fd-layout-panel__body'));
   }
 });
