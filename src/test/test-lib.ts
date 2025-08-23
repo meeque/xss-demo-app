@@ -59,16 +59,17 @@ export async function whenStableDetectChanges(fixture: ComponentFixture<unknown>
 
 type FlexibleLocator = string | By | (() => (WebElement[] | Promise<WebElement[]>));
 
-export function findAndExpectCount(context: WebElement, locator: FlexibleLocator, count = 1, timeout = 2500): Promise<WebElement[]> {
+export async function findAndExpectCount(context: WebElement, locator: FlexibleLocator, count = 1, timeout = 2500): Promise<WebElement[]> {
   const processedLocator
     = (typeof locator == 'string') ? By.css(locator) : locator;
 
-  return context.getDriver().wait<WebElement[]>(
+  return await context.getDriver().wait<WebElement[]>(
     async () => {
       const elements = await context.findElements(processedLocator);
       return (elements.length == count) ? elements : null;
     },
     timeout,
+    'Failed to find element with locator ' + processedLocator + ' for context <' + (await context.getTagName()) + '>.',
   );
 }
 
