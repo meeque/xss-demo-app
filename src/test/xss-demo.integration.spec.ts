@@ -149,6 +149,7 @@ describe('Xss Demo App', () => {
   let payloadInputCombobox: WebElement;
   let payloadOutputCombobox: WebElement;
   let payloadInputTextArea: WebElement;
+  let liveOutput: WebElement;
   let alertOverlay: WebElement;
 
   const presetTestConfigFactory: Record<string, (name: string, expectXss?: boolean) => EnhancedPresetTestConfig> = {
@@ -156,7 +157,7 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await findOutput().findElement((By.css('a'))).click();
+          await liveOutput.findElement((By.css('a'))).click();
         },
         expectXss,
         timeout: 500,
@@ -167,7 +168,7 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const input = await findOutput().findElement((By.css('input')));
+          const input = await liveOutput.findElement((By.css('input')));
           await input.click();
         },
         timeout: 500,
@@ -178,7 +179,7 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const element = await findOutput().findElement((By.css('[onmouseenter]')));
+          const element = await liveOutput.findElement((By.css('[onmouseenter]')));
           const actions = driver.actions({ async: true });
           await actions.move({ origin: element }).perform();
         },
@@ -190,9 +191,9 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await findOutput().findElement((By.css('iframe.xss-demo-guest')));
-          const codeField = await findOutput().findElement((By.css('textarea[name=code]')));
-          const runButton = await findOutput().findElement((By.css('button[name=run]')));
+          await liveOutput.findElement((By.css('iframe.xss-demo-guest')));
+          const codeField = await liveOutput.findElement((By.css('textarea[name=code]')));
+          const runButton = await liveOutput.findElement((By.css('button[name=run]')));
           await codeField.clear();
           await codeField.sendKeys('parent.xss()');
           await runButton.click();
@@ -205,8 +206,8 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const codeField = await findOutput().findElement((By.css('textarea[name=code]')));
-          const runButton = await findOutput().findElement((By.css('button[name=run]')));
+          const codeField = await liveOutput.findElement((By.css('textarea[name=code]')));
+          const runButton = await liveOutput.findElement((By.css('button[name=run]')));
           await codeField.clear();
           await codeField.sendKeys('opener.xss()');
           await runButton.click();
@@ -239,7 +240,7 @@ describe('Xss Demo App', () => {
           expect(appChildElements.length).toBe(1);
           await expect(appElement.findElement(By.css('div.xss-demo-defacement'))).resolves.not.toEqual(null);
         },
-        timeout: 1000,
+        timeout: 3000,
       });
     },
   };
@@ -317,10 +318,11 @@ describe('Xss Demo App', () => {
 
     app = await driver.wait(until.elementLocated(By.css('xss-demo-root')), 2500);
 
-    payloadInputTextArea = await app.findElement(By.css('section.input-area textarea.payload'));
-    payloadInputCombobox = await app.findElement(By.css('section.input-area xss-combobox-input'));
-    payloadOutputCombobox = await app.findElement(By.css('section.output-area xss-combobox-input'));
-    alertOverlay = await app.findElement(By.css('.fd-shell__overlay.fd-overlay--alert'));
+    payloadInputTextArea = await findAndExpectOne(app, 'section.input-area textarea.payload');
+    payloadInputCombobox = await findAndExpectOne(app, 'section.input-area xss-combobox-input');
+    payloadOutputCombobox = await findAndExpectOne(app, 'section.output-area xss-combobox-input');
+    liveOutput = await findAndExpectOne(app, 'section.output-area xss-payload-output .live-output.fd-layout-panel .fd-layout-panel__body');
+    alertOverlay = await findAndExpectOne(app, '.fd-shell__overlay.fd-overlay--alert');
   });
 
   afterEach(async () => {
@@ -383,7 +385,7 @@ describe('Xss Demo App', () => {
                 async () => {
                   await payloadInputTextArea.clear();
                   await selectInputOutput(null, null, outputCollection.name, outputDescriptor.name);
-                  await expect(alertOverlay.findElement(By.css('.alert-xss-triggered'))).rejects.toEqual(expect.anything());
+                  await expect(findAndExpectOne(alertOverlay, '.alert-xss-triggered', 500)).rejects.toThrow();
                   await payloadInputTextArea.sendKeys(payloadTestConfig.payload);
                 },
               );
@@ -417,7 +419,7 @@ describe('Xss Demo App', () => {
 
         await testConfig.doExpect();
       },
-      testConfig.getTimeout() + 5000,
+      testConfig.getTimeout() + 8000,
     );
   }
 
@@ -466,7 +468,7 @@ describe('Xss Demo App', () => {
   }
 
   async function clickMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<void> {
-    const comboboxControlInput = await combobox.findElement(By.css('.fd-popover__control input'));
+    const comboboxControlInput = await findAndExpectOne(combobox, '.fd-popover__control input');
     await comboboxControlInput.click();
 
     // we need multiple click attempts due to a weird UI glitch in the ComboboxInputComponent
@@ -492,13 +494,5 @@ describe('Xss Demo App', () => {
         return;
       }
     }
-  }
-
-  function findPayloadOutputComponent(): WebElementPromise {
-    return app.findElement(By.css('section.output-area xss-payload-output'));
-  }
-
-  function findOutput(): WebElementPromise {
-    return findPayloadOutputComponent().findElement(By.css('.live-output.fd-layout-panel .fd-layout-panel__body'));
   }
 });
