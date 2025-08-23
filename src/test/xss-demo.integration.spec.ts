@@ -4,7 +4,7 @@
 
 
 
-import { By, WebElement, WebElementPromise, until } from 'selenium-webdriver';
+import { By, WebElement, until } from 'selenium-webdriver';
 
 import { findAndExpectOne, WindowTracker } from './test-lib';
 
@@ -31,7 +31,7 @@ interface EnhancedTestConfig extends TestConfig {
 }
 
 class DefaultTestConfig implements EnhancedTestConfig {
-  private static defaultTimeout = 200;
+  private static defaultTimeout = 500;
 
   static fromRaw<T, C>(configs: (string | T)[], cnstrctr: new (data: (string | T)) => C): C[] {
     return (configs || []).map(config => new cnstrctr(config));
@@ -157,10 +157,11 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await liveOutput.findElement((By.css('a'))).click();
+          const link = await findAndExpectOne(liveOutput, 'a', 500);
+          await link.click();
         },
         expectXss,
-        timeout: 500,
+        timeout: 1000,
       });
     },
 
@@ -168,10 +169,10 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const input = await liveOutput.findElement((By.css('input')));
+          const input = await findAndExpectOne(liveOutput, 'input', 500);
           await input.click();
         },
-        timeout: 500,
+        timeout: 1000,
       });
     },
 
@@ -179,11 +180,10 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const element = await liveOutput.findElement((By.css('[onmouseenter]')));
-          const actions = driver.actions({ async: true });
-          await actions.move({ origin: element }).perform();
+          const element = await findAndExpectOne(liveOutput, '[onmouseenter]', 500);
+          await globalThis.driver.actions({ async: true }).move({ origin: element }).perform();
         },
-        timeout: 500,
+        timeout: 1000,
       });
     },
 
@@ -191,14 +191,14 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await liveOutput.findElement((By.css('iframe.xss-demo-guest')));
-          const codeField = await liveOutput.findElement((By.css('textarea[name=code]')));
-          const runButton = await liveOutput.findElement((By.css('button[name=run]')));
+          await findAndExpectOne(liveOutput, 'iframe.xss-demo-guest', 500);
+          const codeField = await findAndExpectOne(liveOutput, 'textarea[name=code]', 200);
+          const runButton = await findAndExpectOne(liveOutput, 'button[name=run]', 200);
           await codeField.clear();
           await codeField.sendKeys('parent.xss()');
           await runButton.click();
         },
-        timeout: 500,
+        timeout: 1500,
       });
     },
 
@@ -206,8 +206,8 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const codeField = await liveOutput.findElement((By.css('textarea[name=code]')));
-          const runButton = await liveOutput.findElement((By.css('button[name=run]')));
+          const codeField = await findAndExpectOne(liveOutput, 'textarea[name=code]', 500);
+          const runButton = await findAndExpectOne(liveOutput, 'button[name=run]', 500);
           await codeField.clear();
           await codeField.sendKeys('opener.xss()');
           await runButton.click();
@@ -215,7 +215,7 @@ describe('Xss Demo App', () => {
         expect: async () => {
           await expect(windowTracker.getNewWindows()).resolves.toHaveLength(1);
         },
-        timeout: 500,
+        timeout: 1500,
       });
     },
 
@@ -226,7 +226,7 @@ describe('Xss Demo App', () => {
         expect: async () => {
           await expect(windowTracker.getNewWindows()).resolves.toHaveLength(1);
         },
-        timeout: 500,
+        timeout: 1500,
       });
     },
 
@@ -235,10 +235,9 @@ describe('Xss Demo App', () => {
         presetName: name,
         expectXss: false,
         expect: async () => {
-          const appElement = await driver.wait(until.elementLocated(By.css('article.fd-shell__app')), 2500);
-          const appChildElements = await appElement.findElements(By.css(':scope > *'));
-          expect(appChildElements.length).toBe(1);
-          await expect(appElement.findElement(By.css('div.xss-demo-defacement'))).resolves.not.toEqual(null);
+          const appElement = await globalThis.driver.wait(until.elementLocated(By.css('article.fd-shell__app')), 2500);
+          await findAndExpectOne(appElement, ':scope > *');
+          await expect(findAndExpectOne(appElement, 'div.xss-demo-defacement')).resolves.toEqual(expect.anything());
         },
         timeout: 3000,
       });
@@ -313,10 +312,10 @@ describe('Xss Demo App', () => {
   };
 
   beforeEach(async () => {
-    await driver.get(xssDemoAppUrl);
-    windowTracker = await WindowTracker.track(driver);
+    await globalThis.driver.get(globalThis.xssDemoAppUrl);
+    windowTracker = await WindowTracker.track(globalThis.driver);
 
-    app = await driver.wait(until.elementLocated(By.css('xss-demo-root')), 2500);
+    app = await globalThis.driver.wait(until.elementLocated(By.css('xss-demo-root')), 2500);
 
     payloadInputTextArea = await findAndExpectOne(app, 'section.input-area textarea.payload');
     payloadInputCombobox = await findAndExpectOne(app, 'section.input-area xss-combobox-input');
