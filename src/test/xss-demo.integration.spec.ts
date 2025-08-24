@@ -484,6 +484,7 @@ describe('Xss Demo App', () => {
         item = await findMenuItem(combobox, groupLabel, itemLabel);
       }
       catch (err) {
+        // ignore and retry
       }
 
       if (item != null) {
@@ -491,6 +492,7 @@ describe('Xss Demo App', () => {
           await item.click();
         }
         catch (err) {
+          // ignore and retry
         }
 
         // check if menu popover has successfully been closed after the click
@@ -498,7 +500,8 @@ describe('Xss Demo App', () => {
         let comboboxPopoverAfterClick: WebElement;
         try {
           comboboxPopoverAfterClick = await findAndExpectOne(combobox, '.fd-popover__body', 100);
-        } catch(err) {
+        }
+        catch (err) {
           // if the menu popover has disappeared, there is nothing left to do here
           // this may happen in tests that alter the whole app (e.g. defacement)
           return;
