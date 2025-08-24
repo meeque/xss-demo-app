@@ -206,6 +206,7 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
+          await windowTracker.switchToOwnWindow();
           const codeField = await findAndExpectOne(liveOutput, 'textarea[name=code]', 100);
           const runButton = await findAndExpectOne(liveOutput, 'button[name=run]', 100);
           await codeField.clear();
