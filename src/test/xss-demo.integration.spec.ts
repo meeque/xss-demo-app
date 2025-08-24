@@ -102,7 +102,7 @@ class DefaultPresetTestConfig extends DefaultTestConfig implements EnhancedPrese
       this.presetName = config;
     }
     else {
-      throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
+      throw new Error('Failed to create PresetTestConfig! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
     }
   }
 
@@ -132,7 +132,7 @@ class DefaultPayloadTestConfig extends DefaultTestConfig implements EnhancedPayl
       this.payload = config;
     }
     else {
-      throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
+      throw new Error('Failed to create PayloadTestConfig! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
     }
   }
 }
