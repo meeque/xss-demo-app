@@ -61,7 +61,7 @@ afterAll(
       await driver.quit();
     }
   },
-  5000,
+  10000,
 );
 
 
