@@ -84,16 +84,16 @@ describe('StripExtraIndentPipe', () => {
     expectTransform(/[.]/, '/[.]/');
   });
 
-  it('should format function source code nicely', () => {
+  it('should format transformed function source code somewhat nicely', () => {
     expectTransform(
       mockFunction,
       'function mockFunction(numbers) {\n'
-      + '  const theAnswer = 42;\n'
-      + '  const result = [];\n'
-      + '  for (const num of numbers) {\n'
-      + '    result.push(num + theAnswer);\n'
-      + '  }\n'
-      + '  return result;\n'
+      + '    const theAnswer = 42;\n'
+      + '    const result = [];\n'
+      + '    for (const num of numbers) {\n'
+      + '        result.push(num + theAnswer);\n'
+      + '    }\n'
+      + '    return result;\n'
       + '}',
     );
   });

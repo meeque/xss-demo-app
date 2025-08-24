@@ -4,7 +4,7 @@ import { TestBed, ComponentFixture } from '@angular/core/testing';
 
 import $ from 'jquery';
 
-import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/lib.spec';
+import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/test-lib';
 
 import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
@@ -34,7 +34,7 @@ describe('PayloadOutputComponent', () => {
   let componentRef: ComponentRef<PayloadOutputComponent>;
   let component: PayloadOutputComponent;
   let element: HTMLElement;
-  let onbeforeupdateSpy: jasmine.Spy;
+  let onbeforeupdateMock: jest.Mock<(value: unknown) => unknown>;
 
 
   const mockDescriptors: Record<string, MockPayloadOutputDescriptor> = {
@@ -65,7 +65,7 @@ describe('PayloadOutputComponent', () => {
         return payload.toUpperCase();
       },
       domInjector: function innerText(element, payload) {
-        element.innerText = '' + payload;
+        element.textContent = '' + payload;
       },
       calculateExpectedOutput: (input) => {
         return input
@@ -116,8 +116,8 @@ describe('PayloadOutputComponent', () => {
     fixture.autoDetectChanges();
     await whenStableDetectChanges(fixture);
 
-    onbeforeupdateSpy = jasmine.createSpy('on update event', event => event);
-    component.onbeforeupdate.subscribe(onbeforeupdateSpy);
+    onbeforeupdateMock = jest.fn(event => event);
+    component.onbeforeupdate.subscribe(onbeforeupdateMock);
   });
 
   describe('initially', () => {
@@ -130,7 +130,7 @@ describe('PayloadOutputComponent', () => {
     });
 
     it('should have auto-update enabled', () => {
-      expect(component.autoUpdateEnabled()).toBeTrue();
+      expect(component.autoUpdateEnabled()).toBe(true);
     });
 
     it('should have a view with empty payload', () => {
@@ -405,9 +405,9 @@ describe('PayloadOutputComponent', () => {
     queryAndExpectLiveSourceCode(expectedOutputString);
 
     if (expectedChangeEvents != null) {
-      expect(onbeforeupdateSpy).toHaveBeenCalledTimes(expectedChangeEvents);
+      expect(onbeforeupdateMock).toHaveBeenCalledTimes(expectedChangeEvents);
     }
-    onbeforeupdateSpy.calls.reset();
+    onbeforeupdateMock.mockClear();
   }
 
   function queryAndExpectTitle(descriptor: PayloadOutputDescriptor) {
@@ -420,15 +420,15 @@ describe('PayloadOutputComponent', () => {
     const panel = queryAndExpectOptional(element, 'div.payload-processor.fd-layout-panel');
 
     if (descriptor.payloadProcessor === undefined) {
-      expect(panel).withContext('Payload Processor panel for PayloadOutputDescripter without a payloadProcessor').toBeNull();
+      expect(panel).toBeNull();
       return null;
     }
 
-    expect(panel).withContext('Payload Processor panel for PayloadOutputDescripter with a payloadProcessor').not.toBeNull();
+    expect(panel).not.toBeNull();
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('Payload Processor Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    expect(body.textContent.trim()).withContext('Payload Processor Function').toBe(strip(descriptor.payloadProcessor.toString()));
+    expect(body.textContent.trim()).toBe(strip(descriptor.payloadProcessor.toString()));
     return panel;
   }
 
@@ -436,15 +436,15 @@ describe('PayloadOutputComponent', () => {
     const panel = queryAndExpectOptional(element, 'div.html-source-provider.fd-layout-panel');
 
     if (descriptor.htmlSourceProvider === undefined) {
-      expect(panel).withContext('HTML Source Provider panel for PauloadOutputDescripter without a htmlSourceProvider').toBeNull();
+      expect(panel).toBeNull();
       return null;
     }
 
-    expect(panel).withContext('HTML Source Provider panel for PauloadOutputDescripter with a htmlSourceProvider').not.toBeNull();
+    expect(panel).not.toBeNull();
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('HTML Source Provider Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    expect(body.textContent.trim()).withContext('HTML Source Provider Function').toBe(strip(descriptor.htmlSourceProvider));
+    expect(body.textContent.trim()).toBe(strip(descriptor.htmlSourceProvider));
     return panel;
   }
 
@@ -452,15 +452,15 @@ describe('PayloadOutputComponent', () => {
     const panel = queryAndExpectOptional(element, 'div.dom-injector.fd-layout-panel');
 
     if (descriptor.domInjector === undefined) {
-      expect(panel).withContext('DOM Injector panel for PauloadOutputDescripter without a domInjector').toBeNull();
+      expect(panel).toBeNull();
       return null;
     }
 
-    expect(panel).withContext('DOM Injector panel for PauloadOutputDescripter with a domInjector').not.toBeNull();
+    expect(panel).not.toBeNull();
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('DOM Injector Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    expect(body.textContent.trim()).withContext('DOM Injector Function').toBe(strip(descriptor.domInjector));
+    expect(body.textContent.trim()).toBe(strip(descriptor.domInjector));
     return panel;
   }
 
@@ -468,15 +468,15 @@ describe('PayloadOutputComponent', () => {
     const panel = queryAndExpectOptional(element, 'div.jquery-injector.fd-layout-panel');
 
     if (descriptor.jQueryInjector === undefined) {
-      expect(panel).withContext('jQuery Injector panel for PauloadOutputDescripter without a jQueryInjector').toBeNull();
+      expect(panel).toBeNull();
       return null;
     }
 
-    expect(panel).withContext('jQuery Injector panel for PauloadOutputDescripter with a jQueryInjector').not.toBeNull();
+    expect(panel).not.toBeNull();
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('jQuery Injector Function');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    expect(body.textContent.trim()).withContext('jQuery Injector Function').toBe(strip(descriptor.jQueryInjector));
+    expect(body.textContent.trim()).toBe(strip(descriptor.jQueryInjector));
     return panel;
   }
 
@@ -484,15 +484,15 @@ describe('PayloadOutputComponent', () => {
     const panel = queryAndExpectOptional(element, 'div.template-code.fd-layout-panel');
 
     if (descriptor.templateComponentType === undefined) {
-      expect(panel).withContext('Angular Template panel for PauloadOutputDescripter without a templateComponentType').toBeNull();
+      expect(panel).toBeNull();
       return null;
     }
 
-    expect(panel).withContext('Angular Template panel for PauloadOutputDescripter with a templateComponentType').not.toBeNull();
+    expect(panel).not.toBeNull();
     const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
     expect(title.textContent.trim()).toBe('Angular Template Code');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
-    expect(body.textContent.trim()).withContext('Angular Template Code').toBe(strip(descriptor.templateComponentType.templateCode));
+    expect(body.textContent.trim()).toBe(strip(descriptor.templateComponentType.templateCode));
     return panel;
   }
 
@@ -503,7 +503,7 @@ describe('PayloadOutputComponent', () => {
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
     if (expectedCode != null) {
       const outputContainer = queryAndExpectOne(body, ':scope > *');
-      expect(outputContainer.innerHTML.trim()).withContext('Live HTML Output').toBe(expectedCode);
+      expect(outputContainer.innerHTML.trim()).toBe(expectedCode);
     }
     return panel;
   }
@@ -514,7 +514,7 @@ describe('PayloadOutputComponent', () => {
     expect(title.textContent.trim()).toBe('Live HTML Source Code');
     const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
     if (expectedCode != null) {
-      expect(body.textContent.trim()).withContext('Live HTML Source Code').toBe(expectedCode);
+      expect(body.textContent.trim()).toBe(expectedCode);
     }
     return panel;
   }
@@ -541,7 +541,7 @@ describe('PayloadOutputComponent', () => {
     const updateNowLink = queryAndExpectOptional(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions span a');
 
     if (expectLinkToExist != null) {
-      expect(!!updateNowLink).withContext('Update Now link exists').toBe(expectLinkToExist);
+      expect(!!updateNowLink).toBe(expectLinkToExist);
     }
 
     return updateNowLink;

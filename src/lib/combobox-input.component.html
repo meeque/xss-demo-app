@@ -44,14 +44,10 @@
 
 <ng-template #defaultMenuItem let-item="item">
   @if (filter(item)) {
-    <li class="fd-list__item">
-      <a
-          (click)="select(item, $event)"
-          (keypress)="select(item, $event)"
-          class="fd-list__title"
-          tabindex="0">
+    <li class="fd-list__item" (click)="select(item, $event)" (keypress)="select(item, $event)" tabindex="0">
+      <span class="fd-list__title">
         {{ item.name }}
-      </a>
+    </span>
     </li>
   }
 </ng-template>

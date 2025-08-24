@@ -85,7 +85,7 @@ module.exports = tseslint.config(
     },
   },
   {
-    files: ['src/**/*.ts'],
+    files: ['*.ts', 'src/**/*.ts'],
     extends: [
       eslint.configs.recommended,
       stylistic.configs.recommended,

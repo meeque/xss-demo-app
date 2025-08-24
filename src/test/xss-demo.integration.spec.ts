@@ -2,37 +2,36 @@
 /* eslint @stylistic/array-bracket-spacing: ['off'] */
 /* eslint @stylistic/key-spacing: ['off'] */
 
-import { TestBed, ComponentFixture } from '@angular/core/testing';
-import { timeout, domTreeAvailable, whenStableDetectChanges } from './lib.spec';
 
-import { xssDemoConfig } from '../xss/xss-demo.config';
+
+import { By, WebElement, until } from 'selenium-webdriver';
+
+import { findAndExpectOne, timeout, WindowTracker } from './test-lib';
+
+import '@angular/compiler';
+
 import { PayloadPresetService } from '../xss/payload-preset.service';
 import { PayloadOutputQuality, PayloadOutputService } from '../xss/payload-output.service';
-import { XssDemoComponent } from '../xss/xss-demo.component';
 
 
 
 interface TestConfig {
-  readonly setup?: () => Promise<void>
   readonly trigger?: () => Promise<void>
   readonly expectXss?: boolean
   readonly expect?: () => Promise<void>
-  readonly cleanup?: () => Promise<void>
   readonly timeout?: number
 }
 
 interface EnhancedTestConfig extends TestConfig {
   isSkip(): boolean
-  doSetup(): Promise<void>
   doTrigger(): Promise<void>
   isExpectXss(): boolean
   doExpect(): Promise<void>
-  doCleanup(): Promise<void>
   getTimeout(): number
 }
 
 class DefaultTestConfig implements EnhancedTestConfig {
-  private static defaultTimeout = 200;
+  private static defaultTimeout = 500;
 
   static fromRaw<T, C>(configs: (string | T)[], cnstrctr: new (data: (string | T)) => C): C[] {
     return (configs || []).map(config => new cnstrctr(config));
@@ -42,21 +41,13 @@ class DefaultTestConfig implements EnhancedTestConfig {
     return null != (configs || []).find(config => config.isExpectXss());
   }
 
-  readonly setup?: () => Promise<void>;
   readonly trigger?: () => Promise<void>;
   readonly expectXss?: boolean;
   readonly expect?: () => Promise<void>;
-  readonly cleanup?: () => Promise<void>;
   readonly timeout?: number;
 
   public isSkip(): boolean {
     return false;
-  }
-
-  public async doSetup(): Promise<void> {
-    if (this.setup) {
-      return this.setup();
-    }
   }
 
   public async doTrigger(): Promise<void> {
@@ -72,14 +63,6 @@ class DefaultTestConfig implements EnhancedTestConfig {
   public async doExpect(): Promise<void> {
     if (this.expect) {
       return this.expect();
-    }
-  }
-
-  public async doCleanup(): Promise<void> {
-    if (this.cleanup) {
-      return this
-        .cleanup()
-        .catch(err => console.error('Ignoring error in custom cleanup function: ' + err));
     }
   }
 
@@ -119,7 +102,7 @@ class DefaultPresetTestConfig extends DefaultTestConfig implements EnhancedPrese
       this.presetName = config;
     }
     else {
-      throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
+      throw new Error('Failed to create PresetTestConfig! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
     }
   }
 
@@ -149,60 +132,36 @@ class DefaultPayloadTestConfig extends DefaultTestConfig implements EnhancedPayl
       this.payload = config;
     }
     else {
-      throw new Error('Failed to create PresetTest Config! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
+      throw new Error('Failed to create PayloadTestConfig! Constructor arg must be either a string or an object, got ' + typeof config + ' instead.');
     }
   }
 }
 
 
 
-describe('Xss Demo App', async () => {
+describe('Xss Demo App', () => {
   const payloadPresetServiceStub = new PayloadPresetService(null);
   const payloadOutputServiceStub = new PayloadOutputService(null);
 
-  let fixture: ComponentFixture<XssDemoComponent>;
-  let component: XssDemoComponent;
-  let element: HTMLElement;
+  let windowTracker: WindowTracker;
+  let app: WebElement;
 
-  let payloadInputCombobox: HTMLElement;
-  let payloadOutputCombobox: HTMLElement;
-  let payloadInputTextArea: HTMLTextAreaElement;
-  let alertOverlay: HTMLElement;
-
-  let xssResolve: () => void;
-
+  let payloadInputCombobox: WebElement;
+  let payloadOutputCombobox: WebElement;
+  let payloadInputTextArea: WebElement;
+  let liveOutput: WebElement;
+  let alertOverlay: WebElement;
 
   const presetTestConfigFactory: Record<string, (name: string, expectXss?: boolean) => EnhancedPresetTestConfig> = {
     clickLink: (name: string, expectXss = true) => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const link = await domTreeAvailable<HTMLElement>(queryOutput(), 'a');
-          link.click();
+          const link = await findAndExpectOne(liveOutput, 'a', 200);
+          await link.click();
         },
         expectXss,
         timeout: 500,
-      });
-    },
-
-    clickLinkNew: (name: string, expectXss = true) => {
-      const MOCK_LINK_TARGET = 'xss-demo_integration-test_click-link-to-new-window';
-      let link = null as HTMLLinkElement;
-      return new DefaultPresetTestConfig({
-        presetName: name,
-        trigger: async () => {
-          link = await domTreeAvailable<HTMLLinkElement>(queryOutput(), 'a');
-          if (link.target === '_blank') {
-            console.log('Tweaking link with target "_blank" to use target "' + MOCK_LINK_TARGET + '" instead.');
-            link.target = MOCK_LINK_TARGET;
-          }
-          link.click();
-        },
-        expectXss,
-        cleanup: async () => {
-          window.open('javascript:window.close();', link.target);
-        },
-        timeout: 1000,
       });
     },
 
@@ -210,8 +169,8 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const input = await domTreeAvailable<HTMLElement>(queryOutput(), 'input');
-          input.dispatchEvent(new Event('focus'));
+          const input = await findAndExpectOne(liveOutput, 'input', 200);
+          await input.click();
         },
         timeout: 500,
       });
@@ -221,8 +180,8 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const element = await domTreeAvailable<HTMLElement>(queryOutput(), '[onmouseenter]');
-          element.dispatchEvent(new Event('mouseenter'));
+          const element = await findAndExpectOne(liveOutput, '[onmouseenter]', 200);
+          await globalThis.driver.actions({ async: true }).move({ origin: element }).perform();
         },
         timeout: 500,
       });
@@ -232,55 +191,43 @@ describe('Xss Demo App', async () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await domTreeAvailable<HTMLElement>(queryOutput(), 'iframe.xss-demo-guest');
-          const codeField = await domTreeAvailable<HTMLElement>(queryOutput(), 'textarea[name=code]') as HTMLTextAreaElement;
-          const runButton = await domTreeAvailable<HTMLElement>(queryOutput(), 'button[name=run]') as HTMLButtonElement;
-          codeField.value = 'parent.xss()';
-          runButton.click();
+          await findAndExpectOne(liveOutput, 'iframe.xss-demo-guest', 200);
+          const codeField = await findAndExpectOne(liveOutput, 'textarea[name=code]', 100);
+          const runButton = await findAndExpectOne(liveOutput, 'button[name=run]', 100);
+          await codeField.clear();
+          await codeField.sendKeys('parent.xss()');
+          await runButton.click();
         },
-        timeout: 500,
+        timeout: 1000,
       });
     },
 
     injectJsWindow: (name: string) => {
-      let windowOpenSpy: jasmine.Spy;
       return new DefaultPresetTestConfig({
         presetName: name,
-        setup: async () => {
-          windowOpenSpy = spyOn(window, 'open').and.callThrough();
-        },
         trigger: async () => {
-          const codeField = await domTreeAvailable<HTMLElement>(queryOutput(), 'textarea[name=code]') as HTMLTextAreaElement;
-          const runButton = await domTreeAvailable<HTMLElement>(queryOutput(), 'button[name=run]') as HTMLButtonElement;
-          codeField.value = 'opener.xss()';
-          runButton.click();
+          await windowTracker.switchToOwnWindow();
+          const codeField = await findAndExpectOne(liveOutput, 'textarea[name=code]', 100);
+          const runButton = await findAndExpectOne(liveOutput, 'button[name=run]', 100);
+          await codeField.clear();
+          await codeField.sendKeys('opener.xss()');
+          await runButton.click();
         },
         expect: async () => {
-          expect(windowOpenSpy).toHaveBeenCalled();
+          await expect(windowTracker.getNewWindows()).resolves.toHaveLength(1);
         },
-        cleanup: async () => {
-          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
-          openedWindow?.close();
-        },
-        timeout: 500,
+        timeout: 1000,
       });
     },
 
     newWindow: (name: string) => {
-      let windowOpenSpy: jasmine.Spy;
       return new DefaultPresetTestConfig({
         presetName: name,
-        setup: async () => {
-          windowOpenSpy = spyOn(window, 'open').and.callThrough();
-        },
         expectXss: false,
         expect: async () => {
-          expect(windowOpenSpy).toHaveBeenCalled();
+          await expect(windowTracker.getNewWindows()).resolves.toHaveLength(1);
         },
-        cleanup: async () => {
-          const openedWindow: WindowProxy = windowOpenSpy.calls.mostRecent()?.returnValue;
-          openedWindow?.close();
-        },
+        timeout: 1000,
       });
     },
 
@@ -289,14 +236,9 @@ describe('Xss Demo App', async () => {
         presetName: name,
         expectXss: false,
         expect: async () => {
-          const element = document.querySelector('article.fd-shell__app');
-          expect(element.childElementCount).toBe(1);
-          expect(element.querySelector('div.xss-demo-defacement')).not.toBeNull();
-        },
-        cleanup: async () => {
-          const element = document.querySelector('div.xss-demo-defacement');
-          element.parentNode.removeChild(element);
-          document.body.style.background = null;
+          const appElement = await globalThis.driver.wait(until.elementLocated(By.css('article.fd-shell__app')), 2500);
+          await findAndExpectOne(appElement, ':scope > *');
+          await expect(findAndExpectOne(appElement, 'div.xss-demo-defacement')).resolves.toEqual(expect.anything());
         },
         timeout: 1000,
       });
@@ -307,19 +249,19 @@ describe('Xss Demo App', async () => {
 
   const presetsTestConfigsByContextAndOutput: Record<string, Record<string, (string | EnhancedPresetTestConfig)[]>> = {
     HtmlContent: {
-      HtmlContentRaw:          [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-      DomInnerHtmlRaw:         [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      HtmlContentRaw:          [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      DomInnerHtmlRaw:         [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
       DomInnerHtmlRawNoInsert: [                                              'Image onerror', 'Image onerror (legacy flavors)',                                                                                                                                                      'Mixed HTML Content'],
-      JQueryHtmlRaw:           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-      JQueryConstructorRaw:    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-      JQueryPrependRaw:        ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-      JQueryAppendRaw:         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-      JQueryBeforeRaw:         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-      JQueryAfterRaw:          ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-      JQueryWrapInnerRaw:      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-      JQueryWrapRaw:           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-      JQueryReplaceWithRaw:    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
-      NgInnerHtmlTrusted:      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLinkNew('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      JQueryHtmlRaw:           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      JQueryConstructorRaw:    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      JQueryPrependRaw:        ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      JQueryAppendRaw:         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      JQueryBeforeRaw:         ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      JQueryAfterRaw:          ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      JQueryWrapInnerRaw:      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      JQueryWrapRaw:           ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      JQueryReplaceWithRaw:    ['Script tag', 'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
+      NgInnerHtmlTrusted:      [              'IFrame src', 'IFrame content', 'Image onerror', 'Image onerror (legacy flavors)', cf.clickLink('A link href'), cf.clickLink('A link destination content'), cf.focusInput('Input field onfocus'), cf.mouseenter('Div onmouseenter'), 'Mixed HTML Content'],
     },
 
     HtmlAttribute: {
@@ -329,12 +271,12 @@ describe('Xss Demo App', async () => {
     },
 
     Url: {
-      DomLinkHrefRaw:           [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener'),        cf.clickLinkNew('URL resource content')                                                     ],
-      DomLinkHrefValidated:     [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener', false), cf.clickLinkNew('URL resource content')                                                     ],
-      JQueryLinkHrefRaw:        [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener'),        cf.clickLinkNew('URL resource content')                                                     ],
-      JQueryLinkHrefValidated:  [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener', false), cf.clickLinkNew('URL resource content')                                                     ],
-      NgLinkHrefTrusted:        [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener'),        cf.clickLinkNew('URL resource content')                                                     ],
-      NgLinkHrefSanitized:      [cf.clickLinkNew('javascript URL', false), cf.clickLinkNew('javascript URL for parent', false), cf.clickLinkNew('javascript URL for opener', false), cf.clickLinkNew('URL resource content')                                                     ],
+      DomLinkHrefRaw:           [cf.clickLink('javascript URL', false), cf.clickLink('javascript URL for parent', false), cf.clickLink('javascript URL for opener'),        cf.clickLink('URL resource content')                                                     ],
+      DomLinkHrefValidated:     [cf.clickLink('javascript URL', false), cf.clickLink('javascript URL for parent', false), cf.clickLink('javascript URL for opener', false), cf.clickLink('URL resource content')                                                     ],
+      JQueryLinkHrefRaw:        [cf.clickLink('javascript URL', false), cf.clickLink('javascript URL for parent', false), cf.clickLink('javascript URL for opener'),        cf.clickLink('URL resource content')                                                     ],
+      JQueryLinkHrefValidated:  [cf.clickLink('javascript URL', false), cf.clickLink('javascript URL for parent', false), cf.clickLink('javascript URL for opener', false), cf.clickLink('URL resource content')                                                     ],
+      NgLinkHrefTrusted:        [cf.clickLink('javascript URL', false), cf.clickLink('javascript URL for parent', false), cf.clickLink('javascript URL for opener'),        cf.clickLink('URL resource content')                                                     ],
+      NgLinkHrefSanitized:      [cf.clickLink('javascript URL', false), cf.clickLink('javascript URL for parent', false), cf.clickLink('javascript URL for opener', false), cf.clickLink('URL resource content')                                                     ],
       DomIframeSrcRaw:          [                                                                                                                                                                                             'javascript URL for parent', 'URL resource content'],
       DomIframeSrcValidated:    [                                                                                                                                                                                                                          'URL resource content'],
       JQueryIframeSrcRaw:       [                                                                                                                                                                                             'javascript URL for parent', 'URL resource content'],
@@ -370,35 +312,25 @@ describe('Xss Demo App', async () => {
     },
   };
 
-
   beforeEach(async () => {
-    TestBed.configureTestingModule(xssDemoConfig);
-    await TestBed.compileComponents();
-    fixture = TestBed.createComponent(XssDemoComponent);
-    fixture.detectChanges();
+    await globalThis.driver.get(globalThis.xssDemoAppUrl);
+    windowTracker = await WindowTracker.track(globalThis.driver);
 
-    component = fixture.componentInstance;
-    element = fixture.nativeElement;
+    app = await globalThis.driver.wait(until.elementLocated(By.css('xss-demo-root')), 2500);
 
-    payloadInputTextArea = element.querySelector('section.input-area textarea.payload');
-    payloadInputCombobox = element.querySelector('section.input-area xss-combobox-input');
-    payloadOutputCombobox = element.querySelector('section.output-area xss-combobox-input');
-    alertOverlay = element.querySelector('.fd-shell__overlay.fd-overlay--alert');
-
-    // ignore global errors caused by dynamically loaded scripts (e.g. script blocks from xss payloads)
-    window.onerror = (message, source, lineno, colno, error) => {
-      console.error(error);
-    };
-
-    const xssOriginal: () => void = globalThis.xss;
-    globalThis.xss = () => {
-      xssOriginal();
-      xssResolve();
-    };
+    payloadInputTextArea = await findAndExpectOne(app, 'section.input-area textarea.payload');
+    payloadInputCombobox = await findAndExpectOne(app, 'section.input-area xss-combobox-input');
+    payloadOutputCombobox = await findAndExpectOne(app, 'section.output-area xss-combobox-input');
+    liveOutput = await findAndExpectOne(app, 'section.output-area xss-payload-output .live-output.fd-layout-panel .fd-layout-panel__body');
+    alertOverlay = await findAndExpectOne(app, '.fd-shell__overlay.fd-overlay--alert');
   });
 
-  it('should be created', async () => {
-    expect(component).toBeDefined();
+  afterEach(async () => {
+    await windowTracker.closeAllNewWindows();
+  });
+
+  test('should be created', async () => {
+    expect(app).toBeDefined();
   });
 
   for (const outputCollection of payloadOutputServiceStub.descriptors) {
@@ -414,12 +346,12 @@ describe('Xss Demo App', async () => {
 
         describe('and payload output "' + outputDescriptor.name + '"', () => {
           if (DefaultTestConfig.hasAnyXss([...presetTestConfigs, ...payloadTestConfigs])) {
-            it('should not be marked as "Recommended", because some tests trigger XSS', () => {
+            test('should not be marked as "Recommended", because some tests trigger XSS', () => {
               expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
             });
           }
           else {
-            it('should not be marked as "Insecure", because no tests trigger XSS', () => {
+            test('should not be marked as "Insecure", because no tests trigger XSS', () => {
               expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Insecure);
             });
           }
@@ -437,9 +369,7 @@ describe('Xss Demo App', async () => {
                 describe('and payload preset "' + presetDescriptor.name + '"', () => {
                   runTestConfig(
                     presetTestConfig,
-                    async () => {
-                      await selectInputOutput(presetCollection.name, presetTestConfig.presetName, outputCollection.name, outputDescriptor.name);
-                    },
+                    () => selectInputOutput(presetCollection.name, presetTestConfig.presetName, outputCollection.name, outputDescriptor.name),
                   );
                 });
               }
@@ -453,14 +383,10 @@ describe('Xss Demo App', async () => {
               runTestConfig(
                 payloadTestConfig,
                 async () => {
-                  payloadInputTextArea.value = '';
+                  await payloadInputTextArea.clear();
                   await selectInputOutput(null, null, outputCollection.name, outputDescriptor.name);
-                  expect(alertOverlay.querySelector('.alert-xss-triggered'))
-                    .withContext('show XSS alert message')
-                    .toEqual(null);
-                  payloadInputTextArea.value = payloadTestConfig.payload;
-                  payloadInputTextArea.dispatchEvent(new Event('input'));
-                  await whenStableDetectChanges(fixture);
+                  await expect(findAndExpectOne(alertOverlay, '.alert-xss-triggered', 500)).rejects.toThrow();
+                  await payloadInputTextArea.sendKeys(payloadTestConfig.payload);
                 },
               );
             });
@@ -473,76 +399,118 @@ describe('Xss Demo App', async () => {
   function runTestConfig(testConfig: EnhancedTestConfig, deployTestPayload: () => Promise<void>) {
     const expectXss = testConfig.isExpectXss();
 
-    it(
+    test(
       'should '
       + (expectXss ? '' : 'NOT ')
       + 'trigger XSS'
       + (testConfig.trigger ? ' with custom trigger' : '')
       + (testConfig.expect ? ' with custom expectation' : ''),
       async () => {
-        await testConfig.doSetup();
-        const xssPromise = nextXssPromise();
-
         await deployTestPayload();
+        await testConfig.doTrigger();
 
-        const triggerPromise = testConfig.doTrigger();
-        const timeoutPromise = timeout(testConfig.getTimeout(), false);
-        await expectAsync(Promise.race([xssPromise, timeoutPromise]))
-          .withContext('call xss() probe before timeout')
-          .toBeResolvedTo(expectXss);
+        const xssAlertPromise = findAndExpectOne(app, '.alert-xss-triggered', testConfig.getTimeout());
+        if (expectXss) {
+          await expect(xssAlertPromise).resolves.toEqual(expect.anything());
+        }
+        else {
+          await expect(xssAlertPromise).rejects.toThrow();
+        }
 
-        expect(alertOverlay.querySelector('.alert-xss-triggered'))
-          .withContext('show XSS alert message')
-          .toEqual(expectXss ? jasmine.anything() : null);
-
-        await expectAsync(testConfig.doExpect())
-          .withContext('custom expectations')
-          .toBeResolved();
-
-        const cleanupPromise = testConfig.doCleanup();
-        await Promise.all([timeoutPromise, triggerPromise, cleanupPromise, whenStableDetectChanges(fixture)]);
+        await testConfig.doExpect();
       },
+      testConfig.getTimeout() + 8000,
     );
   }
 
   async function selectInputOutput(inputContext: string, inputName: string, outputContext: string, outputName: string): Promise<void> {
-    try {
-      queryMenuLink(payloadInputCombobox, inputContext, inputName).dispatchEvent(new Event('click'));
-    }
-    catch (err) {
-      console.error(err);
+    if (inputContext != null && inputName != null) {
+      await clickMenuItem(payloadInputCombobox, inputContext, inputName);
     }
 
-    try {
-      queryMenuLink(payloadOutputCombobox, outputContext, outputName).dispatchEvent(new Event('click'));
+    if (outputContext != null && outputName != null) {
+      await clickMenuItem(payloadOutputCombobox, outputContext, outputName);
     }
-    catch (err) {
-      console.error(err);
+  }
+
+  async function findMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<WebElement> {
+    const groups = await combobox.findElements(By.css('div.fd-popover__body div.fd-list__group-header'));
+
+    let group: WebElement;
+    for (const g of groups) {
+      const text = await g.getText();
+      if (text.trim() == groupLabel) {
+        group = g;
+        break;
+      }
+    }
+    if (group == null) {
+      return null;
     }
 
-    await whenStableDetectChanges(fixture);
+    const itemList = await group.findElement(By.xpath('following-sibling::ul[1]'));
+    if (itemList == null) {
+      return null;
+    }
+
+    const items = await itemList.findElements(By.css('li.fd-list__item'));
+
+    let item: WebElement;
+    for (const i of items) {
+      const text = await i.getText();
+      if (text.trim() == itemLabel) {
+        item = i;
+        break;
+      }
+    }
+
+    return item;
   }
 
-  function queryMenuLink(combobox: HTMLElement, groupLabelText: string, linkText: string): HTMLLinkElement {
-    const groupLabelElement = Array
-      .from(combobox.querySelectorAll('div.fd-popover__body div.fd-list__group-header'))
-      .find((label: HTMLLabelElement) => label.textContent.trim() == groupLabelText) as HTMLElement;
-    return Array
-      .from(groupLabelElement.nextElementSibling.querySelectorAll('li a'))
-      .find((a: HTMLLinkElement) => a.textContent.trim() == linkText) as HTMLLinkElement;
-  }
+  async function clickMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<void> {
+    // we need multiple click attempts due to a weird UI glitch in the ComboboxInputComponent
+    for (let retries = 0; retries < 5; retries++) {
+      await windowTracker.switchToOwnWindow();
+      const comboboxInput = await findAndExpectOne(combobox, '.fd-popover__control input');
+      const comboboxPopover = await findAndExpectOne(combobox, '.fd-popover__body');
+      let item = null as WebElement;
 
-  function queryPayloadOutputComponent(): HTMLElement {
-    return element.querySelector('section.output-area xss-payload-output');
-  }
+      // open menu popover, if not open yet
+      if ('true' == await comboboxPopover.getAttribute('aria-hidden')) {
+        await comboboxInput.click();
+      }
 
-  function queryOutput(): HTMLElement {
-    return queryPayloadOutputComponent().querySelector('.live-output.fd-layout-panel .fd-layout-panel__body');
-  }
+      try {
+        item = await findMenuItem(combobox, groupLabel, itemLabel);
+      }
+      catch (err) {
+        // ignore and retry
+      }
 
-  function nextXssPromise(): Promise<boolean> {
-    return new Promise((resolve) => {
-      xssResolve = () => resolve(true);
-    });
+      if (item != null) {
+        try {
+          await item.click();
+        }
+        catch (err) {
+          // ignore and retry
+        }
+
+        // check if menu popover has successfully been closed after the click
+        await timeout(100);
+        let comboboxPopoverAfterClick: WebElement;
+        try {
+          comboboxPopoverAfterClick = await findAndExpectOne(combobox, '.fd-popover__body', 100);
+        }
+        catch (err) {
+          // if the menu popover has disappeared, there is nothing left to do here
+          // this may happen in tests that alter the whole app (e.g. defacement)
+          return;
+        }
+        if ('true' == await comboboxPopoverAfterClick?.getAttribute('aria-hidden')) {
+          return;
+        }
+      }
+    }
+    throw new Error('Failed to click menu item "' + groupLabel + '"/"' + itemLabel + '"!');
   }
 });
