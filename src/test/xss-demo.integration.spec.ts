@@ -6,7 +6,7 @@
 
 import { By, WebElement, until } from 'selenium-webdriver';
 
-import { findAndExpectOne, WindowTracker } from './test-lib';
+import { findAndExpectOne, timeout, WindowTracker } from './test-lib';
 
 import '@angular/compiler';
 
@@ -454,7 +454,7 @@ describe('Xss Demo App', () => {
 
     const items = await itemList.findElements(By.css('li.fd-list__item'));
 
-    let item = null as WebElement;
+    let item: WebElement;
     for (const i of items) {
       const text = await i.getText();
       if (text.trim() == itemLabel) {
@@ -467,31 +467,39 @@ describe('Xss Demo App', () => {
   }
 
   async function clickMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<void> {
-    const comboboxControlInput = await findAndExpectOne(combobox, '.fd-popover__control input');
-    await comboboxControlInput.click();
-
     // we need multiple click attempts due to a weird UI glitch in the ComboboxInputComponent
-    while (true) {
-      let item: WebElement;
+    for (let retries = 0; retries < 5; retries++) {
       await windowTracker.switchToOwnWindow();
+      const comboboxInput = await findAndExpectOne(combobox, '.fd-popover__control input');
+      const comboboxPopover = await findAndExpectOne(combobox, '.fd-popover__body');
+      let item = null as WebElement;
+
+      // open menu popover, if not open yet
+      if ('true' == await comboboxPopover.getAttribute('aria-hidden')) {
+        await comboboxInput.click();
+      }
+
       try {
         item = await findMenuItem(combobox, groupLabel, itemLabel);
       }
       catch (err) {
-        return;
       }
 
-      if (await item?.isDisplayed()) {
+      if (item != null) {
         try {
           await item.click();
         }
         catch (err) {
+        }
+
+        // check if menu popover has successfully been closed after the click
+        await timeout(100);
+        const comboboxPopoverAfterClick = await findAndExpectOne(combobox, '.fd-popover__body');
+        if ('true' == await comboboxPopoverAfterClick.getAttribute('aria-hidden')) {
           return;
         }
       }
-      else {
-        return;
-      }
     }
+    throw new Error('Failed to click menu item "' + groupLabel + '"/"' + itemLabel + '"!');
   }
 });
