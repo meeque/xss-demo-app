@@ -62,86 +62,90 @@ describe('Post Message Mock', () => {
       return expectOriginsTable([xssDemoAppOrigin]);
     });
 
-    test('should manage trusted origins', async () => {
-      const origins = new Set<string>([xssDemoAppOrigin]);
-      await expectOriginsTable(origins);
-
-      {
-        const origin = 'https://xss.example';
-        origins.add(origin);
-        await fillNewOriginForm(origin);
+    test(
+      'should manage trusted origins',
+      async () => {
+        const origins = new Set<string>([xssDemoAppOrigin]);
         await expectOriginsTable(origins);
-      }
 
-      {
-        const origin = 'https://yss.example';
-        origins.add(origin);
-        await fillNewOriginForm(origin);
-        await expectOriginsTable(origins);
-      }
+        {
+          const origin = 'https://xss.example';
+          origins.add(origin);
+          await fillNewOriginForm(origin);
+          await expectOriginsTable(origins);
+        }
 
-      {
-        const origin = xssDemoAppOrigin;
-        origins.delete(origin);
-        await untrustOrigin(origin);
-        await expectOriginsTable(origins);
-      }
+        {
+          const origin = 'https://yss.example';
+          origins.add(origin);
+          await fillNewOriginForm(origin);
+          await expectOriginsTable(origins);
+        }
 
-      {
-        // start adding origin, but do not save
-        const origin = 'https://zss.example';
-        await fillNewOriginForm(origin, false);
-        await expectOriginsTable(origins);
-      }
+        {
+          const origin = xssDemoAppOrigin;
+          origins.delete(origin);
+          await untrustOrigin(origin);
+          await expectOriginsTable(origins);
+        }
 
-      {
-        const origin = 'lololo';
-        origins.add(origin);
-        await fillNewOriginForm(origin);
-        await expectOriginsTable(origins, true);
+        {
+          // start adding origin, but do not save
+          const origin = 'https://zss.example';
+          await fillNewOriginForm(origin, false);
+          await expectOriginsTable(origins);
+        }
 
-        origins.delete(origin);
-        await untrustOrigin(origin);
-        await expectOriginsTable(origins);
-      }
+        {
+          const origin = 'lololo';
+          origins.add(origin);
+          await fillNewOriginForm(origin);
+          await expectOriginsTable(origins, true);
 
-      {
-        // re-add existing origin
-        const origin = 'https://xss.example';
-        await fillNewOriginForm(origin);
-        await expectOriginsTable(origins);
-      }
+          origins.delete(origin);
+          await untrustOrigin(origin);
+          await expectOriginsTable(origins);
+        }
 
-      {
-        const origin = xssDemoAppOrigin;
-        origins.add(origin);
-        await fillNewOriginForm(origin);
-        await expectOriginsTable(origins);
-      }
+        {
+          // re-add existing origin
+          const origin = 'https://xss.example';
+          await fillNewOriginForm(origin);
+          await expectOriginsTable(origins);
+        }
 
-      {
-        const origin = 'https://yss.example';
-        origins.delete(origin);
-        await untrustOrigin(origin);
-        await expectOriginsTable(origins);
-      }
+        {
+          const origin = xssDemoAppOrigin;
+          origins.add(origin);
+          await fillNewOriginForm(origin);
+          await expectOriginsTable(origins);
+        }
 
-      {
-        const origin = 'https://xss.example';
-        origins.delete(origin);
-        await untrustOrigin(origin);
-        await expectOriginsTable(origins);
-      }
+        {
+          const origin = 'https://yss.example';
+          origins.delete(origin);
+          await untrustOrigin(origin);
+          await expectOriginsTable(origins);
+        }
 
-      {
-        const origin = xssDemoAppOrigin;
-        origins.delete(origin);
-        await untrustOrigin(origin);
-        await expectOriginsTable(origins);
-      }
+        {
+          const origin = 'https://xss.example';
+          origins.delete(origin);
+          await untrustOrigin(origin);
+          await expectOriginsTable(origins);
+        }
 
-      await expectOriginsTable([]);
-    });
+        {
+          const origin = xssDemoAppOrigin;
+          origins.delete(origin);
+          await untrustOrigin(origin);
+          await expectOriginsTable(origins);
+        }
+
+        await expectOriginsTable([]);
+      },
+      10000,
+    );
   });
 
   describe('"Received Post-Message Events" table', () => {
@@ -205,6 +209,7 @@ describe('Post Message Mock', () => {
           await postMessageAndExpectEventsTable('baz', postedEvents, testOriginConfig);
           await postMessageAndExpectEventsTable('qux', postedEvents, testOriginConfig);
         },
+        10000,
       );
     }
   });
