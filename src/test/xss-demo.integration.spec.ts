@@ -239,7 +239,7 @@ describe('Xss Demo App', () => {
           await findAndExpectOne(appElement, ':scope > *');
           await expect(findAndExpectOne(appElement, 'div.xss-demo-defacement')).resolves.toEqual(expect.anything());
         },
-        timeout: 3000,
+        timeout: 1000,
       });
     },
   };
@@ -494,8 +494,15 @@ describe('Xss Demo App', () => {
 
         // check if menu popover has successfully been closed after the click
         await timeout(100);
-        const comboboxPopoverAfterClick = await findAndExpectOne(combobox, '.fd-popover__body');
-        if ('true' == await comboboxPopoverAfterClick.getAttribute('aria-hidden')) {
+        let comboboxPopoverAfterClick: WebElement;
+        try {
+          comboboxPopoverAfterClick = await findAndExpectOne(combobox, '.fd-popover__body', 100);
+        } catch(err) {
+          // if the menu popover has disappeared, there is nothing left to do here
+          // this may happen in tests that alter the whole app (e.g. defacement)
+          return;
+        }
+        if ('true' == await comboboxPopoverAfterClick?.getAttribute('aria-hidden')) {
           return;
         }
       }
