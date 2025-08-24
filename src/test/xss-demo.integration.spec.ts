@@ -157,11 +157,11 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const link = await findAndExpectOne(liveOutput, 'a', 500);
+          const link = await findAndExpectOne(liveOutput, 'a', 200);
           await link.click();
         },
         expectXss,
-        timeout: 1000,
+        timeout: 500,
       });
     },
 
@@ -169,10 +169,10 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const input = await findAndExpectOne(liveOutput, 'input', 500);
+          const input = await findAndExpectOne(liveOutput, 'input', 200);
           await input.click();
         },
-        timeout: 1000,
+        timeout: 500,
       });
     },
 
@@ -180,10 +180,10 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const element = await findAndExpectOne(liveOutput, '[onmouseenter]', 500);
+          const element = await findAndExpectOne(liveOutput, '[onmouseenter]', 200);
           await globalThis.driver.actions({ async: true }).move({ origin: element }).perform();
         },
-        timeout: 1000,
+        timeout: 500,
       });
     },
 
@@ -191,14 +191,14 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await findAndExpectOne(liveOutput, 'iframe.xss-demo-guest', 500);
-          const codeField = await findAndExpectOne(liveOutput, 'textarea[name=code]', 200);
-          const runButton = await findAndExpectOne(liveOutput, 'button[name=run]', 200);
+          await findAndExpectOne(liveOutput, 'iframe.xss-demo-guest', 200);
+          const codeField = await findAndExpectOne(liveOutput, 'textarea[name=code]', 100);
+          const runButton = await findAndExpectOne(liveOutput, 'button[name=run]', 100);
           await codeField.clear();
           await codeField.sendKeys('parent.xss()');
           await runButton.click();
         },
-        timeout: 1500,
+        timeout: 1000,
       });
     },
 
@@ -206,8 +206,8 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          const codeField = await findAndExpectOne(liveOutput, 'textarea[name=code]', 500);
-          const runButton = await findAndExpectOne(liveOutput, 'button[name=run]', 500);
+          const codeField = await findAndExpectOne(liveOutput, 'textarea[name=code]', 100);
+          const runButton = await findAndExpectOne(liveOutput, 'button[name=run]', 100);
           await codeField.clear();
           await codeField.sendKeys('opener.xss()');
           await runButton.click();
@@ -215,7 +215,7 @@ describe('Xss Demo App', () => {
         expect: async () => {
           await expect(windowTracker.getNewWindows()).resolves.toHaveLength(1);
         },
-        timeout: 1500,
+        timeout: 1000,
       });
     },
 
@@ -226,7 +226,7 @@ describe('Xss Demo App', () => {
         expect: async () => {
           await expect(windowTracker.getNewWindows()).resolves.toHaveLength(1);
         },
-        timeout: 1500,
+        timeout: 1000,
       });
     },
 

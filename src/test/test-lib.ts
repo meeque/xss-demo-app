@@ -59,7 +59,7 @@ export async function whenStableDetectChanges(fixture: ComponentFixture<unknown>
 
 type FlexibleLocator = string | By | (() => (WebElement[] | Promise<WebElement[]>));
 
-export async function findAndExpectCount(context: WebElement, locator: FlexibleLocator, count = 1, timeout = 2500): Promise<WebElement[]> {
+export async function findAndExpectCount(context: WebElement, locator: FlexibleLocator, count = 1, timeout = 500): Promise<WebElement[]> {
   const processedLocator
     = (typeof locator == 'string') ? By.css(locator) : locator;
 
@@ -75,7 +75,7 @@ export async function findAndExpectCount(context: WebElement, locator: FlexibleL
   );
 }
 
-export async function findAndExpectOne(context: WebElement, locator: FlexibleLocator, timeout = 2500): Promise<WebElement> {
+export async function findAndExpectOne(context: WebElement, locator: FlexibleLocator, timeout = 500): Promise<WebElement> {
   const elements = await findAndExpectCount(context, locator, 1, timeout);
   return elements[0];
 }
