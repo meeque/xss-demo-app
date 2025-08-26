@@ -5,10 +5,12 @@
 
 
 import { By, WebElement, until } from 'selenium-webdriver';
-
 import { findAndExpectOne, timeout, WindowTracker } from './test-lib';
 
 import '@angular/compiler';
+import { Injector } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { DomSanitizer } from '@angular/platform-browser';
 
 import { PayloadPresetService } from '../xss/payload-preset.service';
 import { PayloadOutputQuality, PayloadOutputService } from '../xss/payload-output.service';
@@ -140,8 +142,19 @@ class DefaultPayloadTestConfig extends DefaultTestConfig implements EnhancedPayl
 
 
 describe('Xss Demo App', () => {
-  const payloadPresetServiceStub = new PayloadPresetService(null);
-  const payloadOutputServiceStub = new PayloadOutputService(null);
+  // this integration test suite uses stubs of PayloadPresetService and PayloadPresetService to generate test cases
+  // this requires minimal Angular DI configuration (but no Angular components) to inject dependencies into the stubs
+  // the generated tests do not rely on Angular at all
+  const stubInjector = Injector.create({
+    providers: [
+      { provide: HttpClient, useValue: null },
+      { provide: DomSanitizer, useValue: null },
+      { provide: PayloadPresetService, useClass: PayloadPresetService },
+      { provide: PayloadOutputService, useClass: PayloadOutputService },
+    ],
+  });
+  const payloadPresetServiceStub = stubInjector.get(PayloadPresetService);
+  const payloadOutputServiceStub = stubInjector.get(PayloadOutputService);
 
   let windowTracker: WindowTracker;
   let app: WebElement;

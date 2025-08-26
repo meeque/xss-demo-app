@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { XssContext, XssContextCollection } from './xss-demo.common';
@@ -14,6 +14,8 @@ export interface PayloadPresetDescriptor {
 
 @Injectable()
 export class PayloadPresetService {
+  private readonly httpClient = inject(HttpClient);
+
   readonly descriptors: XssContextCollection<PayloadPresetDescriptor>[] = [
     {
       context: null,
@@ -259,9 +261,6 @@ export class PayloadPresetService {
       ],
     },
   ];
-
-  constructor(private readonly httpClient: HttpClient) {
-  }
 
   loadPresetPayload(presetUrl: string): Promise<string> {
     const { promise, resolve } = Promise.withResolvers<string>();
