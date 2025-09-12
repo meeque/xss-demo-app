@@ -37,15 +37,12 @@ declare module 'expect' {
 
 beforeAll(
   async () => {
+    const chromeBinary = process.env.XSS_DEMO_APP_TEST_CHROME_BINARY ?? '/usr/bin/chromium';
+    const chromeArgs = (process.env.XSS_DEMO_APP_TEST_CHROME_ARGS ?? '--ignore-certificate-errors').split(/\s/g);
+
     const chromeOptions = new ChromeOptions();
-
-    chromeOptions.setChromeBinaryPath('/usr/bin/chromium');
-    chromeOptions.addArguments('--no-sandbox');
-    chromeOptions.addArguments('--ignore-certificate-errors');
-
-    if (process.env.XSS_DEMO_APP_TEST_HEADLESS) {
-      chromeOptions.addArguments('--headless');
-    }
+    chromeOptions.setChromeBinaryPath(chromeBinary);
+    chromeOptions.addArguments(...chromeArgs);
 
     const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
     await driver.manage().setTimeouts({ implicit: 250 });
