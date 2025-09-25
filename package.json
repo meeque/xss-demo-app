@@ -37,9 +37,10 @@
     "@types/jquery": "^3.5.0",
     "@types/selenium-webdriver": "^4.1.28",
     "angular-eslint": "^20.1.1",
-    "chromedriver": "^138.0.4",
+    "chromedriver": "^140.0.4",
     "jest": "^30.0.5",
     "jest-preset-angular": "^15.0.0",
+    "jest-environment-jsdom": "^29.7.0",
     "selenium-webdriver": "^4.34.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.2"
