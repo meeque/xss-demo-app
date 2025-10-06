@@ -130,7 +130,35 @@ The following Chrome CLI arguments may be useful in conjunction with `XSS_DEMO_A
   | `--headless`                  | Use this, when running the tests on a host that does not have a UI (e.g. when running in a CI/CD environment).                                  |
   | `--no-sandbox`                | Use this, when running the tests in a sandboxed environment that is incompatible with Chrome's own sandboxing (e.g. a Docker or lxc container). |
 
-TODO Deactivate popup blockers for integration tests!
+Here's an example that runs integration tests with some of the above configuration options:
+
+```
+XSS_DEMO_APP_URL='https://xss.dev.meeque.local:4200/' XSS_DEMO_APP_TEST_CHROME_BINARY='/usr/bin/chrome' XSS_DEMO_APP_TEST_CHROME_ARGS='--ignore-certificate-errors --headless --no-sandbox' npm run test:integration --ignore-certificate-errors
+```
+
+
+#### Notes on "XSS Demo App" Integration Test Suite
+
+The ["Xss Demo App" integration test suite](src/test/xss-demo.integration.spec.ts) tests key functionality of the XSS Demo App.
+In particular, it tries numerous combinations of attack payloads and payload outputs and asserts that these DO or DO NOT trigger successfull XSS as expected.
+These tests are data-driven and the test suite maintains a huge table of combinations that should trigger XSS.
+All other combinationis are expected not to trigger XSS.
+
+Some of these tests may create a new browser tab or window.
+This might be prevented by the browser's built-in pop-up blocker, which will make some of these tests fail.
+It is highly recommended to disable pop-up blocking for the domain that the XSS Demo App is running on.
+(It appears that pop-up blocking does not interfere, when running the browser in headless mode.)
+
+#### Notes on Mock Pages Test Suites
+
+The Mock Pages that come with this XSS Demo App have their own integration test suites each.
+These tests focus on the UI of the individual Mock Pages, not on their interactions with the XSS Demo App itself.
+However the latter is covered by parts of the "Xss Demo App" integration test suite.
+
+Notably, the integration test suite for the "Cookies Mock" tests how domain-specific cookies are handled.
+These tests also involve cookies that are set for parent domains of the domain where the XSS Demo App is hosted.
+E.g. when running on `xss.example.net`, the tests would test cookies on both `xss.example.net` and `example.net`.
+There will be no test for top-level domains such as `net`, because the browser would block these.
 
 
 
