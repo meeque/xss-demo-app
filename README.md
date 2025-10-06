@@ -4,11 +4,17 @@ The XSS Demo App is an interactive web application that allows testing of DOM-ba
 Luckily, most XSS vulnerabilities that can be exploited on the server-side have analogous vulnerabilities in the live HTML DOM.
 
 THe XSS Demo App is written on top of the Angular framework.
-While it does show certain XSS vulnerabilities that are specific to Angular, it also features XSS vulnerabilities that target pure HTML DOM facilities.
+While it does demopnstrate XSS vulnerabilities that are specific to Angular, it also features XSS vulnerabilities that are based on HTML, the DOM, and jQuery.
 
 
 
-## Try It
+## Usage Instructions
+
+For basic usage of the XSS Demo App, see the intro text in its web UI.
+
+
+
+### Try It Live
 
 A live version of this XSS Demo App is hosted here:
 
@@ -17,47 +23,126 @@ A live version of this XSS Demo App is hosted here:
 
 These two domains host the same instance of the XSS Demo App, which can be useful for testing XSS impact accross different [origins](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy).
 
-The live XSS Ddmo App is provided on a **best-effort basis**, so occasional outages are expected.
+The live-hosted XSS Demo App is provided on a **best-effort basis**, so occasional outages are expected.
 Basic monitoring is in place though and problems will get fixed eventually.
 
 
 
-## Build It
+### Build It
 
-You will need `node.js`, `npm,` `ng` (the Angular CLI tool) to build the XSS Demo App. Run the following commands in this directory:
+You will need `node.js`, `npm,` `ng` (the Angular CLI tool) to build the XSS Demo App.
+Run the following commands in this directory:
 
-    npm install
-    ng build
+```
+npm install
+ng build
+```
 
+After the build, the XSS Demo App will be available in the `dist/` directory.
 
-
-## Run It
-
-After the build, the XSS Demo App will be available in the `dist/` directory. It can be deployed on any web-server that can host static files.
-
-However, in a local setup, it is more convenient to use the `ng` tool to run it. Simply run the following command:
-
-    ng serve
-
-This will bring up a node.js web server that will serve the XSS Demo App at:
-http://localhost:4200/
-
-By default, `ng serve` binds to host address 128.0.0.1, i.e. the local loopback interface. If you want to share access to the XSS Demo App, or access it accross local VMs, you will need to loosen this restriction. Use the `--host` aregument to bind to a different host address. The following will bind to all interfaces:
-
-    ng serve --host 0.0.0.0
-
-TODO Exlain dev certificates
-TODO Explain implications of binding to all interfaces
+Note that the XSS Demo App contains an npm `postinstall` script ([tls/cert.sh](tls/cert.sh)) that will create self-signed certificates for testing purposes.
+This requires an environment that is capable to execute unix shell scripts, in particular `bash`.
+It also requires the `openssl` binary to be available on the `PATH`.
 
 
 
-## Test It
+### Run It
+
+The XSS Demo App can be deployed on any web-server that can host static files.
+Just run the build and copy the contents of the `dist/` directory into your servers web root directory.
+
+In a local development setup, it is more convenient to use the `ng` tool to run the XSS Demo App.
+Simply run this Angular command:
+
+```
+ng serve
+```
+
+This brings up a node.js web server that makea the XSS Demo App available at:
+
+[https://localhost:4200/](https://localhost:4200/)
+
+Alternatively, you can point your browser to any a different host name or IP-address that refers to your host.
+
+By default, `ng serve` binds to all host addresses.
+If you want to ristrict access to a pecific network, you can use the `--host` option to bind to a specific host address.
+E.g., to restrict access to localhost, run this Angular command:
+
+```
+ng serve --host 127.0.0.1
+```
+
+The above `ng serve` commands depend on the TLS certificates that the `postinstall` script generates, see the *Build It* section.
+These certificates are self signed, so your browser should warn you that they should not be trusted.
+You can add a temporary exception to trust these certificates.
+This is secure in most scenarios, in particular for local access.
+See the *Security Considerations* section below for details.
+
+
+
+### Test It
+
+The XSS Demo App project comes with both unit tests and integration tests, which can be run separately.
+Neither of these are available through the `ng` command, you'll have to run them through the `npm` command instead.
+
+#### Unit Tests
+
+These are simple unit tests that can be run in nodejs.
+This includes unit tests for Angular UI components that run in Angular's `TestBed` and do not require a web browser.
+
+The unit tests do not require any additional configuration.
+You can run them with this `npm` command:
+
+```
+npm test
+```
+
+
+
+#### Integration Tests
+
+These test the XSS Demo App in a real web browser (currenly only Chrome or Chromium are supported).
+The integration tests use Selenium Web-Driver to interact with the browser and the XSS Demo App.
+You can run them with this `npm` command:
+
+```
+npm run test:integration
+```
+
+Note that this command does not build, start, or stop the XSS Demo App itself.
+Before running the integration tests, you'll have to build and start the XSS Demo App yourself (e.g. in the background or in a different terminal).
+
+Running the integration tests may work as-is in common development setups, but may require additional configuraiton in other setups.
+You can use environment variables to configure the integration tests.
+These are the supported variables:
+
+  | Variable Name                     | Default Value                 | Description                                                |
+  |-----------------------------------|-------------------------------|------------------------------------------------------------|
+  | `XSS_DEMO_APP_URL`                | `https://localhost:4200/`     | Base-URL of the XSS Demo App to test in the browser.       |
+  | `XSS_DEMO_APP_TEST_CHROME_BINARY` | `/usr/bin/chromium`           | Name or path of the Chrome binary to use.                  |
+  | `XSS_DEMO_APP_TEST_CHROME_ARGS`   | `--ignore-certificate-errors` | CLI arguments (seperated by whitespace) to pass to Chrome. |
+
+The following Chrome CLI arguments may be useful in conjunction with `XSS_DEMO_APP_TEST_CHROME_ARGS`:
+
+  | Argument                      | Recommended Usage                                                                                                                               |
+  |-------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+  | `--ignore-certificate-errors` | Use this, when running the XSS Demo App with a self-signed TLS certificate (which is the default when running it with `ng serve`).              |
+  | `--headless`                  | Use this, when running the tests on a host that does not have a UI (e.g. when running in a CI/CD environment).                                  |
+  | `--no-sandbox`                | Use this, when running the tests in a sandboxed environment that is incompatible with Chrome's own sandboxing (e.g. a Docker or lxc container). |
 
 TODO Deactivate popup blockers for integration tests!
 
 
 
-## Security Considerations
+### Containerize It
+
+TODO
+
+
+
+## Additional Info
+
+### Security Considerations
 
 The XSS Demo App has intentional XSS vulnerabilities that can be exploited.
 By design, it will only allow to exploit XSS through payloads that are entered into its web UI interactively.
@@ -86,7 +171,7 @@ Apart from vulnerabiities of the underlying components (node.js, Angular, nginx,
 
 
 
-## Bugs
+### Bugs
 
 The UI of the XSS Demo App has the following known bugs:
 
