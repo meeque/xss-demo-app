@@ -217,7 +217,7 @@ docker build --tag meeque/xss-demo-app:latest .
 
 #### Run in Docker Container
 
-The following assumes that you have built the XSS Demo App Docker image and tagged it 'meeque/xss-demo-app' (or, you have pulled this image tag from Docker Hub).
+The following assumes that you have built the XSS Demo App Docker image and tagged it `meeque/xss-demo-app` (or, you have pulled this image tag from Docker Hub).
 
 Based on the Docker image, you can run a Docker container that serves the XSS Demo App.
 For example, run the following command to create a container that serves the XSS Demo App through plain http on port 8080:
