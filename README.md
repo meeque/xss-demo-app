@@ -192,7 +192,68 @@ There will be no test for top-level domains such as `net`, because the browser w
 
 ### Containerize It
 
-TODO
+The XSS Demo App comes with a [Dockerfile](Dockerfile), which makes it easy to run it in a Docker container.
+
+A pre-built XSS Demo App Docker image is available in the [meeque/xss-demo-app](https://hub.docker.com/r/meeque/xss-demo-app) repository on Docker Hub.
+This Docker image is maintained on a **best-effort basis**, so it may be lagging behind the latest verson of the codebase.
+
+
+
+#### Build the Docker Image
+
+You can easily build an XSS Demo App Docker image yourself by running a few simple commands.
+Not that you'll first have to build the XSS Demo App itself, before you can build the Docker image.
+The Dockerfile expects that a fully build XSS Demo App is already available in the `dist` directory.
+
+With this in mind, run the following commands to build the Docker image:
+
+```
+npm install
+ng build
+docker build --tag meeque/xss-demo-app:latest .
+```
+
+
+
+#### Run in Docker Container
+
+The following assumes that you have built the XSS Demo App Docker image and tagged it 'meeque/xss-demo-app' (or, you have pulled this image tag from Docker Hub).
+
+Based on the Docker image, you can run a Docker container that serves the XSS Demo App.
+For example, run the following command to create a container that serves the XSS Demo App through plain http on port 8080:
+
+```
+docker run --detach --publish 8080:8080 --name xss-demo-app meeque/xss-demo-app
+```
+
+As said, the above serves the XSS Demo App through plain http.
+If you want to use TLS instead (that is, serve the XSS Demo App through https) you'll need to add a certificate and matching private key into the container.
+Make these files available at the following paths inside the container:
+
+```
+/etc/nginx/xss-demo-app/tls/xss-demo-app.cert.pem
+/etc/nginx/xss-demo-app/tls/xss-demo-app.key.pem
+```
+
+For local usage, you can reuse the same self-signed certificate and key that `npm install` generates when you build the XSS Demo App.
+Just copy these from the `tls` sub-directory on the host to the `/etc/nginx/xss-demo-app/tls` directory inside the container.
+Then, restart the container, so that the entrypoint script in the XSS Demo App Docker image can pick them up.
+
+Alternatively, you can use a bind mount to expose certificate and key from the host to the comtainer.
+Note that you may need to adjust the filesystem permissions of these files, so that the `nginx` user inside the container can read the files during startup.
+With correct filesystem permissions in place, run a command like the following to create a container that serves the XSS Demo App through https on port 8443:
+
+```
+docker run --detach --publish 8443:8443 --mount type=bind,readonly,source=/path/to/xss-demo-app/tls,target=/etc/nginx/xss-demo-app/tls --name xss-demo-app meeque/xss-demo-app
+```
+
+If all worked well, this Docker container will serve the XSS Demo App over TLS on port 8433.
+If there was a problem with the certificate or key file, the Docker container will simply fall back to plain http on port 8080.
+In this case, have a look at the logs of the Docker container to investigate further.
+
+Currentltly, the XSS Demo App Docker image does not support serving over both http and https at the same time.
+If TLS certificate and key are set up properly, it will serve through https only.
+Otherwise, it will fall back to plain http only.
 
 
 
