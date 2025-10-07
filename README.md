@@ -53,7 +53,7 @@ Just run the build and copy the contents of the `dist/` directory into your serv
 
 
 
-### Angular Serve with TLS
+#### Angular Serve with TLS
 
 In a local development setup, it is more convenient to use the `ng` tool to run the XSS Demo App.
 Simply run this Angular command:
@@ -85,7 +85,7 @@ See the *Security Considerations* section below for details.
 
 
 
-### Angular Serve without TLS
+#### Angular Serve without TLS
 
 The XSS Demo App is best served over TLS, because some of its functionality does not work well without TLS.
 In particular, the XSS Demo App makes use of the [CookieStore](https://developer.mozilla.org/en-US/docs/Web/API/CookieStore) API, which is only available to documents that are served securely.
