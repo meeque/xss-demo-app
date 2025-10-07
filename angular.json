@@ -69,8 +69,8 @@
           "options": {
             "host": "0.0.0.0",
             "ssl": true,
-            "sslCert": "tls/xss-dev.cert.pem",
-            "sslKey": "tls/private/xss-dev.key.pem"
+            "sslCert": "tls/xss-demo-app.cert.pem",
+            "sslKey": "tls/xss-demo-app.key.pem"
           },
           "configurations": {
             "production": {
