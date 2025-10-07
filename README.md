@@ -51,6 +51,10 @@ It also requires the `openssl` binary to be available on the `PATH`.
 The XSS Demo App can be deployed on any web-server that can host static files.
 Just run the build and copy the contents of the `dist/` directory into your servers web root directory.
 
+
+
+### Angular Serve with TLS
+
 In a local development setup, it is more convenient to use the `ng` tool to run the XSS Demo App.
 Simply run this Angular command:
 
@@ -72,11 +76,30 @@ E.g., to restrict access to localhost, run this Angular command:
 ng serve --host 127.0.0.1
 ```
 
-The above `ng serve` commands depend on the TLS certificates that the `postinstall` script generates, see the *Build It* section.
-These certificates are self signed, so your browser should warn you that they should not be trusted.
-You can add a temporary exception to trust these certificates.
+The above `ng serve` commands depend on the TLS certificate that the `postinstall` script generates, see the *Build It* section.
+These certificate is self signed, so your browser will warn you that it should not be trusted.
+You can add a temporary exception to trust this certificate for this host.
 This is secure in most scenarios, in particular for local access.
+For non-local access, you can check certificate fingerprints, see outputs of `npm install`.
 See the *Security Considerations* section below for details.
+
+
+
+### Angular Serve without TLS
+
+The XSS Demo App is best served over TLS, because some of its functionality does not work well without TLS.
+In particular, the XSS Demo App makes use of the [CookieStore](https://developer.mozilla.org/en-US/docs/Web/API/CookieStore) API, which is only available to documents that are served securely.
+
+That said, most other XSS Demo App functionality works just fine without TLS.
+And, in a local access scenario this is reasonably secure.
+To run the XSS Demo App without TLS, use this Angular command:
+
+```
+ng serve --ssl=false
+```
+
+Be aware that some automated integration tests will fail, when you run them against an XSS Demo App that is served without TLS.
+
 
 
 
@@ -84,6 +107,8 @@ See the *Security Considerations* section below for details.
 
 The XSS Demo App project comes with both unit tests and integration tests, which can be run separately.
 Neither of these are available through the `ng` command, you'll have to run them through the `npm` command instead.
+
+
 
 #### Unit Tests
 
@@ -133,8 +158,9 @@ The following Chrome CLI arguments may be useful in conjunction with `XSS_DEMO_A
 Here's an example that runs integration tests with some of the above configuration options:
 
 ```
-XSS_DEMO_APP_URL='https://xss.dev.meeque.local:4200/' XSS_DEMO_APP_TEST_CHROME_BINARY='/usr/bin/chrome' XSS_DEMO_APP_TEST_CHROME_ARGS='--ignore-certificate-errors --headless --no-sandbox' npm run test:integration --ignore-certificate-errors
+XSS_DEMO_APP_URL='https://xss.dev.meeque.local:4200/' XSS_DEMO_APP_TEST_CHROME_BINARY='/usr/bin/chrome' XSS_DEMO_APP_TEST_CHROME_ARGS='--ignore-certificate-errors --headless --no-sandbox' npm run test:integration
 ```
+
 
 
 #### Notes on "XSS Demo App" Integration Test Suite
@@ -148,6 +174,8 @@ Some of these tests may create a new browser tab or window.
 This might be prevented by the browser's built-in pop-up blocker, which will make some of these tests fail.
 It is highly recommended to disable pop-up blocking for the domain that the XSS Demo App is running on.
 (It appears that pop-up blocking does not interfere, when running the browser in headless mode.)
+
+
 
 #### Notes on Mock Pages Test Suites
 
