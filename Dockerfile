@@ -1,5 +1,5 @@
 ### this tag refers to nginx 1.*
-FROM nginx@sha256:fb01117203ff38c2f9af91db1a7409459182a37c87cced5cb442d1d8fcc66d19
+FROM nginx@sha256:341bf0f3ce6c5277d6002cf6e1fb0319fa4252add24ab6a0e262e0056d313208
 
 ### Copy entrypoint scripts ###
 COPY   --chown=root:root --chmod=755   docker/docker-entrypoint.d/   /docker-entrypoint.d/
