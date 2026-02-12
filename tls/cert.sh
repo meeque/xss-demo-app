@@ -7,7 +7,7 @@ cd "${xss_demo_tls_dir}"
 
 if [[ -f 'xss-demo-app.csr.pem' && -f 'xss-demo-app.cert.pem' && -f 'xss-demo-app.key.pem'  ]]
 then
-    echo 'XSS Demo App App: Private key and certificate for development and testing purposes already exist.'
+    echo 'XSS Demo App: Private key and certificate for development and testing purposes already exist.'
     echo 'XSS Demo App: Skipping generation of new key pair and certificate.'
     echo 'XSS Demo App: In order to regenerate, delete all "*.pem" files in the "'"${xss_demo_tls_dir}"'" dir and run this script again!'
 else
