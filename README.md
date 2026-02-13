@@ -127,7 +127,7 @@ npm test
 #### Integration Tests
 
 These test the XSS Demo App in a real web browser (currenly only Chrome or Chromium are supported).
-The integration tests use Selenium Web-Driver to interact with the browser and the XSS Demo App.
+The integration tests use Selenium Web-Driver and ChromeDriver to interact with the browser and the XSS Demo App.
 You can run them with this `npm` command:
 
 ```
@@ -141,11 +141,12 @@ Running the integration tests may work as-is in common development setups, but m
 You can use environment variables to configure the integration tests.
 These are the supported variables:
 
-  | Variable Name                     | Default Value                 | Description                                                |
-  |-----------------------------------|-------------------------------|------------------------------------------------------------|
-  | `XSS_DEMO_APP_URL`                | `https://localhost:4200/`     | Base-URL of the XSS Demo App to test in the browser.       |
-  | `XSS_DEMO_APP_TEST_CHROME_BINARY` | `/usr/bin/chromium`           | Name or path of the Chrome binary to use.                  |
-  | `XSS_DEMO_APP_TEST_CHROME_ARGS`   | `--ignore-certificate-errors` | CLI arguments (seperated by whitespace) to pass to Chrome. |
+  | Variable Name                            | Default Value                 | Description                                                |
+  |------------------------------------------|-------------------------------|------------------------------------------------------------|
+  | `XSS_DEMO_APP_URL`                       | `https://localhost:4200/`     | Base-URL of the XSS Demo App to test in the browser.       |
+  | `XSS_DEMO_APP_TEST_CHROME_DRIVER_BINARY` | *auto detect, see below*      | Name or path of the ChromeDriver binary to use.            |
+  | `XSS_DEMO_APP_TEST_CHROME_BINARY`        | `/usr/bin/chromium`           | Name or path of the Chrome binary to use.                  |
+  | `XSS_DEMO_APP_TEST_CHROME_ARGS`          | `--ignore-certificate-errors` | CLI arguments (seperated by whitespace) to pass to Chrome. |
 
 The following Chrome CLI arguments may be useful in conjunction with `XSS_DEMO_APP_TEST_CHROME_ARGS`:
 
@@ -155,11 +156,21 @@ The following Chrome CLI arguments may be useful in conjunction with `XSS_DEMO_A
   | `--headless`                  | Use this, when running the tests on a host that does not have a UI (e.g. when running in a CI/CD environment).                                  |
   | `--no-sandbox`                | Use this, when running the tests in a sandboxed environment that is incompatible with Chrome's own sandboxing (e.g. a Docker or lxc container). |
 
-Here's an example that runs integration tests with some of the above configuration options:
+Here's an example that runs XSS Demo App integration tests with some of the above configuration options:
 
 ```
-XSS_DEMO_APP_URL='https://xss.dev.meeque.local:4200/' XSS_DEMO_APP_TEST_CHROME_BINARY='/usr/bin/chrome' XSS_DEMO_APP_TEST_CHROME_ARGS='--ignore-certificate-errors --headless --no-sandbox' npm run test:integration
+XSS_DEMO_APP_URL='https://xss.dev.meeque.local:4200/' XSS_DEMO_APP_TEST_CHROME_DRIVER_BINARY='/usr/bin/chromedriver' XSS_DEMO_APP_TEST_CHROME_BINARY='/usr/bin/chrome' XSS_DEMO_APP_TEST_CHROME_ARGS='--ignore-certificate-errors --headless --no-sandbox' npm run test:integration
 ```
+
+The XSS Demo App pulls in ChromeDriver through its npm `devDepencies`.
+If you do not set `XSS_DEMO_APP_TEST_CHROME_DRIVER_BINARY`, Selenium Web-Driver will auto-detect this ChromeDriver binary.
+However, the XSS Demo App does **not** pull in the browser itself.
+You will have to install Chrome or Chromium yourself.
+
+Also note, that the ChromeDriver is very picky about the Chrome version that it supports.
+The two will only play nice together, if they are at matching major versions.
+If the auto-detected ChromeDriver binary does not work with your browser version, you will have to install the correct ChromeDriver version yourself.
+Then, point the `XSS_DEMO_APP_TEST_CHROME_DRIVER_BINARY` environment variable to this ChromeDriver binary when running XSS Demo App integration tests.
 
 
 

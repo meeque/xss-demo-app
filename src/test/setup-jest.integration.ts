@@ -1,7 +1,7 @@
 import { expect } from '@jest/globals';
 import type { ExpectationResult } from 'expect';
 import { Builder, Browser } from 'selenium-webdriver';
-import { Options as ChromeOptions } from 'selenium-webdriver/chrome';
+import { Options as ChromeOptions, ServiceBuilder as ChromeServiceBuilder } from 'selenium-webdriver/chrome';
 
 
 
@@ -37,14 +37,21 @@ declare module 'expect' {
 
 beforeAll(
   async () => {
+    const chromeDriverBinary = process.env.XSS_DEMO_APP_TEST_CHROME_DRIVER_BINARY;
     const chromeBinary = process.env.XSS_DEMO_APP_TEST_CHROME_BINARY ?? '/usr/bin/chromium';
     const chromeArgs = (process.env.XSS_DEMO_APP_TEST_CHROME_ARGS ?? '--ignore-certificate-errors').split(/\s/g);
+
+    const chromeService = new ChromeServiceBuilder(chromeDriverBinary);
 
     const chromeOptions = new ChromeOptions();
     chromeOptions.setChromeBinaryPath(chromeBinary);
     chromeOptions.addArguments(...chromeArgs);
 
-    const driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(chromeOptions).build();
+    const driver = await new Builder()
+      .forBrowser(Browser.CHROME)
+      .setChromeService(chromeService)
+      .setChromeOptions(chromeOptions)
+      .build();
     await driver.manage().setTimeouts({ implicit: 250 });
     globalThis.driver = driver;
   },
