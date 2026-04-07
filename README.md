@@ -91,11 +91,11 @@ The XSS Demo App is best served over TLS, because some of its functionality does
 In particular, the XSS Demo App makes use of the [CookieStore](https://developer.mozilla.org/en-US/docs/Web/API/CookieStore) API, which is only available to documents that are served securely.
 
 That said, most other XSS Demo App functionality works just fine without TLS.
-And, in a local access scenario this is reasonably secure.
-To run the XSS Demo App without TLS, use this Angular command:
+And, in a local access scenario this is perfectly secure.
+To run the XSS Demo App without TLS, while restricting access to localhost, use this Angular command:
 
 ```
-ng serve --ssl=false
+ng serve --ssl=false --host 127.0.0.1
 ```
 
 Be aware that some automated integration tests will fail, when you run them against an XSS Demo App that is served without TLS.
@@ -159,7 +159,7 @@ The following Chrome CLI arguments may be useful in conjunction with `XSS_DEMO_A
 Here's an example that runs XSS Demo App integration tests with some of the above configuration options:
 
 ```
-XSS_DEMO_APP_URL='https://xss.dev.meeque.local:4200/' XSS_DEMO_APP_TEST_CHROME_DRIVER_BINARY='/usr/bin/chromedriver' XSS_DEMO_APP_TEST_CHROME_BINARY='/usr/bin/chrome' XSS_DEMO_APP_TEST_CHROME_ARGS='--ignore-certificate-errors --headless --no-sandbox' npm run test:integration
+XSS_DEMO_APP_URL='https://xss.dev.meeque.local:4200/' XSS_DEMO_APP_TEST_CHROME_DRIVER_BINARY='/usr/bin/chromedriver' XSS_DEMO_APP_TEST_CHROME_BINARY='/usr/bin/chromium' XSS_DEMO_APP_TEST_CHROME_ARGS='--ignore-certificate-errors --headless --no-sandbox' npm run test:integration
 ```
 
 The XSS Demo App pulls in ChromeDriver through its npm `devDepencies`.
