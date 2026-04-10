@@ -45,7 +45,7 @@ export class PayloadProcessors {
   }
 
   htmlChallengeStripTags(payload) {
-    return payload.replaceAll(/<[/]?[-_.:0-9a-zA-Z]+(\s[^<>]*)?[/]?>/g, '');
+    return payload.replaceAll(/<[-_.:/0-9a-zA-Z]+([\s/][^>]*)?>/g, '');
   }
 
   urlValidate(payload) {
