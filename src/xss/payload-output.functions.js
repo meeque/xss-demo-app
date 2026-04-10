@@ -48,6 +48,10 @@ export class PayloadProcessors {
     return payload.replaceAll(/<[-_.:/0-9a-zA-Z]+([\s/][^>]*)?>/g, '');
   }
 
+  htmlChallengeOutOfSpace(payload) {
+    return payload.replaceAll(/\s/g, '');
+  }
+
   urlValidate(payload) {
     let url;
     try {

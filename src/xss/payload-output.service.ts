@@ -634,6 +634,14 @@ export class PayloadOutputService {
             payloadProcessor: this.payloadProcessors.jsChallengeTheGreatEscape,
             domInjector: this.domInjectors.scriptBlock,
           },
+          {
+            id: 'OutOfSpace',
+            quality: PayloadOutputQuality.Insecure,
+            name: 'Out of Space',
+            title: 'Out of Space Challenge',
+            payloadProcessor: this.payloadProcessors.htmlChallengeOutOfSpace,
+            htmlSourceProvider: this.htmlSourceProviders.content,
+          },
         ],
       },
     ];
