@@ -1,8 +1,9 @@
-const globals = require('globals');
+const defineConfig = require('eslint/config').defineConfig;
 const eslint = require('@eslint/js');
 const tseslint = require('typescript-eslint');
 const angulareslint = require('angular-eslint');
 const stylistic = require('@stylistic/eslint-plugin');
+const globals = require('globals');
 
 
 
@@ -37,7 +38,7 @@ const xssDemoAppEslintConfigs = {
 
 
 
-module.exports = tseslint.config(
+module.exports = defineConfig(
   {
     files: ['*.js'],
     extends: [
