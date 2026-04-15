@@ -12,6 +12,7 @@
 /dist
 /tmp
 /out-tsc
+/result
 
 # tls config
 /tls/**/*.pem
