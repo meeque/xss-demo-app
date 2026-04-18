@@ -12,14 +12,16 @@
 
 let
 
+  fs = lib.fileset;
+
   containerConfigFiles =
-    lib.fileset.toSource {
+    fs.toSource {
       root = ./docker;
       fileset = ./docker/etc;
     };
 
   nginxConfigFiles =
-    lib.fileset.toSource {
+    fs.toSource {
       root = ../docker;
       fileset = ../docker/etc/nginx;
     };
@@ -79,11 +81,11 @@ in
     '';
 
     config = {
+      User = "101:101";
       Entrypoint = [ "${entrypointScript}" ];
       ExposedPorts = {
         "8080/tcp" = {};
         "8443/tcp" = {};
       };
-      User = "101:101";
     };
   }
