@@ -2,11 +2,10 @@
   lib,
   dockerTools,
   runCommand,
-  writeShellScript,
+  writeTextFile,
 
   nginx,
-  bash,
-  coreutils,
+  busybox,
   xssDemoApp,
 }:
 
@@ -36,20 +35,24 @@ let
       '';
 
   xssDemoAppWrapperScript =
-    writeShellScript
-      "100-xss-demo-app.sh"
-      (
-        builtins.readFile ../docker/docker-entrypoint.d/100-xss-demo-app.sh
-      );
+    writeTextFile {
+      name = "100-xss-demo-app.sh";
+      executable = true;
+      text = builtins.readFile ../docker/docker-entrypoint.d/100-xss-demo-app.sh;
+    };
 
   entrypointScript =
-    writeShellScript
-      "docker-entrypoint.sh"
-      ''
+    writeTextFile {
+      name = "docker-entrypoint.sh";
+      executable = true;
+      text = ''
+        #!/bin/sh
+
         ${xssDemoAppWrapperScript}
 
         exec nginx -c /etc/nginx/nginx.conf
       '';
+    };
 
 in
 
@@ -59,8 +62,7 @@ in
 
     copyToRoot = [
       nginx
-      bash
-      coreutils
+      busybox
 
       containerConfigFiles
       nginxConfigFiles
