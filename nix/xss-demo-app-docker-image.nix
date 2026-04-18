@@ -77,10 +77,8 @@ in
       # make runtime dirs (cache, logs) world-writable
       chmod 777 var
       mkdir -p var/run var/cache/nginx var/log/nginx tmp
-      touch var/run/nginx.pid
       chmod 777 var/run var/cache/nginx var/log/nginx
       chmod 1777 tmp
-      chmod 666 var/run/nginx.pid
     '';
 
     config = {
