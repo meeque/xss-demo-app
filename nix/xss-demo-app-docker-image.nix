@@ -13,10 +13,10 @@ let
 
   fs = lib.fileset;
 
-  containerConfigFiles =
-    fs.toSource {
-      root = ./docker;
-      fileset = ./docker/etc;
+  customFakeNss =
+    dockerTools.fakeNss.override {
+      extraPasswdLines = ["nginx:x:101:101:nginx user:/var/empty:/bin/false"];
+      extraGroupLines = ["nginx:x:101:"];
     };
 
   nginxConfigFiles =
@@ -47,7 +47,7 @@ let
       executable = true;
       name = "docker-entrypoint.sh";
       destination = "/docker-entrypoint.sh";
-      text = builtins.readFile ./docker/docker-entrypoint.sh;
+      text = builtins.readFile ./docker-entrypoint.sh;
     };
 
 in
@@ -57,14 +57,16 @@ in
     tag = "nix-latest";
 
     copyToRoot = [
+      # dependencies
       nginx
       busybox
 
-      containerConfigFiles
+      # custom files
+      customFakeNss
       nginxConfigFiles
-      webRootFiles
       xssDemoAppWrapperScript
       entrypointScript
+      webRootFiles
     ];
 
     extraCommands = ''
@@ -73,7 +75,8 @@ in
       chmod 777 etc/nginx/xss-demo-app
 
       # make runtime dirs (cache, logs) world-writable
-      mkdir -p var/run var/cache/nginx var/log/nginx var/empty tmp
+      chmod 777 var
+      mkdir -p var/run var/cache/nginx var/log/nginx tmp
       touch var/run/nginx.pid
       chmod 777 var/run var/cache/nginx var/log/nginx
       chmod 1777 tmp
