@@ -36,22 +36,18 @@ let
 
   xssDemoAppWrapperScript =
     writeTextFile {
-      name = "100-xss-demo-app.sh";
       executable = true;
+      name = "100-xss-demo-app.sh";
+      destination = "/docker-entrypoint.d/100-xss-demo-app.sh";
       text = builtins.readFile ../docker/docker-entrypoint.d/100-xss-demo-app.sh;
     };
 
   entrypointScript =
     writeTextFile {
-      name = "docker-entrypoint.sh";
       executable = true;
-      text = ''
-        #!/bin/sh
-
-        ${xssDemoAppWrapperScript}
-
-        exec nginx -c /etc/nginx/nginx.conf
-      '';
+      name = "docker-entrypoint.sh";
+      destination = "/docker-entrypoint.sh";
+      text = builtins.readFile ./docker/docker-entrypoint.sh;
     };
 
 in
@@ -67,6 +63,8 @@ in
       containerConfigFiles
       nginxConfigFiles
       webRootFiles
+      xssDemoAppWrapperScript
+      entrypointScript
     ];
 
     extraCommands = ''
@@ -84,7 +82,7 @@ in
 
     config = {
       User = "101:101";
-      Entrypoint = [ "${entrypointScript}" ];
+      Entrypoint = [ "/docker-entrypoint.sh" ];
       ExposedPorts = {
         "8080/tcp" = {};
         "8443/tcp" = {};
