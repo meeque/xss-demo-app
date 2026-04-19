@@ -250,7 +250,7 @@ This creates a much smaller image, because it does not contain a package manager
 (In contrast, building the image from the Dockerfile relies on a Debian base image which contains the apt package manager.)
 
 Another benefit is, that you won't need to build the XSS Demo App manually, before building the Docker image with Nix.
-Nix will simply build the XSS Demo App when needed, or reuse a previous build from the Nix store.
+Nix will build the XSS Demo App when needed, or reuse a previous build from the Nix store.
 To build the Docker image with nix, simply run the following command in this directory:
 
 ```
