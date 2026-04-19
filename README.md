@@ -30,7 +30,7 @@ Basic monitoring is in place though and problems will get fixed eventually.
 
 ### Build It
 
-You will need `node.js`, `npm,` `ng` (the Angular CLI tool) to build the XSS Demo App.
+You will need [`node`](https://nodejs.org/), [`npm`](https://npmjs.com/), and [`ng`](https://angular.dev/tools/cli) (the [Angular](https://angular.dev/) CLI tool) to build the XSS Demo App yourself.
 Run the following commands in this directory:
 
 ```
@@ -43,6 +43,24 @@ After the build, the XSS Demo App will be available in the `dist/` directory.
 Note that the XSS Demo App contains an npm `postinstall` script ([tls/cert.sh](tls/cert.sh)) that will create self-signed certificates for testing purposes.
 This requires an environment that is capable to execute unix shell scripts, in particular `bash`.
 It also requires the `openssl` binary to be available on the `PATH`.
+
+
+
+#### Build it with Nix (experimental)
+
+Alternatively, you can use [Nix](https://nixos.org/nix/) to build the XSS Demo App.
+Just run the following command in this directory:
+
+```
+nix-build --attr xssDemoApp
+```
+
+Nix should take care of fetching all pre-requisites and building the XSS Demo App in an isolated environment.
+Under the hood, this still makes use of the `npm` and `ng`, just as described above.
+It will create the same build-outputs in this directory, but it will also create a Nix package in your local nix store.
+
+Ideally, this Nix build should be reproducible, and always yield the same results file for file and byte for byte.
+However, this behavior is still experimental and fully reproducable builds are not guaranteed.
 
 
 
@@ -99,7 +117,6 @@ ng serve --ssl=false --host 127.0.0.1
 ```
 
 Be aware that some automated integration tests will fail, when you run them against an XSS Demo App that is served without TLS.
-
 
 
 
@@ -203,7 +220,7 @@ There will be no test for top-level domains such as `net`, because the browser w
 
 ### Containerize It
 
-The XSS Demo App comes with a [Dockerfile](Dockerfile), which makes it easy to run it in a Docker container.
+The XSS Demo App comes with a [Dockerfile](Dockerfile), which makes it easy to run it in a [Docker](https://docker.com/) container.
 
 A pre-built XSS Demo App Docker image is available in the [meeque/xss-demo-app](https://hub.docker.com/r/meeque/xss-demo-app) repository on Docker Hub.
 This Docker image is maintained on a **best-effort basis**, so it may be lagging behind the latest verson of the codebase.
@@ -213,7 +230,7 @@ This Docker image is maintained on a **best-effort basis**, so it may be lagging
 #### Build the Docker Image
 
 You can easily build an XSS Demo App Docker image yourself by running a few simple commands.
-Not that you'll first have to build the XSS Demo App itself, before you can build the Docker image.
+Note that you'll first have to build the XSS Demo App itself, before you can build the Docker image.
 The Dockerfile expects that a fully build XSS Demo App is already available in the `dist` directory.
 
 With this in mind, run the following commands to build the Docker image:
@@ -223,6 +240,34 @@ npm install
 ng build
 docker build --tag meeque/xss-demo-app:latest .
 ```
+
+
+
+##### Build the Docker Image with Nix (experimental)
+
+Alternatively, you can build the XSS Demo App Docker image with Nix.
+This creates a much smaller image, because it does not contain a package manager and other bloat inside the image.
+(In contrast, building the image from the Dockerfile relies on a Debian base image which contains the apt package manager.)
+
+Another benefit is, that you won't need to build the XSS Demo App manually, before building the Docker image with Nix.
+Nix will simply build the XSS Demo App when needed, or reuse a previous build from the Nix store.
+To build the Docker image with nix, simply run the following command in this directory:
+
+```
+nix-build --attr xssDemoAppDockerImage
+```
+
+This build does not rely on Docker itself, and it will not install the image in your local Docker engine.
+Instead, it will create a Docker image archive in your local Nix store, and print its path at the end of the build.
+You can then import the image into Docker with this command (you'll have to adjust the path though):
+
+```
+docker image load --input /nix/store/9hpwmzn5jia022jm0kfl3j96jqsx0f20-xss-demo-app.tar.gz
+```
+
+By default, this will make the XSS Demo App Docker image available under the name `meeque/xss-demo-app:nix-latest`.
+You can then use this image just like the standard XSS Demo App Docker image.
+Simply adjust the image name accordingly in the commands shown in the next section...
 
 
 
