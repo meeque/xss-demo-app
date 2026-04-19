@@ -222,8 +222,8 @@ There will be no test for top-level domains such as `net`, because the browser w
 
 The XSS Demo App comes with a [Dockerfile](Dockerfile), which makes it easy to run it in a [Docker](https://docker.com/) container.
 
-A pre-built XSS Demo App Docker image is available in the [meeque/xss-demo-app](https://hub.docker.com/r/meeque/xss-demo-app) repository on Docker Hub.
-This Docker image is maintained on a **best-effort basis**, so it may be lagging behind the latest verson of the codebase.
+Pre-built XSS Demo App Docker images are available in the [meeque/xss-demo-app](https://hub.docker.com/r/meeque/xss-demo-app) repository on Docker Hub.
+These Docker images are maintained on a **best-effort basis**, so they may be lagging behind the latest version of this codebase.
 
 
 
