@@ -91,7 +91,14 @@ in
 
     config = {
       User = "${nginxUidGid}";
-      Entrypoint = [ "/docker-entrypoint.sh" ];
+      WorkingDir = "/tmp/";
+      Entrypoint = [
+        "/docker-entrypoint.sh"
+      ];
+      Command = [];
+      Volumes = {
+        "/etc/nginx/xss-demo-app/tls/" = {};
+      };
       ExposedPorts = {
         "8080/tcp" = {};
         "8443/tcp" = {};
