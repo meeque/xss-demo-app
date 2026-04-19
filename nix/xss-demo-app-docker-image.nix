@@ -13,10 +13,18 @@ let
 
   fs = lib.fileset;
 
+  nginxUid = "101";
+  nginxGid = "101";
+  nginxUidGid = "${nginxUid}:${nginxGid}";
+
   customFakeNss =
     dockerTools.fakeNss.override {
-      extraPasswdLines = ["nginx:x:101:101:nginx user:/var/empty:/bin/false"];
-      extraGroupLines = ["nginx:x:101:"];
+      extraPasswdLines = [
+        "nginx:x:${nginxUidGid}:nginx user:/var/empty:/bin/false"
+      ];
+      extraGroupLines = [
+        "nginx:x:${nginxGid}:"
+      ];
     };
 
   nginxConfigFiles =
@@ -52,11 +60,11 @@ let
 
 in
 
-  dockerTools.buildImage {
+  dockerTools.buildLayeredImage {
     name = "meeque/xss-demo-app";
     tag = "nix-latest";
 
-    copyToRoot = [
+    contents = [
       # dependencies
       nginx
       busybox
@@ -69,20 +77,20 @@ in
       webRootFiles
     ];
 
-    extraCommands = ''
-      # Make the xss-demo-app dir world-writable so the entrypoint
-      # can create the http/https symlink.
-      chmod 777 etc/nginx/xss-demo-app
+    fakeRootCommands = ''
+      # adjust nginx config dir permissions
+      chown  -R  '${nginxUidGid}'  etc/nginx
+      chmod  -R  'go-rwx'  etc/nginx/xss-demo-app/tls
 
-      # make runtime dirs (cache, logs) world-writable
-      chmod 777 var
-      mkdir -p var/run var/cache/nginx var/log/nginx tmp
-      chmod 777 var/run var/cache/nginx var/log/nginx
-      chmod 1777 tmp
+      # adjust nginx runtime dirs permissions
+      mkdir  -p  var/run  var/cache/nginx  var/log/nginx  tmp
+      touch  var/run/nginx.pid
+      chown  -R  '${nginxUidGid}'  var/run/nginx.pid  var/cache/nginx  var/log/nginx
+      chmod  '1777'  tmp
     '';
 
     config = {
-      User = "101:101";
+      User = "${nginxUidGid}";
       Entrypoint = [ "/docker-entrypoint.sh" ];
       ExposedPorts = {
         "8080/tcp" = {};
