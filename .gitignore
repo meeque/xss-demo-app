@@ -1,9 +1,14 @@
-# hidden, temp, backup, log files
+# hidden, temp, backup, log, archive files
 .*
 *~
 *.tmp
 *.bak
 *.log
+*.zip
+*.tar
+*.tar.*
+*.tgz
+*.tbz
 
 # dependencies
 /node_modules
