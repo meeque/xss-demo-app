@@ -5,4 +5,5 @@ export default {
   ...createCjsPreset(),
   setupFilesAfterEnv: ['<rootDir>/src/test/setup-jest.integration.ts'],
   testMatch: ['**/*.integration.spec.ts'],
+  maxWorkers: 1,
 } satisfies Config;
