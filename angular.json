@@ -104,6 +104,9 @@
   },
   "cli": {
     "analytics": false,
+    "cache": {
+      "path": "/tmp/angular-cache"
+    },
     "schematicCollections": [
       "angular-eslint"
     ]
