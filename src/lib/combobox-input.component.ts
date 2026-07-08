@@ -1,5 +1,6 @@
-import { Component, ViewContainerRef, ChangeDetectorRef, TemplateRef, AfterViewChecked, inject, input, model, viewChildren, viewChild } from '@angular/core';
+import { Component, TemplateRef, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { NgTemplateOutlet } from '@angular/common';
 
 
 
@@ -21,15 +22,6 @@ export interface MenuGroup<V, W> extends MenuEntry<V> {
 }
 
 
-export class MenuListContext {
-  constructor(
-    public $implicit: ComboboxInputComponent,
-    public items: MenuItem<unknown>[],
-  ) {
-  }
-}
-
-
 export class MenuItemContext {
   constructor(
     public $implicit: ComboboxInputComponent,
@@ -45,14 +37,12 @@ export class MenuItemContext {
   templateUrl: './combobox-input.component.html',
   styleUrl: './combobox-input.component.css',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, NgTemplateOutlet],
 })
-export class ComboboxInputComponent implements AfterViewChecked {
+export class ComboboxInputComponent {
   private static nextComponentId = 0;
   protected readonly componentId = ComboboxInputComponent.nextComponentId++;
 
-
-  private readonly changeDetector = inject(ChangeDetectorRef);
 
   readonly items = input<MenuItem<unknown>[]>([]);
   readonly groups = input<MenuGroup<unknown, unknown>[]>([]);
@@ -60,55 +50,6 @@ export class ComboboxInputComponent implements AfterViewChecked {
 
   protected readonly query = model<string>(null);
   protected readonly menuExpanded = model(false);
-
-  private readonly menuListContainers = viewChildren('menuList', { read: ViewContainerRef });
-  private readonly menuItemContainers = viewChildren('menuItem', { read: ViewContainerRef });
-  private readonly defaultMenuListTemplate = viewChild<TemplateRef<MenuListContext>>('defaultMenuList');
-  private readonly defaultMenuItemTemplate = viewChild<TemplateRef<MenuItemContext>>('defaultMenuItem');
-
-
-  ngAfterViewChecked() {
-    this.menuListContainers().forEach(
-      (menuListContainer) => {
-        menuListContainer.clear();
-        this.menuItemContainers().forEach(
-          (menuItemContainer) => {
-            menuItemContainer.clear();
-          },
-        );
-      },
-    );
-
-    let nextMenuItem = 0;
-
-    this.menuListContainers().forEach(
-      (menuListContainer, listIndex) => {
-        const listItems = (listIndex == 0) ? this.items() : this.groups()[listIndex - 1].items;
-        menuListContainer.createEmbeddedView<MenuListContext>(
-          this.defaultMenuListTemplate(),
-          new MenuListContext(this, listItems),
-        );
-
-        this.changeDetector.detectChanges();
-
-        this.menuItemContainers().forEach(
-          (menuItemContainer, itemIndex) => {
-            if (itemIndex >= nextMenuItem) {
-              const menuItem = listItems[itemIndex - nextMenuItem];
-              const template = menuItem.template || this.defaultMenuItemTemplate();
-              menuItemContainer.createEmbeddedView<MenuItemContext>(
-                template,
-                new MenuItemContext(this, menuItem),
-              );
-            }
-          },
-        );
-
-        nextMenuItem = this.menuItemContainers().length;
-      },
-    );
-    this.changeDetector.detectChanges();
-  }
 
 
   protected toggleMenu(show?: boolean) {
@@ -118,6 +59,10 @@ export class ComboboxInputComponent implements AfterViewChecked {
     else {
       this.menuExpanded.set(show);
     }
+  }
+
+  protected itemContext(item: MenuItem<unknown>): MenuItemContext {
+    return new MenuItemContext(this, item);
   }
 
   protected filter(item: MenuItem<unknown>) {

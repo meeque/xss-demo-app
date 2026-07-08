@@ -21,26 +21,32 @@
         class="fd-popover__body fd-popover__body--no-arrow fd-popover__body--dropdown fd-popover__body--dropdown-fill"
         [attr.aria-hidden]="!menuExpanded()">
       <div class="fd-popover__wrapper docs-max-height">
-        <ng-template #menuList></ng-template>
+        <ul class="fd-list fd-list--dropdown">
+          @for (item of items(); track item) {
+            <ng-container
+                [ngTemplateOutlet]="item.template || defaultMenuItem"
+                [ngTemplateOutletContext]="itemContext(item)">
+            </ng-container>
+          }
+        </ul>
         @for (group of groups(); track group) {
           <div class="fd-list__group-header">
             <span class="fd-list__title">{{ group.name }}</span>
           </div>
-          <ng-template #menuList></ng-template>
+          <ul class="fd-list fd-list--dropdown">
+            @for (item of group.items; track item) {
+              <ng-container
+                  [ngTemplateOutlet]="item.template || defaultMenuItem"
+                  [ngTemplateOutletContext]="itemContext(item)">
+              </ng-container>
+            }
+          </ul>
         }
       </div>
     </div>
 
   </div>
 </div>
-
-<ng-template #defaultMenuList let-items="items">
-  <ul class="fd-list fd-list--dropdown">
-    @for (item of items; track item) {
-      <ng-template #menuItem></ng-template>
-    }
-  </ul>
-</ng-template>
 
 <ng-template #defaultMenuItem let-item="item">
   @if (filter(item)) {
