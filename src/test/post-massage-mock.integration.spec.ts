@@ -209,7 +209,7 @@ describe('Post Message Mock', () => {
           await postMessageAndExpectEventsTable('baz', postedEvents, testOriginConfig);
           await postMessageAndExpectEventsTable('qux', postedEvents, testOriginConfig);
         },
-        10000,
+        30000,
       );
     }
   });

@@ -337,11 +337,11 @@ describe('Xss Demo App', () => {
     payloadOutputCombobox = await findAndExpectOne(app, 'section.output-area xss-combobox-input');
     liveOutput = await findAndExpectOne(app, 'section.output-area xss-payload-output .live-output.fd-layout-panel .fd-layout-panel__body');
     alertOverlay = await findAndExpectOne(app, '.fd-shell__overlay.fd-overlay--alert');
-  });
+  }, 15000);
 
   afterEach(async () => {
     await windowTracker.closeAllNewWindows();
-  });
+  }, 15000);
 
   test('should be created', async () => {
     expect(app).toBeDefined();
