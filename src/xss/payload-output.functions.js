@@ -161,7 +161,7 @@ export class PayloadProcessors {
     return this.sanitizer.bypassSecurityTrustResourceUrl(payload);
   };
 
-  ngTrustAsStyle(payload) {
+  ngTrustAsStyle = (payload) => {
     return this.sanitizer.bypassSecurityTrustStyle(payload);
   };
 }
