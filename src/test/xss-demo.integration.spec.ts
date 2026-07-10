@@ -5,7 +5,7 @@
 
 
 import { By, WebElement, until } from 'selenium-webdriver';
-import { findAndExpectAny, findAndExpectOne, findAndExpectStable, timeout, WindowTracker } from './test-lib';
+import { findAndExpectOne, findStable, timeout, WindowTracker } from './test-lib';
 
 import '@angular/compiler';
 import { Injector } from '@angular/core';
@@ -448,7 +448,7 @@ describe('Xss Demo App', () => {
   }
 
   async function findMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<WebElement> {
-    const groups = await findAndExpectStable(combobox, 'div.fd-popover__body div.fd-list__group-header');
+    const groups = await findStable(combobox, 'div.fd-popover__body div.fd-list__group-header');
 
     let group: WebElement;
     for (const g of groups) {
@@ -467,7 +467,7 @@ describe('Xss Demo App', () => {
       return null;
     }
 
-    const items = await findAndExpectStable(itemList, 'li.fd-list__item');
+    const items = await findStable(itemList, 'li.fd-list__item');
 
     let item: WebElement;
     for (const i of items) {
