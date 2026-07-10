@@ -348,9 +348,6 @@ Apart from vulnerabiities of the underlying components (node.js, Angular, nginx,
 
 The UI of the XSS Demo App has the following known bugs:
 
-* The entries of the "ComboBox" menus do not react to mouse clicks properly.
-  Particularly, they sometimes ignore the first mouse click.
-  Click again to work around this!
 * Several layout flaws remain. E.g.:
   There's a huge empty area at the bottom of the page.
   Some menus and other widgets overflow the page, especially on small screens.

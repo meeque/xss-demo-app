@@ -5,7 +5,7 @@
 
 
 import { By, WebElement, until } from 'selenium-webdriver';
-import { findAndExpectOne, timeout, WindowTracker } from './test-lib';
+import { findAndExpectAny, findAndExpectOne, findAndExpectStable, timeout, WindowTracker } from './test-lib';
 
 import '@angular/compiler';
 import { Injector } from '@angular/core';
@@ -448,7 +448,7 @@ describe('Xss Demo App', () => {
   }
 
   async function findMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<WebElement> {
-    const groups = await combobox.findElements(By.css('div.fd-popover__body div.fd-list__group-header'));
+    const groups = await findAndExpectStable(combobox, 'div.fd-popover__body div.fd-list__group-header');
 
     let group: WebElement;
     for (const g of groups) {
@@ -462,12 +462,12 @@ describe('Xss Demo App', () => {
       return null;
     }
 
-    const itemList = await group.findElement(By.xpath('following-sibling::ul[1]'));
+    const itemList = await findAndExpectOne(group, By.xpath('following-sibling::ul[1]'));
     if (itemList == null) {
       return null;
     }
 
-    const items = await itemList.findElements(By.css('li.fd-list__item'));
+    const items = await findAndExpectStable(itemList, 'li.fd-list__item');
 
     let item: WebElement;
     for (const i of items) {
@@ -482,49 +482,33 @@ describe('Xss Demo App', () => {
   }
 
   async function clickMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<void> {
-    // we need multiple click attempts due to a weird UI glitch in the ComboboxInputComponent
-    for (let retries = 0; retries < 5; retries++) {
-      await windowTracker.switchToOwnWindow();
-      const comboboxInput = await findAndExpectOne(combobox, '.fd-popover__control input');
-      const comboboxPopover = await findAndExpectOne(combobox, '.fd-popover__body');
-      let item = null as WebElement;
+    await windowTracker.switchToOwnWindow();
+    const comboboxInput = await findAndExpectOne(combobox, '.fd-popover__control input');
+    const comboboxPopover = await findAndExpectOne(combobox, '.fd-popover__body');
 
-      // open menu popover, if not open yet
-      if ('true' == await comboboxPopover.getAttribute('aria-hidden')) {
-        await comboboxInput.click();
-      }
-
-      try {
-        item = await findMenuItem(combobox, groupLabel, itemLabel);
-      }
-      catch (err) {
-        // ignore and retry
-      }
-
-      if (item != null) {
-        try {
-          await item.click();
-        }
-        catch (err) {
-          // ignore and retry
-        }
-
-        // check if menu popover has successfully been closed after the click
-        await timeout(100);
-        let comboboxPopoverAfterClick: WebElement;
-        try {
-          comboboxPopoverAfterClick = await findAndExpectOne(combobox, '.fd-popover__body', 100);
-        }
-        catch (err) {
-          // if the menu popover has disappeared, there is nothing left to do here
-          // this may happen in tests that alter the whole app (e.g. defacement)
-          return;
-        }
-        if ('true' == await comboboxPopoverAfterClick?.getAttribute('aria-hidden')) {
-          return;
-        }
-      }
+    // open menu popover, if not open yet
+    if ('true' == await comboboxPopover.getAttribute('aria-hidden')) {
+      await comboboxInput.click();
     }
-    throw new Error('Failed to click menu item "' + groupLabel + '"/"' + itemLabel + '"!');
+
+    const item = await findMenuItem(combobox, groupLabel, itemLabel);
+    if (item == null) {
+      throw new Error('Failed to find menu item "' + groupLabel + '"/"' + itemLabel + '"!');
+    }
+    await item.click();
+
+    // check that the menu popover closed after the click
+    await timeout(100);
+    let comboboxPopoverAfterClick: WebElement;
+    try {
+      comboboxPopoverAfterClick = await findAndExpectOne(combobox, '.fd-popover__body', 100);
+    }
+    catch (err) {
+      // menu popover disappeared entirely — this may happen in tests that alter the whole app (e.g. defacement)
+      return;
+    }
+    if ('true' != await comboboxPopoverAfterClick?.getAttribute('aria-hidden')) {
+      throw new Error('Menu failed to close after click on menu item "' + groupLabel + '"/"' + itemLabel + '"!');
+    }
   }
 });
