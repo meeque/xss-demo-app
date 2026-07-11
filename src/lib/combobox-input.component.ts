@@ -86,12 +86,12 @@ export class ComboboxInputComponent {
     this.query.set('');
     this.placeholder.set(item.name);
 
-    // trigger item's select callback asynchronously,
-    // otherwise errors in the callback might interfere
+    // trigger item's select handler asynchronously,
+    // otherwise errors in the handler might interfere
     // with combobox input functionality,
     // such as toggling the menu
     setTimeout(
-      () => item.select(item, event)
+      () => item.select(item, event),
     );
   }
 }
