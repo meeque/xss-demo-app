@@ -85,6 +85,13 @@ export class ComboboxInputComponent {
     this.toggleMenu(false);
     this.query.set('');
     this.placeholder.set(item.name);
-    return item.select(item, event);
+
+    // trigger item's select callback asynchronously,
+    // otherwise errors in the callback might interfere
+    // with combobox input functionality,
+    // such as toggling the menu
+    setTimeout(
+      () => item.select(item, event)
+    );
   }
 }

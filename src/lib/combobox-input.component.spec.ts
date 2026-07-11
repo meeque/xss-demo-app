@@ -1,5 +1,21 @@
+import { Component, ErrorHandler } from '@angular/core';
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { ComboboxInputComponent, MenuGroup, MenuItem } from './combobox-input.component';
+import { timeout } from '../test/test-lib';
+
+@Component({
+  template: `
+    @if (renderError) { {{ throwError() }} }
+    <xss-combobox-input [items]="items"></xss-combobox-input>
+  `,
+  standalone: true,
+  imports: [ComboboxInputComponent],
+})
+class TestHostComponent {
+  items: MenuItem<unknown>[] = [];
+  renderError = false;
+  throwError(): never { throw new Error('simulated rendering error'); }
+}
 
 describe('ComboboxInputComponent', () => {
   let fixture: ComponentFixture<ComboboxInputComponent>;
@@ -103,11 +119,12 @@ describe('ComboboxInputComponent', () => {
       expect(queryMenuListsItems().grouped.length).toBe(0);
     });
 
-    it('should select value when menu items are clicked', () => {
+    it('should select value when menu items are clicked', async () => {
       const listItems = queryMenuListsItems().plain;
 
       for (const [i, menuItem] of plainMenuItems.entries()) {
         listItems[i].dispatchEvent(new Event('click'));
+        await timeout(0);
         expect(selectedValue).toBe(menuItem.value);
       }
     });
@@ -220,12 +237,13 @@ describe('ComboboxInputComponent', () => {
       }
     });
 
-    it('should select value when menu items are clicked', () => {
+    it('should select value when menu items are clicked', async () => {
       const groupListItems = queryMenuListsItems().grouped;
 
       for (const [i, menuGroup] of groupedMenuItems.entries()) {
         for (const [j, menuItem] of menuGroup.items.entries()) {
           groupListItems[i][j].dispatchEvent(new Event('click'));
+          await timeout(0);
           expect(selectedValue).toBe(menuItem.value);
         }
       }
@@ -262,4 +280,60 @@ describe('ComboboxInputComponent', () => {
 
     return { plain: plainListItems, grouped: groupListsItems };
   }
+});
+
+describe('ComboboxInputComponent (with host component)', () => {
+  let hostFixture: ComponentFixture<TestHostComponent>;
+  let hostComponent: TestHostComponent;
+  let menuPopover: HTMLElement;
+  let menuButton: HTMLButtonElement;
+
+  beforeEach(async () => {
+    TestBed.configureTestingModule({
+      imports: [TestHostComponent],
+      // Suppress errors thrown by TestHostComponent.throwError() so they don't
+      // cause zone.js to mark the test as failed independently of our assertion
+      providers: [{ provide: ErrorHandler, useValue: { handleError: () => {} } }],
+    });
+    await TestBed.compileComponents();
+
+    hostFixture = TestBed.createComponent(TestHostComponent);
+    hostComponent = hostFixture.componentInstance;
+    hostFixture.detectChanges();
+
+    menuPopover = hostFixture.nativeElement.querySelector('div.fd-popover__body');
+    menuButton = hostFixture.nativeElement.querySelector('button');
+
+    hostComponent.items = [
+      {
+        name: 'Test Item',
+        value: 'test',
+        // Simulates a select callback that causes a rendering error in a sibling component
+        select: () => { hostComponent.renderError = true; return true; },
+      },
+    ];
+    hostFixture.detectChanges();
+
+    menuButton.dispatchEvent(new Event('click'));
+    hostFixture.detectChanges();
+  });
+
+  it('should close menu before item select callback runs', async () => {
+    hostFixture.nativeElement.querySelector('li.fd-list__item').dispatchEvent(new Event('click'));
+
+    // Run CD before item.select fires: if select() schedules item.select asynchronously,
+    // renderError is still false here and CD completes cleanly, closing the menu.
+    // If select() calls item.select synchronously (current behaviour), renderError is already
+    // true, the host template throws, CD aborts before reaching the combobox, and
+    // aria-hidden stays "false".
+    try {
+      hostFixture.detectChanges();
+    } catch {
+      // Expected in the unfixed case: synchronous item.select() set renderError=true before
+      // detectChanges ran, causing the host template to throw and abort CD.
+    }
+    expect(menuPopover.getAttribute('aria-hidden')).toBe('true');
+
+    await new Promise<void>(resolve => setTimeout(resolve));  // let deferred item.select() fire
+  });
 });
