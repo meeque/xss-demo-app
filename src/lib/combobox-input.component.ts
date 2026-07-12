@@ -1,4 +1,4 @@
-import { Component, TemplateRef, input, model, ChangeDetectionStrategy } from '@angular/core';
+import { Component, TemplateRef, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgTemplateOutlet } from '@angular/common';
 
@@ -37,7 +37,6 @@ export class MenuItemContext {
   templateUrl: './combobox-input.component.html',
   styleUrl: './combobox-input.component.css',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormsModule, NgTemplateOutlet],
 })
 export class ComboboxInputComponent {

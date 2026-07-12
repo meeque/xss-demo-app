@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ElementRef, ViewContainerRef, EnvironmentInjector, signal, input, model, effect, inject, viewChild, output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, ViewContainerRef, EnvironmentInjector, signal, input, model, effect, inject, viewChild, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
@@ -13,7 +13,6 @@ import { NonAngularLiveOutputComponent } from './live-output.component';
   templateUrl: './payload-output.component.html',
   styleUrls: ['./payload-output.component.css'],
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormsModule, StripExtraIndentPipe],
 })
 export class PayloadOutputComponent implements AfterViewInit {
