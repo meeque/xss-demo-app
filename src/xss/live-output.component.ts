@@ -1,4 +1,4 @@
-import { Component, Type, ElementRef, InputSignal, input, AfterViewInit, inject } from '@angular/core';
+import { Component, Type, ElementRef, InputSignal, input, AfterViewInit, inject, ChangeDetectionStrategy } from '@angular/core';
 import { NgStyle } from '@angular/common';
 
 import { PayloadOutputDescriptor } from './payload-output.service';
@@ -16,6 +16,7 @@ export interface LiveOutputType extends Type<LiveOutput> {
 
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: '',
 })
 export abstract class LiveOutputComponent implements LiveOutput {
@@ -36,6 +37,7 @@ export abstract class LiveOutputComponent implements LiveOutput {
 @Component({
   selector: 'xss-live-output-non-angular',
   template: NonAngularLiveOutputComponent.templateCode,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class NonAngularLiveOutputComponent extends LiveOutputComponent implements AfterViewInit {
@@ -81,6 +83,7 @@ export class NonAngularLiveOutputComponent extends LiveOutputComponent implement
 @Component({
   selector: 'xss-live-output-encoded',
   template: EncodedLiveOutputComponent.templateCode,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class EncodedLiveOutputComponent extends LiveOutputComponent {
@@ -90,6 +93,7 @@ export class EncodedLiveOutputComponent extends LiveOutputComponent {
 @Component({
   selector: 'xss-live-output-text-content',
   template: TextContentLiveOutputComponent.templateCode,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class TextContentLiveOutputComponent extends LiveOutputComponent {
@@ -99,6 +103,7 @@ export class TextContentLiveOutputComponent extends LiveOutputComponent {
 @Component({
   selector: 'xss-live-output-inner-text',
   template: InnerTextLiveOutputComponent.templateCode,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class InnerTextLiveOutputComponent extends LiveOutputComponent {
@@ -108,6 +113,7 @@ export class InnerTextLiveOutputComponent extends LiveOutputComponent {
 @Component({
   selector: 'xss-live-output-inner-html',
   template: InnerHtmlLiveOutputComponent.templateCode,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class InnerHtmlLiveOutputComponent extends LiveOutputComponent {
@@ -117,6 +123,7 @@ export class InnerHtmlLiveOutputComponent extends LiveOutputComponent {
 @Component({
   selector: 'xss-live-output-paragraph-title',
   template: ParagraphTitleLiveOutputComponent.templateCode,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class ParagraphTitleLiveOutputComponent extends LiveOutputComponent {
@@ -126,6 +133,7 @@ export class ParagraphTitleLiveOutputComponent extends LiveOutputComponent {
 @Component({
   selector: 'xss-live-output-link-url',
   template: LinkUrlLiveOutputComponent.templateCode,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class LinkUrlLiveOutputComponent extends LiveOutputComponent {
@@ -135,6 +143,7 @@ export class LinkUrlLiveOutputComponent extends LiveOutputComponent {
 @Component({
   selector: 'xss-live-output-iframe-url',
   template: IframeUrlLiveOutputComponent.templateCode,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class IframeUrlLiveOutputComponent extends LiveOutputComponent {
@@ -144,6 +153,7 @@ export class IframeUrlLiveOutputComponent extends LiveOutputComponent {
 @Component({
   selector: 'xss-live-output-style-block',
   template: StyleBlockLiveOutputComponent.templateCode,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class StyleBlockLiveOutputComponent extends LiveOutputComponent {
@@ -153,6 +163,7 @@ export class StyleBlockLiveOutputComponent extends LiveOutputComponent {
 @Component({
   selector: 'xss-live-output-style-attribute',
   template: StyleAttributeLiveOutputComponent.templateCode,
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: true,
 })
 export class StyleAttributeLiveOutputComponent extends LiveOutputComponent {
@@ -163,6 +174,7 @@ export class StyleAttributeLiveOutputComponent extends LiveOutputComponent {
   selector: 'xss-live-output-structured-style-attribute',
   template: StructuredStyleAttributeLiveOutputComponent.templateCode,
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [NgStyle],
 })
 export class StructuredStyleAttributeLiveOutputComponent extends LiveOutputComponent {

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectorRef, TemplateRef, model, inject, viewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ChangeDetectorRef, TemplateRef, model, inject, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from '../lib/combobox-input.component';
@@ -14,6 +14,7 @@ import { PayloadOutputComponent } from './payload-output.component';
   templateUrl: './xss-demo.component.html',
   styleUrls: ['./xss-demo.component.css'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [FormsModule, ComboboxInputComponent, PayloadOutputComponent],
 })
 export class XssDemoComponent implements OnInit, AfterViewInit {
