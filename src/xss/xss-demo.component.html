@@ -45,68 +45,77 @@
               <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
 
               <ng-template #payloadOutputMenuTechnologyFilters let-item="item" let-comboboxInput>
-                <li class="fd-list__item">
-                  <div class="fddocs-button-container filters filters-technology">
-                    <span class="sap-icon--filter"></span>
-                    <span> {{ item.name }} </span>
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
-                      [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
-                      <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
-                      <span> HTML </span>
-                    </button>
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputTechnologyFilter('domInjector')"
-                      [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')">
-                      <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
-                      <span> DOM </span>
-                    </button>
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputTechnologyFilter('jQueryInjector')"
-                      [attr.aria-selected]="payloadOutputTechnologyFilters.includes('jQueryInjector')">
-                      <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
-                      <span> jQuery </span>
-                    </button>
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputTechnologyFilter('templateComponentType')"
-                      [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateComponentType')">
-                      <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
-                      <span> Angular </span>
-                    </button>
+                <li class="fd-list__item list-group-item py-2">
+                  <div class="fddocs-button-container filters filters-technology d-flex align-items-center gap-2 flex-wrap">
+                    <span>{{ item.name }}</span>
+                    <div class="btn-group" role="group">
+                      <button
+                        class="fd-button btn btn-outline-secondary"
+                        (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
+                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')"
+                        [class.active]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
+                        <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
+                        <span> HTML </span>
+                      </button>
+                      <button
+                        class="fd-button btn btn-outline-secondary"
+                        (click)="togglePayloadOutputTechnologyFilter('domInjector')"
+                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')"
+                        [class.active]="payloadOutputTechnologyFilters.includes('domInjector')">
+                        <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
+                        <span> DOM </span>
+                      </button>
+                      <button
+                        class="fd-button btn btn-outline-secondary"
+                        (click)="togglePayloadOutputTechnologyFilter('jQueryInjector')"
+                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('jQueryInjector')"
+                        [class.active]="payloadOutputTechnologyFilters.includes('jQueryInjector')">
+                        <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
+                        <span> jQuery </span>
+                      </button>
+                      <button
+                        class="fd-button btn btn-outline-secondary"
+                        (click)="togglePayloadOutputTechnologyFilter('templateComponentType')"
+                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateComponentType')"
+                        [class.active]="payloadOutputTechnologyFilters.includes('templateComponentType')">
+                        <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
+                        <span> Angular </span>
+                      </button>
+                    </div>
                   </div>
                 </li>
               </ng-template>
 
               <ng-template #payloadOutputMenuQualityFilters let-item="item" let-comboboxInput>
-                <li class="fd-list__item">
-                  <div class="fddocs-button-container filters filters-quality">
-                    <span class="sap-icon--filter"></span>
-                    {{ item.name }}
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Recommended)"
-                      [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)">
-                      <span>Recommended </span>
-                      <span class="sap-icon--accept"></span>
-                    </button>
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Questionable)"
-                      [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)">
-                      <span> Questionable </span>
-                      <span class="sap-icon--question-mark"></span>
-                    </button>
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Insecure)"
-                      [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)">
-                      <span> Insecure </span>
-                      <span class="sap-icon--alert"></span>
-                    </button>
+                <li class="fd-list__item list-group-item py-2">
+                  <div class="fddocs-button-container filters filters-quality d-flex align-items-center gap-2 flex-wrap">
+                    <span>{{ item.name }}</span>
+                    <div class="btn-group" role="group">
+                      <button
+                        class="fd-button btn btn-outline-secondary"
+                        (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Recommended)"
+                        [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)"
+                        [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)">
+                        <span>Recommended </span>
+                        <span class="sap-icon--accept"></span>
+                      </button>
+                      <button
+                        class="fd-button btn btn-outline-secondary"
+                        (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Questionable)"
+                        [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)"
+                        [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)">
+                        <span> Questionable </span>
+                        <span class="sap-icon--question-mark"></span>
+                      </button>
+                      <button
+                        class="fd-button btn btn-outline-secondary"
+                        (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Insecure)"
+                        [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)"
+                        [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)">
+                        <span> Insecure </span>
+                        <span class="sap-icon--alert"></span>
+                      </button>
+                    </div>
                   </div>
                 </li>
               </ng-template>
@@ -114,7 +123,7 @@
               <ng-template #payloadOutputMenuItem let-item="item" let-comboboxInput>
                 @if (comboboxInput.filter(item)) {
                   <li
-                    class="fd-list__item"
+                    class="fd-list__item list-group-item list-group-item-action"
                     (click)="comboboxInput.select(item, $event)"
                     (keypress)="comboboxInput.select(item, $event)"
                     tabindex="0">
@@ -167,19 +176,18 @@
 
   <div class="fd-shell__overlay fd-overlay fd-overlay--alert">
     @if (xssTriggeredCounter) {
-      <div [id]="'xss-demo-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered" role="note">
-        <p class="fd-message-strip__text">
+      <div [id]="'xss-demo-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered alert alert-danger alert-dismissible" role="alert">
+        <p class="fd-message-strip__text mb-0">
           @if (xssTriggeredCounter > 1) {
-            <span class="fd-counter">{{ xssTriggeredCounter }} </span>
+            <span class="fd-counter badge bg-danger rounded-pill">{{ xssTriggeredCounter }}</span>
           }
           <span> {{ xssMessage }}</span>
         </p>
         <button
           (click)="resetXss()"
           [attr.aria-controls]="'xss-demo-component-' + componentId + '-xss-alert'"
-          class="fd-button fd-button--transparent"
+          class="fd-button fd-button--transparent btn-close"
           title="Close">
-          <i class="sap-icon--decline"></i>
         </button>
       </div>
     }

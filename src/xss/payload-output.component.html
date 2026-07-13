@@ -1,7 +1,7 @@
 
-<div class="title fd-layout-panel fd-margin-top-bottom--sm">
-  <div class="fd-layout-panel__header">
-    <h3 class="fd-layout-panel__title">
+<div class="title fd-layout-panel fd-margin-top-bottom--sm card my-2">
+  <div class="fd-layout-panel__header card-header d-flex align-items-center gap-2">
+    <h3 class="fd-layout-panel__title mb-0">
       @if (outputDescriptor().htmlSourceProvider) {
         <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
       }
@@ -31,22 +31,22 @@
 @if (outputDescriptor().payloadProcessor) {
   <div
     [id]="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
-    class="payload-processor fd-layout-panel fd-margin-top-bottom--sm"
+    class="payload-processor fd-layout-panel fd-margin-top-bottom--sm card my-2"
     aria-expanded="true">
-    <div class="fd-layout-panel__header">
-      <div class="fd-layout-panel__expand">
+    <div class="fd-layout-panel__header card-header d-flex align-items-center gap-2">
+      <div class="fd-layout-panel__expand d-flex">
         <button
-          class="fd-button fd-button--transparent fd-layout-panel__button"
+          class="fd-button fd-button--transparent fd-layout-panel__button btn btn-link"
           aria-controls="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
           (click)="togglePanel($event)">
           <i></i>
         </button>
       </div>
-      <h4 class="fd-layout-panel__title">Payload Processor Function</h4>
+      <h4 class="fd-layout-panel__title mb-0">Payload Processor Function</h4>
     </div>
     <div
       role="region"
-      class="fd-layout-panel__body"
+      class="fd-layout-panel__body card-body"
       [textContent]="outputDescriptor().payloadProcessor | stripextraindent">
     </div>
   </div>
@@ -55,22 +55,22 @@
 @if (outputDescriptor().htmlSourceProvider) {
   <div
     [id]="'xss-payload-output-component-' + componentId + '-html-source-provider-panel'"
-    class="html-source-provider fd-layout-panel fd-margin-top-bottom--sm"
+    class="html-source-provider fd-layout-panel fd-margin-top-bottom--sm card my-2"
     aria-expanded="true">
-    <div class="fd-layout-panel__header">
-      <div class="fd-layout-panel__expand">
+    <div class="fd-layout-panel__header card-header d-flex align-items-center gap-2">
+      <div class="fd-layout-panel__expand d-flex">
         <button
-          class="fd-button fd-button--transparent fd-layout-panel__button"
+          class="fd-button fd-button--transparent fd-layout-panel__button btn btn-link"
           aria-controls="'xss-payload-output-component-' + componentId + '-html-source-provider-panel'"
           (click)="togglePanel($event)">
           <i></i>
         </button>
       </div>
-      <h4 class="fd-layout-panel__title">HTML Source Provider Function</h4>
+      <h4 class="fd-layout-panel__title mb-0">HTML Source Provider Function</h4>
     </div>
     <div
       role="region"
-      class="fd-layout-panel__body"
+      class="fd-layout-panel__body card-body"
       [textContent]="outputDescriptor().htmlSourceProvider | stripextraindent">
     </div>
   </div>
@@ -79,22 +79,22 @@
 @if (outputDescriptor().domInjector) {
   <div
     [id]="'xss-payload-output-component-' + componentId + '-dom-injector-panel'"
-    class="dom-injector fd-layout-panel fd-margin-top-bottom--sm"
+    class="dom-injector fd-layout-panel fd-margin-top-bottom--sm card my-2"
     aria-expanded="true">
-    <div class="fd-layout-panel__header">
-      <div class="fd-layout-panel__expand">
+    <div class="fd-layout-panel__header card-header d-flex align-items-center gap-2">
+      <div class="fd-layout-panel__expand d-flex">
         <button
-          class="fd-button fd-button--transparent fd-layout-panel__button"
+          class="fd-button fd-button--transparent fd-layout-panel__button btn btn-link"
           aria-controls="'xss-payload-output-component-' + componentId + '-dom-injector-panel'"
           (click)="togglePanel($event)">
           <i></i>
         </button>
       </div>
-      <h4 class="fd-layout-panel__title">DOM Injector Function</h4>
+      <h4 class="fd-layout-panel__title mb-0">DOM Injector Function</h4>
     </div>
     <div
       role="region"
-      class="fd-layout-panel__body"
+      class="fd-layout-panel__body card-body"
       [textContent]="outputDescriptor().domInjector | stripextraindent">
     </div>
   </div>
@@ -103,22 +103,22 @@
 @if (outputDescriptor().jQueryInjector) {
   <div
     [id]="'xss-payload-output-component-' + componentId + '-jquery-injector-panel'"
-    class="jquery-injector fd-layout-panel fd-margin-top-bottom--sm"
+    class="jquery-injector fd-layout-panel fd-margin-top-bottom--sm card my-2"
     aria-expanded="true">
-    <div class="fd-layout-panel__header">
-      <div class="fd-layout-panel__expand">
+    <div class="fd-layout-panel__header card-header d-flex align-items-center gap-2">
+      <div class="fd-layout-panel__expand d-flex">
         <button
-          class="fd-button fd-button--transparent fd-layout-panel__button"
+          class="fd-button fd-button--transparent fd-layout-panel__button btn btn-link"
           aria-controls="'xss-payload-output-component-' + componentId + '-jquery-injector-panel'"
           (click)="togglePanel($event)">
           <i></i>
         </button>
       </div>
-      <h4 class="fd-layout-panel__title">jQuery Injector Function</h4>
+      <h4 class="fd-layout-panel__title mb-0">jQuery Injector Function</h4>
     </div>
     <div
       role="region"
-      class="fd-layout-panel__body"
+      class="fd-layout-panel__body card-body"
       [textContent]="outputDescriptor().jQueryInjector | stripextraindent">
     </div>
   </div>
@@ -127,33 +127,33 @@
 @if (outputDescriptor().templateComponentType) {
   <div
     [id]="'xss-payload-output-component-' + componentId + '-template-code-panel'"
-    class="template-code fd-layout-panel fd-margin-top-bottom--sm"
+    class="template-code fd-layout-panel fd-margin-top-bottom--sm card my-2"
     aria-expanded="true">
-    <div class="fd-layout-panel__header">
-      <div class="fd-layout-panel__expand">
+    <div class="fd-layout-panel__header card-header d-flex align-items-center gap-2">
+      <div class="fd-layout-panel__expand d-flex">
         <button
-          class="fd-button fd-button--transparent fd-layout-panel__button"
+          class="fd-button fd-button--transparent fd-layout-panel__button btn btn-link"
           aria-controls="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
           (click)="togglePanel($event)">
           <i></i>
         </button>
       </div>
-      <h4 class="fd-layout-panel__title">Angular Template Code</h4>
+      <h4 class="fd-layout-panel__title mb-0">Angular Template Code</h4>
     </div>
     <div
       role="region"
-      class="fd-layout-panel__body"
+      class="fd-layout-panel__body card-body"
       [textContent]="outputDescriptor().templateComponentType.templateCode | stripextraindent">
     </div>
   </div>
 }
 
 <div
-  class="live-output fd-layout-panel fd-margin-top-bottom--sm"
+  class="live-output fd-layout-panel fd-margin-top-bottom--sm card my-2"
   aria-expanded="true">
-  <div class="fd-layout-panel__header">
-    <h4 class="fd-layout-panel__title">Live HTML Output</h4>
-    <div class="fd-layout-panel__actions">
+  <div class="fd-layout-panel__header card-header d-flex align-items-center gap-2">
+    <h4 class="fd-layout-panel__title mb-0">Live HTML Output</h4>
+    <div class="fd-layout-panel__actions ms-auto d-flex align-items-center gap-2">
       @if (!autoUpdateEnabled()) {
         <span>
           <a href="#" (click)="updateNow()">Update now</a>
@@ -166,29 +166,29 @@
       </label>
     </div>
   </div>
-  <div #liveOutputElement role="region" class="fd-layout-panel__body">
+  <div #liveOutputElement role="region" class="fd-layout-panel__body card-body">
     <ng-template #liveOutputViewContainer></ng-template>
   </div>
 </div>
 
 <div
   [id]="'xss-payload-output-component-' + componentId + '-live-source-code-panel'"
-  class="fd-layout-panel live-source-code fd-margin-top-bottom--sm"
+  class="fd-layout-panel live-source-code fd-margin-top-bottom--sm card my-2"
   aria-expanded="true">
-  <div class="fd-layout-panel__header">
-    <div class="fd-layout-panel__expand">
+  <div class="fd-layout-panel__header card-header d-flex align-items-center gap-2">
+    <div class="fd-layout-panel__expand d-flex">
       <button
-        class="fd-button fd-button--transparent fd-layout-panel__button"
+        class="fd-button fd-button--transparent fd-layout-panel__button btn btn-link"
         aria-controls="'xss-payload-output-component-' + componentId + '-live-source-code-panel'"
         (click)="togglePanel($event)">
         <i></i>
       </button>
     </div>
-    <h4 class="fd-layout-panel__title">Live HTML Source Code</h4>
+    <h4 class="fd-layout-panel__title mb-0">Live HTML Source Code</h4>
   </div>
   <div
     role="region"
-    class="fd-layout-panel__body"
+    class="fd-layout-panel__body card-body"
     [textContent]="liveSourceCode() | stripextraindent">
   </div>
 </div>

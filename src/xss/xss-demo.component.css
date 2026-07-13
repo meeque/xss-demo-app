@@ -4,17 +4,12 @@
 
 .fd-shell__header h1 {
   text-align: center;
-  font-family: var(--sapFontFamily);
-  color: var(--sapHighlightTextColor);
+  color: var(--bs-primary-text-emphasis);
 }
-
-
 
 .fd-dynamic-page__content.xss-triggered {
-  background-color: var(--sapErrorBackground) !important;
+  background-color: var(--bs-danger-bg-subtle) !important;
 }
-
-
 
 .input-area textarea.payload {
   box-sizing: border-box;
@@ -27,20 +22,9 @@
   border-radius: 0.4rem;
 }
 
-
-
-.output-area .fd-list__item .filters {
-  cursor: inherit;
-}
-
 .output-area .fd-list__item span,
 .output-area .fd-list__item img.technology-icon {
   vertical-align: middle;
-}
-
-.output-area .fd-list__item .filters button {
-  margin-left: 8px;
-  height: 2em;
 }
 
 .output-area .technology-icon {
@@ -48,11 +32,13 @@
   height: 1.4em;
 }
 
-.output-area button[aria-selected=true] .technology-icon {
+.output-area button[aria-selected=true] .technology-icon,
+.output-area button.active .technology-icon {
   filter: invert(1);
 }
 
-.output-area button[aria-selected=true]:hover .technology-icon {
+.output-area button[aria-selected=true]:hover .technology-icon,
+.output-area button.active:hover .technology-icon {
   filter: unset;
 }
 
@@ -68,8 +54,6 @@
   content: "\26A0";
 }
 
-
-
 .fd-shell__overlay {
   display: flex;
   position: fixed;
@@ -79,34 +63,4 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
-}
-
-.fd-shell__overlay .fd-message-strip {
-  position: relative;
-  padding: 0.6rem 0.9rem;
-  border-style: solid;
-  border-width: medium;
-  border-radius: 0.3rem;
-  font-family: var(--sapFontFamily);
-  color: var(--fd-color-text-1);
-}
-
-.fd-shell__overlay .fd-message-strip .fd-message-strip__text,
-.fd-shell__overlay .fd-message-strip .fd-button {
-  display: inline;
-  vertical-align: middle;
-  font-weight: bold;
-}
-
-.fd-shell__overlay .fd-message-strip .fd-button i.sap-icon--decline::before {
-  content: '⨯';
-}
-
-.fd-shell__overlay .fd-message-strip .fd-button i.sap-icon--decline {
-  color: var(--fdMessageStrip_Text_Color);
-}
-
-.fd-shell__overlay .fd-message-strip.fd-message-strip--error {
-  background-color: var(--sapErrorBackground);
-  border-color: var(--sapErrorColor);
 }
