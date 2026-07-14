@@ -1,3 +1,7 @@
+.accordion {
+  --bs-accordion-btn-bg: var(--bs-primary-bg-subtle);
+}
+
 .card {
   --bs-card-cap-bg: var(--bs-primary-bg-subtle);
 }
