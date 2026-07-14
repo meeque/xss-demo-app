@@ -37,7 +37,7 @@
       <div class="d-flex">
         <button
           class="btn btn-link"
-          aria-controls="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
+          [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
           (click)="togglePanel($event)">
           <i></i>
         </button>
@@ -61,7 +61,7 @@
       <div class="d-flex">
         <button
           class="btn btn-link"
-          aria-controls="'xss-payload-output-component-' + componentId + '-html-source-provider-panel'"
+          [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-html-source-provider-panel'"
           (click)="togglePanel($event)">
           <i></i>
         </button>
@@ -85,7 +85,7 @@
       <div class="d-flex">
         <button
           class="btn btn-link"
-          aria-controls="'xss-payload-output-component-' + componentId + '-dom-injector-panel'"
+          [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-dom-injector-panel'"
           (click)="togglePanel($event)">
           <i></i>
         </button>
@@ -109,7 +109,7 @@
       <div class="d-flex">
         <button
           class="btn btn-link"
-          aria-controls="'xss-payload-output-component-' + componentId + '-jquery-injector-panel'"
+          [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-jquery-injector-panel'"
           (click)="togglePanel($event)">
           <i></i>
         </button>
@@ -133,7 +133,7 @@
       <div class="d-flex">
         <button
           class="btn btn-link"
-          aria-controls="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
+          [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-template-code-panel'"
           (click)="togglePanel($event)">
           <i></i>
         </button>
@@ -179,7 +179,7 @@
     <div class="d-flex">
       <button
         class="btn btn-link"
-        aria-controls="'xss-payload-output-component-' + componentId + '-live-source-code-panel'"
+        [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-live-source-code-panel'"
         (click)="togglePanel($event)">
         <i></i>
       </button>
