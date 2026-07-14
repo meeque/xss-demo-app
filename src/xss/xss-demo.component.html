@@ -7,148 +7,147 @@
   <article>
     <main [class.xss-triggered]="xssTriggeredCounter">
 
-          <section class="input-area">
+      <section class="input-area">
 
-            <h2>Payload Input</h2>
+        <h2>Payload Input</h2>
 
-              <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></xss-combobox-input>
+        <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></xss-combobox-input>
 
-              <div class="card my-2">
-                <div class="card-body">
-                  <textarea
-                    name="payload"
-                    class="payload"
-                    [(ngModel)]="payload"
-                    placeholder="Enter your XSS attack code in this Paylaod Input field, or, select one of the Payload Presets from the above menu...">
-                  </textarea>
-                </div>
+        <div class="card my-2">
+          <div class="card-body">
+            <textarea
+              name="payload"
+              class="payload"
+              [(ngModel)]="payload"
+              placeholder="Enter your XSS attack code in this Paylaod Input field, or, select one of the Payload Presets from the above menu...">
+            </textarea>
+          </div>
+        </div>
+
+      </section>
+
+
+
+      <section class="output-area">
+
+        <h2>Payload Output</h2>
+
+        <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
+
+        <ng-template #payloadOutputMenuTechnologyFilters let-item="item" let-comboboxInput>
+          <li class="list-group-item py-2">
+            <div class="filters filters-technology d-flex align-items-center gap-2 flex-wrap">
+              <span>{{ item.name }}</span>
+              <div class="btn-group" role="group">
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')"
+                  [class.active]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
+                  <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
+                  <span> HTML </span>
+                </button>
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputTechnologyFilter('domInjector')"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')"
+                  [class.active]="payloadOutputTechnologyFilters.includes('domInjector')">
+                  <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
+                  <span> DOM </span>
+                </button>
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputTechnologyFilter('jQueryInjector')"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes('jQueryInjector')"
+                  [class.active]="payloadOutputTechnologyFilters.includes('jQueryInjector')">
+                  <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
+                  <span> jQuery </span>
+                </button>
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputTechnologyFilter('templateComponentType')"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateComponentType')"
+                  [class.active]="payloadOutputTechnologyFilters.includes('templateComponentType')">
+                  <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
+                  <span> Angular </span>
+                </button>
               </div>
+            </div>
+          </li>
+        </ng-template>
 
-          </section>
+        <ng-template #payloadOutputMenuQualityFilters let-item="item" let-comboboxInput>
+          <li class="list-group-item py-2">
+            <div class="filters filters-quality d-flex align-items-center gap-2 flex-wrap">
+              <span>{{ item.name }}</span>
+              <div class="btn-group" role="group">
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Recommended)"
+                  [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)"
+                  [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)">
+                  <span>Recommended </span>
+                  <span class="quality-icon quality-recommended"></span>
+                </button>
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Questionable)"
+                  [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)"
+                  [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)">
+                  <span> Questionable </span>
+                  <span class="quality-icon quality-questionable"></span>
+                </button>
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Insecure)"
+                  [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)"
+                  [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)">
+                  <span> Insecure </span>
+                  <span class="quality-icon quality-insecure"></span>
+                </button>
+              </div>
+            </div>
+          </li>
+        </ng-template>
 
+        <ng-template #payloadOutputMenuItem let-item="item" let-comboboxInput>
+          @if (comboboxInput.filter(item)) {
+            <li
+              class="list-group-item list-group-item-action"
+              (click)="comboboxInput.select(item, $event)"
+              (keypress)="comboboxInput.select(item, $event)"
+              tabindex="0">
 
-
-          <section class="output-area">
-
-            <h2>Payload Output</h2>
-
-              <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
-
-              <ng-template #payloadOutputMenuTechnologyFilters let-item="item" let-comboboxInput>
-                <li class="list-group-item py-2">
-                  <div class="filters filters-technology d-flex align-items-center gap-2 flex-wrap">
-                    <span>{{ item.name }}</span>
-                    <div class="btn-group" role="group">
-                      <button
-                        class="btn btn-outline-secondary"
-                        (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
-                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')"
-                        [class.active]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
-                        <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
-                        <span> HTML </span>
-                      </button>
-                      <button
-                        class="btn btn-outline-secondary"
-                        (click)="togglePayloadOutputTechnologyFilter('domInjector')"
-                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')"
-                        [class.active]="payloadOutputTechnologyFilters.includes('domInjector')">
-                        <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
-                        <span> DOM </span>
-                      </button>
-                      <button
-                        class="btn btn-outline-secondary"
-                        (click)="togglePayloadOutputTechnologyFilter('jQueryInjector')"
-                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('jQueryInjector')"
-                        [class.active]="payloadOutputTechnologyFilters.includes('jQueryInjector')">
-                        <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
-                        <span> jQuery </span>
-                      </button>
-                      <button
-                        class="btn btn-outline-secondary"
-                        (click)="togglePayloadOutputTechnologyFilter('templateComponentType')"
-                        [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateComponentType')"
-                        [class.active]="payloadOutputTechnologyFilters.includes('templateComponentType')">
-                        <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
-                        <span> Angular </span>
-                      </button>
-                    </div>
-                  </div>
-                </li>
-              </ng-template>
-
-              <ng-template #payloadOutputMenuQualityFilters let-item="item" let-comboboxInput>
-                <li class="list-group-item py-2">
-                  <div class="filters filters-quality d-flex align-items-center gap-2 flex-wrap">
-                    <span>{{ item.name }}</span>
-                    <div class="btn-group" role="group">
-                      <button
-                        class="btn btn-outline-secondary"
-                        (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Recommended)"
-                        [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)"
-                        [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)">
-                        <span>Recommended </span>
-                        <span class="quality-icon quality-recommended"></span>
-                      </button>
-                      <button
-                        class="btn btn-outline-secondary"
-                        (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Questionable)"
-                        [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)"
-                        [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)">
-                        <span> Questionable </span>
-                        <span class="quality-icon quality-questionable"></span>
-                      </button>
-                      <button
-                        class="btn btn-outline-secondary"
-                        (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Insecure)"
-                        [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)"
-                        [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)">
-                        <span> Insecure </span>
-                        <span class="quality-icon quality-insecure"></span>
-                      </button>
-                    </div>
-                  </div>
-                </li>
-              </ng-template>
-
-              <ng-template #payloadOutputMenuItem let-item="item" let-comboboxInput>
-                @if (comboboxInput.filter(item)) {
-                  <li
-                    class="list-group-item list-group-item-action"
-                    (click)="comboboxInput.select(item, $event)"
-                    (keypress)="comboboxInput.select(item, $event)"
-                    tabindex="0">
-
-                    <span>
-                      @if (item.value.htmlSourceProvider) {
-                        <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
-                      }
-                      @if (item.value.domInjector) {
-                        <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
-                      }
-                      @if (item.value.jQueryInjector) {
-                        <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
-                      }
-                      @if (item.value.templateComponentType) {
-                        <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
-                      }
-                      {{ item.name }}
-                      @if (item.value.quality) {
-                        <span class="quality-icon" [class]="'quality-icon quality-' + item.value.quality.toLowerCase()"></span>
-                      }
-                    </span>
-                  </li>
+              <span>
+                @if (item.value.htmlSourceProvider) {
+                  <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
                 }
-              </ng-template>
+                @if (item.value.domInjector) {
+                  <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
+                }
+                @if (item.value.jQueryInjector) {
+                  <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
+                }
+                @if (item.value.templateComponentType) {
+                  <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
+                }
+                {{ item.name }}
+                @if (item.value.quality) {
+                  <span class="quality-icon" [class]="'quality-icon quality-' + item.value.quality.toLowerCase()"></span>
+                }
+              </span>
+            </li>
+          }
+        </ng-template>
 
-              <xss-payload-output
-                [outputDescriptor]="activePayloadOutput()"
-                [payload]="payload()"
-                (onbeforeupdate)="resetXss()">
-              </xss-payload-output>
-          </section>
+        <xss-payload-output
+          [outputDescriptor]="activePayloadOutput()"
+          [payload]="payload()"
+          (onbeforeupdate)="resetXss()">
+        </xss-payload-output>
+      </section>
 
     </main>
-
   </article>
 
   <div class="xss-alert-overlay">
