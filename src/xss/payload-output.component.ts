@@ -2,8 +2,7 @@ import { Component, AfterViewInit, ElementRef, ViewContainerRef, EnvironmentInje
 import { FormsModule } from '@angular/forms';
 
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
-import { XssContext } from './xss-demo.common';
-import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
+import { PayloadOutputDescriptor } from './payload-output.service';
 import { NonAngularLiveOutputComponent } from './live-output.component';
 
 
@@ -19,8 +18,6 @@ export class PayloadOutputComponent implements AfterViewInit {
   private static nextComponentId = 0;
   protected readonly componentId = PayloadOutputComponent.nextComponentId++;
 
-  protected readonly XssContext = XssContext;
-  protected readonly PayloadOutputQuality = PayloadOutputQuality;
 
 
   private readonly environmentInjector = inject(EnvironmentInjector);
