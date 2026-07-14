@@ -160,12 +160,16 @@
     <div class="ms-auto d-flex align-items-center gap-2">
       @if (!autoUpdateEnabled()) {
         <span>
-          <a href="#" (click)="updateNow()">Update now</a>
+          <a href="#" (click)="updateNow()">Update now!</a>
           –
         </span>
       }
-      <label>
-        <input  type="checkbox" [(ngModel)]="autoUpdateEnabled">
+      <label class="form-check form-switch">
+        <input
+            type="checkbox"
+            class="form-check-input"
+            switch
+            [(ngModel)]="autoUpdateEnabled">
         Auto update
       </label>
     </div>
