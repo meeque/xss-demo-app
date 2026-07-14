@@ -1,44 +1,44 @@
-.fd-layout-panel .fd-layout-panel__header h3 img,
-.fd-layout-panel .fd-layout-panel__header h3 span {
+.card .card-header h3 img,
+.card .card-header h3 span {
   vertical-align: middle;
 }
 
-.title .fd-layout-panel__header .technology-icon {
+.title .card-header .technology-icon {
   width: 2em;
   height: 2em;
   opacity: 0.8;
 }
 
-.fd-layout-panel[aria-expanded="false"] .fd-layout-panel__body {
+.card[aria-expanded="false"] .card-body {
   display: none;
 }
 
-.fd-layout-panel[aria-expanded="true"] .fd-layout-panel__header .fd-layout-panel__expand button.fd-layout-panel__button i::before {
+.card[aria-expanded="true"] .card-header button.btn-link i::before {
   content: "\02C5";
 }
 
-.fd-layout-panel[aria-expanded="false"] .fd-layout-panel__header .fd-layout-panel__expand button.fd-layout-panel__button i::before {
+.card[aria-expanded="false"] .card-header button.btn-link i::before {
   content: "\02C3";
 }
 
-.fd-layout-panel .fd-layout-panel__header .fd-layout-panel__title .sap-icon--accept::before {
+.card .card-header .sap-icon--accept::before {
   content: "\2714";
 }
 
-.fd-layout-panel .fd-layout-panel__header .fd-layout-panel__title .sap-icon--question-mark::before {
+.card .card-header .sap-icon--question-mark::before {
   content: "\2370";
 }
 
-.fd-layout-panel .fd-layout-panel__header .fd-layout-panel__title .sap-icon--alert::before {
+.card .card-header .sap-icon--alert::before {
   content: "\26A0";
 }
 
-.payload-processor .fd-layout-panel__body,
-.html-source-provider .fd-layout-panel__body,
-.dom-injector .fd-layout-panel__body,
-.jquery-injector .fd-layout-panel__body,
-.template-code .fd-layout-panel__body,
-.live-source-code .fd-layout-panel__body {
+.payload-processor .card-body,
+.html-source-provider .card-body,
+.dom-injector .card-body,
+.jquery-injector .card-body,
+.template-code .card-body,
+.live-source-code .card-body {
   font-family: monospace;
   white-space-collapse: preserve;
 }

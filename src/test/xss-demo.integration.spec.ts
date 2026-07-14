@@ -249,7 +249,7 @@ describe('Xss Demo App', () => {
         presetName: name,
         expectXss: false,
         expect: async () => {
-          const appElement = await globalThis.driver.wait(until.elementLocated(By.css('article.fd-shell__app')), 2500);
+          const appElement = await globalThis.driver.wait(until.elementLocated(By.css('article')), 2500);
           await findAndExpectOne(appElement, ':scope > *');
           await expect(findAndExpectOne(appElement, 'div.xss-demo-defacement')).resolves.toEqual(expect.anything());
         },
@@ -335,8 +335,8 @@ describe('Xss Demo App', () => {
     payloadInputTextArea = await findAndExpectOne(app, 'section.input-area textarea.payload');
     payloadInputCombobox = await findAndExpectOne(app, 'section.input-area xss-combobox-input');
     payloadOutputCombobox = await findAndExpectOne(app, 'section.output-area xss-combobox-input');
-    liveOutput = await findAndExpectOne(app, 'section.output-area xss-payload-output .live-output.fd-layout-panel .fd-layout-panel__body');
-    alertOverlay = await findAndExpectOne(app, '.fd-shell__overlay.fd-overlay--alert');
+    liveOutput = await findAndExpectOne(app, 'section.output-area xss-payload-output .live-output.card .card-body');
+    alertOverlay = await findAndExpectOne(app, '.xss-alert-overlay');
   }, 15000);
 
   afterEach(async () => {
@@ -448,7 +448,7 @@ describe('Xss Demo App', () => {
   }
 
   async function findMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<WebElement> {
-    const groups = await findStable(combobox, 'div.fd-popover__body div.fd-list__group-header');
+    const groups = await findStable(combobox, 'div.dropdown-menu div.list-group-item');
 
     let group: WebElement;
     for (const g of groups) {
@@ -467,7 +467,7 @@ describe('Xss Demo App', () => {
       return null;
     }
 
-    const items = await findStable(itemList, 'li.fd-list__item');
+    const items = await findStable(itemList, 'li.list-group-item');
 
     let item: WebElement;
     for (const i of items) {
@@ -483,8 +483,8 @@ describe('Xss Demo App', () => {
 
   async function clickMenuItem(combobox: WebElement, groupLabel: string, itemLabel: string): Promise<void> {
     await windowTracker.switchToOwnWindow();
-    const comboboxInput = await findAndExpectOne(combobox, '.fd-popover__control input');
-    const comboboxPopover = await findAndExpectOne(combobox, '.fd-popover__body');
+    const comboboxInput = await findAndExpectOne(combobox, '[aria-haspopup=true] input');
+    const comboboxPopover = await findAndExpectOne(combobox, '.dropdown-menu');
 
     // open menu popover, if not open yet
     if ('true' == await comboboxPopover.getAttribute('aria-hidden')) {
@@ -501,7 +501,7 @@ describe('Xss Demo App', () => {
     await timeout(100);
     let comboboxPopoverAfterClick: WebElement;
     try {
-      comboboxPopoverAfterClick = await findAndExpectOne(combobox, '.fd-popover__body', 100);
+      comboboxPopoverAfterClick = await findAndExpectOne(combobox, '.dropdown-menu', 100);
     }
     catch (err) {
       // menu popover disappeared entirely — this may happen in tests that alter the whole app (e.g. defacement)

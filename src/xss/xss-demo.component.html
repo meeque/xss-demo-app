@@ -174,7 +174,7 @@
 
   </article>
 
-  <div class="fd-shell__overlay fd-overlay fd-overlay--alert">
+  <div class="fd-shell__overlay fd-overlay fd-overlay--alert xss-alert-overlay">
     @if (xssTriggeredCounter) {
       <div [id]="'xss-demo-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered alert alert-danger alert-dismissible" role="alert">
         <p class="fd-message-strip__text mb-0">

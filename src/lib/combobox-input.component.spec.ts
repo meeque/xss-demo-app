@@ -23,7 +23,7 @@ describe('ComboboxInputComponent', () => {
     component = fixture.componentInstance;
     element = fixture.nativeElement;
     textInput = element.querySelector('input[type=text]');
-    menuPopover = element.querySelector('div.fd-popover__body');
+    menuPopover = element.querySelector('div.dropdown-menu');
     menuButton = element.querySelector('button');
   });
 
@@ -201,7 +201,7 @@ describe('ComboboxInputComponent', () => {
     });
 
     it('should display a header for each group', () => {
-      const groupHeaders = element.querySelectorAll('div.fd-list__group-header');
+      const groupHeaders = element.querySelectorAll('div.list-group-item');
 
       expect(groupHeaders.length).toBe(groupedMenuItems.length);
 
@@ -266,7 +266,7 @@ describe('ComboboxInputComponent', () => {
       fixture.detectChanges();
       expect(menuPopover.getAttribute('aria-hidden')).toBe('false');
 
-      element.querySelector('li.fd-list__item').dispatchEvent(new Event('click'));
+      element.querySelector('li.list-group-item').dispatchEvent(new Event('click'));
       fixture.detectChanges();
       await timeout(0);
       expect(menuPopover.getAttribute('aria-hidden')).toBe('true');

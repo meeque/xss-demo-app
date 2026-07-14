@@ -1,13 +1,13 @@
-.fd-shell__header {
+header {
   height: auto;
 }
 
-.fd-shell__header h1 {
+header h1 {
   text-align: center;
   color: var(--bs-primary-text-emphasis);
 }
 
-.fd-dynamic-page__content.xss-triggered {
+main.xss-triggered {
   background-color: var(--bs-danger-bg-subtle) !important;
 }
 
@@ -22,8 +22,8 @@
   border-radius: 0.4rem;
 }
 
-.output-area .fd-list__item span,
-.output-area .fd-list__item img.technology-icon {
+.output-area .list-group-item span,
+.output-area .list-group-item img.technology-icon {
   vertical-align: middle;
 }
 
@@ -54,7 +54,7 @@
   content: "\26A0";
 }
 
-.fd-shell__overlay {
+.xss-alert-overlay {
   display: flex;
   position: fixed;
   left: 50%;

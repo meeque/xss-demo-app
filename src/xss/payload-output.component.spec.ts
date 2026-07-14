@@ -411,13 +411,13 @@ describe('PayloadOutputComponent', () => {
   }
 
   function queryAndExpectTitle(descriptor: PayloadOutputDescriptor) {
-    const title = queryAndExpectOne(element, 'div.title.fd-layout-panel h3');
+    const title = queryAndExpectOne(element, 'div.title.card h3');
     expect(title.textContent.trim()).toBe(descriptor.title);
     return title;
   }
 
   function queryAndExpectPayloadProcessor(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.payload-processor.fd-layout-panel');
+    const panel = queryAndExpectOptional(element, 'div.payload-processor.card');
 
     if (descriptor.payloadProcessor === undefined) {
       expect(panel).toBeNull();
@@ -425,15 +425,15 @@ describe('PayloadOutputComponent', () => {
     }
 
     expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
+    const title = queryAndExpectOne(panel, '.card-header h4');
     expect(title.textContent.trim()).toBe('Payload Processor Function');
-    const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
+    const body = queryAndExpectOne(panel, 'div.card-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.payloadProcessor.toString()));
     return panel;
   }
 
   function queryAndExpectHtmlSourceProvider(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.html-source-provider.fd-layout-panel');
+    const panel = queryAndExpectOptional(element, 'div.html-source-provider.card');
 
     if (descriptor.htmlSourceProvider === undefined) {
       expect(panel).toBeNull();
@@ -441,15 +441,15 @@ describe('PayloadOutputComponent', () => {
     }
 
     expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
+    const title = queryAndExpectOne(panel, '.card-header h4');
     expect(title.textContent.trim()).toBe('HTML Source Provider Function');
-    const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
+    const body = queryAndExpectOne(panel, 'div.card-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.htmlSourceProvider));
     return panel;
   }
 
   function queryAndExpectDomInjector(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.dom-injector.fd-layout-panel');
+    const panel = queryAndExpectOptional(element, 'div.dom-injector.card');
 
     if (descriptor.domInjector === undefined) {
       expect(panel).toBeNull();
@@ -457,15 +457,15 @@ describe('PayloadOutputComponent', () => {
     }
 
     expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
+    const title = queryAndExpectOne(panel, '.card-header h4');
     expect(title.textContent.trim()).toBe('DOM Injector Function');
-    const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
+    const body = queryAndExpectOne(panel, 'div.card-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.domInjector));
     return panel;
   }
 
   function queryAndExpectJQueryInjector(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.jquery-injector.fd-layout-panel');
+    const panel = queryAndExpectOptional(element, 'div.jquery-injector.card');
 
     if (descriptor.jQueryInjector === undefined) {
       expect(panel).toBeNull();
@@ -473,15 +473,15 @@ describe('PayloadOutputComponent', () => {
     }
 
     expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
+    const title = queryAndExpectOne(panel, '.card-header h4');
     expect(title.textContent.trim()).toBe('jQuery Injector Function');
-    const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
+    const body = queryAndExpectOne(panel, 'div.card-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.jQueryInjector));
     return panel;
   }
 
   function queryAndExpectTemplateComponentType(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.template-code.fd-layout-panel');
+    const panel = queryAndExpectOptional(element, 'div.template-code.card');
 
     if (descriptor.templateComponentType === undefined) {
       expect(panel).toBeNull();
@@ -489,18 +489,18 @@ describe('PayloadOutputComponent', () => {
     }
 
     expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
+    const title = queryAndExpectOne(panel, '.card-header h4');
     expect(title.textContent.trim()).toBe('Angular Template Code');
-    const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
+    const body = queryAndExpectOne(panel, 'div.card-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.templateComponentType.templateCode));
     return panel;
   }
 
   function queryAndExpectLiveOutput(expectedCode?: string) {
-    const panel = queryAndExpectOne(element, 'div.live-output.fd-layout-panel');
-    const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
+    const panel = queryAndExpectOne(element, 'div.live-output.card');
+    const title = queryAndExpectOne(panel, '.card-header h4');
     expect(title.textContent.trim()).toBe('Live HTML Output');
-    const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
+    const body = queryAndExpectOne(panel, 'div.card-body');
     if (expectedCode != null) {
       const outputContainer = queryAndExpectOne(body, ':scope > *');
       expect(outputContainer.innerHTML.trim()).toBe(expectedCode);
@@ -509,10 +509,10 @@ describe('PayloadOutputComponent', () => {
   }
 
   function queryAndExpectLiveSourceCode(expectedCode?: string) {
-    const panel = queryAndExpectOne(element, 'div.live-source-code.fd-layout-panel');
-    const title = queryAndExpectOne(panel, 'h4.fd-layout-panel__title');
+    const panel = queryAndExpectOne(element, 'div.live-source-code.card');
+    const title = queryAndExpectOne(panel, '.card-header h4');
     expect(title.textContent.trim()).toBe('Live HTML Source Code');
-    const body = queryAndExpectOne(panel, 'div.fd-layout-panel__body');
+    const body = queryAndExpectOne(panel, 'div.card-body');
     if (expectedCode != null) {
       expect(body.textContent.trim()).toBe(expectedCode);
     }
@@ -521,7 +521,7 @@ describe('PayloadOutputComponent', () => {
 
   function queryAndExpectAutoUpdateEnabled(expectedToggleState?: boolean) {
     const liveOutputPanel = queryAndExpectLiveOutput();
-    const toggle = queryAndExpectOne(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions label input[type=checkbox]') as HTMLInputElement;
+    const toggle = queryAndExpectOne(liveOutputPanel, '.card-header .ms-auto label input[type=checkbox]') as HTMLInputElement;
     expect(toggle.type).toBe('checkbox');
     expect(toggle.checked).toBe(component.autoUpdateEnabled());
     if (expectedToggleState != null) {
@@ -538,7 +538,7 @@ describe('PayloadOutputComponent', () => {
 
   function queryAndExpectUpdateNowLink(expectLinkToExist?: boolean) {
     const liveOutputPanel = queryAndExpectLiveOutput();
-    const updateNowLink = queryAndExpectOptional(liveOutputPanel, '.fd-layout-panel__header .fd-layout-panel__actions span a');
+    const updateNowLink = queryAndExpectOptional(liveOutputPanel, '.card-header .ms-auto span a');
 
     if (expectLinkToExist != null) {
       expect(!!updateNowLink).toBe(expectLinkToExist);

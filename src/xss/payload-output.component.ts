@@ -105,7 +105,7 @@ export class PayloadOutputComponent implements AfterViewInit {
   }
 
   protected togglePanel(event: MouseEvent) {
-    const panel = (event.target as Element).closest('.fd-layout-panel');
+    const panel = (event.target as Element).closest('.card');
     panel.ariaExpanded = (panel.ariaExpanded == 'true') ? 'false' : 'true';
   }
 }
