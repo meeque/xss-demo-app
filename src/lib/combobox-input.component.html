@@ -1,15 +1,14 @@
-<div class="fd-form-item mb-3">
-  <div class="fd-popover dropdown">
+<div class="mb-3">
+  <div class="dropdown">
 
     <div
-        class="fd-popover__control"
         [attr.aria-controls]="'xss-combobox-input-component-' + componentId"
         [attr.aria-expanded]="menuExpanded()"
         aria-haspopup="true">
-      <div class="fd-input-group fd-input-group--control input-group">
-        <input type="text" class="fd-input fd-input-group__input form-control" [(ngModel)]="query" [placeholder]="placeholder()" (focus)="toggleMenu(true)" (input)="toggleMenu(true)">
-        <span class="fd-input-group__addon fd-input-group__addon--button">
-          <button (click)="toggleMenu()" class="fd-input-group__button fd-button fd-button--transparent btn btn-outline-secondary">
+      <div class="input-group">
+        <input type="text" class="form-control" [(ngModel)]="query" [placeholder]="placeholder()" (focus)="toggleMenu(true)" (input)="toggleMenu(true)">
+        <span>
+          <button (click)="toggleMenu()" class="btn btn-outline-secondary">
             ▽
           </button>
         </span>
@@ -18,10 +17,10 @@
 
     <div
         [id]="'xss-combobox-input-component-' + componentId"
-        class="fd-popover__body fd-popover__body--no-arrow fd-popover__body--dropdown fd-popover__body--dropdown-fill dropdown-menu w-100 p-0"
+        class="dropdown-menu w-100 p-0"
         [attr.aria-hidden]="!menuExpanded()">
-      <div class="fd-popover__wrapper docs-max-height overflow-y-auto">
-        <ul class="fd-list fd-list--dropdown list-group list-group-flush">
+      <div class="docs-max-height overflow-y-auto">
+        <ul class="list-group list-group-flush">
           @for (item of items(); track item) {
             <ng-container
                 [ngTemplateOutlet]="item.template || defaultMenuItem"
@@ -30,10 +29,10 @@
           }
         </ul>
         @for (group of groups(); track group) {
-          <div class="fd-list__group-header list-group-item fw-semibold bg-body-secondary">
-            <span class="fd-list__title">{{ group.name }}</span>
+          <div class="list-group-item fw-semibold bg-body-secondary">
+            <span>{{ group.name }}</span>
           </div>
-          <ul class="fd-list fd-list--dropdown list-group list-group-flush">
+          <ul class="list-group list-group-flush">
             @for (item of group.items; track item) {
               <ng-container
                   [ngTemplateOutlet]="item.template || defaultMenuItem"
@@ -50,8 +49,8 @@
 
 <ng-template #defaultMenuItem let-item="item">
   @if (filter(item)) {
-    <li class="fd-list__item list-group-item list-group-item-action" (click)="select(item, $event)" (keypress)="select(item, $event)" tabindex="0">
-      <span class="fd-list__title">
+    <li class="list-group-item list-group-item-action" (click)="select(item, $event)" (keypress)="select(item, $event)" tabindex="0">
+      <span>
         {{ item.name }}
     </span>
     </li>

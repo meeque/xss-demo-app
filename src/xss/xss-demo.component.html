@@ -1,17 +1,17 @@
-<div class="fd-shell fd-shell--fixed">
+<div>
 
-  <header class="fd-shell__header">
+  <header>
     <h1>Cross-Site-Scripting (XSS) Demo</h1>
   </header>
 
-  <article class="fd-shell__app fd-dynamic-page">
-    <main class="fd-dynamic-page__content" [class.xss-triggered]="xssTriggeredCounter">
-      <div class="fd-container">
-        <div class="fd-row">
+  <article>
+    <main [class.xss-triggered]="xssTriggeredCounter">
+      <div>
+        <div>
 
 
 
-          <section class="input-area fd-section fd-col--6">
+          <section class="input-area">
 
             <h2>Payload Input</h2>
 
@@ -19,8 +19,8 @@
 
               <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></xss-combobox-input>
 
-              <div class="fd-layout-panel fd-margin-top-bottom--sm">
-                <div class="fd-layout-panel__body">
+              <div>
+                <div>
                   <textarea
                     name="payload"
                     class="payload"
@@ -36,7 +36,7 @@
 
 
 
-          <section class="output-area fd-section fd-col--6">
+          <section class="output-area">
 
             <h2>Payload Output</h2>
 
@@ -45,12 +45,12 @@
               <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
 
               <ng-template #payloadOutputMenuTechnologyFilters let-item="item" let-comboboxInput>
-                <li class="fd-list__item list-group-item py-2">
+                <li class="list-group-item py-2">
                   <div class="fddocs-button-container filters filters-technology d-flex align-items-center gap-2 flex-wrap">
                     <span>{{ item.name }}</span>
                     <div class="btn-group" role="group">
                       <button
-                        class="fd-button btn btn-outline-secondary"
+                        class="btn btn-outline-secondary"
                         (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
                         [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')"
                         [class.active]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
@@ -58,7 +58,7 @@
                         <span> HTML </span>
                       </button>
                       <button
-                        class="fd-button btn btn-outline-secondary"
+                        class="btn btn-outline-secondary"
                         (click)="togglePayloadOutputTechnologyFilter('domInjector')"
                         [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')"
                         [class.active]="payloadOutputTechnologyFilters.includes('domInjector')">
@@ -66,7 +66,7 @@
                         <span> DOM </span>
                       </button>
                       <button
-                        class="fd-button btn btn-outline-secondary"
+                        class="btn btn-outline-secondary"
                         (click)="togglePayloadOutputTechnologyFilter('jQueryInjector')"
                         [attr.aria-selected]="payloadOutputTechnologyFilters.includes('jQueryInjector')"
                         [class.active]="payloadOutputTechnologyFilters.includes('jQueryInjector')">
@@ -74,7 +74,7 @@
                         <span> jQuery </span>
                       </button>
                       <button
-                        class="fd-button btn btn-outline-secondary"
+                        class="btn btn-outline-secondary"
                         (click)="togglePayloadOutputTechnologyFilter('templateComponentType')"
                         [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateComponentType')"
                         [class.active]="payloadOutputTechnologyFilters.includes('templateComponentType')">
@@ -87,12 +87,12 @@
               </ng-template>
 
               <ng-template #payloadOutputMenuQualityFilters let-item="item" let-comboboxInput>
-                <li class="fd-list__item list-group-item py-2">
+                <li class="list-group-item py-2">
                   <div class="fddocs-button-container filters filters-quality d-flex align-items-center gap-2 flex-wrap">
                     <span>{{ item.name }}</span>
                     <div class="btn-group" role="group">
                       <button
-                        class="fd-button btn btn-outline-secondary"
+                        class="btn btn-outline-secondary"
                         (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Recommended)"
                         [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)"
                         [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)">
@@ -100,7 +100,7 @@
                         <span class="sap-icon--accept"></span>
                       </button>
                       <button
-                        class="fd-button btn btn-outline-secondary"
+                        class="btn btn-outline-secondary"
                         (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Questionable)"
                         [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)"
                         [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)">
@@ -108,7 +108,7 @@
                         <span class="sap-icon--question-mark"></span>
                       </button>
                       <button
-                        class="fd-button btn btn-outline-secondary"
+                        class="btn btn-outline-secondary"
                         (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Insecure)"
                         [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)"
                         [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)">
@@ -123,12 +123,12 @@
               <ng-template #payloadOutputMenuItem let-item="item" let-comboboxInput>
                 @if (comboboxInput.filter(item)) {
                   <li
-                    class="fd-list__item list-group-item list-group-item-action"
+                    class="list-group-item list-group-item-action"
                     (click)="comboboxInput.select(item, $event)"
                     (keypress)="comboboxInput.select(item, $event)"
                     tabindex="0">
 
-                    <span class="fd-list__title">
+                    <span>
                       @if (item.value.htmlSourceProvider) {
                         <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
                       }
@@ -174,19 +174,19 @@
 
   </article>
 
-  <div class="fd-shell__overlay fd-overlay fd-overlay--alert xss-alert-overlay">
+  <div class="xss-alert-overlay">
     @if (xssTriggeredCounter) {
-      <div [id]="'xss-demo-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered alert alert-danger alert-dismissible" role="alert">
-        <p class="fd-message-strip__text mb-0">
+      <div [id]="'xss-demo-component-' + componentId + '-xss-alert'" class="alert-xss-triggered alert alert-danger alert-dismissible" role="alert">
+        <p class="mb-0">
           @if (xssTriggeredCounter > 1) {
-            <span class="fd-counter badge bg-danger rounded-pill">{{ xssTriggeredCounter }}</span>
+            <span class="badge bg-danger rounded-pill">{{ xssTriggeredCounter }}</span>
           }
           <span> {{ xssMessage }}</span>
         </p>
         <button
           (click)="resetXss()"
           [attr.aria-controls]="'xss-demo-component-' + componentId + '-xss-alert'"
-          class="fd-button fd-button--transparent btn-close"
+          class="btn-close"
           title="Close">
         </button>
       </div>
