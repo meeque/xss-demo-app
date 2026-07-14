@@ -9,18 +9,6 @@
   opacity: 0.8;
 }
 
-.card[aria-expanded="false"] .card-body {
-  display: none;
-}
-
-.card[aria-expanded="true"] .card-header button.btn-link i::before {
-  content: "\02C5";
-}
-
-.card[aria-expanded="false"] .card-header button.btn-link i::before {
-  content: "\02C3";
-}
-
 .card .card-header .sap-icon--accept::before {
   content: "\2714";
 }
@@ -33,12 +21,12 @@
   content: "\26A0";
 }
 
-.payload-processor .card-body,
-.html-source-provider .card-body,
-.dom-injector .card-body,
-.jquery-injector .card-body,
-.template-code .card-body,
-.live-source-code .card-body {
+.payload-processor .accordion-body,
+.html-source-provider .accordion-body,
+.dom-injector .accordion-body,
+.jquery-injector .accordion-body,
+.template-code .accordion-body,
+.live-source-code .accordion-body {
   font-family: monospace;
   white-space-collapse: preserve;
 }

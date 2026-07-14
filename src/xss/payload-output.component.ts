@@ -105,7 +105,12 @@ export class PayloadOutputComponent implements AfterViewInit {
   }
 
   protected togglePanel(event: MouseEvent) {
-    const panel = (event.target as Element).closest('.card');
-    panel.ariaExpanded = (panel.ariaExpanded == 'true') ? 'false' : 'true';
+    const button = (event.target as Element).closest('.accordion-button') as HTMLElement;
+    const isExpanded = button.ariaExpanded !== 'false';
+    button.ariaExpanded = isExpanded ? 'false' : 'true';
+    button.classList.toggle('collapsed', isExpanded);
+    button.closest('.accordion-item')
+      ?.querySelector('.accordion-collapse')
+      ?.classList.toggle('show', !isExpanded);
   }
 }

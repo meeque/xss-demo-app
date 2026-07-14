@@ -417,7 +417,7 @@ describe('PayloadOutputComponent', () => {
   }
 
   function queryAndExpectPayloadProcessor(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.payload-processor.card');
+    const panel = queryAndExpectOptional(element, 'div.payload-processor.accordion');
 
     if (descriptor.payloadProcessor === undefined) {
       expect(panel).toBeNull();
@@ -425,15 +425,15 @@ describe('PayloadOutputComponent', () => {
     }
 
     expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, '.card-header h4');
+    const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
     expect(title.textContent.trim()).toBe('Payload Processor Function');
-    const body = queryAndExpectOne(panel, 'div.card-body');
+    const body = queryAndExpectOne(panel, 'div.accordion-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.payloadProcessor.toString()));
     return panel;
   }
 
   function queryAndExpectHtmlSourceProvider(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.html-source-provider.card');
+    const panel = queryAndExpectOptional(element, 'div.html-source-provider.accordion');
 
     if (descriptor.htmlSourceProvider === undefined) {
       expect(panel).toBeNull();
@@ -441,15 +441,15 @@ describe('PayloadOutputComponent', () => {
     }
 
     expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, '.card-header h4');
+    const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
     expect(title.textContent.trim()).toBe('HTML Source Provider Function');
-    const body = queryAndExpectOne(panel, 'div.card-body');
+    const body = queryAndExpectOne(panel, 'div.accordion-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.htmlSourceProvider));
     return panel;
   }
 
   function queryAndExpectDomInjector(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.dom-injector.card');
+    const panel = queryAndExpectOptional(element, 'div.dom-injector.accordion');
 
     if (descriptor.domInjector === undefined) {
       expect(panel).toBeNull();
@@ -457,15 +457,15 @@ describe('PayloadOutputComponent', () => {
     }
 
     expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, '.card-header h4');
+    const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
     expect(title.textContent.trim()).toBe('DOM Injector Function');
-    const body = queryAndExpectOne(panel, 'div.card-body');
+    const body = queryAndExpectOne(panel, 'div.accordion-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.domInjector));
     return panel;
   }
 
   function queryAndExpectJQueryInjector(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.jquery-injector.card');
+    const panel = queryAndExpectOptional(element, 'div.jquery-injector.accordion');
 
     if (descriptor.jQueryInjector === undefined) {
       expect(panel).toBeNull();
@@ -473,15 +473,15 @@ describe('PayloadOutputComponent', () => {
     }
 
     expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, '.card-header h4');
+    const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
     expect(title.textContent.trim()).toBe('jQuery Injector Function');
-    const body = queryAndExpectOne(panel, 'div.card-body');
+    const body = queryAndExpectOne(panel, 'div.accordion-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.jQueryInjector));
     return panel;
   }
 
   function queryAndExpectTemplateComponentType(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.template-code.card');
+    const panel = queryAndExpectOptional(element, 'div.template-code.accordion');
 
     if (descriptor.templateComponentType === undefined) {
       expect(panel).toBeNull();
@@ -489,9 +489,9 @@ describe('PayloadOutputComponent', () => {
     }
 
     expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, '.card-header h4');
+    const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
     expect(title.textContent.trim()).toBe('Angular Template Code');
-    const body = queryAndExpectOne(panel, 'div.card-body');
+    const body = queryAndExpectOne(panel, 'div.accordion-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.templateComponentType.templateCode));
     return panel;
   }
@@ -509,10 +509,10 @@ describe('PayloadOutputComponent', () => {
   }
 
   function queryAndExpectLiveSourceCode(expectedCode?: string) {
-    const panel = queryAndExpectOne(element, 'div.live-source-code.card');
-    const title = queryAndExpectOne(panel, '.card-header h4');
+    const panel = queryAndExpectOne(element, 'div.live-source-code.accordion');
+    const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
     expect(title.textContent.trim()).toBe('Live HTML Source Code');
-    const body = queryAndExpectOne(panel, 'div.card-body');
+    const body = queryAndExpectOne(panel, 'div.accordion-body');
     if (expectedCode != null) {
       expect(body.textContent.trim()).toBe(expectedCode);
     }
