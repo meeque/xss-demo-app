@@ -1,5 +1,4 @@
-<div class="mb-3">
-  <div class="dropdown">
+<div class="dropdown mb-3">
 
     <div
         [attr.aria-controls]="'xss-combobox-input-component-' + componentId"
@@ -41,15 +40,12 @@
       </div>
     </div>
 
-  </div>
 </div>
 
 <ng-template #defaultMenuItem let-item="item">
   @if (filter(item)) {
     <li class="list-group-item list-group-item-action" (click)="select(item, $event)" (keypress)="select(item, $event)" tabindex="0">
-      <span>
-        {{ item.name }}
-    </span>
+      {{ item.name }}
     </li>
   }
 </ng-template>

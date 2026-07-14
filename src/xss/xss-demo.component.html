@@ -6,16 +6,10 @@
 
   <article>
     <main [class.xss-triggered]="xssTriggeredCounter">
-      <div>
-        <div>
-
-
 
           <section class="input-area">
 
             <h2>Payload Input</h2>
-
-            <div>
 
               <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></xss-combobox-input>
 
@@ -30,8 +24,6 @@
                 </div>
               </div>
 
-            </div>
-
           </section>
 
 
@@ -39,8 +31,6 @@
           <section class="output-area">
 
             <h2>Payload Output</h2>
-
-            <div>
 
               <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
 
@@ -150,20 +140,13 @@
                 }
               </ng-template>
 
-              <div>
-                <xss-payload-output
-                  [outputDescriptor]="activePayloadOutput()"
-                  [payload]="payload()"
-                  (onbeforeupdate)="resetXss()">
-                </xss-payload-output>
-              </div>
-            </div>
+              <xss-payload-output
+                [outputDescriptor]="activePayloadOutput()"
+                [payload]="payload()"
+                (onbeforeupdate)="resetXss()">
+              </xss-payload-output>
           </section>
 
-
-
-        </div>
-      </div>
     </main>
 
   </article>
