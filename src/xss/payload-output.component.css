@@ -1,3 +1,7 @@
+.card {
+  --bs-card-cap-bg: var(--bs-primary-bg-subtle);
+}
+
 .card .card-header h3 img,
 .card .card-header h3 span {
   vertical-align: middle;
