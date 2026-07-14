@@ -13,3 +13,15 @@ body {
     height: 60em;
     border: var(--bs-danger) dashed 5px;
 }
+
+.quality-icon.quality-recommended::before {
+  content: "\2714";
+}
+
+.quality-icon.quality-questionable::before {
+  content: "\2370";
+}
+
+.quality-icon.quality-insecure::before {
+  content: "\26A0";
+}

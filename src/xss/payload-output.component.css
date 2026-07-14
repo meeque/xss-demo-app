@@ -13,18 +13,6 @@
   opacity: 0.8;
 }
 
-.card .card-header .sap-icon--accept::before {
-  content: "\2714";
-}
-
-.card .card-header .sap-icon--question-mark::before {
-  content: "\2370";
-}
-
-.card .card-header .sap-icon--alert::before {
-  content: "\26A0";
-}
-
 .payload-processor .accordion-body,
 .html-source-provider .accordion-body,
 .dom-injector .accordion-body,

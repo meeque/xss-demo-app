@@ -15,14 +15,8 @@
         <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
       }
       <span> {{ outputDescriptor().title }} </span>
-      @if (outputDescriptor().quality === PayloadOutputQuality.Recommended) {
-        <span class="sap-icon--accept"></span>
-      }
-      @if (outputDescriptor().quality === PayloadOutputQuality.Questionable) {
-        <span class="sap-icon--question-mark"></span>
-      }
-      @if (outputDescriptor().quality === PayloadOutputQuality.Insecure) {
-        <span class="sap-icon--alert"></span>
+      @if (outputDescriptor().quality) {
+        <span class="quality-icon" [class]="'quality-icon quality-' + outputDescriptor().quality.toLowerCase()"></span>
       }
     </h3>
   </div>
