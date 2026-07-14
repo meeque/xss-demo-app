@@ -7,17 +7,14 @@
         aria-haspopup="true">
       <div class="input-group">
         <input type="text" class="form-control" [(ngModel)]="query" [placeholder]="placeholder()" (focus)="toggleMenu(true)" (input)="toggleMenu(true)">
-        <span>
-          <button (click)="toggleMenu()" class="btn btn-outline-secondary">
-            ▽
-          </button>
-        </span>
+        <button type="button" (click)="toggleMenu()" class="btn btn-outline-secondary dropdown-toggle" [class.show]="menuExpanded()" [attr.aria-label]="menuExpanded() ? 'Close dropdown' : 'Open dropdown'"></button>
       </div>
     </div>
 
     <div
         [id]="'xss-combobox-input-component-' + componentId"
         class="dropdown-menu w-100 p-0"
+        [class.show]="menuExpanded()"
         [attr.aria-hidden]="!menuExpanded()">
       <div class="overflow-y-auto">
         <ul class="list-group list-group-flush">
