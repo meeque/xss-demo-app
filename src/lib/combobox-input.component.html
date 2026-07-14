@@ -19,7 +19,7 @@
         [id]="'xss-combobox-input-component-' + componentId"
         class="dropdown-menu w-100 p-0"
         [attr.aria-hidden]="!menuExpanded()">
-      <div class="docs-max-height overflow-y-auto">
+      <div class="overflow-y-auto">
         <ul class="list-group list-group-flush">
           @for (item of items(); track item) {
             <ng-container
