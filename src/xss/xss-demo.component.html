@@ -4,10 +4,10 @@
     <h1>Cross-Site-Scripting (XSS) Demo</h1>
   </header>
 
-  <article>
-    <main [class.xss-triggered]="xssTriggeredCounter">
+  <article class="container-fluid">
+    <main class="row g-3 align-items-start" [class.xss-triggered]="xssTriggeredCounter">
 
-      <section class="input-area">
+      <section class="input-area col-12 col-md-6">
 
         <h2>Payload Input</h2>
 
@@ -28,7 +28,7 @@
 
 
 
-      <section class="output-area">
+      <section class="output-area col-12 col-md-6">
 
         <h2>Payload Output</h2>
 
