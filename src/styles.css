@@ -10,11 +10,14 @@ body {
 
 header {
   height: auto;
+  background-color: var(--bs-primary);
 }
 
 header h1 {
+  line-height: inherit;
   text-align: center;
-  color: var(--bs-primary-text-emphasis);
+  font-weight: bold;
+  color: var(--bs-emphasis-color);
 }
 
 .quality-icon.quality-recommended::before {
