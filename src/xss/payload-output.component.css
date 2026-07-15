@@ -2,18 +2,36 @@
   --bs-accordion-btn-bg: var(--bs-primary-bg-subtle);
 }
 
-.card {
-  --bs-card-cap-bg: var(--bs-primary-bg-subtle);
+.accordion .accordion-button {
+  font-size: inherit;
+  font-weight: inherit;
 }
 
-.card .card-header h3 img,
-.card .card-header h3 span {
+.accordion h4.accordion-header {
+  font-size: 1.2rem;
+}
+
+.card {
+  --bs-card-cap-bg: var(--bs-primary-bg-subtle);
+  --bs-card-cap-padding-y: 1rem;
+}
+
+.card .card-header h4 {
+  font-size: 1.2rem;
+}
+
+.title.card .card-header h3 {
+  font-size: 1.5rem;
+}
+
+.title.card .card-header h3 img,
+.title.card .card-header h3 span {
   vertical-align: middle;
 }
 
-.title .card-header .technology-icon {
-  width: 2em;
-  height: 2em;
+.title.card .card-header .technology-icon {
+  width: 1.5em;
+  height: 1.5em;
   opacity: 0.8;
 }
 
