@@ -1,11 +1,11 @@
-<div>
+<div class="d-flex flex-column min-vh-100">
 
   <header class="sticky-top container-fluid">
     <h1>XSS Demo</h1>
   </header>
 
-  <article class="container-fluid">
-    <main class="row g-3 align-items-start" [class.xss-triggered]="xssTriggeredCounter">
+  <article class="container-fluid flex-fill" [class.xss-triggered]="xssTriggeredCounter">
+    <main class="row g-3 align-items-start">
 
       <section class="input-area col-12 col-md-6">
 
