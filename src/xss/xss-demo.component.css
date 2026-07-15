@@ -69,4 +69,5 @@ article.xss-triggered {
   border-width: 0.2em;
   border-color: var(--bs-danger);
   vertical-align: middle;
+  font-weight: bold;
 }
