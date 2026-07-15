@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   buildNpmPackage,
 }:
 
@@ -10,6 +11,8 @@ in
   buildNpmPackage {
     pname = "xss-demo-app";
     version = "0.0.0";
+
+    nodejs = pkgs.nodejs_24;
 
     src = fs.toSource {
       root = ../.;
@@ -26,7 +29,7 @@ in
         );
     };
 
-    npmDepsHash = "sha256-x6VH4V8JNUhSSA7d1TfiZ1s04OkMOL2JikI8OsTBVhk=";
+    npmDepsHash = "sha256-IXMRJhT5TTTtkYdEHnYKPNIk2/JD2OQkvpOdubSbFww=";
 
     npmFlags = [ "--ignore-scripts" ];
 
