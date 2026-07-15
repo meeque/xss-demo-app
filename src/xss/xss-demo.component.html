@@ -113,7 +113,7 @@
         <ng-template #payloadOutputMenuItem let-item="item" let-comboboxInput>
           @if (comboboxInput.filter(item)) {
             <li
-              class="list-group-item list-group-item-action"
+              class="list-group-item list-group-item-action btn"
               (click)="comboboxInput.select(item, $event)"
               (keypress)="comboboxInput.select(item, $event)"
               tabindex="0">

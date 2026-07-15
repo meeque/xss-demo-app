@@ -44,7 +44,7 @@
 
 <ng-template #defaultMenuItem let-item="item">
   @if (filter(item)) {
-    <li class="list-group-item list-group-item-action" (click)="select(item, $event)" (keypress)="select(item, $event)" tabindex="0">
+    <li class="list-group-item list-group-item-action btn" (click)="select(item, $event)" (keypress)="select(item, $event)" tabindex="0">
       {{ item.name }}
     </li>
   }
