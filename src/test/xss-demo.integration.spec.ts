@@ -488,6 +488,8 @@ describe('Xss Demo App', () => {
 
     // open menu popover, if not open yet
     if ('true' == await comboboxPopover.getAttribute('aria-hidden')) {
+      // scroll to comboboxInput first, because it might be occluded by header bar
+      await globalThis.driver.actions().scroll(0, 0, 0, 0, comboboxInput).perform();
       await comboboxInput.click();
     }
 
