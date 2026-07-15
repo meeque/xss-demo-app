@@ -56,13 +56,12 @@ article.xss-triggered {
 
 .xss-alert-overlay {
   display: flex;
-  position: fixed;
+  position: absolute;
   left: 50%;
-  top: 3.5rem;
-  transform: translate(-50%,0);
+  top: 100%;
+  transform: translate(-50%, -33%);
   align-items: center;
   justify-content: center;
-  z-index: 2000;
 }
 
 .xss-alert-overlay .alert {

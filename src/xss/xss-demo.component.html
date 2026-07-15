@@ -2,6 +2,24 @@
 
   <header class="sticky-top container-fluid">
     <h1>XSS Demo</h1>
+    <div class="xss-alert-overlay">
+      @if (xssTriggeredCounter) {
+        <div [id]="'xss-demo-component-' + componentId + '-xss-alert'" class="alert-xss-triggered alert alert-danger alert-dismissible" role="alert">
+          <p class="mb-0">
+            @if (xssTriggeredCounter > 1) {
+              <span class="badge bg-danger rounded-pill">{{ xssTriggeredCounter }}</span>
+            }
+            <span> {{ xssMessage }}</span>
+          </p>
+          <button
+            (click)="resetXss()"
+            [attr.aria-controls]="'xss-demo-component-' + componentId + '-xss-alert'"
+            class="btn-close"
+            title="Close">
+          </button>
+        </div>
+      }
+    </div>
   </header>
 
   <article class="container-fluid flex-fill" [class.xss-triggered]="xssTriggeredCounter">
@@ -149,24 +167,5 @@
 
     </main>
   </article>
-
-  <div class="xss-alert-overlay">
-    @if (xssTriggeredCounter) {
-      <div [id]="'xss-demo-component-' + componentId + '-xss-alert'" class="alert-xss-triggered alert alert-danger alert-dismissible" role="alert">
-        <p class="mb-0">
-          @if (xssTriggeredCounter > 1) {
-            <span class="badge bg-danger rounded-pill">{{ xssTriggeredCounter }}</span>
-          }
-          <span> {{ xssMessage }}</span>
-        </p>
-        <button
-          (click)="resetXss()"
-          [attr.aria-controls]="'xss-demo-component-' + componentId + '-xss-alert'"
-          class="btn-close"
-          title="Close">
-        </button>
-      </div>
-    }
-  </div>
 
 </div>
