@@ -8,18 +8,6 @@ body {
     padding: 0;
 }
 
-header {
-  height: auto;
-  background-color: var(--bs-primary);
-}
-
-header h1 {
-  line-height: inherit;
-  text-align: center;
-  font-weight: bold;
-  color: var(--bs-emphasis-color);
-}
-
 .quality-icon.quality-recommended::before {
   content: "\2714";
 }

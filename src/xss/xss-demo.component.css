@@ -1,5 +1,22 @@
-article.xss-triggered {
-  background-color: var(--bs-danger-bg-subtle) !important;
+header {
+  height: auto;
+  padding: 0.5px;
+  background-color: var(--bs-primary);
+}
+
+header h1 {
+  line-height: inherit;
+  text-align: center;
+  font-weight: bold;
+  color: var(--bs-emphasis-color);
+}
+
+main {
+  margin-top: 1rem;
+}
+
+main section h2 {
+  text-align: center;
 }
 
 .input-area textarea.payload {
@@ -33,13 +50,24 @@ article.xss-triggered {
   filter: unset;
 }
 
+article.xss-triggered {
+  background-color: var(--bs-danger-bg-subtle) !important;
+}
+
 .xss-alert-overlay {
   display: flex;
   position: fixed;
   left: 50%;
-  top: 4rem;
+  top: 3.5rem;
   transform: translate(-50%,0);
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 2000;
+}
+
+.xss-alert-overlay .alert {
+  margin: 0;
+  border-width: 0.2em;
+  border-color: var(--bs-danger);
+  vertical-align: middle;
 }
