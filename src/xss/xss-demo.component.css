@@ -1,14 +1,30 @@
 header {
   height: auto;
-  padding: 0.5px;
   background-color: var(--bs-primary);
 }
 
 header h1 {
+  padding: 0.2rem;
   line-height: inherit;
   text-align: center;
   font-weight: bold;
   color: var(--bs-emphasis-color);
+}
+
+header .xss-alert-overlay {
+  display: block;
+  position: absolute;
+  justify-self: center;
+  /* adjust to dynamic sizing of the h1 in the header: */
+  top: min(2rem + 2vw, 3.5rem);
+}
+
+header .xss-alert-overlay .alert {
+  margin: 0;
+  border-width: 0.2rem;
+  border-color: var(--bs-danger);
+  vertical-align: middle;
+  font-weight: bold;
 }
 
 main {
@@ -52,22 +68,4 @@ main section h2 {
 
 article.xss-triggered {
   background-color: var(--bs-danger-bg-subtle) !important;
-}
-
-.xss-alert-overlay {
-  display: flex;
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  transform: translate(-50%, -33%);
-  align-items: center;
-  justify-content: center;
-}
-
-.xss-alert-overlay .alert {
-  margin: 0;
-  border-width: 0.2em;
-  border-color: var(--bs-danger);
-  vertical-align: middle;
-  font-weight: bold;
 }
