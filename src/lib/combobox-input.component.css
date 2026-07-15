@@ -1,8 +1,12 @@
+.dropdown-toggle {
+  --bs-btn-bg: var(--bs-body-bg);
+}
+
 .dropdown-toggle::after {
-    /* this mimics Bootstrap's `--bs-accordion-btn-icon-transition` variable, which is not available here: */
-    transition: transform .2s ease-in-out;
+  /* this mimics Bootstrap's `--bs-accordion-btn-icon-transition` variable, which is not available here: */
+  transition: transform .2s ease-in-out;
 }
 
 .dropdown-toggle.show::after {
-    transform: rotate(-180deg);
+  transform: rotate(-180deg);
 }
