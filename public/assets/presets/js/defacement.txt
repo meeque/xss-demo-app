@@ -30,7 +30,7 @@
   footer.innerText = pageTitle;
   overlay.appendChild(footer);
 
-  var container = document.querySelector('article.fd-shell__app') || document.body;
+  var container = document.querySelector('article') || document.body;
   container.innerText = '';
   container.style.background = 'black';
   container.style.overflow = 'scroll';

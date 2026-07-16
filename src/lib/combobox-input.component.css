@@ -1,7 +1,16 @@
-div[aria-haspopup=true] button .sap-icon--navigation-down-arrow::before {
-    content: "\02C5";
+.dropdown-toggle {
+  --bs-btn-bg: var(--bs-body-bg);
 }
 
-div[aria-haspopup=true][aria-expanded=true] button .sap-icon--navigation-down-arrow::before {
-    content: "\02C4";
+.dropdown-toggle::after {
+  /* this mimics Bootstrap's `--bs-accordion-btn-icon-transition` variable, which is not available here: */
+  transition: transform .2s ease-in-out;
+}
+
+.dropdown-toggle.show::after {
+  transform: rotate(-180deg);
+}
+
+div.list-group.list-group-item {
+  border-radius: 0;
 }

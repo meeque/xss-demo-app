@@ -1,49 +1,46 @@
-.fd-layout-panel .fd-layout-panel__header h3,
-.fd-layout-panel .fd-layout-panel__header h4 {
-  font-weight: bold;
+.accordion {
+  --bs-accordion-btn-bg: var(--bs-primary-bg-subtle);
 }
 
-.fd-layout-panel .fd-layout-panel__header h3 img,
-.fd-layout-panel .fd-layout-panel__header h3 span {
+.accordion .accordion-button {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.accordion h4.accordion-header {
+  font-size: 1.2rem;
+}
+
+.card {
+  --bs-card-cap-bg: var(--bs-primary-bg-subtle);
+  --bs-card-cap-padding-y: 1rem;
+}
+
+.card .card-header h4 {
+  font-size: 1.2rem;
+}
+
+.title.card .card-header h3 {
+  font-size: 1.5rem;
+}
+
+.title.card .card-header h3 img,
+.title.card .card-header h3 span {
   vertical-align: middle;
 }
 
-.title .fd-layout-panel__header .technology-icon {
-  width: 2em;
-  height: 2em;
+.title.card .card-header .technology-icon {
+  width: 1.5em;
+  height: 1.5em;
   opacity: 0.8;
 }
 
-.fd-layout-panel[aria-expanded="false"] .fd-layout-panel__body {
-  display: none;
-}
-
-.fd-layout-panel[aria-expanded="true"] .fd-layout-panel__header .fd-layout-panel__expand button.fd-layout-panel__button i::before {
-  content: "\02C5";
-}
-
-.fd-layout-panel[aria-expanded="false"] .fd-layout-panel__header .fd-layout-panel__expand button.fd-layout-panel__button i::before {
-  content: "\02C3";
-}
-
-.fd-layout-panel .fd-layout-panel__header .fd-layout-panel__title .sap-icon--accept::before {
-  content: "\2714";
-}
-
-.fd-layout-panel .fd-layout-panel__header .fd-layout-panel__title .sap-icon--question-mark::before {
-  content: "\2370";
-}
-
-.fd-layout-panel .fd-layout-panel__header .fd-layout-panel__title .sap-icon--alert::before {
-  content: "\26A0";
-}
-
-.payload-processor .fd-layout-panel__body,
-.html-source-provider .fd-layout-panel__body,
-.dom-injector .fd-layout-panel__body,
-.jquery-injector .fd-layout-panel__body,
-.template-code .fd-layout-panel__body,
-.live-source-code .fd-layout-panel__body {
+.payload-processor .accordion-body,
+.html-source-provider .accordion-body,
+.dom-injector .accordion-body,
+.jquery-injector .accordion-body,
+.template-code .accordion-body,
+.live-source-code .accordion-body {
   font-family: monospace;
   white-space-collapse: preserve;
 }

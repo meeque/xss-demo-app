@@ -2,8 +2,7 @@ import { Component, AfterViewInit, ElementRef, ViewContainerRef, EnvironmentInje
 import { FormsModule } from '@angular/forms';
 
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
-import { XssContext } from './xss-demo.common';
-import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
+import { PayloadOutputDescriptor } from './payload-output.service';
 import { NonAngularLiveOutputComponent } from './live-output.component';
 
 
@@ -19,8 +18,6 @@ export class PayloadOutputComponent implements AfterViewInit {
   private static nextComponentId = 0;
   protected readonly componentId = PayloadOutputComponent.nextComponentId++;
 
-  protected readonly XssContext = XssContext;
-  protected readonly PayloadOutputQuality = PayloadOutputQuality;
 
 
   private readonly environmentInjector = inject(EnvironmentInjector);
@@ -105,7 +102,12 @@ export class PayloadOutputComponent implements AfterViewInit {
   }
 
   protected togglePanel(event: MouseEvent) {
-    const panel = (event.target as Element).closest('.fd-layout-panel');
-    panel.ariaExpanded = (panel.ariaExpanded == 'true') ? 'false' : 'true';
+    const button = (event.target as Element).closest('.accordion-button') as HTMLElement;
+    const isExpanded = button.ariaExpanded !== 'false';
+    button.ariaExpanded = isExpanded ? 'false' : 'true';
+    button.classList.toggle('collapsed', isExpanded);
+    button.closest('.accordion-item')
+      ?.querySelector('.accordion-collapse')
+      ?.classList.toggle('show', !isExpanded);
   }
 }

@@ -348,9 +348,7 @@ Apart from vulnerabiities of the underlying components (node.js, Angular, nginx,
 
 The UI of the XSS Demo App has the following known bugs:
 
-* Several layout flaws remain. E.g.:
-  There's a huge empty area at the bottom of the page.
-  Some menus and other widgets overflow the page, especially on small screens.
-* "ComboBox" menus lack keyboard navigation.
+* Keyboard navigation is very basic.
+* Accessibility is rather poor.
 
 Feel free to submit pull-requests to fix the above or any other flaws!

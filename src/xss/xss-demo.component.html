@@ -1,188 +1,171 @@
-<div class="fd-shell fd-shell--fixed">
+<div class="d-flex flex-column min-vh-100">
 
-  <header class="fd-shell__header">
-    <h1>Cross-Site-Scripting (XSS) Demo</h1>
+  <header class="container-fluid">
+    <h1>XSS Demo</h1>
+    <div class="xss-alert-overlay">
+      @if (xssTriggeredCounter) {
+        <div [id]="'xss-demo-component-' + componentId + '-xss-alert'" class="alert-xss-triggered alert alert-danger alert-dismissible" role="alert">
+          <p class="mb-0">
+            @if (xssTriggeredCounter > 1) {
+              <span class="badge bg-danger rounded-pill">{{ xssTriggeredCounter }}</span>
+            }
+            <span> {{ xssMessage }}</span>
+          </p>
+          <button
+            (click)="resetXss()"
+            [attr.aria-controls]="'xss-demo-component-' + componentId + '-xss-alert'"
+            class="btn-close"
+            title="Close">
+          </button>
+        </div>
+      }
+    </div>
   </header>
 
-  <article class="fd-shell__app fd-dynamic-page">
-    <main class="fd-dynamic-page__content" [class.xss-triggered]="xssTriggeredCounter">
-      <div class="fd-container">
-        <div class="fd-row">
+  <article class="container-fluid flex-fill" [class.xss-triggered]="xssTriggeredCounter">
+    <main class="row g-3 align-items-start">
 
+      <section class="input-area col-12 col-lg-6">
 
+        <h2>Payload Input</h2>
 
-          <section class="input-area fd-section fd-col--6">
+        <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></xss-combobox-input>
 
-            <h2>Payload Input</h2>
-
-            <div>
-
-              <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></xss-combobox-input>
-
-              <div class="fd-layout-panel fd-margin-top-bottom--sm">
-                <div class="fd-layout-panel__body">
-                  <textarea
-                    name="payload"
-                    class="payload"
-                    [(ngModel)]="payload"
-                    placeholder="Enter your XSS attack code in this Paylaod Input field, or, select one of the Payload Presets from the above menu...">
-                  </textarea>
-                </div>
-              </div>
-
-            </div>
-
-          </section>
-
-
-
-          <section class="output-area fd-section fd-col--6">
-
-            <h2>Payload Output</h2>
-
-            <div>
-
-              <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
-
-              <ng-template #payloadOutputMenuTechnologyFilters let-item="item" let-comboboxInput>
-                <li class="fd-list__item">
-                  <div class="fddocs-button-container filters filters-technology">
-                    <span class="sap-icon--filter"></span>
-                    <span> {{ item.name }} </span>
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
-                      [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
-                      <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
-                      <span> HTML </span>
-                    </button>
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputTechnologyFilter('domInjector')"
-                      [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')">
-                      <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
-                      <span> DOM </span>
-                    </button>
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputTechnologyFilter('jQueryInjector')"
-                      [attr.aria-selected]="payloadOutputTechnologyFilters.includes('jQueryInjector')">
-                      <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
-                      <span> jQuery </span>
-                    </button>
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputTechnologyFilter('templateComponentType')"
-                      [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateComponentType')">
-                      <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
-                      <span> Angular </span>
-                    </button>
-                  </div>
-                </li>
-              </ng-template>
-
-              <ng-template #payloadOutputMenuQualityFilters let-item="item" let-comboboxInput>
-                <li class="fd-list__item">
-                  <div class="fddocs-button-container filters filters-quality">
-                    <span class="sap-icon--filter"></span>
-                    {{ item.name }}
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Recommended)"
-                      [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)">
-                      <span>Recommended </span>
-                      <span class="sap-icon--accept"></span>
-                    </button>
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Questionable)"
-                      [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)">
-                      <span> Questionable </span>
-                      <span class="sap-icon--question-mark"></span>
-                    </button>
-                    <button
-                      class="fd-button"
-                      (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Insecure)"
-                      [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)">
-                      <span> Insecure </span>
-                      <span class="sap-icon--alert"></span>
-                    </button>
-                  </div>
-                </li>
-              </ng-template>
-
-              <ng-template #payloadOutputMenuItem let-item="item" let-comboboxInput>
-                @if (comboboxInput.filter(item)) {
-                  <li
-                    class="fd-list__item"
-                    (click)="comboboxInput.select(item, $event)"
-                    (keypress)="comboboxInput.select(item, $event)"
-                    tabindex="0">
-
-                    <span class="fd-list__title">
-                      @if (item.value.htmlSourceProvider) {
-                        <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
-                      }
-                      @if (item.value.domInjector) {
-                        <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
-                      }
-                      @if (item.value.jQueryInjector) {
-                        <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
-                      }
-                      @if (item.value.templateComponentType) {
-                        <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
-                      }
-                      {{ item.name }}
-                      @if (item.value.quality === PayloadOutputQuality.Recommended) {
-                        <span class="sap-icon--accept"></span>
-                      }
-                      @if (item.value.quality === PayloadOutputQuality.Questionable) {
-                        <span class="sap-icon--question-mark"></span>
-                      }
-                      @if (item.value.quality === PayloadOutputQuality.Insecure) {
-                        <span class="sap-icon--alert"></span>
-                      }
-                    </span>
-                  </li>
-                }
-              </ng-template>
-
-              <div>
-                <xss-payload-output
-                  [outputDescriptor]="activePayloadOutput()"
-                  [payload]="payload()"
-                  (onbeforeupdate)="resetXss()">
-                </xss-payload-output>
-              </div>
-            </div>
-          </section>
-
-
-
+        <div class="card my-2">
+          <div class="card-body">
+            <textarea
+              name="payload"
+              class="payload"
+              [(ngModel)]="payload"
+              placeholder="Enter your XSS attack code in this Paylaod Input field, or, select one of the Payload Presets from the above menu...">
+            </textarea>
+          </div>
         </div>
-      </div>
-    </main>
 
-  </article>
+      </section>
 
-  <div class="fd-shell__overlay fd-overlay fd-overlay--alert">
-    @if (xssTriggeredCounter) {
-      <div [id]="'xss-demo-component-' + componentId + '-xss-alert'" class="fd-message-strip fd-message-strip--error fd-message-strip--dismissible alert-xss-triggered" role="note">
-        <p class="fd-message-strip__text">
-          @if (xssTriggeredCounter > 1) {
-            <span class="fd-counter">{{ xssTriggeredCounter }} </span>
+
+
+      <section class="output-area col-12 col-lg-6">
+
+        <h2>Payload Output</h2>
+
+        <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
+
+        <ng-template #payloadOutputMenuTechnologyFilters let-item="item" let-comboboxInput>
+          <li class="list-group-item py-2">
+            <div class="filters filters-technology d-flex align-items-center gap-2 flex-wrap">
+              <span>{{ item.name }}</span>
+              <div class="btn-group" role="group">
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')"
+                  [class.active]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
+                  <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
+                  <span> HTML </span>
+                </button>
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputTechnologyFilter('domInjector')"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')"
+                  [class.active]="payloadOutputTechnologyFilters.includes('domInjector')">
+                  <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
+                  <span> DOM </span>
+                </button>
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputTechnologyFilter('jQueryInjector')"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes('jQueryInjector')"
+                  [class.active]="payloadOutputTechnologyFilters.includes('jQueryInjector')">
+                  <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
+                  <span> jQuery </span>
+                </button>
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputTechnologyFilter('templateComponentType')"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateComponentType')"
+                  [class.active]="payloadOutputTechnologyFilters.includes('templateComponentType')">
+                  <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
+                  <span> Angular </span>
+                </button>
+              </div>
+            </div>
+          </li>
+        </ng-template>
+
+        <ng-template #payloadOutputMenuQualityFilters let-item="item" let-comboboxInput>
+          <li class="list-group-item py-2">
+            <div class="filters filters-quality d-flex align-items-center gap-2 flex-wrap">
+              <span>{{ item.name }}</span>
+              <div class="btn-group" role="group">
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Recommended)"
+                  [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)"
+                  [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Recommended)">
+                  <span>Recommended </span>
+                  <span class="quality-icon quality-recommended"></span>
+                </button>
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Questionable)"
+                  [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)"
+                  [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Questionable)">
+                  <span> Questionable </span>
+                  <span class="quality-icon quality-questionable"></span>
+                </button>
+                <button
+                  class="btn btn-outline-secondary"
+                  (click)="togglePayloadOutputQualityFilter(PayloadOutputQuality.Insecure)"
+                  [attr.aria-selected]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)"
+                  [class.active]="payloadOutputQualityFilters.includes(PayloadOutputQuality.Insecure)">
+                  <span> Insecure </span>
+                  <span class="quality-icon quality-insecure"></span>
+                </button>
+              </div>
+            </div>
+          </li>
+        </ng-template>
+
+        <ng-template #payloadOutputMenuItem let-item="item" let-comboboxInput>
+          @if (comboboxInput.filter(item)) {
+            <li
+              class="list-group-item list-group-item-action btn"
+              (click)="comboboxInput.select(item, $event)"
+              (keypress)="comboboxInput.select(item, $event)"
+              tabindex="0">
+
+              <span>
+                @if (item.value.htmlSourceProvider) {
+                  <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
+                }
+                @if (item.value.domInjector) {
+                  <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
+                }
+                @if (item.value.jQueryInjector) {
+                  <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
+                }
+                @if (item.value.templateComponentType) {
+                  <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
+                }
+                {{ item.name }}
+                @if (item.value.quality) {
+                  <span class="quality-icon" [class]="'quality-icon quality-' + item.value.quality.toLowerCase()"></span>
+                }
+              </span>
+            </li>
           }
-          <span> {{ xssMessage }}</span>
-        </p>
-        <button
-          (click)="resetXss()"
-          [attr.aria-controls]="'xss-demo-component-' + componentId + '-xss-alert'"
-          class="fd-button fd-button--transparent"
-          title="Close">
-          <i class="sap-icon--decline"></i>
-        </button>
-      </div>
-    }
-  </div>
+        </ng-template>
+
+        <xss-payload-output
+          [outputDescriptor]="activePayloadOutput()"
+          [payload]="payload()"
+          (onbeforeupdate)="resetXss()">
+        </xss-payload-output>
+      </section>
+
+    </main>
+  </article>
 
 </div>

@@ -1,28 +1,3 @@
-@font-face {
-    font-family: "72";
-    src: url("@sap-theming/theming-base-content/content/Base/baseLib/baseTheme/fonts/72-Regular-full.woff") format("woff");
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: "72";
-    src: url("@sap-theming/theming-base-content/content/Base/baseLib/baseTheme/fonts/72-Bold-full.woff") format("woff");
-    font-weight: 700;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: "72";
-    src: url("@sap-theming/theming-base-content/content/Base/baseLib/baseTheme/fonts/72-Light-full.woff") format("woff");
-    font-weight: 300;
-    font-style: normal;
-}
-
-:root {
-    --sapGroup_TitleFontSize: 1.0rem;
-}
-
 html {
     font-size: 16px;
 }
@@ -33,8 +8,20 @@ body {
     padding: 0;
 }
 
+.quality-icon.quality-recommended::before {
+  content: "\2714";
+}
+
+.quality-icon.quality-questionable::before {
+  content: "\2370";
+}
+
+.quality-icon.quality-insecure::before {
+  content: "\26A0";
+}
+
 .output-area .live-output iframe.xss-demo-guest {
     width: 100%;
     height: 60em;
-    border: var(--sapErrorColor) dashed 5px;
+    border: var(--bs-danger) dashed 5px;
 }

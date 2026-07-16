@@ -1,20 +1,39 @@
-.fd-shell__header {
+header {
   height: auto;
+  background-color: var(--bs-primary);
 }
 
-.fd-shell__header h1 {
+header h1 {
+  padding: 0.2rem;
+  line-height: inherit;
   text-align: center;
-  font-family: var(--sapFontFamily);
-  color: var(--sapHighlightTextColor);
+  font-weight: bold;
+  color: var(--bs-emphasis-color);
 }
 
-
-
-.fd-dynamic-page__content.xss-triggered {
-  background-color: var(--sapErrorBackground) !important;
+header .xss-alert-overlay {
+  display: block;
+  position: absolute;
+  justify-self: center;
+  /* adjust to dynamic sizing of the h1 in the header: */
+  top: min(2rem + 2vw, 3.5rem);
 }
 
+header .xss-alert-overlay .alert {
+  margin: 0;
+  border-width: 0.2rem;
+  border-color: var(--bs-danger);
+  vertical-align: middle;
+  font-weight: bold;
+}
 
+main {
+  margin-top: 1rem;
+}
+
+main section h2 {
+  text-align: center;
+}
 
 .input-area textarea.payload {
   box-sizing: border-box;
@@ -27,20 +46,9 @@
   border-radius: 0.4rem;
 }
 
-
-
-.output-area .fd-list__item .filters {
-  cursor: inherit;
-}
-
-.output-area .fd-list__item span,
-.output-area .fd-list__item img.technology-icon {
+.output-area .list-group-item span,
+.output-area .list-group-item img.technology-icon {
   vertical-align: middle;
-}
-
-.output-area .fd-list__item .filters button {
-  margin-left: 8px;
-  height: 2em;
 }
 
 .output-area .technology-icon {
@@ -48,65 +56,16 @@
   height: 1.4em;
 }
 
-.output-area button[aria-selected=true] .technology-icon {
+.output-area button[aria-selected=true] .technology-icon,
+.output-area button.active .technology-icon {
   filter: invert(1);
 }
 
-.output-area button[aria-selected=true]:hover .technology-icon {
+.output-area button[aria-selected=true]:hover .technology-icon,
+.output-area button.active:hover .technology-icon {
   filter: unset;
 }
 
-.output-area .sap-icon--accept::before {
-  content: "\2714";
-}
-
-.output-area .sap-icon--question-mark::before {
-  content: "\2370";
-}
-
-.output-area .sap-icon--alert::before {
-  content: "\26A0";
-}
-
-
-
-.fd-shell__overlay {
-  display: flex;
-  position: fixed;
-  left: 50%;
-  top: 4rem;
-  transform: translate(-50%,0);
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.fd-shell__overlay .fd-message-strip {
-  position: relative;
-  padding: 0.6rem 0.9rem;
-  border-style: solid;
-  border-width: medium;
-  border-radius: 0.3rem;
-  font-family: var(--sapFontFamily);
-  color: var(--fd-color-text-1);
-}
-
-.fd-shell__overlay .fd-message-strip .fd-message-strip__text,
-.fd-shell__overlay .fd-message-strip .fd-button {
-  display: inline;
-  vertical-align: middle;
-  font-weight: bold;
-}
-
-.fd-shell__overlay .fd-message-strip .fd-button i.sap-icon--decline::before {
-  content: '⨯';
-}
-
-.fd-shell__overlay .fd-message-strip .fd-button i.sap-icon--decline {
-  color: var(--fdMessageStrip_Text_Color);
-}
-
-.fd-shell__overlay .fd-message-strip.fd-message-strip--error {
-  background-color: var(--sapErrorBackground);
-  border-color: var(--sapErrorColor);
+article.xss-triggered {
+  background-color: var(--bs-danger-bg-subtle) !important;
 }
