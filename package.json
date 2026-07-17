@@ -2,7 +2,7 @@
   "name": "xss-demo-app",
   "version": "0.0.0",
   "scripts": {
-    "postinstall": "tls/cert.sh",
+    "postinstall": "tls/cert.sh && echo && nix/prefetch-npm-deps.sh",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
