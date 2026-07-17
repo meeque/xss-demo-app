@@ -10,7 +10,7 @@
     "test": "jest --config jest.config.ts",
     "test:integration": "jest --config jest.integration.config.ts",
     "lint": "ng lint",
-    "clean": "rm -r node_modules .angular dist"
+    "clean": "rm -r node_modules .angular dist nix/npm-deps-hash.nix"
   },
   "private": true,
   "dependencies": {
