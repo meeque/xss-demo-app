@@ -12,12 +12,12 @@ fi
 xss_demo_nix_dir="$( realpath "$(dirname "$0")" )"
 cd "${xss_demo_nix_dir}"
 
-nix_file='xss-demo-app.nix'
+npm_deps_hash_file='npm-deps-hash.nix'
 package_lock_file='../package-lock.json'
 
-npm_deps_hash=$(prefetch-npm-deps "${package_lock_file}")
-sed -i "s|npmDepsHash = \".*\"|npmDepsHash = \"${npm_deps_hash}\"|" "${nix_file}"
+npm_deps_hash="$(prefetch-npm-deps "${package_lock_file}")"
+echo "\"${npm_deps_hash}\"" > "${npm_deps_hash_file}"
 
-echo "XSS Demo App: Updated npmDepsHash in xss-demo-app.nix to: ${npm_deps_hash}"
+echo "XSS Demo App: Updated file \"${npm_deps_hash_file}\" with npmDepsHash: \"${npm_deps_hash}\"."
 
 echo 'XSS Demo App: Nix helper script done.'

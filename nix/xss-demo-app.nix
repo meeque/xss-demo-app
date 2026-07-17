@@ -29,7 +29,7 @@ in
         );
     };
 
-    npmDepsHash = "sha256-IXMRJhT5TTTtkYdEHnYKPNIk2/JD2OQkvpOdubSbFww=";
+    npmDepsHash = import ./npm-deps-hash.nix;
 
     npmFlags = [ "--ignore-scripts" ];
 

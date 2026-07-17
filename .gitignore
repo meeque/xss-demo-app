@@ -24,10 +24,13 @@
 /tls/**/*.key.pass.txt
 /tls/private
 
+# nix build
+/nix/npm-deps-hash.nix
+
 # misc
 /connect.lock
 /coverage
 /typings
 
-# System Files
+# common system files
 Thumbs.db
