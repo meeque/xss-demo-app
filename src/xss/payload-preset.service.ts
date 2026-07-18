@@ -182,6 +182,10 @@ export class PayloadPresetService {
           name: 'declarations for Jester logo background (JSON-encoded Angular\'s ngStyle)',
           url: 'assets/presets/css/background-jester-logo-json.txt',
         },
+        {
+          name: 'tic tac toe',
+          url: 'assets/presets/css/tic-tac-toe.txt',
+        },
       ],
     },
     {

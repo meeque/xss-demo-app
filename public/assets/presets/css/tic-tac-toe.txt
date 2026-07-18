@@ -1,0 +1,13 @@
+
+.card.live-output .card-body {
+  padding: 0;
+}
+
+.card.live-output xss-live-output-non-angular {
+  display: block;
+  width: 100%;
+  height: 4rem;
+  border: none;
+  margin: 0;
+  background: red;
+}
