@@ -14,47 +14,47 @@
 @property --st11 {
   syntax: "<string>";
   inherits: true;
-  initial-value: "â€‡";
+  initial-value: "\002007";
 }
 @property --st21 {
   syntax: "<string>";
   inherits: true;
-  initial-value: "â€‡";
+  initial-value: "\002007";
 }
 @property --st31 {
   syntax: "<string>";
   inherits: true;
-  initial-value: "â€‡";
+  initial-value: "\002007";
 }
 @property --st12 {
   syntax: "<string>";
   inherits: true;
-  initial-value: "â€‡";
+  initial-value: "\002007";
 }
 @property --st22 {
   syntax: "<string>";
   inherits: true;
-  initial-value: "â€‡";
+  initial-value: "\002007";
 }
 @property --st32 {
   syntax: "<string>";
   inherits: true;
-  initial-value: "â€‡";
+  initial-value: "\002007";
 }
 @property --st13 {
   syntax: "<string>";
   inherits: true;
-  initial-value: "â€‡";
+  initial-value: "\002007";
 }
 @property --st23 {
   syntax: "<string>";
   inherits: true;
-  initial-value: "â€‡";
+  initial-value: "\002007";
 }
 @property --st33 {
   syntax: "<string>";
   inherits: true;
-  initial-value: "â€‡";
+  initial-value: "\002007";
 }
 
 /* Playfield squares as ints */
