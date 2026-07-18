@@ -172,18 +172,19 @@
   position: absolute;
   overflow: clip;
 
+  /* determine size of playfield squares: */
   left: 64px;
   top: 64px;
-  width: 384px;
-  height: 384px;
+  width: 256px;
+  height: 256px;
+
+  border: 8px solid red;
+  border-radius: 10px;
 
   font-family: monospace;
 
-  border: 8px ridge #999;
-  border-radius: 10px;
-
-  box-shadow: 0 0px 26px #FFF, 0 0px 33px #FFF, 0 0px 64px #FFF;
-  background: linear-gradient(0deg, #FFF 90%, #000), linear-gradient(-90deg, #FFF 90%, #000);
+  /* draw playfield grid */
+  background: linear-gradient(0deg, white 90%, red), linear-gradient(-90deg, white 90%, red);
   background-size: 33.34% 33.34%;
   background-position: -1px -1px;
   background-blend-mode: multiply;
@@ -196,41 +197,50 @@
   }
 
   &::before {
+    content: var(--st11) " " var(--st21) " " var(--st31) "\A" var(--st12) " " var(--st22) " " var(--st32) "\A" var(--st13) " " var(--st23) " " var(--st33);
+    white-space: pre;
+
     display: block;
     position: absolute;
     top: 0;
     left: 25px;
-    white-space: pre;
-    content: var(--st11) " " var(--st21) " " var(--st31) "\A" var(--st12) " " var(--st22) " " var(--st32) "\A" var(--st13) " " var(--st23) " " var(--st33);
-    font-size: 90px;
     width: 256px;
     height: 256px;
-    line-height: 96px;
-    pointer-events: none;
+
+    /* determine placement of individual square markers: */
+    line-height: 82px;
+    font-size: 66px;
+
     font-weight: bold;
     color: #333;
+
+    pointer-events: none;
   }
 
   &::after {
-    cursor: pointer;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 96px;
-    height: 96px;
-    pointer-events: none;
-    background: linear-gradient(0deg, #EEE 89%, #000), linear-gradient(-90deg, #EEE 89%, #000);
-    background-blend-mode: multiply;
-    translate: calc(mod(var(--sqCurrent),3)*99px) calc(mod(round(down, var(--sqCurrent) / 3),3)*96px);
-    font-size: 90px;
-    color: #8890;
-    text-shadow: 2px 2px #000;
-    font-weight: bold;
-    opacity: 0;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: absolute;
+
+
+    top: 0;
+    left: 0;
+    width: 85px;
+    height: 85px;
+
+    translate: calc(mod(var(--sqCurrent),3)*80px) calc(mod(round(down, var(--sqCurrent) / 3),3)*80px);
+
+    border: 6px solid green;
+
     line-height: 0;
+    font-size: 90px;
+    font-weight: bold;
+    color: #8890;
+    opacity: 0;
+
+    cursor: pointer;
+    pointer-events: none;
   }
 }
 
@@ -238,7 +248,7 @@
 @container html (width: 384px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq11) - calc(mod(var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
+      scale: calc(max(0,1 - var(--sq11) - calc(mod(var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0, 2))));
       pointer-events: auto;
       content: "X";
     }
@@ -272,7 +282,7 @@
 @container html (width: 385px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq21) - calc(mod(var(--sq11) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
+      scale: calc(max(0,1 - var(--sq21) - calc(mod(var(--sq11) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0, 2))));
       pointer-events: auto;
       content: "X";
     }
@@ -306,7 +316,7 @@
 @container html (width: 386px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq31) - calc(mod(var(--sq11) + var(--sq21) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
+      scale: calc(max(0,1 - var(--sq31) - calc(mod(var(--sq11) + var(--sq21) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0, 2))));
       pointer-events: auto;
       content: "X";
     }
@@ -340,7 +350,7 @@
 @container html (width: 387px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq12) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
+      scale: calc(max(0,1 - var(--sq12) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0, 2))));
       pointer-events: auto;
       content: "X";
     }
@@ -374,7 +384,7 @@
 @container html (width: 388px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq22) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
+      scale: calc(max(0,1 - var(--sq22) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0, 2))));
       pointer-events: auto;
       content: "X";
     }
@@ -408,7 +418,7 @@
 @container html (width: 389px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq32) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
+      scale: calc(max(0,1 - var(--sq32) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq13) + var(--sq23) + var(--sq33) + 0, 2))));
       pointer-events: auto;
       content: "X";
     }
@@ -442,7 +452,7 @@
 @container html (width: 390px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq13) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq23) + var(--sq33) + 0,2))));
+      scale: calc(max(0,1 - var(--sq13) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq23) + var(--sq33) + 0, 2))));
       pointer-events: auto;
       content: "X";
     }
@@ -476,7 +486,7 @@
 @container html (width: 391px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq23) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq33) + 0,2))));
+      scale: calc(max(0,1 - var(--sq23) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq33) + 0, 2))));
       pointer-events: auto;
       content: "X";
     }
@@ -510,7 +520,7 @@
 @container html (width: 392px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq33) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + 0,2))));
+      scale: calc(max(0,1 - var(--sq33) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + 0, 2))));
       pointer-events: auto;
       content: "X";
     }
@@ -544,7 +554,7 @@
 @container html (width: 393px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq11) - calc(mod(var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
+      scale: calc(max(0,1 - var(--sq11) - calc(mod(var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1, 2))));
       pointer-events: auto;
       content: "O";
     }
@@ -578,7 +588,7 @@
 @container html (width: 394px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq21) - calc(mod(var(--sq11) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
+      scale: calc(max(0,1 - var(--sq21) - calc(mod(var(--sq11) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1, 2))));
       pointer-events: auto;
       content: "O";
     }
@@ -612,7 +622,7 @@
 @container html (width: 395px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq31) - calc(mod(var(--sq11) + var(--sq21) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
+      scale: calc(max(0,1 - var(--sq31) - calc(mod(var(--sq11) + var(--sq21) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1, 2))));
       pointer-events: auto;
       content: "O";
     }
@@ -646,7 +656,7 @@
 @container html (width: 396px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq12) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
+      scale: calc(max(0,1 - var(--sq12) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1, 2))));
       pointer-events: auto;
       content: "O";
     }
@@ -680,7 +690,7 @@
 @container html (width: 397px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq22) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
+      scale: calc(max(0,1 - var(--sq22) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1, 2))));
       pointer-events: auto;
       content: "O";
     }
@@ -714,7 +724,7 @@
 @container html (width: 398px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq32) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
+      scale: calc(max(0,1 - var(--sq32) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq13) + var(--sq23) + var(--sq33) + 1, 2))));
       pointer-events: auto;
       content: "O";
     }
@@ -748,7 +758,7 @@
 @container html (width: 399px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq13) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq23) + var(--sq33) + 1,2))));
+      scale: calc(max(0,1 - var(--sq13) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq23) + var(--sq33) + 1, 2))));
       pointer-events: auto;
       content: "O";
     }
@@ -782,7 +792,7 @@
 @container html (width: 400px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq23) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq33) + 1,2))));
+      scale: calc(max(0,1 - var(--sq23) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq33) + 1, 2))));
       pointer-events: auto;
       content: "O";
     }
@@ -816,7 +826,7 @@
 @container html (width: 401px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
-      scale: calc(max(0,1 - var(--sq33) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + 1,2))));
+      scale: calc(max(0,1 - var(--sq33) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + 1, 2))));
       pointer-events: auto;
       content: "O";
     }
