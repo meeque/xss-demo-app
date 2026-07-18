@@ -1,107 +1,107 @@
-/* 
+/*
   based on https://lyra.horse/fun/tic-tac-nohtml/
   by https://lyra.horse/
 */
 
 /* Current mousable square (int 0-19) */
 @property --sqCurrent {
-    syntax: "<integer>";
-    inherits: true;
-    initial-value: 0;
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
 }
 
 /* Playfield squares as strings */
 @property --st11 {
-    syntax: "<string>";
-    inherits: true;
-    initial-value: "â€‡";
+  syntax: "<string>";
+  inherits: true;
+  initial-value: "â€‡";
 }
 @property --st21 {
-    syntax: "<string>";
-    inherits: true;
-    initial-value: "â€‡";
+  syntax: "<string>";
+  inherits: true;
+  initial-value: "â€‡";
 }
 @property --st31 {
-    syntax: "<string>";
-    inherits: true;
-    initial-value: "â€‡";
+  syntax: "<string>";
+  inherits: true;
+  initial-value: "â€‡";
 }
 @property --st12 {
-    syntax: "<string>";
-    inherits: true;
-    initial-value: "â€‡";
+  syntax: "<string>";
+  inherits: true;
+  initial-value: "â€‡";
 }
 @property --st22 {
-    syntax: "<string>";
-    inherits: true;
-    initial-value: "â€‡";
+  syntax: "<string>";
+  inherits: true;
+  initial-value: "â€‡";
 }
 @property --st32 {
-    syntax: "<string>";
-    inherits: true;
-    initial-value: "â€‡";
+  syntax: "<string>";
+  inherits: true;
+  initial-value: "â€‡";
 }
 @property --st13 {
-    syntax: "<string>";
-    inherits: true;
-    initial-value: "â€‡";
+  syntax: "<string>";
+  inherits: true;
+  initial-value: "â€‡";
 }
 @property --st23 {
-    syntax: "<string>";
-    inherits: true;
-    initial-value: "â€‡";
+  syntax: "<string>";
+  inherits: true;
+  initial-value: "â€‡";
 }
 @property --st33 {
-    syntax: "<string>";
-    inherits: true;
-    initial-value: "â€‡";
+  syntax: "<string>";
+  inherits: true;
+  initial-value: "â€‡";
 }
 
 /* Playfield squares as ints */
 @property --sq11 {
-    syntax: "<integer>";
-    inherits: true;
-    initial-value: 0;
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
 }
 @property --sq21 {
-    syntax: "<integer>";
-    inherits: true;
-    initial-value: 0;
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
 }
 @property --sq31 {
-    syntax: "<integer>";
-    inherits: true;
-    initial-value: 0;
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
 }
 @property --sq12 {
-    syntax: "<integer>";
-    inherits: true;
-    initial-value: 0;
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
 }
 @property --sq22 {
-    syntax: "<integer>";
-    inherits: true;
-    initial-value: 0;
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
 }
 @property --sq32 {
-    syntax: "<integer>";
-    inherits: true;
-    initial-value: 0;
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
 }
 @property --sq13 {
-    syntax: "<integer>";
-    inherits: true;
-    initial-value: 0;
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
 }
 @property --sq23 {
-    syntax: "<integer>";
-    inherits: true;
-    initial-value: 0;
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
 }
 @property --sq33 {
-    syntax: "<integer>";
-    inherits: true;
-    initial-value: 0;
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
 }
 
 /* Rotate through mousable squares */
@@ -114,7 +114,7 @@
   }
 }
 
-/* formerly known as html */
+/* outer container, formerly known as html */
 .card.live-output .card-body {
   transition: --sqCurrent 100000s 100000s;
   animation: setSq 0.3s steps(19) infinite;
@@ -134,27 +134,27 @@
   }
 }
 
-/* formerly known as body */
+/* inner container, formerly known as body */
 .card.live-output xss-live-output-non-angular  {
   transition:
-        --sq11 1000000000s 1000000000s,
-        --sq21 1000000000s 1000000000s,
-        --sq31 1000000000s 1000000000s,
-        --sq12 1000000000s 1000000000s,
-        --sq22 1000000000s 1000000000s,
-        --sq32 1000000000s 1000000000s,
-        --sq13 1000000000s 1000000000s,
-        --sq23 1000000000s 1000000000s,
-        --sq33 1000000000s 1000000000s,
-        --st11 1000000000s 1000000000s allow-discrete,
-        --st21 1000000000s 1000000000s allow-discrete,
-        --st31 1000000000s 1000000000s allow-discrete,
-        --st12 1000000000s 1000000000s allow-discrete,
-        --st22 1000000000s 1000000000s allow-discrete,
-        --st32 1000000000s 1000000000s allow-discrete,
-        --st13 1000000000s 1000000000s allow-discrete,
-        --st23 1000000000s 1000000000s allow-discrete,
-        --st33 1000000000s 1000000000s allow-discrete;
+    --sq11 1000000000s 1000000000s,
+    --sq21 1000000000s 1000000000s,
+    --sq31 1000000000s 1000000000s,
+    --sq12 1000000000s 1000000000s,
+    --sq22 1000000000s 1000000000s,
+    --sq32 1000000000s 1000000000s,
+    --sq13 1000000000s 1000000000s,
+    --sq23 1000000000s 1000000000s,
+    --sq33 1000000000s 1000000000s,
+    --st11 1000000000s 1000000000s allow-discrete,
+    --st21 1000000000s 1000000000s allow-discrete,
+    --st31 1000000000s 1000000000s allow-discrete,
+    --st12 1000000000s 1000000000s allow-discrete,
+    --st22 1000000000s 1000000000s allow-discrete,
+    --st32 1000000000s 1000000000s allow-discrete,
+    --st13 1000000000s 1000000000s allow-discrete,
+    --st23 1000000000s 1000000000s allow-discrete,
+    --st33 1000000000s 1000000000s allow-discrete;
 }
 
 .card.live-output xss-live-output-non-angular {
@@ -217,622 +217,621 @@
     font-weight: bold;
     opacity: 0;
     display: flex;
-        justify-content: center;
-        align-items: center;
-        line-height: 0;
+    justify-content: center;
+    align-items: center;
+    line-height: 0;
   }
 }
 
 /* CSS for every mousable square */
 @container html (width: 10000px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq11) - calc(mod(var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
-        pointer-events: auto;
-        content: "X";
-      }
-        &:hover:active {
-          background: orange;
-        --sq11: 1;
-        --st11: "X";
-        transition:
-          --sq11 0s 0s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 0s 0s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq11) - calc(mod(var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
+      pointer-events: auto;
+      content: "X";
+    }
+    &:hover:active {
+      background: orange;
+    --sq11: 1;
+    --st11: "X";
+    transition:
+      --sq11 0s 0s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 0s 0s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10001px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq21) - calc(mod(var(--sq11) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
-        pointer-events: auto;
-        content: "X";
-      }
-        &:hover:active {
-          background: orange;
-        --sq21: 1;
-        --st21: "X";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 0s 0s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 0s 0s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq21) - calc(mod(var(--sq11) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
+      pointer-events: auto;
+      content: "X";
+    }
+    &:hover:active {
+      background: orange;
+    --sq21: 1;
+    --st21: "X";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 0s 0s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 0s 0s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10002px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq31) - calc(mod(var(--sq11) + var(--sq21) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
-        pointer-events: auto;
-        content: "X";
-      }
-        &:hover:active {
-          background: orange;
-        --sq31: 1;
-        --st31: "X";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 0s 0s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 0s 0s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq31) - calc(mod(var(--sq11) + var(--sq21) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
+      pointer-events: auto;
+      content: "X";
+    }
+    &:hover:active {
+      background: orange;
+    --sq31: 1;
+    --st31: "X";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 0s 0s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 0s 0s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10003px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq12) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
-        pointer-events: auto;
-        content: "X";
-      }
-        &:hover:active {
-          background: orange;
-        --sq12: 1;
-        --st12: "X";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 0s 0s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 0s 0s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq12) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
+      pointer-events: auto;
+      content: "X";
+    }
+    &:hover:active {
+      background: orange;
+    --sq12: 1;
+    --st12: "X";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 0s 0s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 0s 0s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10004px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq22) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
-        pointer-events: auto;
-        content: "X";
-      }
-        &:hover:active {
-          background: orange;
-        --sq22: 1;
-        --st22: "X";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 0s 0s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 0s 0s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq22) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
+      pointer-events: auto;
+      content: "X";
+    }
+    &:hover:active {
+      background: orange;
+    --sq22: 1;
+    --st22: "X";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 0s 0s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 0s 0s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10005px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq32) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
-        pointer-events: auto;
-        content: "X";
-      }
-        &:hover:active {
-          background: orange;
-        --sq32: 1;
-        --st32: "X";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 0s 0s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 0s 0s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq32) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq13) + var(--sq23) + var(--sq33) + 0,2))));
+      pointer-events: auto;
+      content: "X";
+    }
+    &:hover:active {
+      background: orange;
+    --sq32: 1;
+    --st32: "X";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 0s 0s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 0s 0s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10006px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq13) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq23) + var(--sq33) + 0,2))));
-        pointer-events: auto;
-        content: "X";
-      }
-        &:hover:active {
-          background: orange;
-        --sq13: 1;
-        --st13: "X";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 0s 0s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 0s 0s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq13) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq23) + var(--sq33) + 0,2))));
+      pointer-events: auto;
+      content: "X";
+    }
+    &:hover:active {
+      background: orange;
+    --sq13: 1;
+    --st13: "X";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 0s 0s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 0s 0s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10007px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq23) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq33) + 0,2))));
-        pointer-events: auto;
-        content: "X";
-      }
-        &:hover:active {
-          background: orange;
-        --sq23: 1;
-        --st23: "X";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 0s 0s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 0s 0s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq23) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq33) + 0,2))));
+      pointer-events: auto;
+      content: "X";
+    }
+    &:hover:active {
+      background: orange;
+    --sq23: 1;
+    --st23: "X";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 0s 0s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 0s 0s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10008px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq33) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + 0,2))));
-        pointer-events: auto;
-        content: "X";
-      }
-        &:hover:active {
-          background: orange;
-        --sq33: 1;
-        --st33: "X";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 0s 0s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 0s 0s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq33) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + 0,2))));
+      pointer-events: auto;
+      content: "X";
+    }
+    &:hover:active {
+      background: orange;
+    --sq33: 1;
+    --st33: "X";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 0s 0s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 0s 0s allow-discrete;
     }
   }
+}
+
 @container html (width: 10009px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq11) - calc(mod(var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
-        pointer-events: auto;
-        content: "O";
-      }
-        &:hover:active {
-          background: orange;
-        --sq11: 3;
-        --st11: "O";
-        transition:
-          --sq11 0s 0s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 0s 0s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq11) - calc(mod(var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
+      pointer-events: auto;
+      content: "O";
+    }
+    &:hover:active {
+      background: orange;
+    --sq11: 3;
+    --st11: "O";
+    transition:
+      --sq11 0s 0s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 0s 0s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10010px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq21) - calc(mod(var(--sq11) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
-        pointer-events: auto;
-        content: "O";
-      }
-        &:hover:active {
-          background: orange;
-        --sq21: 3;
-        --st21: "O";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 0s 0s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 0s 0s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq21) - calc(mod(var(--sq11) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
+      pointer-events: auto;
+      content: "O";
+    }
+    &:hover:active {
+      background: orange;
+    --sq21: 3;
+    --st21: "O";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 0s 0s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 0s 0s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10011px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq31) - calc(mod(var(--sq11) + var(--sq21) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
-        pointer-events: auto;
-        content: "O";
-      }
-        &:hover:active {
-          background: orange;
-        --sq31: 3;
-        --st31: "O";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 0s 0s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 0s 0s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq31) - calc(mod(var(--sq11) + var(--sq21) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
+      pointer-events: auto;
+      content: "O";
+    }
+    &:hover:active {
+      background: orange;
+    --sq31: 3;
+    --st31: "O";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 0s 0s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 0s 0s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10012px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq12) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
-        pointer-events: auto;
-        content: "O";
-      }
-        &:hover:active {
-          background: orange;
-        --sq12: 3;
-        --st12: "O";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 0s 0s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 0s 0s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq12) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
+      pointer-events: auto;
+      content: "O";
+    }
+    &:hover:active {
+      background: orange;
+    --sq12: 3;
+    --st12: "O";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 0s 0s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 0s 0s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10013px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq22) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
-        pointer-events: auto;
-        content: "O";
-      }
-        &:hover:active {
-          background: orange;
-        --sq22: 3;
-        --st22: "O";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 0s 0s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 0s 0s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq22) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
+      pointer-events: auto;
+      content: "O";
+    }
+    &:hover:active {
+      background: orange;
+    --sq22: 3;
+    --st22: "O";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 0s 0s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 0s 0s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10014px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq32) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
-        pointer-events: auto;
-        content: "O";
-      }
-        &:hover:active {
-          background: orange;
-        --sq32: 3;
-        --st32: "O";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 0s 0s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 0s 0s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq32) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq13) + var(--sq23) + var(--sq33) + 1,2))));
+      pointer-events: auto;
+      content: "O";
+    }
+    &:hover:active {
+      background: orange;
+    --sq32: 3;
+    --st32: "O";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 0s 0s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 0s 0s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10015px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq13) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq23) + var(--sq33) + 1,2))));
-        pointer-events: auto;
-        content: "O";
-      }
-        &:hover:active {
-          background: orange;
-        --sq13: 3;
-        --st13: "O";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 0s 0s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 0s 0s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq13) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq23) + var(--sq33) + 1,2))));
+      pointer-events: auto;
+      content: "O";
+    }
+    &:hover:active {
+      background: orange;
+    --sq13: 3;
+    --st13: "O";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 0s 0s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 0s 0s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10016px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq23) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq33) + 1,2))));
-        pointer-events: auto;
-        content: "O";
-      }
-        &:hover:active {
-          background: orange;
-        --sq23: 3;
-        --st23: "O";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 0s 0s,
-          --sq33 1000000000s 1000000000s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 0s 0s allow-discrete,
-          --st33 1000000000s 1000000000s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq23) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq33) + 1,2))));
+      pointer-events: auto;
+      content: "O";
+    }
+    &:hover:active {
+      background: orange;
+    --sq23: 3;
+    --st23: "O";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 0s 0s,
+      --sq33 1000000000s 1000000000s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 0s 0s allow-discrete,
+      --st33 1000000000s 1000000000s allow-discrete;
     }
   }
+}
+
 @container html (width: 10017px) {
-    .card.live-output xss-live-output-non-angular {
-      &::after {
-        scale: calc(max(0,1 - var(--sq33) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + 1,2))));
-        pointer-events: auto;
-        content: "O";
-      }
-        &:hover:active {
-          background: orange;
-        --sq33: 3;
-        --st33: "O";
-        transition:
-          --sq11 1000000000s 1000000000s,
-          --sq21 1000000000s 1000000000s,
-          --sq31 1000000000s 1000000000s,
-          --sq12 1000000000s 1000000000s,
-          --sq22 1000000000s 1000000000s,
-          --sq32 1000000000s 1000000000s,
-          --sq13 1000000000s 1000000000s,
-          --sq23 1000000000s 1000000000s,
-          --sq33 0s 0s,
-          --st11 1000000000s 1000000000s allow-discrete,
-          --st21 1000000000s 1000000000s allow-discrete,
-          --st31 1000000000s 1000000000s allow-discrete,
-          --st12 1000000000s 1000000000s allow-discrete,
-          --st22 1000000000s 1000000000s allow-discrete,
-          --st32 1000000000s 1000000000s allow-discrete,
-          --st13 1000000000s 1000000000s allow-discrete,
-          --st23 1000000000s 1000000000s allow-discrete,
-          --st33 0s 0s allow-discrete;
-  
-        }
+  .card.live-output xss-live-output-non-angular {
+    &::after {
+      scale: calc(max(0,1 - var(--sq33) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + 1,2))));
+      pointer-events: auto;
+      content: "O";
+    }
+    &:hover:active {
+      background: orange;
+    --sq33: 3;
+    --st33: "O";
+    transition:
+      --sq11 1000000000s 1000000000s,
+      --sq21 1000000000s 1000000000s,
+      --sq31 1000000000s 1000000000s,
+      --sq12 1000000000s 1000000000s,
+      --sq22 1000000000s 1000000000s,
+      --sq32 1000000000s 1000000000s,
+      --sq13 1000000000s 1000000000s,
+      --sq23 1000000000s 1000000000s,
+      --sq33 0s 0s,
+      --st11 1000000000s 1000000000s allow-discrete,
+      --st21 1000000000s 1000000000s allow-discrete,
+      --st31 1000000000s 1000000000s allow-discrete,
+      --st12 1000000000s 1000000000s allow-discrete,
+      --st22 1000000000s 1000000000s allow-discrete,
+      --st32 1000000000s 1000000000s allow-discrete,
+      --st13 1000000000s 1000000000s allow-discrete,
+      --st23 1000000000s 1000000000s allow-discrete,
+      --st33 0s 0s allow-discrete;
     }
   }
+}
