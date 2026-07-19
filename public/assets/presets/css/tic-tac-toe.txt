@@ -129,7 +129,6 @@
   padding: 0;
   margin: 0;
 
-  /* width: calc(1000px + var(--sqCurrent) * 1px); */
   width: calc(384px + var(--sqCurrent) * 1px);
   height: 384px;
 
@@ -164,15 +163,13 @@
     --st13 1000000000s 1000000000s allow-discrete,
     --st23 1000000000s 1000000000s allow-discrete,
     --st33 1000000000s 1000000000s allow-discrete;
-}
 
-.card.live-output xss-live-output-non-angular {
   /* TODO adjust to Bootstrap width break-points, or similar */
   display: block;
   position: absolute;
   overflow: clip;
 
-  /* determine size of playfield squares: */
+  /* Determine size of playfield squares */
   left: 64px;
   top: 64px;
   width: 256px;
@@ -183,18 +180,13 @@
 
   font-family: monospace;
 
-  /* draw playfield grid */
+  /* Draw playfield grid */
   background: linear-gradient(0deg, white 90%, red), linear-gradient(-90deg, white 90%, red);
   background-size: 33.34% 33.34%;
   background-position: -1px -1px;
   background-blend-mode: multiply;
 
   pointer-events: none;
-
-  &:hover::after {
-    opacity: 1;
-    transition: opacity 0.1s;
-  }
 
   &::before {
     content: var(--st11) " " var(--st21) " " var(--st31) "\A" var(--st12) " " var(--st22) " " var(--st32) "\A" var(--st13) " " var(--st23) " " var(--st33);
@@ -231,18 +223,23 @@
 
     translate: calc(mod(var(--sqCurrent),3)*80px) calc(mod(round(down, var(--sqCurrent) / 3),3)*80px);
 
-    border: 6px solid green;
-
-    line-height: 0;
-    font-size: 90px;
+    line-height: 82px;
+    font-size: 66px;
     font-weight: bold;
-    color: #8890;
+    color: blue;
     opacity: 0;
+
+    background-color: pink;
 
     cursor: pointer;
     pointer-events: none;
   }
-}
+
+  &:hover::after {
+    opacity: 1;
+    transition: opacity 0.1s;
+  }
+t}
 
 /* CSS for every mousable square */
 @container html (width: 384px) {
@@ -253,7 +250,6 @@
       content: "X";
     }
     &:hover:active {
-      background: orange;
     --sq11: 1;
     --st11: "X";
     transition:
@@ -287,7 +283,6 @@
       content: "X";
     }
     &:hover:active {
-      background: orange;
     --sq21: 1;
     --st21: "X";
     transition:
@@ -321,7 +316,6 @@
       content: "X";
     }
     &:hover:active {
-      background: orange;
     --sq31: 1;
     --st31: "X";
     transition:
@@ -355,7 +349,6 @@
       content: "X";
     }
     &:hover:active {
-      background: orange;
     --sq12: 1;
     --st12: "X";
     transition:
@@ -389,7 +382,6 @@
       content: "X";
     }
     &:hover:active {
-      background: orange;
     --sq22: 1;
     --st22: "X";
     transition:
@@ -423,7 +415,6 @@
       content: "X";
     }
     &:hover:active {
-      background: orange;
     --sq32: 1;
     --st32: "X";
     transition:
@@ -457,7 +448,6 @@
       content: "X";
     }
     &:hover:active {
-      background: orange;
     --sq13: 1;
     --st13: "X";
     transition:
@@ -491,7 +481,6 @@
       content: "X";
     }
     &:hover:active {
-      background: orange;
     --sq23: 1;
     --st23: "X";
     transition:
@@ -525,7 +514,6 @@
       content: "X";
     }
     &:hover:active {
-      background: orange;
     --sq33: 1;
     --st33: "X";
     transition:
@@ -559,7 +547,6 @@
       content: "O";
     }
     &:hover:active {
-      background: orange;
     --sq11: 3;
     --st11: "O";
     transition:
@@ -593,7 +580,6 @@
       content: "O";
     }
     &:hover:active {
-      background: orange;
     --sq21: 3;
     --st21: "O";
     transition:
@@ -627,7 +613,6 @@
       content: "O";
     }
     &:hover:active {
-      background: orange;
     --sq31: 3;
     --st31: "O";
     transition:
@@ -661,7 +646,6 @@
       content: "O";
     }
     &:hover:active {
-      background: orange;
     --sq12: 3;
     --st12: "O";
     transition:
@@ -695,7 +679,6 @@
       content: "O";
     }
     &:hover:active {
-      background: orange;
     --sq22: 3;
     --st22: "O";
     transition:
@@ -729,7 +712,6 @@
       content: "O";
     }
     &:hover:active {
-      background: orange;
     --sq32: 3;
     --st32: "O";
     transition:
@@ -763,7 +745,6 @@
       content: "O";
     }
     &:hover:active {
-      background: orange;
     --sq13: 3;
     --st13: "O";
     transition:
@@ -797,7 +778,6 @@
       content: "O";
     }
     &:hover:active {
-      background: orange;
     --sq23: 3;
     --st23: "O";
     transition:
@@ -831,7 +811,6 @@
       content: "O";
     }
     &:hover:active {
-      background: orange;
     --sq33: 3;
     --st33: "O";
     transition:
