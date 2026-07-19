@@ -127,12 +127,10 @@
   display: block;
   overflow: hidden;
   padding: 0;
-  margin: 0;
+  margin-left: 0;
 
   width: calc(384px + var(--sqCurrent) * 1px);
-  height: 384px;
-
-  background: yellow;
+  height: 260px;
 
   transition: --sqCurrent 100000s 100000s;
   animation: setSq 0.3s steps(19) infinite;
@@ -150,7 +148,7 @@
   overflow: clip;
 
   /* Determine size of playfield squares */
-  left: 72px;
+  left: 128px;
   top: 72px;
   width: 240px;
   height: 240px;
@@ -159,8 +157,8 @@
 
   /* Draw playfield squares grid */
   background-image:
-    linear-gradient(to top,   white 30%, #202020 31%, white 32%, white 66%, #202020 67%, white 68%),
-    linear-gradient(to right, white 30%, #202020 31%, white 32%, white 66%, #202020 67%, white 68%);
+    linear-gradient(to top,   transparent 30%, #202020 31%, transparent 32%, transparent 66%, #202020 67%, transparent 68%),
+    linear-gradient(to right, transparent 30%, #202020 31%, transparent 32%, transparent 66%, #202020 67%, transparent 68%);
   background-blend-mode: multiply;
 
   pointer-events: none;
@@ -225,10 +223,8 @@
     text-align: center;
     font-size: 80px;
     font-weight: bold;
-    color: blue;
+    color: #666;
     opacity: 0;
-
-    background-color: pink;
 
     cursor: pointer;
     pointer-events: none;
