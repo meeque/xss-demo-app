@@ -115,14 +115,14 @@
 }
 
 .card.live-output {
-  /* TODO overflow: hidden; */
+  overflow: hidden;
+  background-color: antiquewhite;
 }
 
-/* Outer container, formerly known as html */
+/* Outer tic-tac-toe container */
 .card.live-output .card-body {
-
   container-type: inline-size;
-  container-name: html;
+  container-name: tic-tac-toe;
 
   display: block;
   overflow: hidden;
@@ -143,10 +143,8 @@
   }
 }
 
-/* Inner container, formerly known as body */
-.card.live-output xss-live-output-non-angular  {
-
-  /* TODO adjust to Bootstrap width break-points, or similar */
+/* Inner tic-tac-toe container */
+.card.live-output xss-live-output-non-angular {
   display: block;
   position: absolute;
   overflow: clip;
@@ -160,7 +158,9 @@
   font-family: monospace;
 
   /* Draw playfield squares grid */
-  background-image: linear-gradient(to top, white 30%, #202020 31%, white 32%, white 66%, #202020 67%, white 68%), linear-gradient(to right, white 30%, #202020, white 32%, white 66%, #202020 67%, white 68%);
+  background-image:
+    linear-gradient(to top,   white 30%, #202020 31%, white 32%, white 66%, #202020 67%, white 68%),
+    linear-gradient(to right, white 30%, #202020 31%, white 32%, white 66%, #202020 67%, white 68%);
   background-blend-mode: multiply;
 
   pointer-events: none;
@@ -242,7 +242,7 @@
 
 /* CSS for each new marker that is being hovered over the field */
 
-@container html (width: 384px) {
+@container tic-tac-toe (width: 384px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq11) - calc(mod(var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0, 2))));
@@ -275,7 +275,7 @@
   }
 }
 
-@container html (width: 385px) {
+@container tic-tac-toe (width: 385px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq21) - calc(mod(var(--sq11) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0, 2))));
@@ -308,7 +308,7 @@
   }
 }
 
-@container html (width: 386px) {
+@container tic-tac-toe (width: 386px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq31) - calc(mod(var(--sq11) + var(--sq21) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0, 2))));
@@ -341,7 +341,7 @@
   }
 }
 
-@container html (width: 387px) {
+@container tic-tac-toe (width: 387px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq12) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0, 2))));
@@ -374,7 +374,7 @@
   }
 }
 
-@container html (width: 388px) {
+@container tic-tac-toe (width: 388px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq22) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 0, 2))));
@@ -407,7 +407,7 @@
   }
 }
 
-@container html (width: 389px) {
+@container tic-tac-toe (width: 389px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq32) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq13) + var(--sq23) + var(--sq33) + 0, 2))));
@@ -440,7 +440,7 @@
   }
 }
 
-@container html (width: 390px) {
+@container tic-tac-toe (width: 390px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq13) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq23) + var(--sq33) + 0, 2))));
@@ -473,7 +473,7 @@
   }
 }
 
-@container html (width: 391px) {
+@container tic-tac-toe (width: 391px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq23) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq33) + 0, 2))));
@@ -506,7 +506,7 @@
   }
 }
 
-@container html (width: 392px) {
+@container tic-tac-toe (width: 392px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq33) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + 0, 2))));
@@ -539,7 +539,7 @@
   }
 }
 
-@container html (width: 393px) {
+@container tic-tac-toe (width: 393px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq11) - calc(mod(var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1, 2))));
@@ -572,7 +572,7 @@
   }
 }
 
-@container html (width: 394px) {
+@container tic-tac-toe (width: 394px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq21) - calc(mod(var(--sq11) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1, 2))));
@@ -605,7 +605,7 @@
   }
 }
 
-@container html (width: 395px) {
+@container tic-tac-toe (width: 395px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq31) - calc(mod(var(--sq11) + var(--sq21) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1, 2))));
@@ -638,7 +638,7 @@
   }
 }
 
-@container html (width: 396px) {
+@container tic-tac-toe (width: 396px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq12) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1, 2))));
@@ -671,7 +671,7 @@
   }
 }
 
-@container html (width: 397px) {
+@container tic-tac-toe (width: 397px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq22) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq32) + var(--sq13) + var(--sq23) + var(--sq33) + 1, 2))));
@@ -704,7 +704,7 @@
   }
 }
 
-@container html (width: 398px) {
+@container tic-tac-toe (width: 398px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq32) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq13) + var(--sq23) + var(--sq33) + 1, 2))));
@@ -737,7 +737,7 @@
   }
 }
 
-@container html (width: 399px) {
+@container tic-tac-toe (width: 399px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq13) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq23) + var(--sq33) + 1, 2))));
@@ -770,7 +770,7 @@
   }
 }
 
-@container html (width: 400px) {
+@container tic-tac-toe (width: 400px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq23) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq33) + 1, 2))));
@@ -803,7 +803,7 @@
   }
 }
 
-@container html (width: 401px) {
+@container tic-tac-toe (width: 401px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
       scale: calc(max(0,1 - var(--sq33) - calc(mod(var(--sq11) + var(--sq21) + var(--sq31) + var(--sq12) + var(--sq22) + var(--sq32) + var(--sq13) + var(--sq23) + 1, 2))));
