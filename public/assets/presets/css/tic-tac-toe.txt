@@ -118,7 +118,7 @@
   /* TODO overflow: hidden; */
 }
 
-/* outer container, formerly known as html */
+/* Outer container, formerly known as html */
 .card.live-output .card-body {
 
   container-type: inline-size;
@@ -143,7 +143,7 @@
   }
 }
 
-/* inner container, formerly known as body */
+/* Inner container, formerly known as body */
 .card.live-output xss-live-output-non-angular  {
 
   /* TODO adjust to Bootstrap width break-points, or similar */
@@ -152,20 +152,15 @@
   overflow: clip;
 
   /* Determine size of playfield squares */
-  left: 64px;
-  top: 64px;
-  width: 256px;
-  height: 256px;
-
-  border: 8px solid red;
-  border-radius: 10px;
+  left: 72px;
+  top: 72px;
+  width: 240px;
+  height: 240px;
 
   font-family: monospace;
 
-  /* Draw playfield grid */
-  background: linear-gradient(0deg, white 90%, red), linear-gradient(-90deg, white 90%, red);
-  background-size: 33.34% 33.34%;
-  background-position: -1px -1px;
+  /* Draw playfield squares grid */
+  background-image: linear-gradient(to top, white 30%, red 31%, white 32%, white 66%, red 67%, white 68%), linear-gradient(to right, white 30%, red 31%, white 32%, white 66%, red 67%, white 68%);
   background-blend-mode: multiply;
 
   pointer-events: none;
@@ -191,19 +186,22 @@
     --st33 1000000000s 1000000000s allow-discrete;
 
   &::before {
+    /* In a shared box, draw all markers that have already been placed */
     content: var(--st11) " " var(--st21) " " var(--st31) "\A" var(--st12) " " var(--st22) " " var(--st32) "\A" var(--st13) " " var(--st23) " " var(--st33);
     white-space: pre;
 
     display: block;
     position: absolute;
     top: 0;
-    left: 25px;
-    width: 256px;
-    height: 256px;
+    left: 0;
+    width: 240px;
+    height: 240px;
+    padding: 2px 13px;
 
-    /* determine placement of individual square markers: */
-    line-height: 82px;
-    font-size: 66px;
+    /* Individual letter placement must align with grid ando hovered markers as closely as possible */
+    letter-spacing: -7px;
+    line-height: 80px;
+    font-size: 80px;
 
     font-weight: bold;
     color: #333;
@@ -212,20 +210,21 @@
   }
 
   &::after {
+    /* In an individual box, draw a new marker that is being hovered over the field */
     display: flex;
     justify-content: center;
     align-items: center;
     position: absolute;
 
-    left: 6px;
+    left: 2px;
     top: 6px;
-    width: 76px;
-    height: 76px;
+    width: 72px;
+    height: 72px;
 
     translate: calc(mod(var(--sqCurrent),3)*80px) calc(mod(round(down, var(--sqCurrent) / 3),3)*80px);
 
-    line-height: 76px;
-    font-size: 66px;
+    line-height: 80px;
+    font-size: 80px;
     font-weight: bold;
     color: blue;
     opacity: 0;
@@ -242,7 +241,8 @@
   }
 }
 
-/* CSS for every mousable square */
+/* CSS for each new marker that is being hovered over the field */
+
 @container html (width: 384px) {
   .card.live-output xss-live-output-non-angular {
     &::after {
