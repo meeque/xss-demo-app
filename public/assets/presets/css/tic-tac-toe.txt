@@ -160,7 +160,7 @@
   font-family: monospace;
 
   /* Draw playfield squares grid */
-  background-image: linear-gradient(to top, white 30%, red 31%, white 32%, white 66%, red 67%, white 68%), linear-gradient(to right, white 30%, red 31%, white 32%, white 66%, red 67%, white 68%);
+  background-image: linear-gradient(to top, white 30%, #202020 31%, white 32%, white 66%, #202020 67%, white 68%), linear-gradient(to right, white 30%, #202020, white 32%, white 66%, #202020 67%, white 68%);
   background-blend-mode: multiply;
 
   pointer-events: none;
@@ -196,10 +196,10 @@
     left: 0;
     width: 240px;
     height: 240px;
-    padding: 2px 13px;
+    padding: 6px 14px;
 
     /* Individual letter placement must align with grid ando hovered markers as closely as possible */
-    letter-spacing: -7px;
+    letter-spacing: -8px;
     line-height: 80px;
     font-size: 80px;
 
@@ -211,9 +211,7 @@
 
   &::after {
     /* In an individual box, draw a new marker that is being hovered over the field */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
     position: absolute;
 
     left: 2px;
@@ -224,6 +222,7 @@
     translate: calc(mod(var(--sqCurrent),3)*80px) calc(mod(round(down, var(--sqCurrent) / 3),3)*80px);
 
     line-height: 80px;
+    text-align: center;
     font-size: 80px;
     font-weight: bold;
     color: blue;
