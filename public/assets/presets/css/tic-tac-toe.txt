@@ -215,15 +215,14 @@
     align-items: center;
     position: absolute;
 
-
-    top: 0;
-    left: 0;
-    width: 85px;
-    height: 85px;
+    left: 6px;
+    top: 6px;
+    width: 76px;
+    height: 76px;
 
     translate: calc(mod(var(--sqCurrent),3)*80px) calc(mod(round(down, var(--sqCurrent) / 3),3)*80px);
 
-    line-height: 82px;
+    line-height: 76px;
     font-size: 66px;
     font-weight: bold;
     color: blue;
