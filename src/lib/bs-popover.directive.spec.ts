@@ -34,6 +34,19 @@ describe('BsPopoverDirective', () => {
     expect(Popover.getOrCreateInstance).toHaveBeenCalledWith(el);
   });
 
+  it('should stop propagation on click and keydown events', () => {
+    const fixture = TestBed.createComponent(TestHostComponent);
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement.querySelector('[data-bs-toggle="popover"]');
+
+    for (const type of ['click', 'keydown'] as const) {
+      const event = new Event(type, { bubbles: true });
+      jest.spyOn(event, 'stopPropagation');
+      el.dispatchEvent(event);
+      expect(event.stopPropagation).toHaveBeenCalled();
+    }
+  });
+
   it('should dispose the Bootstrap Popover when destroyed', () => {
     const mockDispose = jest.fn();
     jest.mocked(Popover.getInstance).mockReturnValue({ dispose: mockDispose } as unknown as InstanceType<typeof Popover>);
