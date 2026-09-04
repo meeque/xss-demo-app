@@ -21,7 +21,7 @@ body {
 }
 
 .help-icon {
-  cursor: pointer;
+  cursor: help;
   opacity: 0.5;
   font-style: normal;
   font-size: 0.75em;
