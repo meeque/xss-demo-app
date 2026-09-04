@@ -31,7 +31,6 @@ body {
 .help-icon:hover,
 .help-icon:focus {
   opacity: 1;
-  outline: none;
 }
 
 .output-area .live-output iframe.xss-demo-guest {
