@@ -47,6 +47,18 @@ describe('BsPopoverDirective', () => {
     }
   });
 
+  it('should sync content when an attribute changes', async () => {
+    const mockSetContent = jest.fn();
+    jest.mocked(Popover.getInstance).mockReturnValue({ setContent: mockSetContent, dispose: jest.fn() } as unknown as InstanceType<typeof Popover>);
+    const fixture = TestBed.createComponent(TestHostComponent);
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement.querySelector('[data-bs-toggle="popover"]');
+
+    el.setAttribute('data-bs-content', 'Updated content');
+    await new Promise(resolve => setTimeout(resolve));
+    expect(mockSetContent).toHaveBeenCalled();
+  });
+
   it('should dispose the Bootstrap Popover when destroyed', () => {
     const mockDispose = jest.fn();
     jest.mocked(Popover.getInstance).mockReturnValue({ dispose: mockDispose } as unknown as InstanceType<typeof Popover>);
