@@ -36,7 +36,7 @@
           data-bs-placement="auto"
           data-bs-container="body"
           data-bs-title="Payload Input"
-          data-bs-content="The attack string to test. Use the preset menu to load common XSS probes, or write your own. The payload is passed to the selected output on each update.">ⓘ</span></h2>
+          data-bs-content="Input for an XSS attack Payload to test against the selected Payload Output. Select one of the payload presets, then customize it. Or, write your own XSS attack payload from scratch!">ⓘ</span></h2>
 
         <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></xss-combobox-input>
 
@@ -66,7 +66,7 @@
           data-bs-placement="auto"
           data-bs-container="body"
           data-bs-title="Payload Output"
-          data-bs-content="Select how and where the payload is injected into the page. Outputs are grouped by XSS context — the syntactic location where injection occurs: HTML Content, HTML Attribute, URL, CSS, or JavaScript.">ⓘ</span></h2>
+          data-bs-content="Snippet of example web application code that process the Payload Input and emits it to the web browser. Select any of the predefined Payload Outputs and test your XSS attack payload against it! Currently, you cannot define your own custom Payload Outputs. See additional ⓘ buttons of the selected Payload Output for details.">ⓘ</span></h2>
 
         <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
 

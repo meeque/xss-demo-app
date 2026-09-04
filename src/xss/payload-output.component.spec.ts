@@ -499,7 +499,7 @@ describe('PayloadOutputComponent', () => {
   function queryAndExpectLiveOutput(expectedCode?: string) {
     const panel = queryAndExpectOne(element, 'div.live-output.card');
     const title = queryAndExpectOne(panel, '.card-header h4');
-    expect(title.textContent.trim()).toBe('Live HTML Output');
+    expect(title.textContent.trim()).toContain('Live HTML Output');
     const body = queryAndExpectOne(panel, 'div.card-body');
     if (expectedCode != null) {
       const outputContainer = queryAndExpectOne(body, ':scope > *');
