@@ -12,7 +12,7 @@ export class BsPopoverDirective implements AfterViewInit, OnDestroy {
   private readonly el = inject<ElementRef<HTMLElement>>(ElementRef);
 
   ngAfterViewInit(): void {
-    new Popover(this.el.nativeElement);
+    Popover.getOrCreateInstance(this.el.nativeElement);
   }
 
   ngOnDestroy(): void {

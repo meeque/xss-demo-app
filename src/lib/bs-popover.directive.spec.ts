@@ -5,6 +5,7 @@ import { BsPopoverDirective } from './bs-popover.directive';
 jest.mock('bootstrap', () => {
   const MockPopover = jest.fn();
   MockPopover.getInstance = jest.fn();
+  MockPopover.getOrCreateInstance = jest.fn();
   return { Popover: MockPopover };
 });
 
@@ -30,7 +31,7 @@ describe('BsPopoverDirective', () => {
     const fixture = TestBed.createComponent(TestHostComponent);
     fixture.detectChanges();
     const el = fixture.nativeElement.querySelector('[data-bs-toggle="popover"]');
-    expect(Popover).toHaveBeenCalledWith(el);
+    expect(Popover.getOrCreateInstance).toHaveBeenCalledWith(el);
   });
 
   it('should dispose the Bootstrap Popover when destroyed', () => {
