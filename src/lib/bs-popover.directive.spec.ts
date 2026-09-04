@@ -47,7 +47,7 @@ describe('BsPopoverDirective', () => {
     }
   });
 
-  it('should sync content when an attribute changes', async () => {
+  it('should sync content when a data-bs-* attribute changes', async () => {
     const mockSetContent = jest.fn();
     jest.mocked(Popover.getInstance).mockReturnValue({ setContent: mockSetContent, dispose: jest.fn() } as unknown as InstanceType<typeof Popover>);
     const fixture = TestBed.createComponent(TestHostComponent);
@@ -57,6 +57,20 @@ describe('BsPopoverDirective', () => {
     el.setAttribute('data-bs-content', 'Updated content');
     await new Promise(resolve => setTimeout(resolve));
     expect(mockSetContent).toHaveBeenCalled();
+  });
+
+  // Bootstrap mutates aria-describedby on the trigger when it shows the popover,
+  // and setContent() re-mutates it — without an attribute filter, this loops forever.
+  it('should not sync when an unrelated attribute changes', async () => {
+    const mockSetContent = jest.fn();
+    jest.mocked(Popover.getInstance).mockReturnValue({ setContent: mockSetContent, dispose: jest.fn() } as unknown as InstanceType<typeof Popover>);
+    const fixture = TestBed.createComponent(TestHostComponent);
+    fixture.detectChanges();
+    const el: HTMLElement = fixture.nativeElement.querySelector('[data-bs-toggle="popover"]');
+
+    el.setAttribute('aria-describedby', 'popover-123');
+    await new Promise(resolve => setTimeout(resolve));
+    expect(mockSetContent).not.toHaveBeenCalled();
   });
 
   it('should dispose the Bootstrap Popover when destroyed', () => {

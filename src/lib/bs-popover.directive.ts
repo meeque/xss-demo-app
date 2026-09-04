@@ -14,7 +14,10 @@ export class BsPopoverDirective implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     Popover.getOrCreateInstance(this.el.nativeElement);
-    this.observer.observe(this.el.nativeElement, { attributes: true });
+    this.observer.observe(this.el.nativeElement, {
+      attributes: true,
+      attributeFilter: ['data-bs-title', 'data-bs-content'],
+    });
   }
 
   ngOnDestroy(): void {
