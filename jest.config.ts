@@ -5,4 +5,5 @@ export default {
   ...createCjsPreset(),
   setupFilesAfterEnv: ['<rootDir>/src/test/setup-jest.ts'],
   testPathIgnorePatterns: ['/node_modules/', '[.]integration[.]spec[.]ts$'],
+  restoreMocks: true,
 } satisfies Config;

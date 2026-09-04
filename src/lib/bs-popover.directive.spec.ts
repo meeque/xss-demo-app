@@ -18,10 +18,6 @@ describe('BsPopoverDirective', () => {
     await TestBed.compileComponents();
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
   it('should initialize a Bootstrap Popover on the host element', () => {
     const getOrCreateInstance = jest.spyOn(Popover, 'getOrCreateInstance');
     const fixture = TestBed.createComponent(TestHostComponent);
