@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 
 import { BsPopoverDirective } from '../lib/bs-popover.directive';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
-import { PayloadOutputDescriptor } from './payload-output.service';
+import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { NonAngularLiveOutputComponent } from './live-output.component';
 
 
@@ -18,6 +18,8 @@ import { NonAngularLiveOutputComponent } from './live-output.component';
 export class PayloadOutputComponent implements AfterViewInit {
   private static nextComponentId = 0;
   protected readonly componentId = PayloadOutputComponent.nextComponentId++;
+
+  protected readonly PayloadOutputQuality = PayloadOutputQuality;
 
 
 
