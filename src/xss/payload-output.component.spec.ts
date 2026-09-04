@@ -426,7 +426,7 @@ describe('PayloadOutputComponent', () => {
 
     expect(panel).not.toBeNull();
     const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
-    expect(title.textContent.trim()).toBe('Payload Processor Function');
+    expect(title.textContent.trim()).toContain('Payload Processor Function');
     const body = queryAndExpectOne(panel, 'div.accordion-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.payloadProcessor.toString()));
     return panel;
@@ -442,7 +442,7 @@ describe('PayloadOutputComponent', () => {
 
     expect(panel).not.toBeNull();
     const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
-    expect(title.textContent.trim()).toBe('HTML Source Provider Function');
+    expect(title.textContent.trim()).toContain('HTML Source Provider Function');
     const body = queryAndExpectOne(panel, 'div.accordion-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.htmlSourceProvider));
     return panel;
@@ -458,7 +458,7 @@ describe('PayloadOutputComponent', () => {
 
     expect(panel).not.toBeNull();
     const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
-    expect(title.textContent.trim()).toBe('DOM Injector Function');
+    expect(title.textContent.trim()).toContain('DOM Injector Function');
     const body = queryAndExpectOne(panel, 'div.accordion-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.domInjector));
     return panel;
@@ -474,7 +474,7 @@ describe('PayloadOutputComponent', () => {
 
     expect(panel).not.toBeNull();
     const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
-    expect(title.textContent.trim()).toBe('jQuery Injector Function');
+    expect(title.textContent.trim()).toContain('jQuery Injector Function');
     const body = queryAndExpectOne(panel, 'div.accordion-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.jQueryInjector));
     return panel;
@@ -490,7 +490,7 @@ describe('PayloadOutputComponent', () => {
 
     expect(panel).not.toBeNull();
     const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
-    expect(title.textContent.trim()).toBe('Angular Template Code');
+    expect(title.textContent.trim()).toContain('Angular Template Code');
     const body = queryAndExpectOne(panel, 'div.accordion-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.templateComponentType.templateCode));
     return panel;
@@ -511,7 +511,7 @@ describe('PayloadOutputComponent', () => {
   function queryAndExpectLiveSourceCode(expectedCode?: string) {
     const panel = queryAndExpectOne(element, 'div.live-source-code.accordion');
     const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
-    expect(title.textContent.trim()).toBe('Live HTML Source Code');
+    expect(title.textContent.trim()).toContain('Live HTML Source Code');
     const body = queryAndExpectOne(panel, 'div.accordion-body');
     if (expectedCode != null) {
       expect(body.textContent.trim()).toBe(expectedCode);

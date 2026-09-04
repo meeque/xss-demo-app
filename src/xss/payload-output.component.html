@@ -3,20 +3,70 @@
   <div class="card-header d-flex align-items-center gap-2">
     <h3 class="mb-0">
       @if (outputDescriptor().htmlSourceProvider) {
-        <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
+        <img
+          class="technology-icon"
+          src="assets/img/html-src-logo-black.svg"
+          alt="HTML"
+          tabindex="0"
+          data-bs-toggle="popover"
+          data-bs-trigger="click focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="HTML Source Provider"
+          data-bs-content="A JavaScript function that builds an HTML string from the processed payload. The string is assigned to element.innerHTML to render the live output.">
       }
       @if (outputDescriptor().domInjector) {
-        <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
+        <img
+          class="technology-icon"
+          src="assets/img/dom-logo-black.svg"
+          alt="DOM"
+          tabindex="0"
+          data-bs-toggle="popover"
+          data-bs-trigger="click focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="DOM Injector"
+          data-bs-content="A JavaScript function that injects the processed payload into a live DOM element using native browser APIs, e.g. element.innerHTML, element.textContent, or element.setAttribute.">
       }
       @if (outputDescriptor().jQueryInjector) {
-        <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
+        <img
+          class="technology-icon"
+          src="assets/img/jquery-logo-black.svg"
+          alt="jQuery"
+          tabindex="0"
+          data-bs-toggle="popover"
+          data-bs-trigger="click focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="jQuery Injector"
+          data-bs-content="A JavaScript function that injects the processed payload via jQuery's DOM manipulation API, e.g. .html(), .text(), .attr(), or .append().">
       }
       @if (outputDescriptor().templateComponentType) {
-        <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
+        <img
+          class="technology-icon"
+          src="assets/img/angular-logo-solid-black.svg"
+          alt="Angular"
+          tabindex="0"
+          data-bs-toggle="popover"
+          data-bs-trigger="click focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="Angular Template"
+          data-bs-content="An Angular component whose template renders the payload using Angular data binding — e.g. an innerHTML binding, text interpolation, an href binding, or NgStyle.">
       }
       <span> {{ outputDescriptor().title }} </span>
       @if (outputDescriptor().quality) {
-        <span class="quality-icon" [class]="'quality-icon quality-' + outputDescriptor().quality.toLowerCase()"></span>
+        <span
+          class="quality-icon"
+          [class]="'quality-icon quality-' + outputDescriptor().quality.toLowerCase()"
+          tabindex="0"
+          data-bs-toggle="popover"
+          data-bs-trigger="click focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="Payload Output Quality"
+          data-bs-content="Recommended — secure by design; XSS should not succeed. Questionable — theoretically secure but with caveats. Insecure — intentionally vulnerable; XSS is expected to succeed here.">
+        </span>
       }
     </h3>
   </div>
@@ -33,6 +83,18 @@
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
           (click)="togglePanel($event)">
           Payload Processor Function
+          <span
+            class="help-icon ms-2"
+            tabindex="0"
+            role="note"
+            data-bs-toggle="popover"
+            data-bs-trigger="click focus"
+            data-bs-placement="auto"
+            data-bs-container="body"
+            data-bs-title="Payload Processor"
+            data-bs-content="An optional transformation applied to the raw payload before it reaches the output. Examples: HTML encoding, URL validation, DOMPurify sanitization, Angular DomSanitizer bypass."
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.stopPropagation()">ⓘ</span>
         </button>
       </h4>
       <div
@@ -59,6 +121,18 @@
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-html-source-provider-panel'"
           (click)="togglePanel($event)">
           HTML Source Provider Function
+          <span
+            class="help-icon ms-2"
+            tabindex="0"
+            role="note"
+            data-bs-toggle="popover"
+            data-bs-trigger="click focus"
+            data-bs-placement="auto"
+            data-bs-container="body"
+            data-bs-title="HTML Source Provider"
+            data-bs-content="A function that wraps the processed payload in HTML markup. The resulting string is assigned to element.innerHTML to produce the live output."
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.stopPropagation()">ⓘ</span>
         </button>
       </h4>
       <div
@@ -85,6 +159,18 @@
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-dom-injector-panel'"
           (click)="togglePanel($event)">
           DOM Injector Function
+          <span
+            class="help-icon ms-2"
+            tabindex="0"
+            role="note"
+            data-bs-toggle="popover"
+            data-bs-trigger="click focus"
+            data-bs-placement="auto"
+            data-bs-container="body"
+            data-bs-title="DOM Injector"
+            data-bs-content="A function that directly manipulates a live DOM element using native browser APIs such as element.innerHTML, element.textContent, or element.setAttribute."
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.stopPropagation()">ⓘ</span>
         </button>
       </h4>
       <div
@@ -111,6 +197,18 @@
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-jquery-injector-panel'"
           (click)="togglePanel($event)">
           jQuery Injector Function
+          <span
+            class="help-icon ms-2"
+            tabindex="0"
+            role="note"
+            data-bs-toggle="popover"
+            data-bs-trigger="click focus"
+            data-bs-placement="auto"
+            data-bs-container="body"
+            data-bs-title="jQuery Injector"
+            data-bs-content="A function that manipulates a live DOM element via jQuery's API, e.g. .html(), .text(), .attr(), or .append()."
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.stopPropagation()">ⓘ</span>
         </button>
       </h4>
       <div
@@ -137,6 +235,18 @@
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-template-code-panel'"
           (click)="togglePanel($event)">
           Angular Template Code
+          <span
+            class="help-icon ms-2"
+            tabindex="0"
+            role="note"
+            data-bs-toggle="popover"
+            data-bs-trigger="click focus"
+            data-bs-placement="auto"
+            data-bs-container="body"
+            data-bs-title="Angular Template"
+            data-bs-content="An Angular component whose template binds the payload using Angular data binding — e.g. an innerHTML binding, text interpolation, an href binding, or NgStyle."
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.stopPropagation()">ⓘ</span>
         </button>
       </h4>
       <div
@@ -189,6 +299,18 @@
         [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-live-source-code-panel'"
         (click)="togglePanel($event)">
         Live HTML Source Code
+        <span
+          class="help-icon ms-2"
+          tabindex="0"
+          role="note"
+          data-bs-toggle="popover"
+          data-bs-trigger="click focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="Live HTML Source"
+          data-bs-content="The serialized innerHTML of the live output area after rendering — shows exactly what ended up in the DOM."
+          (click)="$event.stopPropagation()"
+          (keydown)="$event.stopPropagation()">ⓘ</span>
       </button>
     </h4>
     <div

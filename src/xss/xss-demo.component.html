@@ -27,7 +27,16 @@
 
       <section class="input-area col-12 col-lg-6">
 
-        <h2>Payload Input</h2>
+        <h2>Payload Input <span
+          class="help-icon"
+          tabindex="0"
+          role="note"
+          data-bs-toggle="popover"
+          data-bs-trigger="click focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="Payload Input"
+          data-bs-content="The attack string to test. Use the preset menu to load common XSS probes, or write your own. The payload is passed to the selected output on each update.">ⓘ</span></h2>
 
         <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></xss-combobox-input>
 
@@ -48,7 +57,16 @@
 
       <section class="output-area col-12 col-lg-6">
 
-        <h2>Payload Output</h2>
+        <h2>Payload Output <span
+          class="help-icon"
+          tabindex="0"
+          role="note"
+          data-bs-toggle="popover"
+          data-bs-trigger="click focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="Payload Output"
+          data-bs-content="Select how and where the payload is injected into the page. Outputs are grouped by XSS context — the syntactic location where injection occurs: HTML Content, HTML Attribute, URL, CSS, or JavaScript.">ⓘ</span></h2>
 
         <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
 
