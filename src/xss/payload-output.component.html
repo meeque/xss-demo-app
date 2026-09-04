@@ -6,57 +6,57 @@
         <img
           class="technology-icon"
           src="assets/img/html-src-logo-black.svg"
-          alt="HTML"
+          alt="Technology: HTML"
           tabindex="0"
           role="button"
           data-bs-toggle="popover"
           data-bs-trigger="click focus"
           data-bs-placement="auto"
           data-bs-container="body"
-          data-bs-title="HTML Source Provider"
-          data-bs-content="A JavaScript function that builds an HTML string from the processed payload. The string is assigned to element.innerHTML to render the live output.">
+          data-bs-title="Technology: HTML"
+          data-bs-content="This Payload Output generate plain HTML code an passes it to the web browser for rendering.">
       }
       @if (outputDescriptor().domInjector) {
         <img
           class="technology-icon"
           src="assets/img/dom-logo-black.svg"
-          alt="DOM"
+          alt="Technology: DOM"
           tabindex="0"
           role="button"
           data-bs-toggle="popover"
           data-bs-trigger="click focus"
           data-bs-placement="auto"
           data-bs-container="body"
-          data-bs-title="DOM Injector"
-          data-bs-content="A JavaScript function that injects the processed payload into a live DOM element using native browser APIs, e.g. element.innerHTML, element.textContent, or element.setAttribute.">
+          data-bs-title="Technology: DOM"
+          data-bs-content="This Payload Output uses DOM APIs to interact with the web browser.">
       }
       @if (outputDescriptor().jQueryInjector) {
         <img
           class="technology-icon"
           src="assets/img/jquery-logo-black.svg"
-          alt="jQuery"
+          alt="Technology: jQuery"
           tabindex="0"
           role="button"
           data-bs-toggle="popover"
           data-bs-trigger="click focus"
           data-bs-placement="auto"
           data-bs-container="body"
-          data-bs-title="jQuery Injector"
-          data-bs-content="A JavaScript function that injects the processed payload via jQuery's DOM manipulation API, e.g. .html(), .text(), .attr(), or .append().">
+          data-bs-title="Technology: jQuery"
+          data-bs-content="This Payload Output uses the JQuery library to interact with the web browser.">
       }
       @if (outputDescriptor().templateComponentType) {
         <img
           class="technology-icon"
           src="assets/img/angular-logo-solid-black.svg"
-          alt="Angular"
+          alt="Technology: Angular"
           tabindex="0"
           role="button"
           data-bs-toggle="popover"
           data-bs-trigger="click focus"
           data-bs-placement="auto"
           data-bs-container="body"
-          data-bs-title="Angular Template"
-          data-bs-content="An Angular component whose template renders the payload using Angular data binding — e.g. an innerHTML binding, text interpolation, an href binding, or NgStyle.">
+          data-bs-title="Technology: Angular"
+          data-bs-content="This Payload Output uses Angular template code to interact with the web browser.">
       }
       <span> {{ outputDescriptor().title }} </span>
       @if (outputDescriptor().quality) {
