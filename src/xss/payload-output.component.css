@@ -11,22 +11,46 @@
   font-size: 1.2rem;
 }
 
+.accordion .accordion-header .help-icon {
+  display: block;
+  margin-right: 0.4em;
+}
+
+
+
 .card {
   --bs-card-cap-bg: var(--bs-primary-bg-subtle);
   --bs-card-cap-padding-y: 1rem;
 }
 
 .card .card-header h4 {
+  display: flex;
+  align-items: center;
   font-size: 1.2rem;
 }
 
+.card .card-header .help-icon {
+  display: block;
+  margin-right: 0.4em;
+}
+
+
+
 .title.card .card-header h3 {
+  display: flex;
+  align-items: center;
   font-size: 1.5rem;
 }
 
-.title.card .card-header h3 img,
-.title.card .card-header h3 span {
-  vertical-align: middle;
+.title.card .card-header .quality-icon {
+  display: block;
+  margin-left: 0.4em;
+  margin-right: 0.4em;
+  cursor: help;
+}
+
+.title.card .card-header .technology-icon {
+  cursor: help;
 }
 
 .title.card .card-header .technology-icon {
@@ -34,6 +58,8 @@
   height: 1.5em;
   opacity: 0.8;
 }
+
+
 
 .payload-processor .accordion-body,
 .html-source-provider .accordion-body,

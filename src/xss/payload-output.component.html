@@ -3,21 +3,79 @@
   <div class="card-header d-flex align-items-center gap-2">
     <h3 class="mb-0">
       @if (outputDescriptor().htmlSourceProvider) {
-        <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
+        <img
+          class="technology-icon"
+          src="assets/img/html-src-logo-black.svg"
+          alt="Technology: HTML"
+          tabindex="0"
+          role="button"
+          data-bs-toggle="popover"
+          data-bs-trigger="focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="Technology: HTML"
+          data-bs-content="This Payload Output generates plain HTML source code and passes it to the web browser for rendering.">
       }
       @if (outputDescriptor().domInjector) {
-        <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
+        <img
+          class="technology-icon"
+          src="assets/img/dom-logo-black.svg"
+          alt="Technology: DOM"
+          tabindex="0"
+          role="button"
+          data-bs-toggle="popover"
+          data-bs-trigger="focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="Technology: DOM"
+          data-bs-content="This Payload Output uses DOM APIs to interact with the web browser.">
       }
       @if (outputDescriptor().jQueryInjector) {
-        <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
+        <img
+          class="technology-icon"
+          src="assets/img/jquery-logo-black.svg"
+          alt="Technology: jQuery"
+          tabindex="0"
+          role="button"
+          data-bs-toggle="popover"
+          data-bs-trigger="focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="Technology: jQuery"
+          data-bs-content="This Payload Output uses the JQuery library to interact with the web browser.">
       }
       @if (outputDescriptor().templateComponentType) {
-        <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
+        <img
+          class="technology-icon"
+          src="assets/img/angular-logo-solid-black.svg"
+          alt="Technology: Angular"
+          tabindex="0"
+          role="button"
+          data-bs-toggle="popover"
+          data-bs-trigger="focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="Technology: Angular"
+          data-bs-content="This Payload Output uses Angular template code to interact with the web browser.">
       }
-      <span> {{ outputDescriptor().title }} </span>
       @if (outputDescriptor().quality) {
-        <span class="quality-icon" [class]="'quality-icon quality-' + outputDescriptor().quality.toLowerCase()"></span>
+        <span
+          class="quality-icon"
+          [class]="'quality-icon quality-' + outputDescriptor().quality.toLowerCase()"
+          tabindex="0"
+          role="button"
+          data-bs-toggle="popover"
+          data-bs-trigger="focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          [attr.data-bs-title]="'Quality: ' + outputDescriptor().quality"
+          [attr.data-bs-content]="
+            outputDescriptor().quality === PayloadOutputQuality.Recommended ? 'This Payload Output demonstrates Recommended, best-practice application code and a fully effctive defense against XSS.' :
+            outputDescriptor().quality === PayloadOutputQuality.Questionable ? 'This Payload Output demonstrates Questionalble application code. While it may be an effctive defense against XSS, it may degrade code-quality or have other undesirable properties. In short, there are better XSS defenses available!' :
+            'This Payload Output demonstrates Insecure application code, that is, an XSS vulnerability! This XSS vulnerability can be exploited by appropriate attack payload in the Payload Input field!'">
+        </span>
       }
+      <span>{{ outputDescriptor().title }}</span>
     </h3>
   </div>
 </div>
@@ -32,7 +90,26 @@
           aria-expanded="true"
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
           (click)="togglePanel($event)">
-          Payload Processor Function
+          <span
+            class="help-icon"
+            tabindex="0"
+            role="note"
+            data-bs-toggle="popover"
+            data-bs-trigger="focus"
+            data-bs-placement="auto"
+            data-bs-container="body"
+            data-bs-title="Payload Processor Function"
+            [attr.data-bs-content]="
+              'This Payload Output uses a JavaScript Payload Processer Function to pre-process the raw Payload Input before passing it on to the ' 
+              + (outputDescriptor().htmlSourceProvider ? 'HTML Source Provider Function' : '')
+              + (outputDescriptor().domInjector ? 'DOM Injector Function' : '')
+              + (outputDescriptor().jQueryInjector ? 'jQuery Injector Function' : '')
+              + (outputDescriptor().templateComponentType ? 'Angular Template Code' : '')
+              + '. '
+              + 'The Payload Output passes the raw Payload Input as argument to the function\'s `payload` parameter. '
+              + 'The Payload Output then uses the function\'s return value for further processing.'"
+            >ⓘ</span>
+          <span>Payload Processor Function</span>
         </button>
       </h4>
       <div
@@ -58,7 +135,27 @@
           aria-expanded="true"
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-html-source-provider-panel'"
           (click)="togglePanel($event)">
-          HTML Source Provider Function
+          <span
+            class="help-icon"
+            tabindex="0"
+            role="note"
+            data-bs-toggle="popover"
+            data-bs-trigger="focus"
+            data-bs-placement="auto"
+            data-bs-container="body"
+            data-bs-title="HTML Source Provider Function"
+            [attr.data-bs-content]="
+              'This Payload Output uses a JavaScript HTML Source Provider Function to generate HTML source code. '
+              + 'The Payload Output passes the '
+              + (outputDescriptor().payloadProcessor ? 'processed Payload Input (as returned by the Payload Processer Function)' : 'raw Payload Input')
+              + ' as argument to the `payload` parameter. '
+              + 'The Payload Output passes the string that the function returns to the web browser for rendering as HTML source code. '
+              + 'The Payload Output runs this JavaScript function on the client side. '
+              + 'However, a real web application might run similar code on the server-side, possibly in a different programming language or template language. '
+              + 'What matters is the HTML source code that such function generates. '
+              + '(There is one caveat here: Under the hood, the Payload Output uses assignment to the `innerHTML` DOM property to pass the HTML source code to the web browser. According to the HTML standard, the browser does NOT execute JavaScript code from `<script>` blocks that are inserted through `innerHTML`. You will have to get more creative with your XSS attack payload. Not sure how? Look for an appropriate Payload Preset!)'"
+            >ⓘ</span>
+          <span>HTML Source Provider Function</span>
         </button>
       </h4>
       <div
@@ -84,7 +181,25 @@
           aria-expanded="true"
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-dom-injector-panel'"
           (click)="togglePanel($event)">
-          DOM Injector Function
+          <span
+            class="help-icon"
+            tabindex="0"
+            role="note"
+            data-bs-toggle="popover"
+            data-bs-trigger="focus"
+            data-bs-placement="auto"
+            data-bs-container="body"
+            data-bs-title="DOM Injector Function"
+            [attr.data-bs-content]="
+              'This Payload Output uses a JavaScript DOM Injector Function to manipulate the web browser\'s DOM. '
+              + 'The Payload Output passes a container DOM element as argument to the `element` parameter. '
+              + 'The Payload Output also passes the '
+              + (outputDescriptor().payloadProcessor ? 'processed Payload Input (as returned by the Payload Processer Function)' : 'raw Payload Input')
+              + ' as argument to the `payload` parameter. '
+              + 'The function uses standard HTML DOM APIs to emit the payload to the web browser. '
+              + 'The Payload Output itself does not interact with the HTML DOM directly, and it ignores the return value of the function.'"
+            >ⓘ</span>
+          <span>DOM Injector Function</span>
         </button>
       </h4>
       <div
@@ -110,7 +225,26 @@
           aria-expanded="true"
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-jquery-injector-panel'"
           (click)="togglePanel($event)">
-          jQuery Injector Function
+          <span
+            class="help-icon"
+            tabindex="0"
+            role="note"
+            data-bs-toggle="popover"
+            data-bs-trigger="focus"
+            data-bs-placement="auto"
+            data-bs-container="body"
+            data-bs-title="jQuery Injector Function"
+            [attr.data-bs-content]="
+              'This Payload Output uses a JavaScript jQuery Injector Function to manipulate the web browser\'s DOM. '
+              + 'The Payload Output passes a container DOM element as argument to the `element` parameter. '
+              + 'The Payload Output also passes the '
+              + (outputDescriptor().payloadProcessor ? 'processed Payload Input (as returned by the Payload Processer Function)' : 'raw Payload Input')
+              + ' as argument to the `payload` parameter. '
+              + 'And the Payload Output makes the jQuery library available through the `$` global variable. '
+              + 'The function uses the jQUery API to emit the payload to the web browser. '
+              + 'The Payload Output itself does not use the jQuery library directly, and it ignores the return value of the function.'"
+            >ⓘ</span>
+          <span>jQuery Injector Function</span>
         </button>
       </h4>
       <div
@@ -136,7 +270,25 @@
           aria-expanded="true"
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-template-code-panel'"
           (click)="togglePanel($event)">
-          Angular Template Code
+          <span
+            class="help-icon"
+            tabindex="0"
+            role="note"
+            data-bs-toggle="popover"
+            data-bs-trigger="focus"
+            data-bs-placement="auto"
+            data-bs-container="body"
+            data-bs-title="Angular Template Code"
+            [attr.data-bs-content]="
+              'This Payload Output uses Angular Template Code to manipulate the web browser\'s DOM. '
+              + 'The Payload Output creates an Angular Component that uses this template. '
+              + 'The Payload Output also makes the '
+              + (outputDescriptor().payloadProcessor ? 'processed Payload Input (as returned by the Payload Processer Function)' : 'raw Payload Input')
+              + ' available as the `payload` property in the component\'s scope. '
+              + 'The template emits the `payload` property to the web browser using Angular templating mechanism. '
+              + 'The Payload Output ensures the component renders the template, but it does not interact with the component in any other way.'"
+            >ⓘ</span>
+          <span>Angular Template Code</span>
         </button>
       </h4>
       <div
@@ -156,7 +308,20 @@
   class="live-output card my-2"
   aria-expanded="true">
   <div class="card-header d-flex align-items-center gap-2">
-    <h4 class="mb-0">Live HTML Output</h4>
+    <h4 class="mb-0">
+      <span
+        class="help-icon"
+        tabindex="0"
+        role="note"
+        data-bs-toggle="popover"
+        data-bs-trigger="focus"
+        data-bs-placement="auto"
+        data-bs-container="body"
+        data-bs-title="Live HTML Output"
+        data-bs-content="Live HTML Output. This is based on the current Payload Input and how this Payload Output processed it."
+        >ⓘ</span>
+      <span>Live HTML Output</span>
+    </h4>
     <div class="ms-auto d-flex align-items-center gap-2">
       @if (!autoUpdateEnabled()) {
         <span>
@@ -188,7 +353,18 @@
         aria-expanded="true"
         [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-live-source-code-panel'"
         (click)="togglePanel($event)">
-        Live HTML Source Code
+        <span
+          class="help-icon"
+          tabindex="0"
+          role="note"
+          data-bs-toggle="popover"
+          data-bs-trigger="focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="Live HTML Source Code"
+          data-bs-content="HTML source code of the DOM tree shown in the Live HTML Output. Note that this may not be fully accurate, because not all DOM trees can be serealized to HTML fully. Ultimately, the XSS Demo App asks the browser for a HTML representation of the DOM tree, and the browser has some leeway in creating this representation. E.g. the browser may use a more compact representation than the HTML source code (if any) that actually generated the DOM tree. E.g., the browser may represent some characters verbatim, even when the HTML source code used a character entity."
+          >ⓘ</span>
+        <span>Live HTML Source Code</span>
       </button>
     </h4>
     <div

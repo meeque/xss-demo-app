@@ -1,8 +1,9 @@
 import { Component, AfterViewInit, ElementRef, ViewContainerRef, EnvironmentInjector, signal, input, model, effect, inject, viewChild, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { BsPopoverDirective } from '../lib/bs-popover.directive';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
-import { PayloadOutputDescriptor } from './payload-output.service';
+import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
 import { NonAngularLiveOutputComponent } from './live-output.component';
 
 
@@ -12,11 +13,13 @@ import { NonAngularLiveOutputComponent } from './live-output.component';
   templateUrl: './payload-output.component.html',
   styleUrls: ['./payload-output.component.css'],
   standalone: true,
-  imports: [FormsModule, StripExtraIndentPipe],
+  imports: [BsPopoverDirective, FormsModule, StripExtraIndentPipe],
 })
 export class PayloadOutputComponent implements AfterViewInit {
   private static nextComponentId = 0;
   protected readonly componentId = PayloadOutputComponent.nextComponentId++;
+
+  protected readonly PayloadOutputQuality = PayloadOutputQuality;
 
 
 

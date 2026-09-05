@@ -20,6 +20,19 @@ body {
   content: "\26A0";
 }
 
+.help-icon {
+  vertical-align: middle;
+  font-size: 1.5rem;
+  font-style: normal;
+  opacity: 0.8;
+  cursor: help;
+}
+
+.help-icon:hover,
+.help-icon:focus {
+  opacity: 1;
+}
+
 .output-area .live-output iframe.xss-demo-guest {
     width: 100%;
     height: 60em;

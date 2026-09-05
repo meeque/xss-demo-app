@@ -27,7 +27,16 @@
 
       <section class="input-area col-12 col-lg-6">
 
-        <h2>Payload Input</h2>
+        <h2>Payload Input <span
+          class="help-icon"
+          tabindex="0"
+          role="note"
+          data-bs-toggle="popover"
+          data-bs-trigger="focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="Payload Input"
+          data-bs-content="Input for an XSS attack Payload to test against the selected Payload Output. Select one of the payload presets, then customize it. Or, write your own XSS attack payload from scratch!">ⓘ</span></h2>
 
         <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></xss-combobox-input>
 
@@ -48,7 +57,16 @@
 
       <section class="output-area col-12 col-lg-6">
 
-        <h2>Payload Output</h2>
+        <h2>Payload Output <span
+          class="help-icon"
+          tabindex="0"
+          role="note"
+          data-bs-toggle="popover"
+          data-bs-trigger="focus"
+          data-bs-placement="auto"
+          data-bs-container="body"
+          data-bs-title="Payload Output"
+          data-bs-content="Snippet of example web application code that process the Payload Input and emits it to the web browser. Select any of the predefined Payload Outputs and test your XSS attack payload against it! Currently, you cannot define your own custom Payload Outputs. See additional ⓘ buttons of the selected Payload Output for details.">ⓘ</span></h2>
 
         <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
 
@@ -149,10 +167,10 @@
                 @if (item.value.templateComponentType) {
                   <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
                 }
-                {{ item.name }}
                 @if (item.value.quality) {
-                  <span class="quality-icon" [class]="'quality-icon quality-' + item.value.quality.toLowerCase()"></span>
+                  &nbsp;<span class="quality-icon" [class]="'quality-icon quality-' + item.value.quality.toLowerCase()"></span>
                 }
+                {{ item.name }}
               </span>
             </li>
           }
