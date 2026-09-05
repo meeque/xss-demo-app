@@ -58,7 +58,6 @@
           data-bs-title="Technology: Angular"
           data-bs-content="This Payload Output uses Angular template code to interact with the web browser.">
       }
-      <span> {{ outputDescriptor().title }} </span>
       @if (outputDescriptor().quality) {
         <span
           class="quality-icon"
@@ -76,6 +75,7 @@
             'This Payload Output demonstrates Insecure application code, that is, an XSS vulnerability! This XSS vulnerability can be exploited by appropriate attack payload in the Payload Input field!'">
         </span>
       }
+      <span>{{ outputDescriptor().title }}</span>
     </h3>
   </div>
 </div>
@@ -90,9 +90,8 @@
           aria-expanded="true"
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-payload-processor-panel'"
           (click)="togglePanel($event)">
-          Payload Processor Function
           <span
-            class="help-icon ms-2"
+            class="help-icon"
             tabindex="0"
             role="note"
             data-bs-toggle="popover"
@@ -110,6 +109,7 @@
               + 'The Payload Output passes the raw Payload Input as argument to the function\'s `payload` parameter. '
               + 'The Payload Output then uses the function\'s return value for further processing.'"
             >ⓘ</span>
+          <span>Payload Processor Function</span>
         </button>
       </h4>
       <div
@@ -135,9 +135,8 @@
           aria-expanded="true"
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-html-source-provider-panel'"
           (click)="togglePanel($event)">
-          HTML Source Provider Function
           <span
-            class="help-icon ms-2"
+            class="help-icon"
             tabindex="0"
             role="note"
             data-bs-toggle="popover"
@@ -156,6 +155,7 @@
               + 'What matters is the HTML source code that such function generates. '
               + '(There is one caveat here: Under the hood, the Payload Output uses assignment to the `innerHTML` DOM property to pass the HTML source code to the web browser. According to the HTML standard, the browser does NOT execute JavaScript code from `<script>` blocks that are inserted through `innerHTML`. You will have to get more creative with your XSS attack payload. Not sure how? Look for an appropriate Payload Preset!)'"
             >ⓘ</span>
+          <span>HTML Source Provider Function</span>
         </button>
       </h4>
       <div
@@ -181,9 +181,8 @@
           aria-expanded="true"
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-dom-injector-panel'"
           (click)="togglePanel($event)">
-          DOM Injector Function
           <span
-            class="help-icon ms-2"
+            class="help-icon"
             tabindex="0"
             role="note"
             data-bs-toggle="popover"
@@ -200,6 +199,7 @@
               + 'The function uses standard HTML DOM APIs to emit the payload to the web browser. '
               + 'The Payload Output itself does not interact with the HTML DOM directly, and it ignores the return value of the function.'"
             >ⓘ</span>
+          <span>DOM Injector Function</span>
         </button>
       </h4>
       <div
@@ -225,9 +225,8 @@
           aria-expanded="true"
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-jquery-injector-panel'"
           (click)="togglePanel($event)">
-          jQuery Injector Function
           <span
-            class="help-icon ms-2"
+            class="help-icon"
             tabindex="0"
             role="note"
             data-bs-toggle="popover"
@@ -245,6 +244,7 @@
               + 'The function uses the jQUery API to emit the payload to the web browser. '
               + 'The Payload Output itself does not use the jQuery library directly, and it ignores the return value of the function.'"
             >ⓘ</span>
+          <span>jQuery Injector Function</span>
         </button>
       </h4>
       <div
@@ -270,9 +270,8 @@
           aria-expanded="true"
           [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-template-code-panel'"
           (click)="togglePanel($event)">
-          Angular Template Code
           <span
-            class="help-icon ms-2"
+            class="help-icon"
             tabindex="0"
             role="note"
             data-bs-toggle="popover"
@@ -289,6 +288,7 @@
               + 'The template emits the `payload` property to the web browser using Angular templating mechanism. '
               + 'The Payload Output ensures the component renders the template, but it does not interact with the component in any other way.'"
             >ⓘ</span>
+          <span>Angular Template Code</span>
         </button>
       </h4>
       <div
@@ -309,9 +309,8 @@
   aria-expanded="true">
   <div class="card-header d-flex align-items-center gap-2">
     <h4 class="mb-0">
-      Live HTML Output
       <span
-        class="help-icon ms-2"
+        class="help-icon"
         tabindex="0"
         role="note"
         data-bs-toggle="popover"
@@ -321,6 +320,7 @@
         data-bs-title="Live HTML Output"
         data-bs-content="Live HTML Output. This is based on the current Payload Input and how this Payload Output processed it."
         >ⓘ</span>
+      <span>Live HTML Output</span>
     </h4>
     <div class="ms-auto d-flex align-items-center gap-2">
       @if (!autoUpdateEnabled()) {
@@ -353,9 +353,8 @@
         aria-expanded="true"
         [attr.aria-controls]="'xss-payload-output-component-' + componentId + '-live-source-code-panel'"
         (click)="togglePanel($event)">
-        Live HTML Source Code
         <span
-          class="help-icon ms-2"
+          class="help-icon"
           tabindex="0"
           role="note"
           data-bs-toggle="popover"
@@ -365,6 +364,7 @@
           data-bs-title="Live HTML Source Code"
           data-bs-content="HTML source code of the DOM tree shown in the Live HTML Output. Note that this may not be fully accurate, because not all DOM trees can be serealized to HTML fully. Ultimately, the XSS Demo App asks the browser for a HTML representation of the DOM tree, and the browser has some leeway in creating this representation. E.g. the browser may use a more compact representation than the HTML source code (if any) that actually generated the DOM tree. E.g., the browser may represent some characters verbatim, even when the HTML source code used a character entity."
           >ⓘ</span>
+        <span>Live HTML Source Code</span>
       </button>
     </h4>
     <div
