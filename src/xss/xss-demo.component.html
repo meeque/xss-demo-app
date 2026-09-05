@@ -167,10 +167,10 @@
                 @if (item.value.templateComponentType) {
                   <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
                 }
-                {{ item.name }}
                 @if (item.value.quality) {
-                  <span class="quality-icon" [class]="'quality-icon quality-' + item.value.quality.toLowerCase()"></span>
+                  &nbsp;<span class="quality-icon" [class]="'quality-icon quality-' + item.value.quality.toLowerCase()"></span>
                 }
+                {{ item.name }}
               </span>
             </li>
           }
