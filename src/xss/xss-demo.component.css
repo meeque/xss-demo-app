@@ -27,6 +27,8 @@ header .xss-alert-overlay .alert {
   font-weight: bold;
 }
 
+
+
 main {
   margin-top: 1rem;
 }
@@ -34,6 +36,8 @@ main {
 main section h2 {
   text-align: center;
 }
+
+
 
 .input-area textarea.payload {
   box-sizing: border-box;
@@ -46,6 +50,8 @@ main section h2 {
   border-radius: 0.4rem;
 }
 
+
+
 .output-area .list-group-item span,
 .output-area .list-group-item img.technology-icon {
   vertical-align: middle;
@@ -56,15 +62,7 @@ main section h2 {
   height: 1.4em;
 }
 
-.output-area button[aria-selected=true] .technology-icon,
-.output-area button.active .technology-icon {
-  filter: invert(1);
-}
 
-.output-area button[aria-selected=true]:hover .technology-icon,
-.output-area button.active:hover .technology-icon {
-  filter: unset;
-}
 
 article.xss-triggered {
   background-color: var(--bs-danger-bg-subtle) !important;
