@@ -52,7 +52,10 @@ in
         ''
       );
 
-    npmFlags = [ "--ignore-scripts" ];
+    npmFlags = [
+      "--ignore-scripts"
+      "--legacy-peer-deps"   # necessary due to conflicting transitive npm dependencies on babel 8
+    ];
 
     installPhase = ''
       cp -r './dist/xss-demo-app/browser' "$out"
