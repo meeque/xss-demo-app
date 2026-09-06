@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 
 import { BsPopoverDirective } from '../lib/bs-popover.directive';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
-import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
+import { PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputTechnology } from './payload-output.service';
 import { NonAngularLiveOutputComponent } from './live-output.component';
 
 
@@ -19,6 +19,7 @@ export class PayloadOutputComponent implements AfterViewInit {
   private static nextComponentId = 0;
   protected readonly componentId = PayloadOutputComponent.nextComponentId++;
 
+  protected readonly PayloadOutputTechnology = PayloadOutputTechnology;
   protected readonly PayloadOutputQuality = PayloadOutputQuality;
 
 
@@ -65,7 +66,7 @@ export class PayloadOutputComponent implements AfterViewInit {
       const liveOutputViewContainer = this.liveOutputViewContainer();
       if (liveOutputViewContainer) {
         liveOutputViewContainer.clear();
-        const liveOutputComponentType = descriptor.templateComponentType || NonAngularLiveOutputComponent;
+        const liveOutputComponentType = descriptor.technology === PayloadOutputTechnology.Angular ? descriptor.payloadEmitter : NonAngularLiveOutputComponent;
         const liveOutputComponent = liveOutputViewContainer.createComponent(
           liveOutputComponentType,
           {

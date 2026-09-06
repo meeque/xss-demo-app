@@ -62,10 +62,7 @@
 
 
 .payload-processor .accordion-body,
-.html-source-provider .accordion-body,
-.dom-injector .accordion-body,
-.jquery-injector .accordion-body,
-.template-code .accordion-body,
+.payload-emitter .accordion-body,
 .live-source-code .accordion-body {
   font-family: monospace;
   white-space-collapse: preserve;

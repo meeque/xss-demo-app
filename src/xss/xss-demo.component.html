@@ -77,33 +77,33 @@
               <div class="btn-group" role="group">
                 <button
                   class="btn btn-outline-secondary"
-                  (click)="togglePayloadOutputTechnologyFilter('htmlSourceProvider')"
-                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')"
-                  [class.active]="payloadOutputTechnologyFilters.includes('htmlSourceProvider')">
+                  (click)="togglePayloadOutputTechnologyFilter(PayloadOutputTechnology.HTML)"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.HTML)"
+                  [class.active]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.HTML)">
                   <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
                   <span> HTML </span>
                 </button>
                 <button
                   class="btn btn-outline-secondary"
-                  (click)="togglePayloadOutputTechnologyFilter('domInjector')"
-                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes('domInjector')"
-                  [class.active]="payloadOutputTechnologyFilters.includes('domInjector')">
+                  (click)="togglePayloadOutputTechnologyFilter(PayloadOutputTechnology.DOM)"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.DOM)"
+                  [class.active]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.DOM)">
                   <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
                   <span> DOM </span>
                 </button>
                 <button
                   class="btn btn-outline-secondary"
-                  (click)="togglePayloadOutputTechnologyFilter('jQueryInjector')"
-                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes('jQueryInjector')"
-                  [class.active]="payloadOutputTechnologyFilters.includes('jQueryInjector')">
+                  (click)="togglePayloadOutputTechnologyFilter(PayloadOutputTechnology.jQuery)"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.jQuery)"
+                  [class.active]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.jQuery)">
                   <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
                   <span> jQuery </span>
                 </button>
                 <button
                   class="btn btn-outline-secondary"
-                  (click)="togglePayloadOutputTechnologyFilter('templateComponentType')"
-                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes('templateComponentType')"
-                  [class.active]="payloadOutputTechnologyFilters.includes('templateComponentType')">
+                  (click)="togglePayloadOutputTechnologyFilter(PayloadOutputTechnology.Angular)"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.Angular)"
+                  [class.active]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.Angular)">
                   <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
                   <span> Angular </span>
                 </button>
@@ -155,16 +155,16 @@
               tabindex="0">
 
               <span>
-                @if (item.value.htmlSourceProvider) {
+                @if (item.value.technology === PayloadOutputTechnology.HTML) {
                   <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
                 }
-                @if (item.value.domInjector) {
+                @if (item.value.technology === PayloadOutputTechnology.DOM) {
                   <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
                 }
-                @if (item.value.jQueryInjector) {
+                @if (item.value.technology === PayloadOutputTechnology.jQuery) {
                   <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
                 }
-                @if (item.value.templateComponentType) {
+                @if (item.value.technology === PayloadOutputTechnology.Angular) {
                   <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
                 }
                 @if (item.value.quality) {

@@ -5,7 +5,7 @@ import { BsPopoverDirective } from '../lib/bs-popover.directive';
 import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from '../lib/combobox-input.component';
 import { XssContext, XssContextCollection } from './xss-demo.common';
 import { PayloadPresetService, PayloadPresetDescriptor } from './payload-preset.service';
-import { PayloadOutputService, PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
+import { PayloadOutputService, PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputTechnology } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
 
 
@@ -23,6 +23,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   private static readonly DEFAULT_XSS_MESSAGE = 'XSS has been triggered!';
 
+  protected readonly PayloadOutputTechnology = PayloadOutputTechnology;
   protected readonly PayloadOutputQuality = PayloadOutputQuality;
 
 
@@ -43,7 +44,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   protected payloadOutputFilters: MenuItem<unknown>[] = [];
   protected payloadOutputGroups: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor>[] = [];
 
-  protected payloadOutputTechnologyFilters: string[] = [];
+  protected payloadOutputTechnologyFilters: PayloadOutputTechnology[] = [];
   protected payloadOutputQualityFilters: PayloadOutputQuality[] = [];
 
   protected xssTriggeredCounter = 0;
@@ -137,7 +138,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   }
 
 
-  protected togglePayloadOutputTechnologyFilter(value: string) {
+  protected togglePayloadOutputTechnologyFilter(value: PayloadOutputTechnology) {
     const newFilters = [];
     for (const currentValue of this.payloadOutputTechnologyFilters) {
       if (currentValue != value) {
@@ -167,7 +168,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     if (query && !item.name.toLowerCase().includes(query.toLowerCase())) {
       return false;
     }
-    if (this.payloadOutputTechnologyFilters.length > 0 && !this.payloadOutputTechnologyFilters.some(technology => item.value[technology])) {
+    if (this.payloadOutputTechnologyFilters.length > 0 && !this.payloadOutputTechnologyFilters.includes(item.value.technology)) {
       return false;
     }
     if (this.payloadOutputQualityFilters.length > 0 && !this.payloadOutputQualityFilters.includes(item.value.quality)) {
