@@ -6,15 +6,13 @@ import $ from 'jquery';
 
 import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/test-lib';
 
-import { PayloadOutputDescriptor, PayloadOutputQuality } from './payload-output.service';
+import { PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputTechnology } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
 import { LiveOutputComponent } from './live-output.component';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
 
 
-interface MockPayloadOutputDescriptor extends PayloadOutputDescriptor {
-  calculateExpectedOutput(input: string): string
-}
+type MockPayloadOutputDescriptor = PayloadOutputDescriptor & { calculateExpectedOutput(input: string): string };
 
 @Component({
   selector: 'xss-mock-live-output-template',
@@ -46,11 +44,12 @@ describe('PayloadOutputComponent', () => {
       id: 'foo',
       name: 'Foo',
       title: 'Mock PayloadOutputDescriptor Foo',
+      technology: PayloadOutputTechnology.HTML,
       quality: PayloadOutputQuality.Insecure,
       payloadProcessor: function removeAllX(payload) {
         return payload.replaceAll('x', '').replaceAll('X', '');
       },
-      htmlSourceProvider: function divContent(payload) {
+      payloadEmitter: function divContent(payload) {
         return '<div>' + payload + '</div>';
       },
       calculateExpectedOutput: input => `<div>${input.replaceAll('x', '').replaceAll('X', '')}</div>`,
@@ -60,11 +59,12 @@ describe('PayloadOutputComponent', () => {
       id: 'bar',
       name: 'Bar',
       title: 'Mock PayloadOutputDescriptor <em>Bar</em>',
+      technology: PayloadOutputTechnology.DOM,
       quality: PayloadOutputQuality.Recommended,
       payloadProcessor: function toUpperCase(payload) {
         return payload.toUpperCase();
       },
-      domInjector: function innerText(element, payload) {
+      payloadEmitter: function innerText(element, payload) {
         element.textContent = '' + payload;
       },
       calculateExpectedOutput: (input) => {
@@ -79,11 +79,12 @@ describe('PayloadOutputComponent', () => {
       id: 'baz',
       name: 'Baz',
       title: 'Mock PayloadOutputDescriptor Baz',
+      technology: PayloadOutputTechnology.Angular,
       quality: PayloadOutputQuality.Insecure,
       payloadProcessor: function trustHtml(payload) {
         return domSanitizer.bypassSecurityTrustHtml(payload);
       },
-      templateComponentType: MockLiveOutputTemplateComponent,
+      payloadEmitter: MockLiveOutputTemplateComponent,
       calculateExpectedOutput: input => `<p>${input}</p>`,
     },
 
@@ -91,8 +92,9 @@ describe('PayloadOutputComponent', () => {
       id: 'qux',
       name: 'Qux',
       title: 'Mock <strong>PayloadOutputDescriptor</strong> Qux',
+      technology: PayloadOutputTechnology.DOM,
       quality: PayloadOutputQuality.Recommended,
-      jQueryInjector: function paragraphTitle(element, payload) {
+      payloadEmitter: function paragraphTitle(element, payload) {
         $('<p>').attr('title', '' + payload).text('This is a paragraph.').appendTo(element);
       },
       calculateExpectedOutput: (input: string) => {
@@ -397,10 +399,7 @@ describe('PayloadOutputComponent', () => {
 
     queryAndExpectTitle(descriptor);
     queryAndExpectPayloadProcessor(descriptor);
-    queryAndExpectHtmlSourceProvider(descriptor);
-    queryAndExpectDomInjector(descriptor);
-    queryAndExpectJQueryInjector(descriptor);
-    queryAndExpectTemplateComponentType(descriptor);
+    queryAndExpectPayloadEmitter(descriptor);
     queryAndExpectLiveOutput(expectedOutputString);
     queryAndExpectLiveSourceCode(expectedOutputString);
 
@@ -432,67 +431,32 @@ describe('PayloadOutputComponent', () => {
     return panel;
   }
 
-  function queryAndExpectHtmlSourceProvider(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.html-source-provider.accordion');
-
-    if (descriptor.htmlSourceProvider === undefined) {
-      expect(panel).toBeNull();
-      return null;
-    }
-
+  function queryAndExpectPayloadEmitter(descriptor: PayloadOutputDescriptor) {
+    const panel = queryAndExpectOptional(element, 'div.payload-emitter.accordion');
     expect(panel).not.toBeNull();
+
     const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
-    expect(title.textContent.trim()).toContain('HTML Source Provider Function');
-    const body = queryAndExpectOne(panel, 'div.accordion-body');
-    expect(body.textContent.trim()).toBe(strip(descriptor.htmlSourceProvider));
-    return panel;
-  }
-
-  function queryAndExpectDomInjector(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.dom-injector.accordion');
-
-    if (descriptor.domInjector === undefined) {
-      expect(panel).toBeNull();
-      return null;
+    switch (descriptor.technology) {
+      case PayloadOutputTechnology.HTML:
+        expect(title.textContent).toContain('HTML Source Provider Function');
+        break;
+      case PayloadOutputTechnology.DOM:
+        expect(title.textContent).toContain('DOM Injector Function');
+        break;
+      case PayloadOutputTechnology.jQuery:
+        expect(title.textContent).toContain('jQuery Injector Function');
+        break;
+      case PayloadOutputTechnology.Angular:
+        expect(title.textContent).toContain('Angular Template Code');
+        break;
     }
-
-    expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
-    expect(title.textContent.trim()).toContain('DOM Injector Function');
     const body = queryAndExpectOne(panel, 'div.accordion-body');
-    expect(body.textContent.trim()).toBe(strip(descriptor.domInjector));
-    return panel;
-  }
-
-  function queryAndExpectJQueryInjector(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.jquery-injector.accordion');
-
-    if (descriptor.jQueryInjector === undefined) {
-      expect(panel).toBeNull();
-      return null;
+    if (descriptor.technology === PayloadOutputTechnology.Angular) {
+      expect(body.textContent.trim()).toBe(strip(descriptor.payloadEmitter.templateCode));
     }
-
-    expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
-    expect(title.textContent.trim()).toContain('jQuery Injector Function');
-    const body = queryAndExpectOne(panel, 'div.accordion-body');
-    expect(body.textContent.trim()).toBe(strip(descriptor.jQueryInjector));
-    return panel;
-  }
-
-  function queryAndExpectTemplateComponentType(descriptor: PayloadOutputDescriptor) {
-    const panel = queryAndExpectOptional(element, 'div.template-code.accordion');
-
-    if (descriptor.templateComponentType === undefined) {
-      expect(panel).toBeNull();
-      return null;
+    else {
+      expect(body.textContent.trim()).toBe(strip(descriptor.payloadEmitter));
     }
-
-    expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
-    expect(title.textContent.trim()).toContain('Angular Template Code');
-    const body = queryAndExpectOne(panel, 'div.accordion-body');
-    expect(body.textContent.trim()).toBe(strip(descriptor.templateComponentType.templateCode));
     return panel;
   }
 

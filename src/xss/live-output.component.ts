@@ -1,7 +1,7 @@
 import { Component, Type, ElementRef, InputSignal, input, AfterViewInit, inject } from '@angular/core';
 import { NgStyle } from '@angular/common';
 
-import { PayloadOutputDescriptor } from './payload-output.service';
+import { PayloadOutputDescriptor, PayloadOutputTechnology } from './payload-output.service';
 
 
 export interface LiveOutput {
@@ -47,27 +47,23 @@ export class NonAngularLiveOutputComponent extends LiveOutputComponent implement
     const payload = this.outputPayload();
     const descriptor = this.outputDescriptor();
     const element = this.containerElement.nativeElement;
-    if (descriptor?.htmlSourceProvider) {
+    if (
+      descriptor?.technology === PayloadOutputTechnology.HTML
+    ) {
       try {
-        element.innerHTML = descriptor.htmlSourceProvider(payload);
+        element.innerHTML = descriptor.payloadEmitter(payload);
       }
       catch (err) {
         console.error(err);
       }
     }
-    else if (descriptor?.domInjector) {
+    else if (
+      descriptor?.technology === PayloadOutputTechnology.DOM
+      || descriptor?.technology === PayloadOutputTechnology.jQuery
+    ) {
       element.textContent = '';
       try {
-        descriptor.domInjector(element, payload);
-      }
-      catch (err) {
-        console.error(err);
-      }
-    }
-    else if (descriptor?.jQueryInjector) {
-      element.textContent = '';
-      try {
-        descriptor.jQueryInjector(element, payload);
+        descriptor.payloadEmitter(element, payload);
       }
       catch (err) {
         console.error(err);
