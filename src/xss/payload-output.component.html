@@ -11,6 +11,7 @@
             + (outputDescriptor().technology === PayloadOutputTechnology.Angular ? 'assets/img/angular-logo-solid-black.svg' : '')
           "
           [alt]="'Technology: ' + outputDescriptor().technology"
+          [title]="'Technology: ' + outputDescriptor().technology"
           tabindex="0"
           role="button"
           triggers="focus"
@@ -18,8 +19,8 @@
           container="body"
           autoClose="outside"
           [popoverTitle]="'Technology: ' + outputDescriptor().technology"
-          [ngbPopover]="technologyPopoverContent">
-        <ng-template #technologyPopoverContent>
+          [ngbPopover]="technologyDocumentation">
+        <ng-template #technologyDocumentation>
           @switch (outputDescriptor().technology) {
             @case (PayloadOutputTechnology.HTML) {
               This Payload Output generates plain HTML source code and passes it to the web browser for rendering.
@@ -40,6 +41,7 @@
         <span
           class="quality-icon"
           [class]="'quality-icon quality-' + outputDescriptor().quality.toLowerCase()"
+          [title]="'Quality: ' + outputDescriptor().quality"
           tabindex="0"
           role="button"
           triggers="focus"
@@ -47,9 +49,9 @@
           container="body"
           autoClose="outside"
           [popoverTitle]="'Quality: ' + outputDescriptor().quality"
-          [ngbPopover]="qualityPopoverContent">
+          [ngbPopover]="qualityDocumentation">
         </span>
-        <ng-template #qualityPopoverContent>
+        <ng-template #qualityDocumentation>
           @switch (outputDescriptor().quality) {
             @case (PayloadOutputQuality.Recommended) {
               This Payload Output demonstrates Recommended, best-practice application code and a fully effctive defense against XSS.
@@ -88,10 +90,11 @@
             container="body"
             autoClose="outside"
             popoverTitle="Payload Processor Function"
-            [ngbPopover]="payloadProcessorPopoverContent"
+            [ngbPopover]="payloadProcessorDocumentation"
             >ⓘ</span>
-            <ng-template #payloadProcessorPopoverContent>
-              This Payload Output uses a JavaScript Payload Processer Function to pre-process the raw Payload Input before passing it on to the <ng-container *ngTemplateOutlet="emitterKindLabel"></ng-container>.
+            <ng-template #payloadProcessorDocumentation>
+              This Payload Output uses a JavaScript Payload Processer Function to pre-process the raw Payload Input before passing it on to the
+              <ng-container *ngTemplateOutlet="emitterKindLabel"></ng-container>.
               The Payload Output passes the raw Payload Input as argument to the function's `payload` parameter.
               The Payload Output then uses the function's return value for further processing.
             </ng-template>
@@ -130,9 +133,9 @@
           container="body"
           autoClose="outside"
           [popoverTitle]="emitterKindLabel"
-          [ngbPopover]="payloadEmitterPopoverContent"
+          [ngbPopover]="payloadEmitterDocumentation"
           >ⓘ</span>
-        <ng-template #payloadEmitterPopoverContent>
+        <ng-template #payloadEmitterDocumentation>
           @switch (outputDescriptor().technology) {
             @case (PayloadOutputTechnology.HTML) {
               This Payload Output uses a JavaScript HTML Source Provider Function to generate HTML source code.
@@ -226,8 +229,12 @@
         container="body"
         autoClose="outside"
         popoverTitle="Live HTML Output"
-        ngbPopover="Live HTML Output. This is based on the current Payload Input and how this Payload Output processed it."
+        [ngbPopover]="liveOutputDocumentation"
         >ⓘ</span>
+      <ng-template #liveOutputDocumentation>
+        Live HTML Output based on the current Payload Input and how this Payload Output processed it.
+        This is what the end-user actually gets to see when application code that this Payload Output demonstrates processes the payload.
+      </ng-template>
       <span>Live HTML Output</span>
     </h4>
     <div class="ms-auto d-flex align-items-center gap-2">
@@ -271,8 +278,15 @@
           container="body"
           autoClose="outside"
           popoverTitle="Live HTML Source Code"
-          ngbPopover="HTML source code of the DOM tree shown in the Live HTML Output. Note that this may not be fully accurate, because not all DOM trees can be serealized to HTML fully. Ultimately, the XSS Demo App asks the browser for a HTML representation of the DOM tree, and the browser has some leeway in creating this representation. E.g. the browser may use a more compact representation than the HTML source code (if any) that actually generated the DOM tree. E.g., the browser may represent some characters verbatim, even when the HTML source code used a character entity."
+          [ngbPopover]="liveSourceCodeDocumentation"
           >ⓘ</span>
+          <ng-template #liveSourceCodeDocumentation>
+            HTML source code of the DOM tree shown in the Live HTML Output.
+            Note that this may not be fully accurate, because not all DOM trees can be serealized to HTML fully.
+            Ultimately, the XSS Demo App asks the browser for a HTML representation of the DOM tree, and the browser has some leeway in creating this representation.
+            E.g. the browser may use a more compact representation than the HTML source code (if any) that actually generated the DOM tree.
+            E.g., the browser may represent some characters verbatim, even when the HTML source code used a character entity.
+          </ng-template>
         <span>Live HTML Source Code</span>
       </button>
     </h4>
