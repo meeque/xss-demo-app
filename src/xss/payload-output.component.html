@@ -14,12 +14,12 @@
           [alt]="'Technology: ' + outputDescriptor().technology"
           tabindex="0"
           role="button"
-          data-bs-toggle="popover"
-          data-bs-trigger="focus"
-          data-bs-placement="auto"
-          data-bs-container="body"
-          [attr.data-bs-title]="'Technology: ' + outputDescriptor().technology"
-          [attr.data-bs-content]="
+          triggers="focus"
+          placement="auto"
+          container="body"
+          autoClose="outside"
+          [popoverTitle]="'Technology: ' + outputDescriptor().technology"
+          [ngbPopover]="
             (outputDescriptor().technology === PayloadOutputTechnology.HTML ? 'This Payload Output generates plain HTML source code and passes it to the web browser for rendering.' : '')
             + (outputDescriptor().technology === PayloadOutputTechnology.DOM ? 'This Payload Output uses DOM APIs to interact with the web browser.' : '')
             + (outputDescriptor().technology === PayloadOutputTechnology.jQuery ? 'This Payload Output uses the JQuery library to interact with the web browser.' : '')
@@ -32,12 +32,12 @@
           [class]="'quality-icon quality-' + outputDescriptor().quality.toLowerCase()"
           tabindex="0"
           role="button"
-          data-bs-toggle="popover"
-          data-bs-trigger="focus"
-          data-bs-placement="auto"
-          data-bs-container="body"
-          [attr.data-bs-title]="'Quality: ' + outputDescriptor().quality"
-          [attr.data-bs-content]="
+          triggers="focus"
+          placement="auto"
+          container="body"
+          autoClose="outside"
+          [popoverTitle]="'Quality: ' + outputDescriptor().quality"
+          [ngbPopover]="
             (outputDescriptor().quality === PayloadOutputQuality.Recommended ? 'This Payload Output demonstrates Recommended, best-practice application code and a fully effctive defense against XSS.' : '')
             + (outputDescriptor().quality === PayloadOutputQuality.Questionable ? 'This Payload Output demonstrates Questionalble application code. While it may be an effctive defense against XSS, it may degrade code-quality or have other undesirable properties. In short, there are better XSS defenses available!' : '')
             + (outputDescriptor().quality === PayloadOutputQuality.Insecure ? 'This Payload Output demonstrates Insecure application code, that is, an XSS vulnerability! This XSS vulnerability can be exploited by appropriate attack payload in the Payload Input field!' : '')
@@ -63,12 +63,13 @@
             class="help-icon"
             tabindex="0"
             role="note"
-            data-bs-toggle="popover"
-            data-bs-trigger="focus"
-            data-bs-placement="auto"
-            data-bs-container="body"
-            data-bs-title="Payload Processor Function"
-            [attr.data-bs-content]="
+            xssStopPropagation
+            triggers="focus"
+            placement="auto"
+            container="body"
+            autoClose="outside"
+            popoverTitle="Payload Processor Function"
+            [ngbPopover]="
               'This Payload Output uses a JavaScript Payload Processer Function to pre-process the raw Payload Input before passing it on to the '
               + (outputDescriptor().technology === PayloadOutputTechnology.HTML ? 'HTML Source Provider Function' : '')
               + (outputDescriptor().technology === PayloadOutputTechnology.DOM ? 'DOM Injector Function' : '')
@@ -108,17 +109,18 @@
           class="help-icon"
           tabindex="0"
           role="note"
-          data-bs-toggle="popover"
-          data-bs-trigger="focus"
-          data-bs-placement="auto"
-          data-bs-container="body"
-          [attr.data-bs-title]="
+          stopPropagation
+          triggers="focus"
+          placement="auto"
+          container="body"
+          autoClose="outside"
+          [popoverTitle]="
             (outputDescriptor().technology === PayloadOutputTechnology.HTML ? 'HTML Source Provider Function' : '')
             + (outputDescriptor().technology === PayloadOutputTechnology.DOM ? 'DOM Injector Function' : '')
             + (outputDescriptor().technology === PayloadOutputTechnology.jQuery ? 'jQuery Injector Function' : '')
             + (outputDescriptor().technology === PayloadOutputTechnology.Angular ? 'Angular Template Code' : '')
           "
-          [attr.data-bs-content]="
+          [ngbPopover]="
             (
               outputDescriptor().technology === PayloadOutputTechnology.HTML
               ? 'This Payload Output uses a JavaScript HTML Source Provider Function to generate HTML source code. '
@@ -198,12 +200,12 @@
         class="help-icon"
         tabindex="0"
         role="note"
-        data-bs-toggle="popover"
-        data-bs-trigger="focus"
-        data-bs-placement="auto"
-        data-bs-container="body"
-        data-bs-title="Live HTML Output"
-        data-bs-content="Live HTML Output. This is based on the current Payload Input and how this Payload Output processed it."
+        triggers="focus"
+        placement="auto"
+        container="body"
+        autoClose="outside"
+        popoverTitle="Live HTML Output"
+        ngbPopover="Live HTML Output. This is based on the current Payload Input and how this Payload Output processed it."
         >ⓘ</span>
       <span>Live HTML Output</span>
     </h4>
@@ -242,12 +244,13 @@
           class="help-icon"
           tabindex="0"
           role="note"
-          data-bs-toggle="popover"
-          data-bs-trigger="focus"
-          data-bs-placement="auto"
-          data-bs-container="body"
-          data-bs-title="Live HTML Source Code"
-          data-bs-content="HTML source code of the DOM tree shown in the Live HTML Output. Note that this may not be fully accurate, because not all DOM trees can be serealized to HTML fully. Ultimately, the XSS Demo App asks the browser for a HTML representation of the DOM tree, and the browser has some leeway in creating this representation. E.g. the browser may use a more compact representation than the HTML source code (if any) that actually generated the DOM tree. E.g., the browser may represent some characters verbatim, even when the HTML source code used a character entity."
+          stopPropagation
+          triggers="focus"
+          placement="auto"
+          container="body"
+          autoClose="outside"
+          popoverTitle="Live HTML Source Code"
+          ngbPopover="HTML source code of the DOM tree shown in the Live HTML Output. Note that this may not be fully accurate, because not all DOM trees can be serealized to HTML fully. Ultimately, the XSS Demo App asks the browser for a HTML representation of the DOM tree, and the browser has some leeway in creating this representation. E.g. the browser may use a more compact representation than the HTML source code (if any) that actually generated the DOM tree. E.g., the browser may represent some characters verbatim, even when the HTML source code used a character entity."
           >ⓘ</span>
         <span>Live HTML Source Code</span>
       </button>
