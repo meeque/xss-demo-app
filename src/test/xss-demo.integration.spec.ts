@@ -204,7 +204,7 @@ describe('Xss Demo App', () => {
       return new DefaultPresetTestConfig({
         presetName: name,
         trigger: async () => {
-          await findAndExpectOne(liveOutput, 'iframe.xss-demo-guest', 200);
+          await findAndExpectOne(liveOutput, 'iframe', 200);
           const codeField = await findAndExpectOne(liveOutput, 'textarea[name=code]', 100);
           const runButton = await findAndExpectOne(liveOutput, 'button[name=run]', 100);
           await codeField.clear();

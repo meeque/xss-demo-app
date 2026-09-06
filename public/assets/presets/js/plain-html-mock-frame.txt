@@ -3,7 +3,7 @@
     document.currentScript.insertAdjacentElement('afterend', workArea);
 
     workArea.innerHTML = '\n'
-        + '<iframe src="/assets/mocks/plain.html" class="xss-demo-guest"></iframe>\n'
+        + '<iframe src="/assets/mocks/plain.html"></iframe>\n'
         + '<div class="host-input">\n'
         + '<div>Send content: <input type="text" name="send-content" value="p0wn" class="input1" ></div>\n'
         + '</div>\n'
@@ -12,7 +12,7 @@
         + '<div>Menu selection value: <span class="output2"></span></div>\n'
         + '</div>\n';
 
-    const guest = workArea.querySelector('iframe.xss-demo-guest').contentWindow;
+    const guest = workArea.querySelector('iframe').contentWindow;
 
     const hostInputs = workArea.querySelector('div.host-input');
     const hostOutputs = workArea.querySelector('div.host-output');

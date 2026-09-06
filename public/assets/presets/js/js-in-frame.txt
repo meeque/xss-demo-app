@@ -3,7 +3,7 @@
     document.currentScript.insertAdjacentElement('afterend', workArea);
 
     workArea.innerHTML = '\n'
-        + '<iframe src="/assets/mocks/plain.html" class="xss-demo-guest"></iframe>\n'
+        + '<iframe src="/assets/mocks/plain.html"></iframe>\n'
         + '<form>\n'
         + '<div>Your JS Code:</div>\n'
         + '<textarea name="code" rows="10" style="width:100%;"></textarea>\n'

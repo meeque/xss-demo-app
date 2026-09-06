@@ -1,1 +1,1 @@
-<iframe src="/assets/probes/xss.html" class="xss-demo-guest"/>
+<iframe src="/assets/probes/xss.html"/>
