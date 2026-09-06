@@ -451,7 +451,7 @@ describe('PayloadOutputComponent', () => {
         break;
     }
     const body = queryAndExpectOne(panel, 'div.accordion-body');
-    if (descriptor.technology == PayloadOutputTechnology.Angular) {
+    if (descriptor.technology === PayloadOutputTechnology.Angular) {
       expect(body.textContent.trim()).toBe(strip(descriptor.payloadEmitter.templateCode));
     }
     else {
