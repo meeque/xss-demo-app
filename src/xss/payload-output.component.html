@@ -4,12 +4,7 @@
       @if (outputDescriptor().technology) {
         <img
           class="technology-icon"
-          [src]="
-            (outputDescriptor().technology === PayloadOutputTechnology.HTML ? 'assets/img/html-src-logo-black.svg' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.DOM ? 'assets/img/dom-logo-black.svg' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.jQuery ? 'assets/img/jquery-logo-black.svg' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.Angular ? 'assets/img/angular-logo-solid-black.svg' : '')
-          "
+          [src]="PayloadOutputTechnologyIcons[outputDescriptor().technology]"
           [alt]="'Technology: ' + outputDescriptor().technology"
           [title]="'Technology: ' + outputDescriptor().technology"
           tabindex="0"

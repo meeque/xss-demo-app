@@ -155,21 +155,14 @@
               tabindex="0">
 
               <span>
-                @if (item.value.technology === PayloadOutputTechnology.HTML) {
-                  <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
-                }
-                @if (item.value.technology === PayloadOutputTechnology.DOM) {
-                  <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
-                }
-                @if (item.value.technology === PayloadOutputTechnology.jQuery) {
-                  <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
-                }
-                @if (item.value.technology === PayloadOutputTechnology.Angular) {
-                  <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
-                }
-                @if (item.value.quality) {
-                  &nbsp;<span class="quality-icon" [class]="'quality-icon quality-' + item.value.quality.toLowerCase()"></span>
-                }
+                <img
+                  class="technology-icon"
+                  [src]="PayloadOutputTechnologyIcons[item.value.technology]"
+                  [alt]="item.value.technology">
+                <span
+                  class="quality-icon"
+                  [class]="'quality-icon quality-' + item.value.quality.toLowerCase()">
+                </span>
                 {{ item.name }}
               </span>
             </li>
