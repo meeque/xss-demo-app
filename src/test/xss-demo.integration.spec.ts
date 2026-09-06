@@ -323,6 +323,7 @@ describe('Xss Demo App', () => {
       LikeLiterally:        ['${xss()}',                                                                                     cf2.noXss('xss()')                                                                    ],
       TheGreatEscape:       ['\\"; xss(); //;',                                                                              cf2.noXss('"; xss(); //;')                                                            ],
       OutOfSpace:           ['<img/src="."/onerror="xss()">', '<img/src="."/onerror="xss()">', '<img/src="."onerror=xss()>', cf2.noXss('<img src="." onerror="xss()">'), cf2.noXss('<img src=. onerror=xss()>')    ],
+      RewindSelecta:        ['<img src="." onerror="xss()">',                                                                                                                                                      ],
     },
   };
 
