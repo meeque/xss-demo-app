@@ -6,7 +6,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from '../lib/combobox-input.component';
 import { XssContext, XssContextCollection } from './xss-demo.common';
 import { PayloadPresetService, PayloadPresetDescriptor } from './payload-preset.service';
-import { PayloadOutputService, PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputTechnology, PayloadOutputTechnologyIcons } from './payload-output.service';
+import { PayloadOutputService, PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputTechnology } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
 
 
@@ -26,7 +26,6 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   protected readonly PayloadOutputTechnology = PayloadOutputTechnology;
   protected readonly PayloadOutputQuality = PayloadOutputQuality;
-  protected readonly PayloadOutputTechnologyIcons = PayloadOutputTechnologyIcons;
 
 
   private readonly payloadPresetService = inject(PayloadPresetService);

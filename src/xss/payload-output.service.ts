@@ -21,13 +21,6 @@ export const PayloadEmitterLabels: Record<PayloadOutputTechnology, string> = {
   [PayloadOutputTechnology.Angular]: 'Angular Template Code',
 };
 
-export const PayloadOutputTechnologyIcons: Record<PayloadOutputTechnology, string> = {
-  [PayloadOutputTechnology.HTML]: 'assets/img/html-src-logo-black.svg',
-  [PayloadOutputTechnology.DOM]: 'assets/img/dom-logo-black.svg',
-  [PayloadOutputTechnology.jQuery]: 'assets/img/jquery-logo-black.svg',
-  [PayloadOutputTechnology.Angular]: 'assets/img/angular-logo-solid-black.svg',
-};
-
 export enum PayloadOutputQuality {
   Recommended = 'Recommended',
   Questionable = 'Questionable',

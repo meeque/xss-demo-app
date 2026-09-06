@@ -51,11 +51,6 @@
 
 .title.card .card-header .technology-icon {
   cursor: help;
-}
-
-.title.card .card-header .technology-icon {
-  width: 1.5em;
-  height: 1.5em;
   opacity: 0.8;
 }
 

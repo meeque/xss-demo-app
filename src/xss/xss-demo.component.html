@@ -80,7 +80,7 @@
                   (click)="togglePayloadOutputTechnologyFilter(PayloadOutputTechnology.HTML)"
                   [attr.aria-selected]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.HTML)"
                   [class.active]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.HTML)">
-                  <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
+                  <span class="technology-icon technology-html"></span>
                   <span> HTML </span>
                 </button>
                 <button
@@ -88,7 +88,7 @@
                   (click)="togglePayloadOutputTechnologyFilter(PayloadOutputTechnology.DOM)"
                   [attr.aria-selected]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.DOM)"
                   [class.active]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.DOM)">
-                  <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
+                  <span class="technology-icon technology-dom"></span>
                   <span> DOM </span>
                 </button>
                 <button
@@ -96,7 +96,7 @@
                   (click)="togglePayloadOutputTechnologyFilter(PayloadOutputTechnology.jQuery)"
                   [attr.aria-selected]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.jQuery)"
                   [class.active]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.jQuery)">
-                  <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
+                  <span class="technology-icon technology-jquery"></span>
                   <span> jQuery </span>
                 </button>
                 <button
@@ -104,7 +104,7 @@
                   (click)="togglePayloadOutputTechnologyFilter(PayloadOutputTechnology.Angular)"
                   [attr.aria-selected]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.Angular)"
                   [class.active]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.Angular)">
-                  <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
+                  <span class="technology-icon technology-angular"></span>
                   <span> Angular </span>
                 </button>
               </div>
@@ -155,10 +155,9 @@
               tabindex="0">
 
               <span>
-                <img
-                  class="technology-icon"
-                  [src]="PayloadOutputTechnologyIcons[item.value.technology]"
-                  [alt]="item.value.technology">
+                <span
+                  [class]="'technology-icon technology-' + item.value.technology.toLowerCase()"
+                  [attr.aria-label]="item.value.technology"></span>
                 <span
                   class="quality-icon"
                   [class]="'quality-icon quality-' + item.value.quality.toLowerCase()">

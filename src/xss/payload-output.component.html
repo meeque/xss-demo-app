@@ -2,10 +2,9 @@
   <div class="card-header d-flex align-items-center gap-2">
     <h3 class="mb-0">
       @if (outputDescriptor().technology) {
-        <img
-          class="technology-icon"
-          [src]="PayloadOutputTechnologyIcons[outputDescriptor().technology]"
-          [alt]="'Technology: ' + outputDescriptor().technology"
+        <span
+          [class]="'technology-icon technology-' + outputDescriptor().technology.toLowerCase()"
+          [attr.aria-label]="'Technology: ' + outputDescriptor().technology"
           [title]="'Technology: ' + outputDescriptor().technology"
           tabindex="0"
           role="button"
@@ -15,6 +14,7 @@
           autoClose="outside"
           [popoverTitle]="'Technology: ' + outputDescriptor().technology"
           [ngbPopover]="technologyDocumentation">
+        </span>
         <ng-template #technologyDocumentation>
           @switch (outputDescriptor().technology) {
             @case (PayloadOutputTechnology.HTML) {

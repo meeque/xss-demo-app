@@ -6,7 +6,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { StopPropagationDirective } from '../lib/stop-propagation.directive';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
-import { PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputTechnology, PayloadEmitterLabels, PayloadOutputTechnologyIcons } from './payload-output.service';
+import { PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputTechnology, PayloadEmitterLabels } from './payload-output.service';
 import { NonAngularLiveOutputComponent } from './live-output.component';
 
 
@@ -25,7 +25,6 @@ export class PayloadOutputComponent implements AfterViewInit {
   protected readonly PayloadOutputTechnology = PayloadOutputTechnology;
   protected readonly PayloadOutputQuality = PayloadOutputQuality;
   protected readonly PayloadEmitterLabels = PayloadEmitterLabels;
-  protected readonly PayloadOutputTechnologyIcons = PayloadOutputTechnologyIcons;
 
 
 
