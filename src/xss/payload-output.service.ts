@@ -740,6 +740,14 @@ export class PayloadOutputService {
             payloadProcessor: this.payloadProcessors.htmlChallengeOutOfSpace,
             payloadEmitter: this.htmlSourceProviders.content,
           },
+          {
+            id: 'RewindSelecta',
+            technology: PayloadOutputTechnology.jQuery,
+            quality: PayloadOutputQuality.Insecure,
+            name: 'Rewind Selecta',
+            title: 'Rewind Selecta Challenge',
+            payloadEmitter: this.jQueryInjectors.jQueryConstructor,
+          },
         ],
       },
     ];
