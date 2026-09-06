@@ -57,7 +57,7 @@ export class PayloadOutputComponent implements AfterViewInit {
 
   private updateLiveOutput(force = false): void {
     const descriptor = this.outputDescriptor();
-    const payload = this.getProcessedPayload();
+    const payload = this.processedPayload;
 
     if (force || this.autoUpdateEnabled() || this.lastOutputDescriptor != descriptor) {
       this.onbeforeupdate.emit();
@@ -89,7 +89,7 @@ export class PayloadOutputComponent implements AfterViewInit {
     );
   };
 
-  private getProcessedPayload() {
+  private get processedPayload() {
     const payloadProcessor = this.outputDescriptor()?.payloadProcessor;
 
     if (payloadProcessor) {
@@ -99,6 +99,13 @@ export class PayloadOutputComponent implements AfterViewInit {
     return this.payload();
   }
 
+  protected get payloadEmitterCode(): string {
+    const payloadEmitter = this.outputDescriptor().payloadEmitter;
+    if ('templateCode' in payloadEmitter) {
+      return payloadEmitter.templateCode;
+    }
+    return payloadEmitter.toString();
+  }
 
   protected updateNow() {
     this.updateLiveOutput(true);

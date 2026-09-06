@@ -41,17 +41,33 @@ interface PayloadOutputDescriptorBase {
   readonly name: string
   readonly title: string
   readonly payloadProcessor?: PayloadProcessor
-  readonly payloadEmitter: any
+}
+
+interface HtmlPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
+  readonly technology: PayloadOutputTechnology.HTML
+  readonly payloadEmitter: HtmlSourceProvider
+}
+
+interface DomPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
+  readonly technology: PayloadOutputTechnology.DOM
+  readonly payloadEmitter: DomInjector
+}
+
+interface JQueryPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
+  readonly technology: PayloadOutputTechnology.jQuery
+  readonly payloadEmitter: JQueryInjector
+}
+
+interface AngularPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
+  readonly technology: PayloadOutputTechnology.Angular
+  readonly payloadEmitter: LiveOutputType
 }
 
 export type PayloadOutputDescriptor
-  = PayloadOutputDescriptorBase
-    & (
-      ({ technology: PayloadOutputTechnology.HTML } & { payloadEmitter: HtmlSourceProvider })
-      | ({ technology: PayloadOutputTechnology.DOM } & { payloadEmitter: DomInjector })
-      | ({ technology: PayloadOutputTechnology.jQuery } & { payloadEmitter: JQueryInjector })
-      | ({ technology: PayloadOutputTechnology.Angular } & { payloadEmitter: LiveOutputType })
-    );
+  = HtmlPayloadOutputDescriptor
+    | DomPayloadOutputDescriptor
+    | JQueryPayloadOutputDescriptor
+    | AngularPayloadOutputDescriptor;
 
 
 

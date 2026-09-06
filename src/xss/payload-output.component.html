@@ -183,7 +183,7 @@
       role="region">
       <div
         class="accordion-body"
-        [textContent]="outputDescriptor().payloadEmitter?.templateCode ?? outputDescriptor().payloadEmitter | stripextraindent">
+        [textContent]="payloadEmitterCode | stripextraindent">
       </div>
     </div>
   </div>
