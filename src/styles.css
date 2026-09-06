@@ -33,7 +33,7 @@ body {
   opacity: 1;
 }
 
-.output-area .live-output iframe.xss-demo-guest {
+.output-area .live-output iframe {
     width: 100%;
     height: 60em;
     border: var(--bs-danger) dashed 5px;

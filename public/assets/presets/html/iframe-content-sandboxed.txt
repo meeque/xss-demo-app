@@ -1,4 +1,3 @@
 <iframe
   src="/assets/probes/xss.html"
-  sandbox="allow-scripts allow-forms allow-downloads allow-modals allow-popups allow-top-navigation"
-  class="xss-demo-guest"/>
+  sandbox="allow-scripts allow-forms allow-downloads allow-modals allow-popups allow-top-navigation"/>
