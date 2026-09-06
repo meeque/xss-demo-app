@@ -1,4 +1,5 @@
 import { Component, AfterViewInit, ElementRef, ViewContainerRef, EnvironmentInjector, signal, input, model, effect, inject, viewChild, output } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -15,7 +16,7 @@ import { NonAngularLiveOutputComponent } from './live-output.component';
   templateUrl: './payload-output.component.html',
   styleUrls: ['./payload-output.component.css'],
   standalone: true,
-  imports: [NgbPopoverModule, StopPropagationDirective, FormsModule, StripExtraIndentPipe],
+  imports: [NgbPopoverModule, NgTemplateOutlet, StopPropagationDirective, FormsModule, StripExtraIndentPipe],
 })
 export class PayloadOutputComponent implements AfterViewInit {
   private static nextComponentId = 0;
