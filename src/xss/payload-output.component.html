@@ -140,12 +140,7 @@
             @case (PayloadOutputTechnology.HTML) {
               This Payload Output uses a JavaScript HTML Source Provider Function to generate HTML source code.
               The Payload Output passes the
-              @if (outputDescriptor().payloadProcessor) {
-                processed Payload Input (as returned by the Payload Processer Function)
-              }
-              @else {
-                raw Payload Input
-              }
+              <ng-content *ngTemplateOutlet="payloadInputLabel"></ng-content>
               as argument to the `payload` parameter.
               The Payload Output passes the string that the function returns to the web browser for rendering as HTML source code.
               The Payload Output runs this JavaScript function on the client side.
@@ -159,12 +154,7 @@
               This Payload Output uses a JavaScript DOM Injector Function to manipulate the web browser's DOM.
               The Payload Output passes a container DOM element as argument to the `element` parameter.
               The Payload Output also passes the
-              @if (outputDescriptor().payloadProcessor) {
-                processed Payload Input (as returned by the Payload Processer Function)
-              }
-              @else {
-                raw Payload Input
-              }
+              <ng-content *ngTemplateOutlet="payloadInputLabel"></ng-content>
               as argument to the `payload` parameter.
               The function uses standard HTML DOM APIs to emit the payload to the web browser.
               The Payload Output itself does not interact with the HTML DOM directly, and it ignores the return value of the function.
@@ -173,12 +163,7 @@
               This Payload Output uses a JavaScript jQuery Injector Function to manipulate the web browser's DOM.
               The Payload Output passes a container DOM element as argument to the `element` parameter.
               The Payload Output also passes the
-              @if (outputDescriptor().payloadProcessor) {
-                processed Payload Input (as returned by the Payload Processer Function)
-              }
-              @else {
-                raw Payload Input
-              }
+              <ng-content *ngTemplateOutlet="payloadInputLabel"></ng-content>
               as argument to the `payload` parameter.
               And the Payload Output makes the jQuery library available through the `$` global variable.
               The function uses the jQUery API to emit the payload to the web browser.
@@ -188,16 +173,19 @@
               This Payload Output uses Angular Template Code to manipulate the web browser's DOM.
               The Payload Output creates an Angular Component that uses this template.
               The Payload Output also makes the
-              @if (outputDescriptor().payloadProcessor) {
-                processed Payload Input (as returned by the Payload Processer Function)
-              }
-              @else {
-                raw Payload Input
-              }
+              <ng-content *ngTemplateOutlet="payloadInputLabel"></ng-content>
               available as the `payload` property in the component's scope.
               The template emits the `payload` property to the web browser using Angular templating mechanism.
               The Payload Output ensures the component renders the template, but it does not interact with the component in any other way.
             }
+          }
+        </ng-template>
+        <ng-template #payloadInputLabel>
+          @if (outputDescriptor().payloadProcessor) {
+            processed Payload Input (as returned by the Payload Processer Function)
+          }
+          @else {
+            raw Payload Input
           }
         </ng-template>
         <span>{{ PayloadEmitterLabels[outputDescriptor().technology] }}</span>
