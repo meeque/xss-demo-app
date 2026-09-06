@@ -47,7 +47,9 @@ export class NonAngularLiveOutputComponent extends LiveOutputComponent implement
     const payload = this.outputPayload();
     const descriptor = this.outputDescriptor();
     const element = this.containerElement.nativeElement;
-    if (descriptor?.technology === PayloadOutputTechnology.HTML) {
+    if (
+      descriptor?.technology === PayloadOutputTechnology.HTML
+    ) {
       try {
         element.innerHTML = descriptor.payloadEmitter(payload);
       }
@@ -55,16 +57,10 @@ export class NonAngularLiveOutputComponent extends LiveOutputComponent implement
         console.error(err);
       }
     }
-    else if (descriptor?.technology === PayloadOutputTechnology.DOM) {
-      element.textContent = '';
-      try {
-        descriptor.payloadEmitter(element, payload);
-      }
-      catch (err) {
-        console.error(err);
-      }
-    }
-    else if (descriptor?.technology === PayloadOutputTechnology.jQuery) {
+    else if (
+      descriptor?.technology === PayloadOutputTechnology.DOM
+      || descriptor?.technology === PayloadOutputTechnology.jQuery
+    ) {
       element.textContent = '';
       try {
         descriptor.payloadEmitter(element, payload);
