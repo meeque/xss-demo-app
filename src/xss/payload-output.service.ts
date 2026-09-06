@@ -28,10 +28,6 @@ type HtmlSourceProvider = (payload: unknown) => string;
 
 type Injector = (element: HTMLElement, payload: unknown) => void;
 
-type DomInjector = Injector;
-
-type JQueryInjector = Injector;
-
 
 
 interface PayloadOutputDescriptorBase {
@@ -50,12 +46,12 @@ interface HtmlPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
 
 interface DomPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
   readonly technology: PayloadOutputTechnology.DOM
-  readonly payloadEmitter: DomInjector
+  readonly payloadEmitter: Injector
 }
 
 interface JQueryPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
   readonly technology: PayloadOutputTechnology.jQuery
-  readonly payloadEmitter: JQueryInjector
+  readonly payloadEmitter: Injector
 }
 
 interface AngularPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
