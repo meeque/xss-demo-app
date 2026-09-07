@@ -51,13 +51,17 @@
           </ng-template>
         </h2>
 
-        <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a Payload Preset ..."></xss-combobox-input>
+        <xss-combobox-input
+          class="payload-presets-menu"
+          [items]="presetItems"
+          [groups]="presetGroups"
+          placeholder="Select a Payload Preset ...">
+        </xss-combobox-input>
 
         <div class="card my-2">
           <div class="card-body">
             <textarea
-              name="payload"
-              class="payload"
+              class="payload-input"
               [(ngModel)]="payload"
               placeholder="Enter your XSS Attack Payload in this Paylaod Input field! Or, select a Payload Preset from the above menu...">
             </textarea>
@@ -99,7 +103,12 @@
           </ng-template>
         </h2>
 
-        <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
+        <xss-combobox-input
+          class="payload-outputs-menu"
+          [items]="payloadOutputFilters"
+          [groups]="payloadOutputGroups"
+          placeholder="Select a payload output...">
+        </xss-combobox-input>
 
         <ng-template #payloadOutputMenuTechnologyFilters let-item="item" let-comboboxInput>
           <li class="list-group-item py-2">

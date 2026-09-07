@@ -142,7 +142,10 @@
   </div>
 }
 
-<div class="payload-emitter accordion my-2">
+<div
+  class="payload-emitter accordion my-2"
+  [class]="'payload-emitter-' + outputDescriptor().technology.toLowerCase()">
+
   <div class="accordion-item">
     <h4 class="accordion-header">
       <button

@@ -333,7 +333,7 @@ describe('Xss Demo App', () => {
 
     app = await globalThis.driver.wait(until.elementLocated(By.css('xss-demo-root')), 2500);
 
-    payloadInputTextArea = await findAndExpectOne(app, 'section.input-area textarea.payload');
+    payloadInputTextArea = await findAndExpectOne(app, 'section.input-area textarea.payload-input');
     payloadInputCombobox = await findAndExpectOne(app, 'section.input-area xss-combobox-input');
     payloadOutputCombobox = await findAndExpectOne(app, 'section.output-area xss-combobox-input');
     liveOutput = await findAndExpectOne(app, 'section.output-area xss-payload-output .live-output.card .card-body');
