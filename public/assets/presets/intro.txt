@@ -13,4 +13,4 @@ For your convenience, the XSS Demo App provides a global JavaScript function nam
 Invoke xss() and you will see a prominent alert message!
 
 Still confused?
-Checkout the ⓘ buttons!
+Check out the ⓘ buttons!
