@@ -14,6 +14,13 @@ export enum PayloadOutputTechnology {
   Angular = 'Angular',
 }
 
+export const PayloadEmitterLabels: Record<PayloadOutputTechnology, string> = {
+  [PayloadOutputTechnology.HTML]: 'HTML Source Provider Function',
+  [PayloadOutputTechnology.DOM]: 'DOM Injector Function',
+  [PayloadOutputTechnology.jQuery]: 'jQuery Injector Function',
+  [PayloadOutputTechnology.Angular]: 'Angular Template Code',
+};
+
 export enum PayloadOutputQuality {
   Recommended = 'Recommended',
   Questionable = 'Questionable',

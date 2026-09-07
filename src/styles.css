@@ -20,6 +20,32 @@ body {
   content: "\26A0";
 }
 
+.technology-icon {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.technology-icon.technology-html {
+  background-image: url('/assets/img/html-src-logo-black.svg');
+}
+
+.technology-icon.technology-dom {
+  background-image: url('/assets/img/dom-logo-black.svg');
+}
+
+.technology-icon.technology-jquery {
+  background-image: url('/assets/img/jquery-logo-black.svg');
+}
+
+.technology-icon.technology-angular {
+  background-image: url('/assets/img/angular-logo-solid-black.svg');
+}
+
 .help-icon {
   vertical-align: middle;
   font-size: 1.5rem;

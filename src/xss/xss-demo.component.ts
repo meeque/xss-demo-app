@@ -1,7 +1,8 @@
 import { Component, OnInit, AfterViewInit, ChangeDetectorRef, TemplateRef, model, inject, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { BsPopoverDirective } from '../lib/bs-popover.directive';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from '../lib/combobox-input.component';
 import { XssContext, XssContextCollection } from './xss-demo.common';
 import { PayloadPresetService, PayloadPresetDescriptor } from './payload-preset.service';
@@ -15,7 +16,7 @@ import { PayloadOutputComponent } from './payload-output.component';
   templateUrl: './xss-demo.component.html',
   styleUrls: ['./xss-demo.component.css'],
   standalone: true,
-  imports: [BsPopoverDirective, FormsModule, ComboboxInputComponent, PayloadOutputComponent],
+  imports: [NgbPopoverModule, FormsModule, ComboboxInputComponent, PayloadOutputComponent],
 })
 export class XssDemoComponent implements OnInit, AfterViewInit {
   private static nextComponentId = 0;

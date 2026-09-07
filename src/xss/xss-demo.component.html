@@ -27,26 +27,43 @@
 
       <section class="input-area col-12 col-lg-6">
 
-        <h2>Payload Input <span
-          class="help-icon"
-          tabindex="0"
-          role="note"
-          data-bs-toggle="popover"
-          data-bs-trigger="focus"
-          data-bs-placement="auto"
-          data-bs-container="body"
-          data-bs-title="Payload Input"
-          data-bs-content="Input for an XSS attack Payload to test against the selected Payload Output. Select one of the payload presets, then customize it. Or, write your own XSS attack payload from scratch!">ⓘ</span></h2>
+        <h2>
+          Payload Input
+          <span
+            class="help-icon"
+            tabindex="0"
+            role="note"
+            triggers="focus"
+            placement="auto"
+            container="body"
+            autoClose="outside"
+            popoverTitle="Payload Input"
+            [ngbPopover]="payloadInputDocumentation"
+            >ⓘ</span>
+          <ng-template #payloadInputDocumentation>
+            <p>
+              Input area for <em>XSS Attack Payload</em> to test against example web application code in the <em>Payload Output</em> area.
+            </p>
+            <p>
+              Select one of the <em>Payload Presets</em> from the menu and customize it!
+              Or, simply write your own <em>XSS Attack Payload</em> from scratch!
+            </p>
+          </ng-template>
+        </h2>
 
-        <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></xss-combobox-input>
+        <xss-combobox-input
+          class="payload-presets-menu"
+          [items]="presetItems"
+          [groups]="presetGroups"
+          placeholder="Select a Payload Preset ...">
+        </xss-combobox-input>
 
         <div class="card my-2">
           <div class="card-body">
             <textarea
-              name="payload"
-              class="payload"
+              class="payload-input"
               [(ngModel)]="payload"
-              placeholder="Enter your XSS attack code in this Paylaod Input field, or, select one of the Payload Presets from the above menu...">
+              placeholder="Enter your XSS Attack Payload in this Payload Input field! Or, select a Payload Preset from the above menu...">
             </textarea>
           </div>
         </div>
@@ -57,18 +74,41 @@
 
       <section class="output-area col-12 col-lg-6">
 
-        <h2>Payload Output <span
-          class="help-icon"
-          tabindex="0"
-          role="note"
-          data-bs-toggle="popover"
-          data-bs-trigger="focus"
-          data-bs-placement="auto"
-          data-bs-container="body"
-          data-bs-title="Payload Output"
-          data-bs-content="Snippet of example web application code that process the Payload Input and emits it to the web browser. Select any of the predefined Payload Outputs and test your XSS attack payload against it! Currently, you cannot define your own custom Payload Outputs. See additional ⓘ buttons of the selected Payload Output for details.">ⓘ</span></h2>
+        <h2>
+          Payload Output
+          <span
+            class="help-icon"
+            tabindex="0"
+            role="note"
+            triggers="focus"
+            placement="auto"
+            container="body"
+            autoClose="outside"
+            popoverTitle="Payload Output"
+            [ngbPopover]="payloadOutputDocumentation"
+            >ⓘ</span>
+          <ng-template #payloadOutputDocumentation>
+            <p>
+              Output area for <em>XSS Attack Payload</em> from the <em>Payload Input</em> area.
+            </p>
+            <p>
+              Select any of the predefined <em>Payload Outputs</em> and test your <em>XSS Attack Payload</em> against it!
+              A <em>Payload Output</em> is a snippet of example web application code.
+              It processes <em>XSS Attack Payload</em> and emits it into the <em>Live HTML Output</em> area below.
+              See ⓘ buttons and icons below for details!
+            </p>
+            <p>
+              Currently, you cannot define your own custom <em>Payload Outputs</em>.
+            </p>
+          </ng-template>
+        </h2>
 
-        <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
+        <xss-combobox-input
+          class="payload-outputs-menu"
+          [items]="payloadOutputFilters"
+          [groups]="payloadOutputGroups"
+          placeholder="Select a Payload Output...">
+        </xss-combobox-input>
 
         <ng-template #payloadOutputMenuTechnologyFilters let-item="item" let-comboboxInput>
           <li class="list-group-item py-2">
@@ -80,7 +120,7 @@
                   (click)="togglePayloadOutputTechnologyFilter(PayloadOutputTechnology.HTML)"
                   [attr.aria-selected]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.HTML)"
                   [class.active]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.HTML)">
-                  <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
+                  <span class="technology-icon technology-html"></span>
                   <span> HTML </span>
                 </button>
                 <button
@@ -88,7 +128,7 @@
                   (click)="togglePayloadOutputTechnologyFilter(PayloadOutputTechnology.DOM)"
                   [attr.aria-selected]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.DOM)"
                   [class.active]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.DOM)">
-                  <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
+                  <span class="technology-icon technology-dom"></span>
                   <span> DOM </span>
                 </button>
                 <button
@@ -96,7 +136,7 @@
                   (click)="togglePayloadOutputTechnologyFilter(PayloadOutputTechnology.jQuery)"
                   [attr.aria-selected]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.jQuery)"
                   [class.active]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.jQuery)">
-                  <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
+                  <span class="technology-icon technology-jquery"></span>
                   <span> jQuery </span>
                 </button>
                 <button
@@ -104,7 +144,7 @@
                   (click)="togglePayloadOutputTechnologyFilter(PayloadOutputTechnology.Angular)"
                   [attr.aria-selected]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.Angular)"
                   [class.active]="payloadOutputTechnologyFilters.includes(PayloadOutputTechnology.Angular)">
-                  <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
+                  <span class="technology-icon technology-angular"></span>
                   <span> Angular </span>
                 </button>
               </div>
@@ -155,21 +195,13 @@
               tabindex="0">
 
               <span>
-                @if (item.value.technology === PayloadOutputTechnology.HTML) {
-                  <img class="technology-icon" src="assets/img/html-src-logo-black.svg" alt="HTML">
-                }
-                @if (item.value.technology === PayloadOutputTechnology.DOM) {
-                  <img class="technology-icon" src="assets/img/dom-logo-black.svg" alt="DOM">
-                }
-                @if (item.value.technology === PayloadOutputTechnology.jQuery) {
-                  <img class="technology-icon" src="assets/img/jquery-logo-black.svg" alt="jQuery">
-                }
-                @if (item.value.technology === PayloadOutputTechnology.Angular) {
-                  <img class="technology-icon" src="assets/img/angular-logo-solid-black.svg" alt="Angular">
-                }
-                @if (item.value.quality) {
-                  &nbsp;<span class="quality-icon" [class]="'quality-icon quality-' + item.value.quality.toLowerCase()"></span>
-                }
+                <span
+                  [class]="'technology-icon technology-' + item.value.technology.toLowerCase()"
+                  [attr.aria-label]="item.value.technology"></span>
+                <span
+                  class="quality-icon"
+                  [class]="'quality-icon quality-' + item.value.quality.toLowerCase()">
+                </span>
                 {{ item.name }}
               </span>
             </li>

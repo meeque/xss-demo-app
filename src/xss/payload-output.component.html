@@ -1,48 +1,77 @@
-
 <div class="title card my-2">
   <div class="card-header d-flex align-items-center gap-2">
     <h3 class="mb-0">
       @if (outputDescriptor().technology) {
-        <img
-          class="technology-icon"
-          [src]="
-            (outputDescriptor().technology === PayloadOutputTechnology.HTML ? 'assets/img/html-src-logo-black.svg' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.DOM ? 'assets/img/dom-logo-black.svg' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.jQuery ? 'assets/img/jquery-logo-black.svg' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.Angular ? 'assets/img/angular-logo-solid-black.svg' : '')
-          "
-          [alt]="'Technology: ' + outputDescriptor().technology"
+        <span
+          [class]="'technology-icon technology-' + outputDescriptor().technology.toLowerCase()"
+          [attr.aria-label]="'Technology: ' + outputDescriptor().technology"
+          [title]="'Technology: ' + outputDescriptor().technology"
           tabindex="0"
           role="button"
-          data-bs-toggle="popover"
-          data-bs-trigger="focus"
-          data-bs-placement="auto"
-          data-bs-container="body"
-          [attr.data-bs-title]="'Technology: ' + outputDescriptor().technology"
-          [attr.data-bs-content]="
-            (outputDescriptor().technology === PayloadOutputTechnology.HTML ? 'This Payload Output generates plain HTML source code and passes it to the web browser for rendering.' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.DOM ? 'This Payload Output uses DOM APIs to interact with the web browser.' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.jQuery ? 'This Payload Output uses the JQuery library to interact with the web browser.' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.Angular ? 'This Payload Output uses Angular template code to interact with the web browser.' : '')
-          ">
+          triggers="focus"
+          placement="auto"
+          container="body"
+          autoClose="outside"
+          [popoverTitle]="'Technology: ' + outputDescriptor().technology"
+          [ngbPopover]="technologyDocumentation">
+        </span>
+        <ng-template #technologyDocumentation>
+          @switch (outputDescriptor().technology) {
+            @case (PayloadOutputTechnology.HTML) {
+              This <em>Payload Output</em> generates plain <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTML">HTML source code</a> from the <em>XSS Attack Payload</em> and emits it into the <em>Live HTML Output</em> area below.
+            }
+            @case (PayloadOutputTechnology.DOM) {
+              This <em>Payload Output</em> uses <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API">HTML DOM APIs</a> to emit <em>XSS Attack Payload</em> into the <em>Live HTML Output</em> area below.
+            }
+            @case (PayloadOutputTechnology.jQuery) {
+              This <em>Payload Output</em> uses the <a target="_blank" href="https://api.jquery.com/">jQuery library</a> to emit <em>XSS Attack Payload</em> into the <em>Live HTML Output</em> area below.
+            }
+            @case (PayloadOutputTechnology.Angular) {
+              This <em>Payload Output</em> uses <a target="_blank" href="https://angular.dev/guide/templates">Angular template code</a> to emit <em>XSS Attack Payload</em> into the <em>Live HTML Output</em> area below.
+            }
+          }
+        </ng-template>
       }
       @if (outputDescriptor().quality) {
         <span
           class="quality-icon"
           [class]="'quality-icon quality-' + outputDescriptor().quality.toLowerCase()"
+          [title]="'Quality: ' + outputDescriptor().quality"
           tabindex="0"
           role="button"
-          data-bs-toggle="popover"
-          data-bs-trigger="focus"
-          data-bs-placement="auto"
-          data-bs-container="body"
-          [attr.data-bs-title]="'Quality: ' + outputDescriptor().quality"
-          [attr.data-bs-content]="
-            (outputDescriptor().quality === PayloadOutputQuality.Recommended ? 'This Payload Output demonstrates Recommended, best-practice application code and a fully effctive defense against XSS.' : '')
-            + (outputDescriptor().quality === PayloadOutputQuality.Questionable ? 'This Payload Output demonstrates Questionalble application code. While it may be an effctive defense against XSS, it may degrade code-quality or have other undesirable properties. In short, there are better XSS defenses available!' : '')
-            + (outputDescriptor().quality === PayloadOutputQuality.Insecure ? 'This Payload Output demonstrates Insecure application code, that is, an XSS vulnerability! This XSS vulnerability can be exploited by appropriate attack payload in the Payload Input field!' : '')
-          ">
+          triggers="focus"
+          placement="auto"
+          container="body"
+          autoClose="outside"
+          [popoverTitle]="'Quality: ' + outputDescriptor().quality"
+          [ngbPopover]="qualityDocumentation">
         </span>
+        <ng-template #qualityDocumentation>
+          @switch (outputDescriptor().quality) {
+            @case (PayloadOutputQuality.Recommended) {
+              <p>
+                This <em>Payload Output</em> demonstrates <strong>Recommended</strong>, best-practice web application code.
+                It defends against XSS effectively.
+              </p>
+            }
+            @case (PayloadOutputQuality.Questionable) {
+              <p>
+                This <em>Payload Output</em> demonstrates <strong>Questionable</strong> web application code.
+                While it may defend against XSS, it has poor code-quality or other undesirable properties.
+                In short, there are better XSS defenses available!
+              </p>
+            }
+            @case (PayloadOutputQuality.Insecure) {
+              <p>
+                This <em>Payload Output</em> demonstrates <strong>Insecure</strong> web application code.
+                That is, its code contains an <strong>XSS vulnerability</strong>!
+              </p>
+              <p>
+                To exploit this <strong>XSS vulnerability</strong> enter an appropriate <em>XSS Attack Payload</em> in the <em>Payload Input</em> area!
+              </p>
+            }
+          }
+        </ng-template>
       }
       <span>{{ outputDescriptor().title }}</span>
     </h3>
@@ -63,22 +92,40 @@
             class="help-icon"
             tabindex="0"
             role="note"
-            data-bs-toggle="popover"
-            data-bs-trigger="focus"
-            data-bs-placement="auto"
-            data-bs-container="body"
-            data-bs-title="Payload Processor Function"
-            [attr.data-bs-content]="
-              'This Payload Output uses a JavaScript Payload Processer Function to pre-process the raw Payload Input before passing it on to the '
-              + (outputDescriptor().technology === PayloadOutputTechnology.HTML ? 'HTML Source Provider Function' : '')
-              + (outputDescriptor().technology === PayloadOutputTechnology.DOM ? 'DOM Injector Function' : '')
-              + (outputDescriptor().technology === PayloadOutputTechnology.jQuery ? 'jQuery Injector Function' : '')
-              + (outputDescriptor().technology === PayloadOutputTechnology.Angular ? 'Angular Template Code' : '')
-              + '. '
-              + 'The Payload Output passes the raw Payload Input as argument to the function\'s `payload` parameter. '
-              + 'The Payload Output then uses the function\'s return value for further processing.'
-            "
+            xssStopPropagation
+            triggers="focus"
+            placement="auto"
+            container="body"
+            autoClose="outside"
+            popoverTitle="Payload Processor Function"
+            [ngbPopover]="payloadProcessorDocumentation"
             >ⓘ</span>
+            <ng-template #payloadProcessorDocumentation>
+              <p>
+                A
+                <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">JavaScript</a>
+                function that pre-processes the raw <em>XSS Attack Payload</em>.
+              </p>
+              <p>
+                <strong>Signature:</strong>
+              </p>
+              <ul>
+                <li>
+                  <em><code>payload</code> param:</em>
+                  <br>
+                  the <ng-container *ngTemplateOutlet="attackPayloadLabel"></ng-container>
+                </li>
+                <li>
+                  <em>return value:</em>
+                  <br>
+                  processed value to be passed to the <em>{{ PayloadEmitterLabels[outputDescriptor().technology] }}</em>
+                </li>
+              </ul>
+              <p>
+                The <em>Payload Output</em> passes the raw <em>XSS Attack Payload</em> as argument to the function's <code>payload</code> parameter.
+                The <em>Payload Output</em> then passes the function's return value to the <em>{{ PayloadEmitterLabels[outputDescriptor().technology] }}</em>.
+              </p>
+            </ng-template>
           <span>Payload Processor Function</span>
         </button>
       </h4>
@@ -95,7 +142,10 @@
   </div>
 }
 
-<div class="payload-emitter accordion my-2">
+<div
+  class="payload-emitter accordion my-2"
+  [class]="'payload-emitter-' + outputDescriptor().technology.toLowerCase()">
+
   <div class="accordion-item">
     <h4 class="accordion-header">
       <button
@@ -108,73 +158,158 @@
           class="help-icon"
           tabindex="0"
           role="note"
-          data-bs-toggle="popover"
-          data-bs-trigger="focus"
-          data-bs-placement="auto"
-          data-bs-container="body"
-          [attr.data-bs-title]="
-            (outputDescriptor().technology === PayloadOutputTechnology.HTML ? 'HTML Source Provider Function' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.DOM ? 'DOM Injector Function' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.jQuery ? 'jQuery Injector Function' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.Angular ? 'Angular Template Code' : '')
-          "
-          [attr.data-bs-content]="
-            (
-              outputDescriptor().technology === PayloadOutputTechnology.HTML
-              ? 'This Payload Output uses a JavaScript HTML Source Provider Function to generate HTML source code. '
-              + 'The Payload Output passes the '
-              + (outputDescriptor().payloadProcessor ? 'processed Payload Input (as returned by the Payload Processer Function)' : 'raw Payload Input')
-              + ' as argument to the `payload` parameter. '
-              + 'The Payload Output passes the string that the function returns to the web browser for rendering as HTML source code. '
-              + 'The Payload Output runs this JavaScript function on the client side. '
-              + 'However, a real web application might run similar code on the server-side, possibly in a different programming language or template language. '
-              + 'What matters is the HTML source code that such function generates. '
-              + '(There is one caveat here: Under the hood, the Payload Output uses assignment to the `innerHTML` DOM property to pass the HTML source code to the web browser. According to the HTML standard, the browser does NOT execute JavaScript code from `<script>` blocks that are inserted through `innerHTML`. You will have to get more creative with your XSS attack payload. Not sure how? Look for an appropriate Payload Preset!)'
-              : ''
-            )
-            + (
-              outputDescriptor().technology === PayloadOutputTechnology.DOM
-              ? 'This Payload Output uses a JavaScript DOM Injector Function to manipulate the web browser\'s DOM. '
-              + 'The Payload Output passes a container DOM element as argument to the `element` parameter. '
-              + 'The Payload Output also passes the '
-              + (outputDescriptor().payloadProcessor ? 'processed Payload Input (as returned by the Payload Processer Function)' : 'raw Payload Input')
-              + ' as argument to the `payload` parameter. '
-              + 'The function uses standard HTML DOM APIs to emit the payload to the web browser. '
-              + 'The Payload Output itself does not interact with the HTML DOM directly, and it ignores the return value of the function.'
-              : ''
-            )
-            + (
-              outputDescriptor().technology === PayloadOutputTechnology.jQuery
-              ? 'This Payload Output uses a JavaScript jQuery Injector Function to manipulate the web browser\'s DOM. '
-              + 'The Payload Output passes a container DOM element as argument to the `element` parameter. '
-              + 'The Payload Output also passes the '
-              + (outputDescriptor().payloadProcessor ? 'processed Payload Input (as returned by the Payload Processer Function)' : 'raw Payload Input')
-              + ' as argument to the `payload` parameter. '
-              + 'And the Payload Output makes the jQuery library available through the `$` global variable. '
-              + 'The function uses the jQUery API to emit the payload to the web browser. '
-              + 'The Payload Output itself does not use the jQuery library directly, and it ignores the return value of the function.'
-              : ''
-            )
-            + (
-              outputDescriptor().technology === PayloadOutputTechnology.Angular
-              ? 'This Payload Output uses Angular Template Code to manipulate the web browser\'s DOM. '
-              + 'The Payload Output creates an Angular Component that uses this template. '
-              + 'The Payload Output also makes the '
-              + (outputDescriptor().payloadProcessor ? 'processed Payload Input (as returned by the Payload Processer Function)' : 'raw Payload Input')
-              + ' available as the `payload` property in the component\'s scope. '
-              + 'The template emits the `payload` property to the web browser using Angular templating mechanism. '
-              + 'The Payload Output ensures the component renders the template, but it does not interact with the component in any other way.'
-              : ''
-            )
-          ">ⓘ</span>
-        <span>
-          {{
-            (outputDescriptor().technology === PayloadOutputTechnology.HTML ? 'HTML Source Provider Function' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.DOM ? 'DOM Injector Function' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.jQuery ? 'jQuery Injector Function' : '')
-            + (outputDescriptor().technology === PayloadOutputTechnology.Angular ? 'Angular Template Code' : '')
-          }}
-        </span>
+          xssStopPropagation
+          triggers="focus"
+          placement="auto"
+          container="body"
+          autoClose="outside"
+          [popoverTitle]="PayloadEmitterLabels[outputDescriptor().technology]"
+          [ngbPopover]="payloadEmitterDocumentation"
+          >ⓘ</span>
+        <ng-template #payloadEmitterDocumentation>
+          @switch (outputDescriptor().technology) {
+            @case (PayloadOutputTechnology.HTML) {
+              <p>
+                A
+                <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">JavaScript</a>
+                function that generates
+                <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTML">HTML</a>
+                source code from the <ng-container *ngTemplateOutlet="attackPayloadLabel"></ng-container>.
+              </p>
+              <p>
+                <strong>Signature:</strong>
+              </p>
+              <ul>
+                <li>
+                  <em><code>payload</code> param:</em>
+                  <br>
+                  the <ng-container *ngTemplateOutlet="attackPayloadLabel"></ng-container>
+                </li>
+                <li>
+                  <em>return value:</em>
+                  <br>
+                  the HTML source code string to be emitted into the <em>Live HTML Output</em>
+                </li>
+              </ul>
+              <p>
+                <em>
+                  <strong>Note:</strong>
+                  <br>
+                  The <em>XSS Demo App</em> runs this JavaScript function on the client side.
+                  However, a real web application might run similar code on the server-side, possibly in a different programming language or template language.
+                </em>
+              </p>
+              <p>
+                <em>
+                  <strong>Caveat:</strong>
+                  <br>
+                  Under the hood, the <em>XSS Demo App</em> uses assignment to the <code>innerHTML</code> DOM property to emit the HTML source code.
+                  According to the
+                  <a target="_blank" href="https://html.spec.whatwg.org/multipage/scripting.html#the-script-element">HTML standard</a>,
+                  web browsers do NOT execute JavaScript code from <code>&lt;script&gt;</code> blocks that are created through <code>innerHTML</code>.
+                  <br>
+                  You will have to get more creative with your <em>XSS Attack Payload</em>.
+                  Not sure how?
+                  Look for an appropriate <em>Payload Preset</em>!
+                </em>
+              </p>
+            }
+            @case (PayloadOutputTechnology.DOM) {
+              <p>
+                A
+                <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">JavaScript</a>
+                function that uses standard
+                <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API">HTML DOM APIs</a>
+                to process the <ng-container *ngTemplateOutlet="attackPayloadLabel"></ng-container>.
+              </p>
+              <p>
+                <strong>Signature:</strong>
+              </p>
+              <ul>
+                <li>
+                  <em><code>element</code> param:</em>
+                  <br>
+                  a container element in the <em>Live HTML Output</em> area below
+                </li>
+                <li>
+                  <em><code>payload</code> param:</em>
+                  <br>
+                  the <ng-container *ngTemplateOutlet="attackPayloadLabel"></ng-container>
+                </li>
+                <li>
+                  <em>return value:</em>
+                  <br>
+                  ignored
+                </li>
+              </ul>
+            }
+            @case (PayloadOutputTechnology.jQuery) {
+              <p>
+                A
+                <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">JavaScript</a>
+                function that uses
+                <a target="_blank" href="https://api.jquery.com/">jQuery APIs</a>
+                to process the <ng-container *ngTemplateOutlet="attackPayloadLabel"></ng-container>.
+              </p>
+              <p>
+                <strong>Signature:</strong>
+              </p>
+              <ul>
+                <li>
+                  <em><code>element</code> param:</em>
+                  <br>
+                  a container element in the <em>Live HTML Output</em> area below
+                </li>
+                <li>
+                  <em><code>payload</code> param:</em>
+                  <br>
+                  the <ng-container *ngTemplateOutlet="attackPayloadLabel"></ng-container>
+                </li>
+                <li>
+                  <em><code>$</code> global var:</em>
+                  <br>
+                  the <code>jQuery</code> object
+                </li>
+                <li>
+                  <em>return value:</em>
+                  <br>
+                  ignored
+                </li>
+              </ul>
+            }
+            @case (PayloadOutputTechnology.Angular) {
+              <p>
+                An
+                <a target="_blank" href="https://angular.dev/guide/templates">Angular Template</a>
+                that processes the <ng-container *ngTemplateOutlet="attackPayloadLabel"></ng-container>.
+              </p>
+              <p>
+                <strong>Signature:</strong>
+              </p>
+              <ul>
+                <li>
+                  <em><code>payload</code> scope variable:</em>
+                  <br>
+                  the <ng-container *ngTemplateOutlet="attackPayloadLabel"></ng-container>
+                </li>
+                <li>
+                  <em>template output:</em>
+                  <br>
+                  a container element in the <em>Live HTML Output</em> area below
+                </li>
+              </ul>
+            }
+          }
+        </ng-template>
+        <ng-template #attackPayloadLabel>
+          @if (outputDescriptor().payloadProcessor) {
+            processed <em>XSS Attack Payload</em> (as returned by the <em>Payload Processor Function</em>)
+          }
+          @else {
+            raw <em>XSS Attack Payload</em>
+          }
+        </ng-template>
+        <span>{{ PayloadEmitterLabels[outputDescriptor().technology] }}</span>
       </button>
     </h4>
     <div
@@ -198,13 +333,19 @@
         class="help-icon"
         tabindex="0"
         role="note"
-        data-bs-toggle="popover"
-        data-bs-trigger="focus"
-        data-bs-placement="auto"
-        data-bs-container="body"
-        data-bs-title="Live HTML Output"
-        data-bs-content="Live HTML Output. This is based on the current Payload Input and how this Payload Output processed it."
+        triggers="focus"
+        placement="auto"
+        container="body"
+        autoClose="outside"
+        popoverTitle="Live HTML Output"
+        [ngbPopover]="liveOutputDocumentation"
         >ⓘ</span>
+      <ng-template #liveOutputDocumentation>
+        <p>
+          Live HTML Output based on the current <em>XSS Attack Payload</em> as processed by this <em>Payload Output</em>.
+          This is what the end-user actually gets to see when the example application code processes the <em>XSS Attack Payload</em>.
+        </p>
+      </ng-template>
       <span>Live HTML Output</span>
     </h4>
     <div class="ms-auto d-flex align-items-center gap-2">
@@ -242,13 +383,32 @@
           class="help-icon"
           tabindex="0"
           role="note"
-          data-bs-toggle="popover"
-          data-bs-trigger="focus"
-          data-bs-placement="auto"
-          data-bs-container="body"
-          data-bs-title="Live HTML Source Code"
-          data-bs-content="HTML source code of the DOM tree shown in the Live HTML Output. Note that this may not be fully accurate, because not all DOM trees can be serealized to HTML fully. Ultimately, the XSS Demo App asks the browser for a HTML representation of the DOM tree, and the browser has some leeway in creating this representation. E.g. the browser may use a more compact representation than the HTML source code (if any) that actually generated the DOM tree. E.g., the browser may represent some characters verbatim, even when the HTML source code used a character entity."
+          xssStopPropagation
+          triggers="focus"
+          placement="auto"
+          container="body"
+          autoClose="outside"
+          popoverTitle="Live HTML Source Code"
+          [ngbPopover]="liveSourceCodeDocumentation"
           >ⓘ</span>
+          <ng-template #liveSourceCodeDocumentation>
+            <p>
+              HTML source code of the DOM tree shown in the <em>Live HTML Output</em>.
+            </p>
+            <p>
+              <em>
+                <strong>Note:</strong>
+                <br>
+                Under the hood, the <em>XSS Demo App</em> reads the <code>innerHTML</code> property of the DOM tree.
+                The web browser then serializes the DOM tree and returns the resulting HTML source code.
+                <br>
+                However, web browsers have some leeway when serializing a DOM tree.
+                The serialized representation may <strong>not</strong> be fully accurate, because not all DOM trees can be serialized to HTML.
+                Also, the web browser may use a more compact representation than the original HTML source code (if any) that actually generated the DOM tree.
+                E.g., the web browser may represent some characters verbatim, even where the original HTML source code used a character entity.
+              </em>
+            </p>
+          </ng-template>
         <span>Live HTML Source Code</span>
       </button>
     </h4>
