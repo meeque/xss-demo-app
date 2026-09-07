@@ -63,7 +63,7 @@
             <textarea
               class="payload-input"
               [(ngModel)]="payload"
-              placeholder="Enter your XSS Attack Payload in this Paylaod Input field! Or, select a Payload Preset from the above menu...">
+              placeholder="Enter your XSS Attack Payload in this Payload Input field! Or, select a Payload Preset from the above menu...">
             </textarea>
           </div>
         </div>
@@ -85,9 +85,9 @@
             container="body"
             autoClose="outside"
             popoverTitle="Payload Output"
-            [ngbPopover]="payloadOurputDocumentation"
+            [ngbPopover]="payloadOutputDocumentation"
             >ⓘ</span>
-          <ng-template #payloadOurputDocumentation>
+          <ng-template #payloadOutputDocumentation>
             <p>
               Output area for <em>XSS Attack Payload</em> from the <em>Payload Input</em> area.
             </p>

@@ -56,7 +56,7 @@
             }
             @case (PayloadOutputQuality.Questionable) {
               <p>
-                This <em>Payload Output</em> demonstrates <strong>Questionalble</strong> web application code.
+                This <em>Payload Output</em> demonstrates <strong>Questionable</strong> web application code.
                 While it may defend against XSS, it has poor code-quality or other undesirable properties.
                 In short, there are better XSS defenses available!
               </p>
@@ -303,7 +303,7 @@
         </ng-template>
         <ng-template #attackPayloadLabel>
           @if (outputDescriptor().payloadProcessor) {
-            processed <em>XSS Attack Payload</em> (as returned by the <em>Payload Processer Function</em>)
+            processed <em>XSS Attack Payload</em> (as returned by the <em>Payload Processor Function</em>)
           }
           @else {
             raw <em>XSS Attack Payload</em>
@@ -402,8 +402,8 @@
                 Under the hood, the XSS Demo App reads the <code>innerHTML</code> property of the DOM tree.
                 The web browser then serializes the DOM tree and returns the resulting HTML source code.
                 <br>
-                However, web browsers have some leeway when serealizing a DOM tree.
-                The serialized representation may <strong>not</strong> be fully accurate, because not all DOM trees can be serealized to HTML.
+                However, web browsers have some leeway when serializing a DOM tree.
+                The serialized representation may <strong>not</strong> be fully accurate, because not all DOM trees can be serialized to HTML.
                 Also, the web browser may use a more compact representation than the original HTML source code (if any) that actually generated the DOM tree.
                 E.g., the web browser may represent some characters verbatim, even where the original HTML source code used a character entity.
               </em>
