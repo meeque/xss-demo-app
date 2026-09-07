@@ -27,18 +27,31 @@
 
       <section class="input-area col-12 col-lg-6">
 
-        <h2>Payload Input <span
-          class="help-icon"
-          tabindex="0"
-          role="note"
-          triggers="focus"
-          placement="auto"
-          container="body"
-          autoClose="outside"
-          popoverTitle="Payload Input"
-          ngbPopover="Input for an XSS attack Payload to test against the selected Payload Output. Select one of the payload presets, then customize it. Or, write your own XSS attack payload from scratch!">ⓘ</span></h2>
+        <h2>
+          Payload Input
+          <span
+            class="help-icon"
+            tabindex="0"
+            role="note"
+            triggers="focus"
+            placement="auto"
+            container="body"
+            autoClose="outside"
+            popoverTitle="Payload Input"
+            [ngbPopover]="payloadInputDocumentation"
+            >ⓘ</span>
+          <ng-template #payloadInputDocumentation>
+            <p>
+              Input area for <em>XSS Attack Payload</em> to test against example web application code in the <em>Payload Output</em> area.
+            </p>
+            <p>
+              Select one of the <em>Payload Presets</em> from the menu and customize it!
+              Or, simply write your own <em>XSS Attack Payload</em> from scratch!
+            </p>
+          </ng-template>
+        </h2>
 
-        <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a preset ..."></xss-combobox-input>
+        <xss-combobox-input [items]="presetItems" [groups]="presetGroups" placeholder="Select a Payload Preset ..."></xss-combobox-input>
 
         <div class="card my-2">
           <div class="card-body">
@@ -46,7 +59,7 @@
               name="payload"
               class="payload"
               [(ngModel)]="payload"
-              placeholder="Enter your XSS attack code in this Paylaod Input field, or, select one of the Payload Presets from the above menu...">
+              placeholder="Enter your XSS Attack Payload in this Paylaod Input field! Or, select a Payload Preset from the above menu...">
             </textarea>
           </div>
         </div>
@@ -57,16 +70,34 @@
 
       <section class="output-area col-12 col-lg-6">
 
-        <h2>Payload Output <span
-          class="help-icon"
-          tabindex="0"
-          role="note"
-          triggers="focus"
-          placement="auto"
-          container="body"
-          autoClose="outside"
-          popoverTitle="Payload Output"
-          ngbPopover="Snippet of example web application code that process the Payload Input and emits it to the web browser. Select any of the predefined Payload Outputs and test your XSS attack payload against it! Currently, you cannot define your own custom Payload Outputs. See additional ⓘ buttons of the selected Payload Output for details.">ⓘ</span></h2>
+        <h2>
+          Payload Output
+          <span
+            class="help-icon"
+            tabindex="0"
+            role="note"
+            triggers="focus"
+            placement="auto"
+            container="body"
+            autoClose="outside"
+            popoverTitle="Payload Output"
+            [ngbPopover]="payloadOurputDocumentation"
+            >ⓘ</span>
+          <ng-template #payloadOurputDocumentation>
+            <p>
+              Output area for <em>XSS Attack Payload</em> from the <em>Payload Input</em> area.
+            </p>
+            <p>
+              Select any of the predefined <em>Payload Outputs</em> and test your <em>XSS Attack Payload</em> against it!
+              A <em>Payload Output</em> is a snippet of example web application code. 
+              It processes potential <em>XSS Attack Payload</em> and emits it into the <em>Live HTML Output</em> area below.
+              See below ⓘ buttons and icons for details!
+            </p>
+            <p>
+              Currently, you cannot define your own custom <em>Payload Outputs</em>.
+            </p>
+          </ng-template>
+        </h2>
 
         <xss-combobox-input [items]="payloadOutputFilters" [groups]="payloadOutputGroups" placeholder="Select a payload output..."></xss-combobox-input>
 
