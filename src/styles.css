@@ -10,16 +10,24 @@ body {
 
 
 
+.quality-icon {
+  font-family: "bootstrap-icons";
+  font-size: 1.3em;
+}
+
 .quality-icon.quality-recommended::before {
-  content: "\2714";
+  content: "\f531"; /* bi-shield-fill-check */
+  color: var(--bs-success);
 }
 
 .quality-icon.quality-questionable::before {
-  content: "\2370";
+  content: "\f506"; /* bi-question-diamond-fill */
+  color: var(--bs-warning);
 }
 
 .quality-icon.quality-insecure::before {
-  content: "\26A0";
+  content: "\f336"; /* bi-exclamation-octagon-fill */
+  color: var(--bs-danger);
 }
 
 
@@ -68,6 +76,8 @@ body {
 .help-icon:focus {
   opacity: 1;
 }
+
+
 
 .output-area .live-output iframe {
     width: 100%;
