@@ -56,19 +56,22 @@ main section h2 {
   vertical-align: middle;
 }
 
-.output-area span.technology-icon {
+.output-area .list-group-item span.technology-icon {
   width: 1.4em;
   height: 1.4em;
 }
 
+.output-area .list-group-item .filters-technology span.technology-icon {
+  margin-inline: 0 0.3em;
+}
+
 .output-area .list-group-item span.quality-icon {
-  margin-inline-start: 0.2em;
-  margin-inline-end: 0.4em;
+  margin-inline: 0.2em 0.4em;
 }
 
 .output-area .list-group-item .filters-quality span.quality-icon {
   line-height: 0; /* prevent icon character height from increasing button height */
-  margin-inline: 0;
+  margin-inline: 0 0.3em;
 }
 
 
