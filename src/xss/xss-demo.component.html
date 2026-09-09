@@ -9,7 +9,7 @@
             @if (xssTriggeredCounter > 1) {
               <span class="badge bg-danger rounded-pill">{{ xssTriggeredCounter }}</span>
             }
-            <span> {{ xssMessage }}</span>
+            <span>{{ xssMessage }}</span>
           </p>
           <button
             (click)="resetXss()"
@@ -198,11 +198,12 @@
                 <span
                   [class]="'technology-icon technology-' + item.value.technology.toLowerCase()"
                   [attr.aria-label]="item.value.technology">
-                </span>&nbsp;<span
+                </span>
+                <span
                   class="quality-icon"
                   [class]="'quality-icon quality-' + item.value.quality.toLowerCase()">
                 </span>
-                {{ item.name }}
+                <span>{{ item.name }}</span>
               </span>
             </li>
           }
