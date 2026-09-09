@@ -8,6 +8,8 @@ body {
     padding: 0;
 }
 
+
+
 .quality-icon.quality-recommended::before {
   content: "\2714";
 }
@@ -19,6 +21,8 @@ body {
 .quality-icon.quality-insecure::before {
   content: "\26A0";
 }
+
+
 
 .technology-icon {
   display: inline-block;
@@ -44,6 +48,12 @@ body {
 
 .technology-icon.technology-angular {
   background-image: url('/assets/img/angular-logo-solid-black.svg');
+}
+
+
+
+.help-icon::before {
+  content: "\24D8";
 }
 
 .help-icon {

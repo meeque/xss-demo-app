@@ -99,7 +99,7 @@
             autoClose="outside"
             popoverTitle="Payload Processor Function"
             [ngbPopover]="payloadProcessorDocumentation"
-            >ⓘ</span>
+            ></span>
             <ng-template #payloadProcessorDocumentation>
               <p>
                 A
@@ -165,7 +165,7 @@
           autoClose="outside"
           [popoverTitle]="PayloadEmitterLabels[outputDescriptor().technology]"
           [ngbPopover]="payloadEmitterDocumentation"
-          >ⓘ</span>
+          ></span>
         <ng-template #payloadEmitterDocumentation>
           @switch (outputDescriptor().technology) {
             @case (PayloadOutputTechnology.HTML) {
@@ -339,7 +339,7 @@
         autoClose="outside"
         popoverTitle="Live HTML Output"
         [ngbPopover]="liveOutputDocumentation"
-        >ⓘ</span>
+        ></span>
       <ng-template #liveOutputDocumentation>
         <p>
           Live HTML Output based on the current <em>XSS Attack Payload</em> as processed by this <em>Payload Output</em>.
@@ -390,7 +390,7 @@
           autoClose="outside"
           popoverTitle="Live HTML Source Code"
           [ngbPopover]="liveSourceCodeDocumentation"
-          >ⓘ</span>
+          ></span>
           <ng-template #liveSourceCodeDocumentation>
             <p>
               HTML source code of the DOM tree shown in the <em>Live HTML Output</em>.
