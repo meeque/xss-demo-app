@@ -1,11 +1,11 @@
 import { Component, Type, ElementRef, InputSignal, input, AfterViewInit, inject } from '@angular/core';
 import { NgStyle } from '@angular/common';
 
-import { PayloadOutputDescriptor, Technology } from './payload-output.service';
+import { Descriptor, Technology } from './payload-output.service';
 
 
 export interface LiveOutput {
-  outputDescriptor: InputSignal<PayloadOutputDescriptor>
+  outputDescriptor: InputSignal<Descriptor>
   outputPayload: InputSignal<unknown>
 }
 
@@ -19,7 +19,7 @@ export interface LiveOutputType extends Type<LiveOutput> {
   template: '',
 })
 export abstract class LiveOutputComponent implements LiveOutput {
-  outputDescriptor = input.required<PayloadOutputDescriptor>();
+  outputDescriptor = input.required<Descriptor>();
   outputPayload = input.required();
 
   /**

@@ -6,7 +6,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { StopPropagationDirective } from '../lib/stop-propagation.directive';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
-import { PayloadOutputDescriptor, Quality, Technology, EmitterLabels } from './payload-output.service';
+import { Descriptor, Quality, Technology, EmitterLabels } from './payload-output.service';
 import { NonAngularLiveOutputComponent } from './live-output.component';
 
 
@@ -30,7 +30,7 @@ export class PayloadOutputComponent implements AfterViewInit {
 
   private readonly environmentInjector = inject(EnvironmentInjector);
 
-  readonly outputDescriptor = input<PayloadOutputDescriptor>();
+  readonly outputDescriptor = input<Descriptor>();
   readonly payload = input('');
 
   readonly autoUpdateEnabled = model(true);
@@ -42,7 +42,7 @@ export class PayloadOutputComponent implements AfterViewInit {
   private readonly liveOutputElement = viewChild<ElementRef>('liveOutputElement');
   private readonly liveOutputViewContainer = viewChild('liveOutputViewContainer', { read: ViewContainerRef });
 
-  private lastOutputDescriptor: PayloadOutputDescriptor;
+  private lastOutputDescriptor: Descriptor;
 
 
   constructor() {

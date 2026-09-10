@@ -37,7 +37,7 @@ type Injector = (element: HTMLElement, payload: unknown) => void;
 
 
 
-interface PayloadOutputDescriptorBase {
+interface DescriptorBase {
   readonly id: string
   readonly technology: Technology
   readonly quality: Quality
@@ -46,31 +46,31 @@ interface PayloadOutputDescriptorBase {
   readonly payloadProcessor?: PayloadProcessor
 }
 
-interface HtmlPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
+interface HtmlDescriptor extends DescriptorBase {
   readonly technology: Technology.HTML
   readonly payloadEmitter: HtmlSourceProvider
 }
 
-interface DomPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
+interface DomDescriptor extends DescriptorBase {
   readonly technology: Technology.DOM
   readonly payloadEmitter: Injector
 }
 
-interface JQueryPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
+interface JQueryDescriptor extends DescriptorBase {
   readonly technology: Technology.jQuery
   readonly payloadEmitter: Injector
 }
 
-interface AngularPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
+interface AngularDescriptor extends DescriptorBase {
   readonly technology: Technology.Angular
   readonly payloadEmitter: LiveOutputType
 }
 
-export type PayloadOutputDescriptor
-  = HtmlPayloadOutputDescriptor
-    | DomPayloadOutputDescriptor
-    | JQueryPayloadOutputDescriptor
-    | AngularPayloadOutputDescriptor;
+export type Descriptor
+  = HtmlDescriptor
+    | DomDescriptor
+    | JQueryDescriptor
+    | AngularDescriptor;
 
 
 
@@ -80,7 +80,7 @@ export class PayloadOutputService {
   private readonly htmlSourceProviders: HtmlSourceProviders;
   private readonly domInjectors: DomInjectors;
   private readonly jQueryInjectors: JQueryInjectors;
-  readonly descriptors: XssContextCollection<PayloadOutputDescriptor>[];
+  readonly descriptors: XssContextCollection<Descriptor>[];
 
 
   constructor() {
@@ -761,7 +761,7 @@ export class PayloadOutputService {
   }
 
 
-  contextDescriptorById(contextId: XssContext): XssContextCollection<PayloadOutputDescriptor> {
+  contextById(contextId: XssContext): XssContextCollection<Descriptor> {
     for (const context of this.descriptors) {
       if (context.context == contextId) {
         return context;
@@ -770,8 +770,8 @@ export class PayloadOutputService {
     return null;
   }
 
-  outputDescriptorById(contextId: XssContext, outputId: string): PayloadOutputDescriptor {
-    const context = this.contextDescriptorById(contextId);
+  descriptorById(contextId: XssContext, outputId: string): Descriptor {
+    const context = this.contextById(contextId);
     if (context) {
       for (const output of context.items) {
         if (output.id == outputId) {

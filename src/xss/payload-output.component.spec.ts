@@ -6,13 +6,13 @@ import $ from 'jquery';
 
 import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/test-lib';
 
-import { PayloadOutputDescriptor, Quality, Technology } from './payload-output.service';
+import { Descriptor, Quality, Technology } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
 import { LiveOutputComponent } from './live-output.component';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
 
 
-type MockPayloadOutputDescriptor = PayloadOutputDescriptor & { calculateExpectedOutput(input: string): string };
+type MockPayloadOutputDescriptor = Descriptor & { calculateExpectedOutput(input: string): string };
 
 @Component({
   selector: 'xss-mock-live-output-template',
@@ -43,7 +43,7 @@ describe('PayloadOutputComponent', () => {
     foo: {
       id: 'foo',
       name: 'Foo',
-      title: 'Mock PayloadOutputDescriptor Foo',
+      title: 'Mock Descriptor Foo',
       technology: Technology.HTML,
       quality: Quality.Insecure,
       payloadProcessor: function removeAllX(payload) {
@@ -58,7 +58,7 @@ describe('PayloadOutputComponent', () => {
     bar: {
       id: 'bar',
       name: 'Bar',
-      title: 'Mock PayloadOutputDescriptor <em>Bar</em>',
+      title: 'Mock Descriptor <em>Bar</em>',
       technology: Technology.DOM,
       quality: Quality.Recommended,
       payloadProcessor: function toUpperCase(payload) {
@@ -78,7 +78,7 @@ describe('PayloadOutputComponent', () => {
     baz: {
       id: 'baz',
       name: 'Baz',
-      title: 'Mock PayloadOutputDescriptor Baz',
+      title: 'Mock Descriptor Baz',
       technology: Technology.Angular,
       quality: Quality.Insecure,
       payloadProcessor: function trustHtml(payload) {
@@ -91,7 +91,7 @@ describe('PayloadOutputComponent', () => {
     qux: {
       id: 'qux',
       name: 'Qux',
-      title: 'Mock <strong>PayloadOutputDescriptor</strong> Qux',
+      title: 'Mock <strong>Descriptor</strong> Qux',
       technology: Technology.DOM,
       quality: Quality.Recommended,
       payloadEmitter: function paragraphTitle(element, payload) {
@@ -376,7 +376,7 @@ describe('PayloadOutputComponent', () => {
     }
   });
 
-  async function setDescriptor(descriptor: PayloadOutputDescriptor): Promise<void> {
+  async function setDescriptor(descriptor: Descriptor): Promise<void> {
     componentRef.setInput('outputDescriptor', descriptor);
     await whenStableDetectChanges(fixture);
   }
@@ -409,13 +409,13 @@ describe('PayloadOutputComponent', () => {
     onbeforeupdateMock.mockClear();
   }
 
-  function queryAndExpectTitle(descriptor: PayloadOutputDescriptor) {
+  function queryAndExpectTitle(descriptor: Descriptor) {
     const title = queryAndExpectOne(element, 'div.title.card h3');
     expect(title.textContent.trim()).toBe(descriptor.title);
     return title;
   }
 
-  function queryAndExpectPayloadProcessor(descriptor: PayloadOutputDescriptor) {
+  function queryAndExpectPayloadProcessor(descriptor: Descriptor) {
     const panel = queryAndExpectOptional(element, 'div.payload-processor.accordion');
 
     if (descriptor.payloadProcessor === undefined) {
@@ -431,7 +431,7 @@ describe('PayloadOutputComponent', () => {
     return panel;
   }
 
-  function queryAndExpectPayloadEmitter(descriptor: PayloadOutputDescriptor) {
+  function queryAndExpectPayloadEmitter(descriptor: Descriptor) {
     const panel = queryAndExpectOptional(element, 'div.payload-emitter.accordion');
     expect(panel).not.toBeNull();
 

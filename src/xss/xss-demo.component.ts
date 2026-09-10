@@ -6,7 +6,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from '../lib/combobox-input.component';
 import { XssContext, XssContextCollection } from './xss-demo.common';
 import { PayloadPresetService, PayloadPresetDescriptor } from './payload-preset.service';
-import { PayloadOutputService, PayloadOutputDescriptor, Quality, Technology } from './payload-output.service';
+import { PayloadOutputService, Descriptor, Quality, Technology } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
 
 
@@ -33,7 +33,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   private readonly changeDetector = inject(ChangeDetectorRef);
 
   readonly payload = model('');
-  readonly activePayloadOutput = model<PayloadOutputDescriptor>();
+  readonly activePayloadOutput = model<Descriptor>();
 
   private readonly payloadOutputMenuItemTemplate = viewChild<TemplateRef<MenuItemContext>>('payloadOutputMenuItem');
   private readonly payloadOutputMenuTechnologyFiltersTemplate = viewChild<TemplateRef<MenuItemContext>>('payloadOutputMenuTechnologyFilters');
@@ -43,7 +43,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   protected presetGroups: MenuGroup<XssContextCollection<PayloadPresetDescriptor>, PayloadPresetDescriptor>[];
 
   protected payloadOutputFilters: MenuItem<unknown>[] = [];
-  protected payloadOutputGroups: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor>[] = [];
+  protected payloadOutputGroups: MenuGroup<XssContextCollection<Descriptor>, Descriptor>[] = [];
 
   protected payloadOutputTechnologyFilters: Technology[] = [];
   protected payloadOutputQualityFilters: Quality[] = [];
@@ -106,13 +106,13 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
     this.payloadOutputGroups = [];
     for (const context of this.payloadOutputService.descriptors) {
-      const group: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor> = {
+      const group: MenuGroup<XssContextCollection<Descriptor>, Descriptor> = {
         name: context.name,
         value: context,
         items: [],
       };
       for (const payloadOutput of context.items) {
-        const item: MenuItem<PayloadOutputDescriptor> = {
+        const item: MenuItem<Descriptor> = {
           name: payloadOutput.name,
           value: payloadOutput,
           select: () => this.activateOutput(context.context, payloadOutput.id),
@@ -165,7 +165,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     this.payloadOutputQualityFilters = newFilters;
   }
 
-  private payloadOutputMenuItemFilter = (item: MenuItem<PayloadOutputDescriptor>, query: string) => {
+  private payloadOutputMenuItemFilter = (item: MenuItem<Descriptor>, query: string) => {
     if (query && !item.name.toLowerCase().includes(query.toLowerCase())) {
       return false;
     }
@@ -178,9 +178,9 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     return true;
   };
 
-  private activateOutput(context: XssContext, output: string) {
+  private activateOutput(context: XssContext, outputId: string) {
     this.activePayloadOutput.set(
-      this.payloadOutputService.outputDescriptorById(context, output),
+      this.payloadOutputService.descriptorById(context, outputId),
     );
     return false;
   }
