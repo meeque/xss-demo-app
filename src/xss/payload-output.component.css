@@ -27,6 +27,7 @@
   display: flex;
   align-items: center;
   font-size: 1.2rem;
+  color: var(--bs-primary-text-emphasis);
 }
 
 .card .card-header .help-icon {
@@ -40,6 +41,7 @@
   display: flex;
   align-items: center;
   font-size: 1.5rem;
+  color: var(--bs-primary-text-emphasis);
 }
 
 .title.card .card-header .quality-icon {
