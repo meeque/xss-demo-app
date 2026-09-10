@@ -135,16 +135,29 @@ body {
 }
 
 .help-icon {
+  /* Reset native <button> chrome so the button renders as if it weren't one. */
   vertical-align: middle;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
   font-size: 1.5rem;
   font-style: normal;
   opacity: 0.8;
   cursor: help;
+  appearance: none;
 }
 
 .help-icon:hover,
 .help-icon:focus {
   opacity: 1;
+}
+
+
+
+.popover .popover-body > :last-child {
+  margin-bottom: 0;
 }
 
 
