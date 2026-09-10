@@ -6,7 +6,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { StopPropagationDirective } from '../lib/stop-propagation.directive';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
-import { PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputTechnology, PayloadEmitterLabels } from './payload-output.service';
+import { PayloadOutputDescriptor, Quality, Technology, EmitterLabels } from './payload-output.service';
 import { NonAngularLiveOutputComponent } from './live-output.component';
 
 
@@ -22,9 +22,9 @@ export class PayloadOutputComponent implements AfterViewInit {
   private static nextComponentId = 0;
   protected readonly componentId = PayloadOutputComponent.nextComponentId++;
 
-  protected readonly PayloadOutputTechnology = PayloadOutputTechnology;
-  protected readonly PayloadOutputQuality = PayloadOutputQuality;
-  protected readonly PayloadEmitterLabels = PayloadEmitterLabels;
+  protected readonly Technology = Technology;
+  protected readonly Quality = Quality;
+  protected readonly PayloadEmitterLabels = EmitterLabels;
 
 
 
@@ -70,7 +70,7 @@ export class PayloadOutputComponent implements AfterViewInit {
       const liveOutputViewContainer = this.liveOutputViewContainer();
       if (liveOutputViewContainer) {
         liveOutputViewContainer.clear();
-        const liveOutputComponentType = descriptor.technology === PayloadOutputTechnology.Angular ? descriptor.payloadEmitter : NonAngularLiveOutputComponent;
+        const liveOutputComponentType = descriptor.technology === Technology.Angular ? descriptor.payloadEmitter : NonAngularLiveOutputComponent;
         const liveOutputComponent = liveOutputViewContainer.createComponent(
           liveOutputComponentType,
           {

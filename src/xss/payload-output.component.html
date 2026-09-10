@@ -17,16 +17,16 @@
         </span>
         <ng-template #technologyDocumentation>
           @switch (outputDescriptor().technology) {
-            @case (PayloadOutputTechnology.HTML) {
+            @case (Technology.HTML) {
               This <em>Payload Output</em> generates plain <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTML">HTML source code</a> from the <em>XSS Attack Payload</em> and emits it into the <em>Live HTML Output</em> area below.
             }
-            @case (PayloadOutputTechnology.DOM) {
+            @case (Technology.DOM) {
               This <em>Payload Output</em> uses <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API">HTML DOM APIs</a> to emit <em>XSS Attack Payload</em> into the <em>Live HTML Output</em> area below.
             }
-            @case (PayloadOutputTechnology.jQuery) {
+            @case (Technology.jQuery) {
               This <em>Payload Output</em> uses the <a target="_blank" href="https://api.jquery.com/">jQuery library</a> to emit <em>XSS Attack Payload</em> into the <em>Live HTML Output</em> area below.
             }
-            @case (PayloadOutputTechnology.Angular) {
+            @case (Technology.Angular) {
               This <em>Payload Output</em> uses <a target="_blank" href="https://angular.dev/guide/templates">Angular template code</a> to emit <em>XSS Attack Payload</em> into the <em>Live HTML Output</em> area below.
             }
           }
@@ -48,20 +48,20 @@
         </span>
         <ng-template #qualityDocumentation>
           @switch (outputDescriptor().quality) {
-            @case (PayloadOutputQuality.Recommended) {
+            @case (Quality.Recommended) {
               <p>
                 This <em>Payload Output</em> demonstrates <strong>Recommended</strong>, best-practice web application code.
                 It defends against XSS effectively.
               </p>
             }
-            @case (PayloadOutputQuality.Questionable) {
+            @case (Quality.Questionable) {
               <p>
                 This <em>Payload Output</em> demonstrates <strong>Questionable</strong> web application code.
                 While it may defend against XSS, it has poor code-quality or other undesirable properties.
                 In short, there are better XSS defenses available!
               </p>
             }
-            @case (PayloadOutputQuality.Insecure) {
+            @case (Quality.Insecure) {
               <p>
                 This <em>Payload Output</em> demonstrates <strong>Insecure</strong> web application code.
                 That is, its code contains an <strong>XSS vulnerability</strong>!
@@ -168,7 +168,7 @@
           ></span>
         <ng-template #payloadEmitterDocumentation>
           @switch (outputDescriptor().technology) {
-            @case (PayloadOutputTechnology.HTML) {
+            @case (Technology.HTML) {
               <p>
                 A
                 <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">JavaScript</a>
@@ -214,7 +214,7 @@
                 </em>
               </p>
             }
-            @case (PayloadOutputTechnology.DOM) {
+            @case (Technology.DOM) {
               <p>
                 A
                 <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">JavaScript</a>
@@ -243,7 +243,7 @@
                 </li>
               </ul>
             }
-            @case (PayloadOutputTechnology.jQuery) {
+            @case (Technology.jQuery) {
               <p>
                 A
                 <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">JavaScript</a>
@@ -277,7 +277,7 @@
                 </li>
               </ul>
             }
-            @case (PayloadOutputTechnology.Angular) {
+            @case (Technology.Angular) {
               <p>
                 An
                 <a target="_blank" href="https://angular.dev/guide/templates">Angular Template</a>

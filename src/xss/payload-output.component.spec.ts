@@ -6,7 +6,7 @@ import $ from 'jquery';
 
 import { queryAndExpectOne, queryAndExpectOptional, whenStableDetectChanges } from '../test/test-lib';
 
-import { PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputTechnology } from './payload-output.service';
+import { PayloadOutputDescriptor, Quality, Technology } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
 import { LiveOutputComponent } from './live-output.component';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
@@ -44,8 +44,8 @@ describe('PayloadOutputComponent', () => {
       id: 'foo',
       name: 'Foo',
       title: 'Mock PayloadOutputDescriptor Foo',
-      technology: PayloadOutputTechnology.HTML,
-      quality: PayloadOutputQuality.Insecure,
+      technology: Technology.HTML,
+      quality: Quality.Insecure,
       payloadProcessor: function removeAllX(payload) {
         return payload.replaceAll('x', '').replaceAll('X', '');
       },
@@ -59,8 +59,8 @@ describe('PayloadOutputComponent', () => {
       id: 'bar',
       name: 'Bar',
       title: 'Mock PayloadOutputDescriptor <em>Bar</em>',
-      technology: PayloadOutputTechnology.DOM,
-      quality: PayloadOutputQuality.Recommended,
+      technology: Technology.DOM,
+      quality: Quality.Recommended,
       payloadProcessor: function toUpperCase(payload) {
         return payload.toUpperCase();
       },
@@ -79,8 +79,8 @@ describe('PayloadOutputComponent', () => {
       id: 'baz',
       name: 'Baz',
       title: 'Mock PayloadOutputDescriptor Baz',
-      technology: PayloadOutputTechnology.Angular,
-      quality: PayloadOutputQuality.Insecure,
+      technology: Technology.Angular,
+      quality: Quality.Insecure,
       payloadProcessor: function trustHtml(payload) {
         return domSanitizer.bypassSecurityTrustHtml(payload);
       },
@@ -92,8 +92,8 @@ describe('PayloadOutputComponent', () => {
       id: 'qux',
       name: 'Qux',
       title: 'Mock <strong>PayloadOutputDescriptor</strong> Qux',
-      technology: PayloadOutputTechnology.DOM,
-      quality: PayloadOutputQuality.Recommended,
+      technology: Technology.DOM,
+      quality: Quality.Recommended,
       payloadEmitter: function paragraphTitle(element, payload) {
         $('<p>').attr('title', '' + payload).text('This is a paragraph.').appendTo(element);
       },
@@ -437,21 +437,21 @@ describe('PayloadOutputComponent', () => {
 
     const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
     switch (descriptor.technology) {
-      case PayloadOutputTechnology.HTML:
+      case Technology.HTML:
         expect(title.textContent).toContain('HTML Source Provider Function');
         break;
-      case PayloadOutputTechnology.DOM:
+      case Technology.DOM:
         expect(title.textContent).toContain('DOM Injector Function');
         break;
-      case PayloadOutputTechnology.jQuery:
+      case Technology.jQuery:
         expect(title.textContent).toContain('jQuery Injector Function');
         break;
-      case PayloadOutputTechnology.Angular:
+      case Technology.Angular:
         expect(title.textContent).toContain('Angular Template Code');
         break;
     }
     const body = queryAndExpectOne(panel, 'div.accordion-body');
-    if (descriptor.technology === PayloadOutputTechnology.Angular) {
+    if (descriptor.technology === Technology.Angular) {
       expect(body.textContent.trim()).toBe(strip(descriptor.payloadEmitter.templateCode));
     }
     else {

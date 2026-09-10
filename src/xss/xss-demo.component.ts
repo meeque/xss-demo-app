@@ -6,7 +6,7 @@ import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { MenuItem, MenuGroup, MenuItemContext, ComboboxInputComponent } from '../lib/combobox-input.component';
 import { XssContext, XssContextCollection } from './xss-demo.common';
 import { PayloadPresetService, PayloadPresetDescriptor } from './payload-preset.service';
-import { PayloadOutputService, PayloadOutputDescriptor, PayloadOutputQuality, PayloadOutputTechnology } from './payload-output.service';
+import { PayloadOutputService, PayloadOutputDescriptor, Quality, Technology } from './payload-output.service';
 import { PayloadOutputComponent } from './payload-output.component';
 
 
@@ -24,8 +24,8 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   private static readonly DEFAULT_XSS_MESSAGE = 'XSS has been triggered!';
 
-  protected readonly PayloadOutputTechnology = PayloadOutputTechnology;
-  protected readonly PayloadOutputQuality = PayloadOutputQuality;
+  protected readonly Technology = Technology;
+  protected readonly Quality = Quality;
 
 
   private readonly payloadPresetService = inject(PayloadPresetService);
@@ -45,8 +45,8 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   protected payloadOutputFilters: MenuItem<unknown>[] = [];
   protected payloadOutputGroups: MenuGroup<XssContextCollection<PayloadOutputDescriptor>, PayloadOutputDescriptor>[] = [];
 
-  protected payloadOutputTechnologyFilters: PayloadOutputTechnology[] = [];
-  protected payloadOutputQualityFilters: PayloadOutputQuality[] = [];
+  protected payloadOutputTechnologyFilters: Technology[] = [];
+  protected payloadOutputQualityFilters: Quality[] = [];
 
   protected xssTriggeredCounter = 0;
   protected xssMessage = XssDemoComponent.DEFAULT_XSS_MESSAGE;
@@ -139,7 +139,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
   }
 
 
-  protected togglePayloadOutputTechnologyFilter(value: PayloadOutputTechnology) {
+  protected togglePayloadOutputTechnologyFilter(value: Technology) {
     const newFilters = [];
     for (const currentValue of this.payloadOutputTechnologyFilters) {
       if (currentValue != value) {
@@ -152,7 +152,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
     this.payloadOutputTechnologyFilters = newFilters;
   }
 
-  protected togglePayloadOutputQualityFilter(value: PayloadOutputQuality) {
+  protected togglePayloadOutputQualityFilter(value: Quality) {
     const newFilters = [];
     for (const currentValue of this.payloadOutputQualityFilters) {
       if (currentValue != value) {

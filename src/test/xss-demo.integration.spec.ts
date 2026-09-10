@@ -13,7 +13,7 @@ import { HttpClient } from '@angular/common/http';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { PayloadPresetService } from '../xss/payload-preset.service';
-import { PayloadOutputQuality, PayloadOutputService } from '../xss/payload-output.service';
+import { Quality, PayloadOutputService } from '../xss/payload-output.service';
 
 
 
@@ -362,12 +362,12 @@ describe('Xss Demo App', () => {
         describe('and payload output "' + outputDescriptor.name + '"', () => {
           if (DefaultTestConfig.hasAnyXss([...presetTestConfigs, ...payloadTestConfigs])) {
             test('should not be marked as "Recommended", because some tests trigger XSS', () => {
-              expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Recommended);
+              expect(outputDescriptor.quality).not.toBe(Quality.Recommended);
             });
           }
           else {
             test('should not be marked as "Insecure", because no tests trigger XSS', () => {
-              expect(outputDescriptor.quality).not.toBe(PayloadOutputQuality.Insecure);
+              expect(outputDescriptor.quality).not.toBe(Quality.Insecure);
             });
           }
 

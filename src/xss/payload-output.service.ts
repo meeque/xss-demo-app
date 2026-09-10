@@ -7,21 +7,21 @@ import { PayloadProcessors, HtmlSourceProviders, DomInjectors, JQueryInjectors }
 
 
 
-export enum PayloadOutputTechnology {
+export enum Technology {
   HTML = 'HTML',
   DOM = 'DOM',
   jQuery = 'jQuery',
   Angular = 'Angular',
 }
 
-export const PayloadEmitterLabels: Record<PayloadOutputTechnology, string> = {
-  [PayloadOutputTechnology.HTML]: 'HTML Source Provider Function',
-  [PayloadOutputTechnology.DOM]: 'DOM Injector Function',
-  [PayloadOutputTechnology.jQuery]: 'jQuery Injector Function',
-  [PayloadOutputTechnology.Angular]: 'Angular Template Code',
+export const EmitterLabels: Record<Technology, string> = {
+  [Technology.HTML]: 'HTML Source Provider Function',
+  [Technology.DOM]: 'DOM Injector Function',
+  [Technology.jQuery]: 'jQuery Injector Function',
+  [Technology.Angular]: 'Angular Template Code',
 };
 
-export enum PayloadOutputQuality {
+export enum Quality {
   Recommended = 'Recommended',
   Questionable = 'Questionable',
   Insecure = 'Insecure',
@@ -39,30 +39,30 @@ type Injector = (element: HTMLElement, payload: unknown) => void;
 
 interface PayloadOutputDescriptorBase {
   readonly id: string
-  readonly technology: PayloadOutputTechnology
-  readonly quality: PayloadOutputQuality
+  readonly technology: Technology
+  readonly quality: Quality
   readonly name: string
   readonly title: string
   readonly payloadProcessor?: PayloadProcessor
 }
 
 interface HtmlPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
-  readonly technology: PayloadOutputTechnology.HTML
+  readonly technology: Technology.HTML
   readonly payloadEmitter: HtmlSourceProvider
 }
 
 interface DomPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
-  readonly technology: PayloadOutputTechnology.DOM
+  readonly technology: Technology.DOM
   readonly payloadEmitter: Injector
 }
 
 interface JQueryPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
-  readonly technology: PayloadOutputTechnology.jQuery
+  readonly technology: Technology.jQuery
   readonly payloadEmitter: Injector
 }
 
 interface AngularPayloadOutputDescriptor extends PayloadOutputDescriptorBase {
-  readonly technology: PayloadOutputTechnology.Angular
+  readonly technology: Technology.Angular
   readonly payloadEmitter: LiveOutputType
 }
 
@@ -99,8 +99,8 @@ export class PayloadOutputService {
         items: [
           {
             id: 'HtmlContentEncoded',
-            technology: PayloadOutputTechnology.HTML,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.HTML,
+            quality: Quality.Questionable,
             name: 'HTML Encoded',
             title: 'Payload as Manually Encoded HTML Content',
             payloadProcessor: this.payloadProcessors.htmlEncode,
@@ -108,8 +108,8 @@ export class PayloadOutputService {
           },
           {
             id: 'HtmlContentSanitizedDefault',
-            technology: PayloadOutputTechnology.HTML,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.HTML,
+            quality: Quality.Recommended,
             name: 'HTML Sanitized (DOMPurify default)',
             title: 'Payload as Sanitized HTML Content (DOMPurify default policy)',
             payloadProcessor: this.payloadProcessors.htmlSanitizeDomPurifyDefault,
@@ -117,8 +117,8 @@ export class PayloadOutputService {
           },
           {
             id: 'HtmlContentSanitizedMinimalInline',
-            technology: PayloadOutputTechnology.HTML,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.HTML,
+            quality: Quality.Recommended,
             name: 'HTML Sanitized (DOMPurify minimal inline)',
             title: 'Payload as Sanitized HTML Content (DOMPurify minimal policy for inline markup)',
             payloadProcessor: this.payloadProcessors.htmlSanitizeDomPurifyMinimalInline,
@@ -126,8 +126,8 @@ export class PayloadOutputService {
           },
           {
             id: 'HtmlContentSanitizedInlineBlockLinks',
-            technology: PayloadOutputTechnology.HTML,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.HTML,
+            quality: Quality.Recommended,
             name: 'HTML Sanitized (DOMPurify some inline, block, links)',
             title: 'Payload as Sanitized HTML Content (DOMPurify policy for some inline, block, and link markup)',
             payloadProcessor: this.payloadProcessors.htmlSanitizeDomPurifyInlineBlockLinks,
@@ -135,8 +135,8 @@ export class PayloadOutputService {
           },
           {
             id: 'HtmlContentRaw',
-            technology: PayloadOutputTechnology.HTML,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.HTML,
+            quality: Quality.Insecure,
             name: 'HTML Raw',
             title: 'Payload as Raw HTML Content',
             payloadEmitter: this.htmlSourceProviders.content,
@@ -144,24 +144,24 @@ export class PayloadOutputService {
 
           {
             id: 'DomTextContent',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.DOM,
+            quality: Quality.Recommended,
             name: 'DOM .textContent',
             title: 'Payload as Text Content (DOM .textContent = ...)',
             payloadEmitter: this.domInjectors.textContent,
           },
           {
             id: 'DomInnerText',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.DOM,
+            quality: Quality.Recommended,
             name: 'DOM .innerText',
             title: 'Payload as Inner Text (DOM .innerText = ...)',
             payloadEmitter: this.domInjectors.innerText,
           },
           {
             id: 'DomInnerHtmlEncoded',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.DOM,
+            quality: Quality.Questionable,
             name: 'DOM .innerHtml Encoded',
             title: 'Payload as Manually Encoded Inner HTML (DOM .innerHTML = ...)',
             payloadProcessor: this.payloadProcessors.htmlEncode,
@@ -169,8 +169,8 @@ export class PayloadOutputService {
           },
           {
             id: 'DomInnerHtmlSanitizedDefault',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.DOM,
+            quality: Quality.Recommended,
             name: 'DOM .innerHtml Sanitized (DOMPurify default)',
             title: 'Payload as Sanitized Inner HTML (DOM .innerHTML = ..., with DOMPurify default policy)',
             payloadProcessor: this.payloadProcessors.htmlSanitizeDomPurifyDefault,
@@ -178,8 +178,8 @@ export class PayloadOutputService {
           },
           {
             id: 'DomInnerHtmlSanitizedMinimalInline',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.DOM,
+            quality: Quality.Recommended,
             name: 'DOM .innerHtml Sanitized (DOMPurify minimal inline)',
             title: 'Payload as Sanitized Inner HTML (DOM .innerHTML = ..., with DOMPurify minimal policy for inline markup)',
             payloadProcessor: this.payloadProcessors.htmlSanitizeDomPurifyMinimalInline,
@@ -187,8 +187,8 @@ export class PayloadOutputService {
           },
           {
             id: 'DomInnerHTMLSanitizedInlineBlockLinks',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.DOM,
+            quality: Quality.Recommended,
             name: 'DOM .innerHtml Sanitized (DOMPurify some inline, block, links)',
             title: 'Payload as Sanitized Inner HTML (DOM .innerHTML = ..., with DOMPurify policy for some inline, block, and link markup)',
             payloadProcessor: this.payloadProcessors.htmlSanitizeDomPurifyInlineBlockLinks,
@@ -196,16 +196,16 @@ export class PayloadOutputService {
           },
           {
             id: 'DomInnerHtmlRaw',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.DOM,
+            quality: Quality.Insecure,
             name: 'DOM .innerHTML Raw',
             title: 'Payload as Raw HTML (DOM .innerHTML = ...)',
             payloadEmitter: this.domInjectors.innerHtml,
           },
           {
             id: 'DomInnerHtmlRawNoInsert',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.DOM,
+            quality: Quality.Insecure,
             name: 'DOM .innerHTML Raw (No Insert)',
             title: 'Payload as Raw HTML (DOM .innerHTML = ..., without insertion into the document)',
             payloadEmitter: this.domInjectors.innerHtmlNoOutput,
@@ -213,16 +213,16 @@ export class PayloadOutputService {
 
           {
             id: 'JQueryText',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.jQuery,
+            quality: Quality.Recommended,
             name: '$().text()',
             title: 'Payload as Text (jQuery().text(...))',
             payloadEmitter: this.jQueryInjectors.text,
           },
           {
             id: 'JQueryHtmlSanitizedDefault',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.jQuery,
+            quality: Quality.Recommended,
             name: '$().html() Sanitized (DOMPurify default)',
             title: 'Payload as Sanitized HTML (jQuery().html(...) with DOMPurify default policy)',
             payloadProcessor: this.payloadProcessors.htmlSanitizeDomPurifyDefault,
@@ -230,8 +230,8 @@ export class PayloadOutputService {
           },
           {
             id: 'JQueryHtmlSanitizedMinimalInline',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.jQuery,
+            quality: Quality.Recommended,
             name: '$().html() Sanitized (DOMPurify minimal inline)',
             title: 'Payload as Sanitized HTML (jQuery().html(...) with DOMPurify minimal policy for inline markup)',
             payloadProcessor: this.payloadProcessors.htmlSanitizeDomPurifyMinimalInline,
@@ -239,8 +239,8 @@ export class PayloadOutputService {
           },
           {
             id: 'JQueryHtmlSanitizedInlineBlockLinks',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.jQuery,
+            quality: Quality.Recommended,
             name: '$().html() Sanitized (DOMPurify some inline, block, links)',
             title: 'Payload as Sanitized HTML (jQuery().html(...) with DOMPurify policy for some inline, block, and link markup)',
             payloadProcessor: this.payloadProcessors.htmlSanitizeDomPurifyInlineBlockLinks,
@@ -248,8 +248,8 @@ export class PayloadOutputService {
           },
           {
             id: 'JQueryHtmlEncoded',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.jQuery,
+            quality: Quality.Questionable,
             name: '$().html() Encoded',
             title: 'Payload as Manually Encoded HTML (jQuery().html(...))',
             payloadProcessor: this.payloadProcessors.htmlEncode,
@@ -257,8 +257,8 @@ export class PayloadOutputService {
           },
           {
             id: 'JQueryConstructorEncoded',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.jQuery,
+            quality: Quality.Questionable,
             name: '$() Encoded',
             title: 'Payload as Manually Encoded HTML Through Constructor (jQuery(...))',
             payloadProcessor: this.payloadProcessors.htmlEncode,
@@ -266,8 +266,8 @@ export class PayloadOutputService {
           },
           {
             id: 'JQueryHtmlTextNode',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.jQuery,
+            quality: Quality.Questionable,
             name: '$().html() Text Node',
             title: 'Payload as DOM Text Node (jQuery().html(...))',
             payloadProcessor: this.payloadProcessors.domTextNode,
@@ -275,8 +275,8 @@ export class PayloadOutputService {
           },
           {
             id: 'JQueryConstructorTextNode',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.jQuery,
+            quality: Quality.Questionable,
             name: '$() Text Node',
             title: 'Payload as DOM Text Node Through Constructor (jQuery(...))',
             payloadProcessor: this.payloadProcessors.domTextNode,
@@ -284,72 +284,72 @@ export class PayloadOutputService {
           },
           {
             id: 'JQueryHtmlRaw',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.jQuery,
+            quality: Quality.Insecure,
             name: '$().html() Raw',
             title: 'Payload as Raw HTML (jQuery().html(...))',
             payloadEmitter: this.jQueryInjectors.html,
           },
           {
             id: 'JQueryConstructorRaw',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.jQuery,
+            quality: Quality.Insecure,
             name: '$() Raw',
             title: 'Payload as Raw HTML Through Constructor (jQuery(...))',
             payloadEmitter: this.jQueryInjectors.jQueryConstructor,
           },
           {
             id: 'JQueryPrependRaw',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.jQuery,
+            quality: Quality.Insecure,
             name: '$().prepend() Raw',
             title: 'Payload Prepended as Raw HTML (jQuery().prepend(...))',
             payloadEmitter: this.jQueryInjectors.prepend,
           },
           {
             id: 'JQueryAppendRaw',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.jQuery,
+            quality: Quality.Insecure,
             name: '$().append() Raw',
             title: 'Payload as Raw HTML Appended (jQuery().append(...))',
             payloadEmitter: this.jQueryInjectors.append,
           },
           {
             id: 'JQueryBeforeRaw',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.jQuery,
+            quality: Quality.Insecure,
             name: '$().before() Raw',
             title: 'Payload as Raw HTML Inserted Before (jQuery().before(...))',
             payloadEmitter: this.jQueryInjectors.before,
           },
           {
             id: 'JQueryAfterRaw',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.jQuery,
+            quality: Quality.Insecure,
             name: '$().after() Raw',
             title: 'Payload as Raw HTML Inserted After (jQuery().after(...))',
             payloadEmitter: this.jQueryInjectors.after,
           },
           {
             id: 'JQueryWrapInnerRaw',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.jQuery,
+            quality: Quality.Insecure,
             name: '$().wrapInner() Raw',
             title: 'Payload as Raw HTML Wrapped Inside (jQuery().wrapInner(...))',
             payloadEmitter: this.jQueryInjectors.wrapInner,
           },
           {
             id: 'JQueryWrapRaw',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.jQuery,
+            quality: Quality.Insecure,
             name: '$().wrap() Raw',
             title: 'Payload as Raw HTML Wrapped Around (jQuery().wrap(...))',
             payloadEmitter: this.jQueryInjectors.wrap,
           },
           {
             id: 'JQueryReplaceWithRaw',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.jQuery,
+            quality: Quality.Insecure,
             name: '$().replaceWith() Raw',
             title: 'Payload as Raw HTML Replacement (jQuery().replaceWith(...))',
             payloadEmitter: this.jQueryInjectors.replaceWith,
@@ -357,40 +357,40 @@ export class PayloadOutputService {
 
           {
             id: 'NgTemplateInterpolation',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.Angular,
+            quality: Quality.Recommended,
             name: 'ng {{...}}',
             title: 'Payload as HTML Content through Template Interpolation (Angular {{...}})',
             payloadEmitter: EncodedLiveOutputComponent,
           },
           {
             id: 'NgTextContent',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.Angular,
+            quality: Quality.Recommended,
             name: 'ng [textContent]',
             title: 'Payload as HTML Text-Content (Angular <div [textContent]="...">)',
             payloadEmitter: TextContentLiveOutputComponent,
           },
           {
             id: 'NgInnerText',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.Angular,
+            quality: Quality.Recommended,
             name: 'ng [innerText]',
             title: 'Payload as HTML Inner-Text (Angular <div [innerText]="...">)',
             payloadEmitter: InnerTextLiveOutputComponent,
           },
           {
             id: 'NgInnerHtmlSanitized',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.Angular,
+            quality: Quality.Recommended,
             name: 'ng [innerHTML] Sanitized',
             title: 'Payload as Sanitized Inner-HTML (Angular <div [innerHTML]="...">)',
             payloadEmitter: InnerHtmlLiveOutputComponent,
           },
           {
             id: 'NgInnerHtmlTrusted',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.Angular,
+            quality: Quality.Insecure,
             name: 'ng [innerHTML] Trusted',
             title: 'Payload as Trusted Inner-HTML (Angular <div [innerHTML]="..."> with DomSanitizer.bypassSecurityTrustHtml())',
             payloadProcessor: this.payloadProcessors.ngTrustAsHtml,
@@ -405,8 +405,8 @@ export class PayloadOutputService {
         items: [
           {
             id: 'HtmlTitleAttributeEncodedQuoted',
-            technology: PayloadOutputTechnology.HTML,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.HTML,
+            quality: Quality.Questionable,
             name: 'HTML <p title> Encoded & Quoted',
             title: 'Payload as Manually Encoded and Quoted HTML Title Attribute Value (<p title="...">)',
             payloadProcessor: this.payloadProcessors.htmlEncode,
@@ -414,16 +414,16 @@ export class PayloadOutputService {
           },
           {
             id: 'HtmlTitleAttributeRawQuoted',
-            technology: PayloadOutputTechnology.HTML,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.HTML,
+            quality: Quality.Insecure,
             name: 'HTML <p title> Raw & Quoted',
             title: 'Payload as Raw, But Quoted HTML Title Attribute Value (<p title="...">)',
             payloadEmitter: this.htmlSourceProviders.paragraphTitle,
           },
           {
             id: 'HtmlTitleAttributeEncodedUnquoted',
-            technology: PayloadOutputTechnology.HTML,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.HTML,
+            quality: Quality.Insecure,
             name: 'HTML <p title> Encoded & Unquoted',
             title: 'Payload as Manually Encoded, But Unquoted HTML Title Attribute Value (<p title=...>)',
             payloadProcessor: this.payloadProcessors.htmlEncode,
@@ -431,40 +431,40 @@ export class PayloadOutputService {
           },
           {
             id: 'HtmlTitleAttributeRawUnquoted',
-            technology: PayloadOutputTechnology.HTML,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.HTML,
+            quality: Quality.Insecure,
             name: 'HTML <p title> Raw & Unquoted',
             title: 'Payload as Raw and Unquoted HTML Title Attribute Value (<p title=...>)',
             payloadEmitter: this.htmlSourceProviders.paragraphTitleUnquoted,
           },
           {
             id: 'DomTitleAttribute',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.DOM,
+            quality: Quality.Recommended,
             name: 'DOM p.setAttribute(\'title\')',
             title: 'Payload as Title Attribute Value (DOM p.setAttribute(\'title\', ...))',
             payloadEmitter: this.domInjectors.titleAttribute,
           },
           {
             id: 'JQueryTitleAttribute',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.jQuery,
+            quality: Quality.Recommended,
             name: '$(p).attr(\'title\')',
             title: 'Paylaod as Title Attribute ($(p).attr(\'title\', ...))',
             payloadEmitter: this.jQueryInjectors.titleAttribute,
           },
           {
             id: 'NgTitleAttribute',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Recommended,
+            technology: Technology.Angular,
+            quality: Quality.Recommended,
             name: 'ng <p [title]>',
             title: 'Payload as Title Attribute (Angular <p [title]="...">)',
             payloadEmitter: ParagraphTitleLiveOutputComponent,
           },
           {
             id: 'NgTitleAttributeTrusted',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.Angular,
+            quality: Quality.Questionable,
             name: 'ng <p [title]> Trusted',
             title: 'Payload as Trusted Title Attribute (Angular <p [title]="..."> with DomSanitizer.bypassSecurityTrustHtml())',
             payloadProcessor: this.payloadProcessors.ngTrustAsHtml,
@@ -479,8 +479,8 @@ export class PayloadOutputService {
         items: [
           {
             id: 'DomLinkHrefValidated',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.DOM,
+            quality: Quality.Questionable,
             name: 'DOM a.href URL-Validated',
             title: 'Payload as URL-Validated Link-URL (DOM a.href = ...)',
             payloadProcessor: this.payloadProcessors.urlValidate,
@@ -488,16 +488,16 @@ export class PayloadOutputService {
           },
           {
             id: 'DomLinkHrefRaw',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.DOM,
+            quality: Quality.Insecure,
             name: 'DOM a.href Raw',
             title: 'Payload as Raw Link-URL (DOM a.href = ...)',
             payloadEmitter: this.domInjectors.linkHref,
           },
           {
             id: 'JQueryLinkHrefValidated',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.jQuery,
+            quality: Quality.Questionable,
             name: '$(a).attr(\'href\') URL-Validated',
             title: 'Payload as URL-Validated Link-URL (jQuery(a).attr(\'href\', ...))',
             payloadProcessor: this.payloadProcessors.urlValidate,
@@ -505,24 +505,24 @@ export class PayloadOutputService {
           },
           {
             id: 'JQueryLinkHrefRaw',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.jQuery,
+            quality: Quality.Insecure,
             name: '$(a).attr(\'href\') Raw',
             title: 'Payload as Raw Link-URL (jQuery(a).attr(\'href\', ...))',
             payloadEmitter: this.jQueryInjectors.linkHref,
           },
           {
             id: 'NgLinkHrefSanitized',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.Angular,
+            quality: Quality.Questionable,
             name: 'ng <a [href]> Sanitized',
             title: 'Payload as Sanitized Link-URL (Angular <a [href]="...">)',
             payloadEmitter: LinkUrlLiveOutputComponent,
           },
           {
             id: 'NgLinkHrefTrusted',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.Angular,
+            quality: Quality.Insecure,
             name: 'ng <a [href]> Trusted',
             title: 'Payload as Trusted Link-URL (Angular <a [href]="..."> with DomSanitizer.bypassSecurityTrustUrl())',
             payloadProcessor: this.payloadProcessors.ngTrustAsUrl,
@@ -530,8 +530,8 @@ export class PayloadOutputService {
           },
           {
             id: 'DomIframeSrcValidated',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.DOM,
+            quality: Quality.Questionable,
             name: 'DOM iframe.src URL-Validated',
             title: 'Payload as URL-Validated IFrame-URL (DOM iframe.src = ...)',
             payloadProcessor: this.payloadProcessors.urlValidate,
@@ -539,16 +539,16 @@ export class PayloadOutputService {
           },
           {
             id: 'DomIframeSrcRaw',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.DOM,
+            quality: Quality.Insecure,
             name: 'DOM iframe.src Raw',
             title: 'Payload as Raw IFrame-URL (DOM iframe.src = ...)',
             payloadEmitter: this.domInjectors.iframeSrc,
           },
           {
             id: 'JQueryIframeSrcValidated',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.jQuery,
+            quality: Quality.Questionable,
             name: '$(iframe).attr(\'src\') URL-Validated',
             title: 'Payload as URL-Validated IFrame-URL (jQuery(iframe).attr(\'src\', ...))',
             payloadProcessor: this.payloadProcessors.urlValidate,
@@ -556,24 +556,24 @@ export class PayloadOutputService {
           },
           {
             id: 'JQueryIframeSrcRaw',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.jQuery,
+            quality: Quality.Insecure,
             name: '$(iframe).attr(\'src\') Raw',
             title: 'Payload as Raw IFrame-URL (jQuery(iframe).attr(\'src\', ...))',
             payloadEmitter: this.jQueryInjectors.iframeSrc,
           },
           {
             id: 'NgIframeSrcSanitized',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.Angular,
+            quality: Quality.Questionable,
             name: 'ng <iframe [src]> Sanitized',
             title: 'Payload as Sanitized IFrame-URL (Angular <iframe [src]="...">)',
             payloadEmitter: IframeUrlLiveOutputComponent,
           },
           {
             id: 'NgIframeSrcTrusted',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.Angular,
+            quality: Quality.Insecure,
             name: 'ng <iframe [src]> Trusted',
             title: 'Payload as Trusted Resource IFrame-URL (Angular <iframe [src]="..."> with DomSanitizer.bypassSecurityTrustResourceUrl())',
             payloadProcessor: this.payloadProcessors.ngTrustAsResourceUrl,
@@ -588,32 +588,32 @@ export class PayloadOutputService {
         items: [
           {
             id: 'DomStyleBlockRaw',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.DOM,
+            quality: Quality.Questionable,
             name: 'DOM style.textContent Raw',
             title: 'Payload as Style Block Text-Content (DOM style.textContent = ...)',
             payloadEmitter: this.domInjectors.styleBlock,
           },
           {
             id: 'DomStyleAttributeRaw',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.DOM,
+            quality: Quality.Questionable,
             name: 'DOM div.setAttribute(\'style\') Raw',
             title: 'Payload as Style Attribute Value (DOM div.setAttribute(\'style\', ...))',
             payloadEmitter: this.domInjectors.styleAttribute,
           },
           {
             id: 'NgStyleBlockSanitized',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.Angular,
+            quality: Quality.Questionable,
             name: 'ng <style [innerHTML]> Sanitized',
             title: 'Payload as Sanitized Style Block HTML (Angular <style [innerHTML]="...">)',
             payloadEmitter: StyleBlockLiveOutputComponent,
           },
           {
             id: 'NgStyleBlockTrusted',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.Angular,
+            quality: Quality.Questionable,
             name: 'ng <style [innerHTML]> Trusted',
             title: 'Payload as Trusted Style Block HTML (Angular <style [innerHTML]="..."> with DomSanitizer.bypassSecurityTrusStyle())',
             payloadProcessor: this.payloadProcessors.ngTrustAsStyle,
@@ -621,16 +621,16 @@ export class PayloadOutputService {
           },
           {
             id: 'NgStyleAttributeSanitized',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.Angular,
+            quality: Quality.Questionable,
             name: 'ng [style] Sanitized',
             title: 'Payload as Sanitized Style Attribute Value (Angular <div [style]="...">)',
             payloadEmitter: StyleAttributeLiveOutputComponent,
           },
           {
             id: 'NgStyleAttributeTrusted',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.Angular,
+            quality: Quality.Questionable,
             name: 'ng [style] Trusted',
             title: 'Payload as Trusted Style Attribute Value (Angular <div [style]="..."> with DomSanitizer.bypassSecurityTrustStyle()',
             payloadProcessor: this.payloadProcessors.ngTrustAsStyle,
@@ -638,8 +638,8 @@ export class PayloadOutputService {
           },
           {
             id: 'NgStyleAttributePropertiesSanitized',
-            technology: PayloadOutputTechnology.Angular,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.Angular,
+            quality: Quality.Questionable,
             name: 'ng [ngStyle] Sanitized',
             title: 'Payload as Sanitized Style Attribute Properties (Angular <div [ngStyle]="..."> with JSON.parse())',
             payloadProcessor: this.payloadProcessors.jsonParse,
@@ -654,8 +654,8 @@ export class PayloadOutputService {
         items: [
           {
             id: 'DomScriptBlockValueEncoded',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Questionable,
+            technology: Technology.DOM,
+            quality: Quality.Questionable,
             name: 'DOM <script>-Block Expression Encoded',
             title: 'Payload as JavaScript-Encoded Expression in a JavaScript Block (DOM script.textContent = ..., with JSON.stringify())',
             payloadProcessor: this.payloadProcessors.jsEncode,
@@ -663,8 +663,8 @@ export class PayloadOutputService {
           },
           {
             id: 'DomScriptBlockStringLiteralDq',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.DOM,
+            quality: Quality.Insecure,
             name: 'DOM <script>-Block "string literal" Raw',
             title: 'Payload as Raw Content of a Double-Quoted String Literal in a JavaScript Block (DOM script.textContent = \'"\' + ... + \'"\')',
             payloadProcessor: this.payloadProcessors.jsDoubleQuote,
@@ -672,8 +672,8 @@ export class PayloadOutputService {
           },
           {
             id: 'DomScriptBlockStringLiteralSq',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.DOM,
+            quality: Quality.Insecure,
             name: 'DOM <script>-Block \'string literal\' Raw',
             title: 'Payload as Raw Content of a Single-Quoted String Literal in a JavaScript Block (DOM script.textContent = \'\\\'\' + ... + \'\\\'\')',
             payloadProcessor: this.payloadProcessors.jsSingleQuote,
@@ -681,8 +681,8 @@ export class PayloadOutputService {
           },
           {
             id: 'DomScriptBlockRaw',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.DOM,
+            quality: Quality.Insecure,
             name: 'DOM <script>-Block Content Raw',
             title: 'Payload as Raw Content of a JavaScript Block (DOM script.textContent = ...)',
             payloadEmitter: this.domInjectors.scriptBlock,
@@ -696,16 +696,16 @@ export class PayloadOutputService {
         items: [
           {
             id: 'DoubleTrouble',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.DOM,
+            quality: Quality.Insecure,
             name: 'Double Trouble',
             title: 'Double Trouble Challenge',
             payloadEmitter: this.domInjectors.challengeDoubleTrouble,
           },
           {
             id: 'WhatsLeft',
-            technology: PayloadOutputTechnology.HTML,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.HTML,
+            quality: Quality.Insecure,
             name: 'What\'s Left',
             title: 'What\'s Left Challenge',
             payloadProcessor: this.payloadProcessors.htmlChallengeStripTags,
@@ -713,8 +713,8 @@ export class PayloadOutputService {
           },
           {
             id: 'LookMomNoParentheses',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.DOM,
+            quality: Quality.Insecure,
             name: 'Look mom! No parentheses!',
             title: 'Look mom! No parentheses! Challenge',
             payloadProcessor: this.payloadProcessors.jsChallengeLookMomNoParentheses,
@@ -722,8 +722,8 @@ export class PayloadOutputService {
           },
           {
             id: 'LikeLiterally',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.DOM,
+            quality: Quality.Insecure,
             name: 'Like Literally',
             title: 'Like Literally Challenge',
             payloadProcessor: this.payloadProcessors.jsChallengeLikeLiterally,
@@ -731,8 +731,8 @@ export class PayloadOutputService {
           },
           {
             id: 'TheGreatEscape',
-            technology: PayloadOutputTechnology.DOM,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.DOM,
+            quality: Quality.Insecure,
             name: 'The Great Escape',
             title: 'The Great Escape Challenge',
             payloadProcessor: this.payloadProcessors.jsChallengeTheGreatEscape,
@@ -740,8 +740,8 @@ export class PayloadOutputService {
           },
           {
             id: 'OutOfSpace',
-            technology: PayloadOutputTechnology.HTML,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.HTML,
+            quality: Quality.Insecure,
             name: 'Out of Space',
             title: 'Out of Space Challenge',
             payloadProcessor: this.payloadProcessors.htmlChallengeOutOfSpace,
@@ -749,8 +749,8 @@ export class PayloadOutputService {
           },
           {
             id: 'RewindSelecta',
-            technology: PayloadOutputTechnology.jQuery,
-            quality: PayloadOutputQuality.Insecure,
+            technology: Technology.jQuery,
+            quality: Quality.Insecure,
             name: 'Rewind Selecta',
             title: 'Rewind Selecta Challenge',
             payloadEmitter: this.jQueryInjectors.jQueryConstructor,
