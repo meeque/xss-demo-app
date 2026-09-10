@@ -117,33 +117,33 @@
               <div class="btn-group" role="group">
                 <button
                   class="btn btn-outline-secondary"
-                  (click)="togglePayloadOutputTechnologyFilter(Technology.HTML)"
-                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes(Technology.HTML)"
-                  [class.active]="payloadOutputTechnologyFilters.includes(Technology.HTML)">
+                  (click)="togglePayloadOutputTechnologyFilter($.Technology.HTML)"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes($.Technology.HTML)"
+                  [class.active]="payloadOutputTechnologyFilters.includes($.Technology.HTML)">
                   <span class="technology-icon technology-html"></span>
                   <span>HTML</span>
                 </button>
                 <button
                   class="btn btn-outline-secondary"
-                  (click)="togglePayloadOutputTechnologyFilter(Technology.DOM)"
-                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes(Technology.DOM)"
-                  [class.active]="payloadOutputTechnologyFilters.includes(Technology.DOM)">
+                  (click)="togglePayloadOutputTechnologyFilter($.Technology.DOM)"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes($.Technology.DOM)"
+                  [class.active]="payloadOutputTechnologyFilters.includes($.Technology.DOM)">
                   <span class="technology-icon technology-dom"></span>
                   <span>DOM</span>
                 </button>
                 <button
                   class="btn btn-outline-secondary"
-                  (click)="togglePayloadOutputTechnologyFilter(Technology.jQuery)"
-                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes(Technology.jQuery)"
-                  [class.active]="payloadOutputTechnologyFilters.includes(Technology.jQuery)">
+                  (click)="togglePayloadOutputTechnologyFilter($.Technology.jQuery)"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes($.Technology.jQuery)"
+                  [class.active]="payloadOutputTechnologyFilters.includes($.Technology.jQuery)">
                   <span class="technology-icon technology-jquery"></span>
                   <span>jQuery</span>
                 </button>
                 <button
                   class="btn btn-outline-secondary"
-                  (click)="togglePayloadOutputTechnologyFilter(Technology.Angular)"
-                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes(Technology.Angular)"
-                  [class.active]="payloadOutputTechnologyFilters.includes(Technology.Angular)">
+                  (click)="togglePayloadOutputTechnologyFilter($.Technology.Angular)"
+                  [attr.aria-selected]="payloadOutputTechnologyFilters.includes($.Technology.Angular)"
+                  [class.active]="payloadOutputTechnologyFilters.includes($.Technology.Angular)">
                   <span class="technology-icon technology-angular"></span>
                   <span>Angular</span>
                 </button>
@@ -159,25 +159,25 @@
               <div class="btn-group" role="group">
                 <button
                   class="btn btn-outline-secondary"
-                  (click)="togglePayloadOutputQualityFilter(Quality.Recommended)"
-                  [attr.aria-selected]="payloadOutputQualityFilters.includes(Quality.Recommended)"
-                  [class.active]="payloadOutputQualityFilters.includes(Quality.Recommended)">
+                  (click)="togglePayloadOutputQualityFilter($.Quality.Recommended)"
+                  [attr.aria-selected]="payloadOutputQualityFilters.includes($.Quality.Recommended)"
+                  [class.active]="payloadOutputQualityFilters.includes($.Quality.Recommended)">
                   <span class="quality-icon quality-recommended"></span>
                   <span>Recommended</span>
                 </button>
                 <button
                   class="btn btn-outline-secondary"
-                  (click)="togglePayloadOutputQualityFilter(Quality.Questionable)"
-                  [attr.aria-selected]="payloadOutputQualityFilters.includes(Quality.Questionable)"
-                  [class.active]="payloadOutputQualityFilters.includes(Quality.Questionable)">
+                  (click)="togglePayloadOutputQualityFilter($.Quality.Questionable)"
+                  [attr.aria-selected]="payloadOutputQualityFilters.includes($.Quality.Questionable)"
+                  [class.active]="payloadOutputQualityFilters.includes($.Quality.Questionable)">
                   <span class="quality-icon quality-questionable"></span>
                   <span>Questionable</span>
                 </button>
                 <button
                   class="btn btn-outline-secondary"
-                  (click)="togglePayloadOutputQualityFilter(Quality.Insecure)"
-                  [attr.aria-selected]="payloadOutputQualityFilters.includes(Quality.Insecure)"
-                  [class.active]="payloadOutputQualityFilters.includes(Quality.Insecure)">
+                  (click)="togglePayloadOutputQualityFilter($.Quality.Insecure)"
+                  [attr.aria-selected]="payloadOutputQualityFilters.includes($.Quality.Insecure)"
+                  [class.active]="payloadOutputQualityFilters.includes($.Quality.Insecure)">
                   <span class="quality-icon quality-insecure"></span>
                   <span>Insecure</span>
                 </button>

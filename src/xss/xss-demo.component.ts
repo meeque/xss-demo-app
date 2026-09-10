@@ -24,8 +24,7 @@ export class XssDemoComponent implements OnInit, AfterViewInit {
 
   private static readonly DEFAULT_XSS_MESSAGE = 'XSS has been triggered!';
 
-  protected readonly Technology = Technology;
-  protected readonly Quality = Quality;
+  protected readonly $ = { Technology, Quality };
 
 
   private readonly payloadPresetService = inject(PayloadPresetService);

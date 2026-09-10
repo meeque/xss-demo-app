@@ -22,10 +22,7 @@ export class PayloadOutputComponent implements AfterViewInit {
   private static nextComponentId = 0;
   protected readonly componentId = PayloadOutputComponent.nextComponentId++;
 
-  protected readonly Technology = Technology;
-  protected readonly Quality = Quality;
-  protected readonly PayloadEmitterLabels = EmitterLabels;
-
+  protected readonly $ = { Technology, Quality, EmitterLabels };
 
 
   private readonly environmentInjector = inject(EnvironmentInjector);
