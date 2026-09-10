@@ -18,16 +18,24 @@
         <ng-template #technologyDocumentation>
           @switch (outputDescriptor().technology) {
             @case ($.Technology.HTML) {
-              This <em>Payload Output</em> generates plain <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTML">HTML source code</a> from the <em>XSS Attack Payload</em> and emits it into the <em>Live HTML Output</em> area below.
+              <p>
+                This <em>Payload Output</em> generates plain <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTML">HTML source code</a> from the <em>XSS Attack Payload</em> and emits it into the <em>Live HTML Output</em> area below.
+              </p>
             }
             @case ($.Technology.DOM) {
-              This <em>Payload Output</em> uses <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API">HTML DOM APIs</a> to emit <em>XSS Attack Payload</em> into the <em>Live HTML Output</em> area below.
+              <p>
+                This <em>Payload Output</em> uses <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API">HTML DOM APIs</a> to emit <em>XSS Attack Payload</em> into the <em>Live HTML Output</em> area below.
+              </p>
             }
             @case ($.Technology.jQuery) {
-              This <em>Payload Output</em> uses the <a target="_blank" href="https://api.jquery.com/">jQuery library</a> to emit <em>XSS Attack Payload</em> into the <em>Live HTML Output</em> area below.
+              <p>
+                This <em>Payload Output</em> uses the <a target="_blank" href="https://api.jquery.com/">jQuery library</a> to emit <em>XSS Attack Payload</em> into the <em>Live HTML Output</em> area below.
+              </p>
             }
             @case ($.Technology.Angular) {
-              This <em>Payload Output</em> uses <a target="_blank" href="https://angular.dev/guide/templates">Angular template code</a> to emit <em>XSS Attack Payload</em> into the <em>Live HTML Output</em> area below.
+              <p>
+                This <em>Payload Output</em> uses <a target="_blank" href="https://angular.dev/guide/templates">Angular template code</a> to emit <em>XSS Attack Payload</em> into the <em>Live HTML Output</em> area below.
+              </p>
             }
           }
         </ng-template>
