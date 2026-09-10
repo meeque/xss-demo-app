@@ -20,10 +20,10 @@ header .xss-alert-overlay {
 }
 
 header .xss-alert-overlay .alert {
+  vertical-align: middle;
   margin: 0;
   border-width: 0.2rem;
-  border-color: var(--bs-danger);
-  vertical-align: middle;
+  color: var(--bs-danger);
   font-weight: bold;
 }
 

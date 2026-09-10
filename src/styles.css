@@ -1,3 +1,49 @@
+/* Bootstrap theme customization */
+
+:root {
+  /*
+    Where not stated otherwise, the following hsv params are used:
+    no-suffix:       sat = 80%, val = 55%
+    -border-subtle:  sat = 30%, val = 90%
+    -bg-subtle:      sat = 10%, val = 90%
+  */
+
+  /* hue = 220° */
+  --bs-primary:               #1c418c;
+  --bs-primary-border-subtle: #a0b7e5;
+  --bs-primary-bg-subtle:     #cdd4e3;
+
+  /* hue = 150° */
+  --bs-success:              #1c8c54;
+  --bs-sucess-border-subtle: #a0e5c3;
+  --bs-success-bg-subtle:    #cee5da;
+
+  /* hue = 355° */
+  --bs-danger:               #b21a26;   /* sat = 85%, val = 70% */
+  --bs-danger-border-subtle: #e5a0a6;
+  --bs-danger-bg-subtle:     #e4cecf;
+
+  /* hue = 55° */
+  --bs-warning:               #ccbb14;   /* sat = 90%, val = 80% */
+  --bs-warning-border-subtle: #e5dfa0;
+  --bs-warning-bg-subtle:     #e5e3ce;
+
+  /* hue = 190° */
+  --bs-info:               #1c798c;
+  --bs-info-border-subtle: #a0d9e5;
+  --bs-info-bg-subtle:     #cee1e5;
+
+  --bs-border-radius:     0.375rem;
+  --bs-border-radius-sm:  0;
+  --bs-border-radius-lg:  0;
+  --bs-border-radius-xl:  0;
+  --bs-border-radius-xxl: 0;
+}
+
+
+
+/* Element customization */
+
 html {
     font-size: 16px;
 }
@@ -7,6 +53,10 @@ body {
     border: none;
     padding: 0;
 }
+
+
+
+/* Common styles  */
 
 
 
