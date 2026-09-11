@@ -121,7 +121,6 @@ body {
   display: inline-block;
   width: 1.5em;
   height: 1.5em;
-  vertical-align: middle;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -149,8 +148,7 @@ body {
   font-size: 1.5rem;
   font-style: normal;
   opacity: 0.6;
-  cursor: help !important;
-  appearance: none;
+  cursor: help !important;  /* override more specific Bootstrap style */
 }
 
 .help-icon:hover,
