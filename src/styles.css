@@ -80,6 +80,21 @@ body {
 
 
 
+.quality-icon,
+.technology-icon,
+.help-icon,
+.collapse-toggle {
+  vertical-align: middle;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  appearance: none;
+}
+
+
+
 .quality-icon {
   font-family: "bootstrap-icons";
   font-size: 1.3em;
@@ -130,28 +145,34 @@ body {
 
 
 
-.help-icon::before {
-  content: "\24D8";
-}
-
 .help-icon {
-  /* Reset native <button> chrome so the button renders as if it weren't one. */
-  vertical-align: middle;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
   font-size: 1.5rem;
   font-style: normal;
-  opacity: 0.8;
-  cursor: help;
+  opacity: 0.6;
+  cursor: help !important;
   appearance: none;
 }
 
 .help-icon:hover,
 .help-icon:focus {
   opacity: 1;
+}
+
+.help-icon::before {
+  content: "\24D8";
+}
+
+
+
+.collapse-toggle::before {
+  font-family: "bootstrap-icons";
+  content: "\f282";   /* bi-chevron-down */
+  display: inline-block;
+  transition: transform 0.2s ease-in-out;
+}
+
+.collapse-toggle[aria-expanded="true"]::before {
+  transform: rotate(-180deg);
 }
 
 
