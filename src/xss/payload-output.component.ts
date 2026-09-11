@@ -2,9 +2,8 @@ import { Component, AfterViewInit, ElementRef, ViewContainerRef, EnvironmentInje
 import { NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCollapseModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { StopPropagationDirective } from '../lib/stop-propagation.directive';
 import { StripExtraIndentPipe } from '../lib/strip-extra-indent.pipe';
 import { Descriptor, Quality, Technology, EmitterLabels } from './payload-output.service';
 import { NonAngularLiveOutputComponent } from './live-output.component';
@@ -16,7 +15,7 @@ import { NonAngularLiveOutputComponent } from './live-output.component';
   templateUrl: './payload-output.component.html',
   styleUrls: ['./payload-output.component.css'],
   standalone: true,
-  imports: [NgbPopoverModule, NgTemplateOutlet, StopPropagationDirective, FormsModule, StripExtraIndentPipe],
+  imports: [NgbCollapseModule, NgbPopoverModule, NgTemplateOutlet, FormsModule, StripExtraIndentPipe],
 })
 export class PayloadOutputComponent implements AfterViewInit {
   private static nextComponentId = 0;
@@ -113,13 +112,9 @@ export class PayloadOutputComponent implements AfterViewInit {
     return false;
   }
 
-  protected togglePanel(event: MouseEvent) {
-    const button = (event.target as Element).closest('.accordion-button') as HTMLElement;
+  protected toggleCard(event: MouseEvent) {
+    const button = (event.target as Element).closest('.collapse-toggle') as HTMLElement;
     const isExpanded = button.ariaExpanded !== 'false';
     button.ariaExpanded = isExpanded ? 'false' : 'true';
-    button.classList.toggle('collapsed', isExpanded);
-    button.closest('.accordion-item')
-      ?.querySelector('.accordion-collapse')
-      ?.classList.toggle('show', !isExpanded);
   }
 }

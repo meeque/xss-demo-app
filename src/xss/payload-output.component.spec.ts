@@ -416,7 +416,7 @@ describe('PayloadOutputComponent', () => {
   }
 
   function queryAndExpectPayloadProcessor(descriptor: Descriptor) {
-    const panel = queryAndExpectOptional(element, 'div.payload-processor.accordion');
+    const panel = queryAndExpectOptional(element, 'div.payload-processor.card');
 
     if (descriptor.payloadProcessor === undefined) {
       expect(panel).toBeNull();
@@ -424,18 +424,18 @@ describe('PayloadOutputComponent', () => {
     }
 
     expect(panel).not.toBeNull();
-    const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
+    const title = queryAndExpectOne(panel, '.card-header h4');
     expect(title.textContent.trim()).toContain('Payload Processor Function');
-    const body = queryAndExpectOne(panel, 'div.accordion-body');
+    const body = queryAndExpectOne(panel, 'div.card-body');
     expect(body.textContent.trim()).toBe(strip(descriptor.payloadProcessor.toString()));
     return panel;
   }
 
   function queryAndExpectPayloadEmitter(descriptor: Descriptor) {
-    const panel = queryAndExpectOptional(element, 'div.payload-emitter.accordion');
+    const panel = queryAndExpectOptional(element, 'div.payload-emitter.card');
     expect(panel).not.toBeNull();
 
-    const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
+    const title = queryAndExpectOne(panel, '.card-header h4');
     switch (descriptor.technology) {
       case Technology.HTML:
         expect(title.textContent).toContain('HTML Source Provider Function');
@@ -450,7 +450,7 @@ describe('PayloadOutputComponent', () => {
         expect(title.textContent).toContain('Angular Template Code');
         break;
     }
-    const body = queryAndExpectOne(panel, 'div.accordion-body');
+    const body = queryAndExpectOne(panel, 'div.card-body');
     if (descriptor.technology === Technology.Angular) {
       expect(body.textContent.trim()).toBe(strip(descriptor.payloadEmitter.templateCode));
     }
@@ -473,10 +473,10 @@ describe('PayloadOutputComponent', () => {
   }
 
   function queryAndExpectLiveSourceCode(expectedCode?: string) {
-    const panel = queryAndExpectOne(element, 'div.live-source-code.accordion');
-    const title = queryAndExpectOne(panel, '.accordion-header .accordion-button');
+    const panel = queryAndExpectOne(element, 'div.live-source-code.card');
+    const title = queryAndExpectOne(panel, '.card-header h4');
     expect(title.textContent.trim()).toContain('Live HTML Source Code');
-    const body = queryAndExpectOne(panel, 'div.accordion-body');
+    const body = queryAndExpectOne(panel, 'div.card-body');
     if (expectedCode != null) {
       expect(body.textContent.trim()).toBe(expectedCode);
     }

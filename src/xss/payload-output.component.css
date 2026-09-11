@@ -11,9 +11,27 @@
   font-size: 1.2rem;
 }
 
-.accordion .accordion-header .help-icon {
+/* Legacy: help-icon nested inside accordion-button (span-based pattern). */
+.accordion .accordion-header .accordion-button .help-icon {
   display: block;
   margin-right: 0.4em;
+}
+
+/* New: help-icon is a sibling <button> of the accordion-button, absolutely
+   positioned so it visually appears inside the accordion-button's colored
+   strip while remaining a separate, non-nested button (valid HTML5). */
+.accordion .accordion-header {
+  position: relative;
+}
+.accordion .accordion-header > .help-icon {
+  position: absolute;
+  z-index: 1;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.accordion .accordion-header > .accordion-button {
+  padding-left: 3rem;
 }
 
 
@@ -58,9 +76,30 @@
 
 
 
-.payload-processor .accordion-body,
-.payload-emitter .accordion-body,
-.live-source-code .accordion-body {
+.payload-processor .card-body,
+.payload-emitter .card-body,
+.live-source-code .card-body {
   font-family: monospace;
   white-space-collapse: preserve;
+}
+
+.card .card-header .collapse-toggle {
+  /* Reset native <button> chrome. */
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  appearance: none;
+  cursor: pointer;
+}
+
+.card .card-header .collapse-toggle::before {
+  font-family: "bootstrap-icons";
+  content: "\f282"; /* bi-chevron-down */
+  display: inline-block;
+  transition: transform 0.2s ease-in-out;
+}
+.card .card-header .collapse-toggle[aria-expanded="true"]::before {
+  transform: rotate(-180deg);
 }
