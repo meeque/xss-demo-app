@@ -2,19 +2,18 @@
   <div class="card-header d-flex align-items-center gap-2">
     <h3 class="mb-0">
       @if (outputDescriptor().technology) {
-        <span
+        <button
+          type="button"
           [class]="'technology-icon technology-' + outputDescriptor().technology.toLowerCase()"
           [attr.aria-label]="'Technology: ' + outputDescriptor().technology"
           [title]="'Technology: ' + outputDescriptor().technology"
-          tabindex="0"
-          role="button"
-          triggers="focus"
+          autoClose="outside"
+          triggers="click"
           placement="auto"
           container="body"
-          autoClose="outside"
           [popoverTitle]="'Technology: ' + outputDescriptor().technology"
           [ngbPopover]="technologyDocumentation">
-        </span>
+        </button>
         <ng-template #technologyDocumentation>
           @switch (outputDescriptor().technology) {
             @case ($.Technology.HTML) {
@@ -41,19 +40,19 @@
         </ng-template>
       }
       @if (outputDescriptor().quality) {
-        <span
+        <button
+          type="button"
           class="quality-icon"
           [class]="'quality-icon quality-' + outputDescriptor().quality.toLowerCase()"
+          [attr.aria-label]="'Quality: ' + outputDescriptor().quality"
           [title]="'Quality: ' + outputDescriptor().quality"
-          tabindex="0"
-          role="button"
-          triggers="focus"
+          autoClose="outside"
+          triggers="click"
           placement="auto"
           container="body"
-          autoClose="outside"
           [popoverTitle]="'Quality: ' + outputDescriptor().quality"
           [ngbPopover]="qualityDocumentation">
-        </span>
+        </button>
         <ng-template #qualityDocumentation>
           @switch (outputDescriptor().quality) {
             @case ($.Quality.Recommended) {
