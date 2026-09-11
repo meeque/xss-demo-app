@@ -336,17 +336,17 @@
   aria-expanded="true">
   <div class="card-header d-flex align-items-center gap-2">
     <h4 class="mb-0">
-      <span
+      <button
+        type="button"
         class="help-icon"
-        tabindex="0"
-        role="note"
-        triggers="focus"
+        aria-label="Show help"
+        autoClose="outside"
+        triggers="click"
         placement="auto"
         container="body"
-        autoClose="outside"
         popoverTitle="Live HTML Output"
         [ngbPopover]="liveOutputDocumentation"
-        ></span>
+        ></button>
       <ng-template #liveOutputDocumentation>
         <p>
           Live HTML Output based on the current <em>XSS Attack Payload</em> as processed by this <em>Payload Output</em>.

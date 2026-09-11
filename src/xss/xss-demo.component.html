@@ -29,17 +29,17 @@
 
         <h2>
           Payload Input
-          <span
+          <button
+            type="button"
             class="help-icon"
-            tabindex="0"
-            role="note"
-            triggers="focus"
+            aria-label="Show help"
+            autoClose="outside"
+            triggers="click"
             placement="auto"
             container="body"
-            autoClose="outside"
             popoverTitle="Payload Input"
             [ngbPopover]="payloadInputDocumentation"
-            ></span>
+            ></button>
           <ng-template #payloadInputDocumentation>
             <p>
               Input area for <em>XSS Attack Payload</em> to test against example web application code in the <em>Payload Output</em> area.
@@ -76,17 +76,17 @@
 
         <h2>
           Payload Output
-          <span
+          <button
+            type="button"
             class="help-icon"
-            tabindex="0"
-            role="note"
-            triggers="focus"
+            aria-label="Show help"
+            autoClose="outside"
+            triggers="click"
             placement="auto"
             container="body"
-            autoClose="outside"
             popoverTitle="Payload Output"
             [ngbPopover]="payloadOutputDocumentation"
-            ></span>
+            ></button>
           <ng-template #payloadOutputDocumentation>
             <p>
               Output area for <em>XSS Attack Payload</em> from the <em>Payload Input</em> area.
