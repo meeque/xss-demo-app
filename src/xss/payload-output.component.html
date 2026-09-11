@@ -139,12 +139,10 @@
     </div>
     <div
       #payloadProcessorCollapse="ngbCollapse"
+      class="card-body"
+      [id]="'xss-payload-output-component-' + componentId + '-payload-processor'"
       [ngbCollapse]="false"
-      [id]="'xss-payload-output-component-' + componentId + '-payload-processor'">
-      <div
-        class="card-body"
-        [textContent]="outputDescriptor().payloadProcessor | stripextraindent">
-      </div>
+      [textContent]="outputDescriptor().payloadProcessor | stripextraindent">
     </div>
   </div>
 }
@@ -321,12 +319,10 @@
   </div>
   <div
     #payloadEmitterCollapse="ngbCollapse"
+    class="card-body"
+    [id]="'xss-payload-output-component-' + componentId + '-payload-emitter'"
     [ngbCollapse]="false"
-    [id]="'xss-payload-output-component-' + componentId + '-payload-emitter'">
-    <div
-      class="card-body"
-      [textContent]="payloadEmitterCode | stripextraindent">
-    </div>
+    [textContent]="payloadEmitterCode | stripextraindent">
   </div>
 </div>
 
@@ -421,11 +417,9 @@
   </div>
   <div
     #liveSourceCodeCollapse="ngbCollapse"
+    class="card-body"
+    [id]="'xss-payload-output-component-' + componentId + '-live-source-code'"
     [ngbCollapse]="false"
-    [id]="'xss-payload-output-component-' + componentId + '-live-source-code'">
-    <div
-      class="card-body"
-      [textContent]="liveSourceCode() | stripextraindent">
-    </div>
+    [textContent]="liveSourceCode() | stripextraindent">
   </div>
 </div>
